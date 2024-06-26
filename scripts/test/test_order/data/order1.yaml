@@ -1,0 +1,15 @@
+drinks:
+- count: 1
+  id: !!python/object/apply:order.Drink_id
+  - 1
+order_id: 1
+order_operation: !!python/object/apply:order.Operation
+- 0
+snacks:
+- count: 1
+  id: !!python/object/apply:order.Snack_id
+  - 1
+- count: 3
+  id: !!python/object/apply:order.Snack_id
+  - 5
+table_id: 1

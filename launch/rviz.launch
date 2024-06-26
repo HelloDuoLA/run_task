@@ -1,0 +1,4 @@
+<launch>  
+    <!-- rviz节点 -->
+    <node pkg="rviz" name="rviz" type="rviz" args="-d $(find run_task)/rviz/rviz.rviz" />
+</launch>  

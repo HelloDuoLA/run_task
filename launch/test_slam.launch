@@ -1,0 +1,8 @@
+<launch>
+    <!-- rviz -->
+    <node pkg="rviz" name="rviz" type="rviz" args="-d $(find run_task)/rviz/rviz.rviz" />
+    <!-- 地图发布 -->
+    <!-- <include file="$(find run_task)/launch/map_pub.launch"/> -->
+    <!-- slam -->
+    <include file="$(find run_task)/launch/slam_demo.launch"/>
+</launch>

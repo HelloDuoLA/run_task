@@ -1,0 +1,20 @@
+<launch>
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" clear_params="true">
+        <rosparam file="$(find run_task)/config/move_base/global_costmap_common_params.yaml"     command="load" ns="global_costmap" />
+        <rosparam file="$(find run_task)/config/move_base/local_costmap_common_params.yaml"      command="load" ns="local_costmap" />
+        <rosparam file="$(find run_task)/config/move_base/local_costmap_params.yaml"      command="load" />
+        <rosparam file="$(find run_task)/config/move_base/global_costmap_params.yaml"     command="load" />
+        <!-- 局部规划器, 默认实现 -->
+        <!-- <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>
+        <rosparam file="$(find run_task)/config/move_base/trj_local_planner_params.yaml"   command="load" /> -->
+        <!-- DWA规划器 -->
+        <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/>
+        <rosparam file="$(find run_task)/config/move_base/dwa_local_planner_params.yaml" command="load" /> 
+        <!-- TEB规划器 -->
+        <!-- <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS"/> -->
+        <!-- <rosparam file="$(find run_task)/config/move_base/teb_local_planner_params.yaml" command="load" /> -->
+    </node>
+</launch>
+
+
+

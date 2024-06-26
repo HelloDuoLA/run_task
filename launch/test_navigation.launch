@@ -1,0 +1,9 @@
+<launch>
+    <node pkg="run_task" type="assign_tasks.py" name="assign_tasks" output="screen">
+        <rosparam file="$(find run_task)/config/run_task_params.yaml" command="load"/>
+    </node>
+
+    <node pkg="test_navigation" type="test_navigation.py" name="test_navigation" output="screen">
+    </node>
+
+</launch>

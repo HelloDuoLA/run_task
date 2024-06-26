@@ -1,0 +1,4 @@
+DistanceOfArmsOrigin: 10  # 两个机械臂之间的距离(y轴)
+HeightOfArmsOrigin  : 10  # 机械臂距离地面的高度
+HeightOfDesk        : 10  # 服务台距离地面的高度
+

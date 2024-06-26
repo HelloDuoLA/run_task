@@ -1,0 +1,5 @@
+<!-- 保存地图 -->
+<launch>
+    <arg name="map_filename" value="$(find run_task)/map/nav"/>
+    <node pkg="map_server" name="save_map" type="map_saver" args="-f $(arg map_filename)" />
+</launch>

@@ -1,0 +1,599 @@
+
+
+
+06-25 16:49:17
+
+--------------------------------------------------
+
+
+Task       : Task_navigate Navigate_to_the_snack_desk 
+Group_id   : 1
+Index      : 0
+Create_time: 1719305357621200799
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Target_2D_pose: x:-999 y:-999 theta:-999 Rotation_degree: 0
+
+Task       : Task_image_rec SNACK 
+Group_id   : 1
+Index      : 1
+Create_time: 1719305357621301174
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Camera_id: HEAD Snack_list: ['id:1,name:YIDA,count:1', 'id:5,name:CHENPIDAN,count:1']
+Need_modify_tasks: 
+          [2:Task_manipulation Grasp_snack ]
+          [3:Task_manipulation Lossen_snack ]
+          [4:Task_manipulation Grasp_snack ]
+          [5:Task_manipulation Lossen_snack ]
+ 
+
+Task       : Task_manipulation Grasp_snack 
+Group_id   : 1
+Index      : 2
+Create_time: 1719305357621397733
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : TBD 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: CLOSE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Lossen_snack 
+Group_id   : 1
+Index      : 3
+Create_time: 1719305357621463537
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [2:Task_manipulation Grasp_snack ] 
+Arm_id              : TBD 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: OPEN  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Grasp_snack 
+Group_id   : 1
+Index      : 4
+Create_time: 1719305357621518611
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : TBD 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: CLOSE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Lossen_snack 
+Group_id   : 1
+Index      : 5
+Create_time: 1719305357621553897
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [4:Task_manipulation Grasp_snack ] 
+Arm_id              : TBD 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: OPEN  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Grasp_container 
+Group_id   : 1
+Index      : 6
+Create_time: 1719305357621615409
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT_RIGHT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 Arm_pose_1: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: CLOSE Clamp_status_1: CLOSE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Deliever_container 
+Group_id   : 1
+Index      : 7
+Create_time: 1719305357621650695
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT_RIGHT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 Arm_pose_1: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_navigate Rotation_in_place 
+Group_id   : 1
+Index      : 8
+Create_time: 1719305357621684789
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Target_2D_pose: x:-999 y:-999 theta:-999 Rotation_degree: 20
+
+Task       : Task_navigate Navigate_to_one_service_desk 
+Group_id   : 1
+Index      : 9
+Create_time: 1719305357621748924
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Target_2D_pose: x:-999 y:-999 theta:-999 Rotation_degree: 0
+
+Task       : Task_manipulation Lossen_container 
+Group_id   : 1
+Index      : 10
+Create_time: 1719305357621782779
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT_RIGHT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 Arm_pose_1: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: OPEN Clamp_status_1: OPEN  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Move 
+Group_id   : 1
+Index      : 11
+Create_time: 1719305357621815204
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT_RIGHT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 Arm_pose_1: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: OPEN Clamp_status_1: OPEN  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_navigate Rotation_in_place 
+Group_id   : 1
+Index      : 12
+Create_time: 1719305357621850728
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Target_2D_pose: x:-999 y:-999 theta:-999 Rotation_degree: 20
+
+Task       : Task_navigate Navigate_to_the_drink_desk 
+Group_id   : 1
+Index      : 13
+Create_time: 1719305357621888399
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Target_2D_pose: x:-999 y:-999 theta:-999 Rotation_degree: 0
+
+Task       : Task_manipulation Move 
+Group_id   : 1
+Index      : 14
+Create_time: 1719305357621914386
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_image_rec COFFEE_MACHIE_SWITCH 
+Group_id   : 1
+Index      : 15
+Create_time: 1719305357621951580
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [14:Task_manipulation Move ] 
+Camera_id: LEFT Snack_list: []
+Need_modify_tasks: 
+          [18:Task_manipulation Move ]
+          [19:Task_manipulation Turn_on_coffee_machine ]
+          [21:Task_manipulation Move ]
+          [22:Task_manipulation Turn_off_coffee_machine ]
+ 
+
+Task       : Task_image_rec CUP_COFFEE_MACHINE 
+Group_id   : 1
+Index      : 16
+Create_time: 1719305357621984481
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Camera_id: HEAD Snack_list: []
+Need_modify_tasks: 
+          [17:Task_manipulation Grasp_cup ]
+          [20:Task_manipulation Move ]
+ 
+
+Task       : Task_manipulation Grasp_cup 
+Group_id   : 1
+Index      : 17
+Create_time: 1719305357622016191
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: CLOSE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Move 
+Group_id   : 1
+Index      : 18
+Create_time: 1719305357622046470
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Turn_on_coffee_machine 
+Group_id   : 1
+Index      : 19
+Create_time: 1719305357622075796
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [18:Task_manipulation Move ] 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Move 
+Group_id   : 1
+Index      : 20
+Create_time: 1719305357622106552
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Move 
+Group_id   : 1
+Index      : 21
+Create_time: 1719305357622144222
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Turn_off_coffee_machine 
+Group_id   : 1
+Index      : 22
+Create_time: 1719305357622175693
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [18:Task_manipulation Move ] 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Move 
+Group_id   : 1
+Index      : 23
+Create_time: 1719305357622216939
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: OPEN  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Move 
+Group_id   : 1
+Index      : 24
+Create_time: 1719305357622246026
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_navigate Rotation_in_place 
+Group_id   : 1
+Index      : 25
+Create_time: 1719305357622273206
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Target_2D_pose: x:-999 y:-999 theta:-999 Rotation_degree: 20
+
+Task       : Task_navigate Navigate_to_the_left_service_desk 
+Group_id   : 1
+Index      : 26
+Create_time: 1719305357622302770
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Target_2D_pose: x:-999 y:-999 theta:-999 Rotation_degree: 0
+
+Task       : Task_manipulation Lossen_cup 
+Group_id   : 1
+Index      : 27
+Create_time: 1719305357622328996
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: OPEN  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Move 
+Group_id   : 1
+Index      : 28
+Create_time: 1719305357622363567
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT_RIGHT 
+Target_arms_pose    : {Arm_pose_0: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 Arm_pose_1: x:-999 y:-999 z:-999 rx:-999 ry:-999 rz:-999 } 
+Target_clamps_status: Clamp_status_0: OPEN Clamp_status_1: OPEN  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_navigate Rotation_in_place 
+Group_id   : 1
+Index      : 29
+Create_time: 1719305357622392892
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Target_2D_pose: x:-999 y:-999 theta:-999 Rotation_degree: 20
+--------------------------------------------------

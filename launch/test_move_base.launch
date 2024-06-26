@@ -1,0 +1,14 @@
+<!-- 测试地图导航 -->
+<launch>
+    <param name="use_sim_time" value="true"/>
+    <!-- 发布地图 -->
+    <include file="$(find run_task)/launch/map_pub.launch"/>
+    <!-- 启动AMCL节点 -->
+    <include file="$(find run_task)/launch/amcl.launch" />
+    <!-- 运行move_base节点 -->
+    <include file="$(find run_task)/launch/move_base.launch" />
+    <!-- 串联 -->
+    <include file="$(find run_task)/launch/test_run_task.launch" />
+    <!-- 运行rviz -->
+    <include file="$(find run_task)/launch/rviz.launch" />
+</launch>

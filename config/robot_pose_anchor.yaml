@@ -1,0 +1,34 @@
+# 初始位姿
+InitialPose:
+  position_x: 11.80
+  position_y: 20.819
+  position_z: 0
+  yaw: 3.14 
+
+# 零食台位姿
+SnackDesk:
+  position_x: 11.80
+  position_y: 20.819
+  position_z: 0
+  yaw: 3.14 
+
+# 饮料台位姿
+DrinkDesk:
+  position_x: 11.80
+  position_y: 20.819
+  position_z: 0
+  yaw: 3.14 
+
+# 右服务台位姿
+RightServiceDesk:
+  position_x: 11.80
+  position_y: 20.819
+  position_z: 0
+  yaw: 3.14 
+
+# 左服务台位姿
+LeftServiceDesk:
+  position_x: 11.80
+  position_y: 20.819
+  position_z: 0
+  yaw: 3.14
