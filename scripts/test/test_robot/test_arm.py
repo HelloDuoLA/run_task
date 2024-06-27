@@ -14,6 +14,7 @@ mr.focus_servo(6)
 mr.set_servo_calibration(1)
 mr.get_angles()
 mr.send_angle(1,0, 100)
+mr.send_angle(2,30, 100)
 
 
 # 左臂
@@ -42,4 +43,4 @@ ml.set_servo_calibration(4)
 ml.set_servo_calibration(5)
 ml.set_servo_calibration(6)
 
-ml.send_angle(1,0, 100)
+ml.send_angle(3,20, 100)
