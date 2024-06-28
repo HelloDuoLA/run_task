@@ -66,7 +66,6 @@ ml.get_gripper_value()
 ml.set_gripper_value(0,100)
 ml.set_gripper_calibration()
 
-
 ml.get_angles()
 ml.set_servo_calibration(1)
 ml.set_servo_calibration(2)
