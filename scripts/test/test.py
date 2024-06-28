@@ -1,4 +1,4 @@
-#! /usr/bin/env /usr/bin/python3
+#! /usr/bin/env /python3
 
 """
     Python 版 HelloWorld
@@ -6,9 +6,6 @@
 """
 import rospy
 import cv2
-# from run_task.msg import ObjPositionWithID
-# from run_task.srv import ImageRec,ImageRecRequest,ImageRecResponse
-import run_task.srv as srv
 import run_task.msg as msg
 
 
@@ -39,6 +36,13 @@ if __name__ == "__main__":
     # Hello.current = hello2
     # hello2.print_name()
     # print(cv2.__version__)
-    a = msg.MoveArmGoal()
-    print(isinstance(a.arm_pose, msg.ArmPose))
+    # a = msg.MoveArmGoal()
+    # print(isinstance(a.arm_pose, msg.ArmPose))
+        # 设置发布消息的频率，1Hz
+    rate = rospy.Rate(1)
+
+    while not rospy.is_shutdown():
+        rospy.loginfo("arm")
+        # 按照设定的频率延时
+        rate.sleep()
     

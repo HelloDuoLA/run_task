@@ -1,4 +1,4 @@
-image: /home/elephant/xzc_code/src/run_task/map/C111.pgm
+image: /home/elephant/xzc_code/ros_ws/src/run_task/map/C111.pgm
 resolution: 0.050000
 origin: [-5.000000, -15.200000, 0.000000]
 negate: 0
