@@ -1,0 +1,35 @@
+<launch>
+	<arg name="rvizconfig" default="$(find turn_on_mercury_robot)/rviz/mercury_x1.rviz" />
+	<arg name="gui" default="true" />
+
+  <arg name="repeat"  default="false"/>
+
+  <arg name="car_mode"  default="brushless_senior_diff" 
+    doc="opt: mini_akm,senior_akm,top_akm_bs,top_akm_dl,
+                mini_mec,senior_mec_bs,senior_mec_dl,top_mec_bs,top_mec_dl,senior_mec_EightDrive,top_mec_EightDrive,
+                mini_omni,senior_omni,top_omni,
+                mini_4wd,mini_4wd_moveit,senior_4wd_bs,senior_4wd_dl,top_4wd_bs,top_4wd_dl,flagship_4wd_bs,flagship_4wd_dl,
+                mini_tank,mini_diff,senior_diff,four_wheel_diff_bs,four_wheel_diff_dl, brushless_senior_diff,
+                mini_tank_moveit,mini_mec_moveit"/>
+
+      <!-- 发布用于建图、导航的TF关系与小车外形可视化 -->
+  <include file="$(find turn_on_mercury_robot)/launch/robot_model_visualization.launch" unless="$(arg repeat)">
+    <arg name="car_mode" value="$(arg car_mode)"/>
+  </include>
+  
+	
+	<!-- Combinejoin values to TF -->
+	<!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" /> -->
+	<node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui">
+		<param name="use_gui" value="$(arg gui)" />
+	</node>
+	<!-- <node name="simple_base_controller" pkg="mercury_x1" type="simple_base_controller.py" output="screen" /> -->
+
+    <!-- Open control script -->
+	<!-- <node name="control_slider" pkg="turn_on_mercury_robot" type="slider_control.py" />  -->
+
+
+	<!-- Show in Rviz ，显示在Rviz-->
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+	<!-- <node name="rviz" pkg="rviz" type="rviz" /> -->
+</launch>
