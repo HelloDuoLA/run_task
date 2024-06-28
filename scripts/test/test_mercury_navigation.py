@@ -25,15 +25,23 @@ def talker():
     pose_drink          =  assign_tasks.System._constant_config_to_robot_anchor_pose_orientation("DrinkDesk")
     pose_right_desk     =  assign_tasks.System._constant_config_to_robot_anchor_pose_orientation("RightServiceDesk")
     pose_left_desk      =  assign_tasks.System._constant_config_to_robot_anchor_pose_orientation("LeftServiceDesk")
+    pose_init           =  utilis.Pose3D()
+    pose_init.x = 0
+    pose_init.y = 0
+    pose_init.z = 0
+    pose_init.yaw   = 0
+    pose_init.roll  = 0
+    pose_init.pitch = 0
     
     
+    task_navi0 = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point,finish_call_back,pose_init)
     task_navi1 = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point,finish_call_back,pose_snack)
     task_navi2 = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point,finish_call_back,pose_drink)
     task_navi3 = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point,finish_call_back,pose_right_desk)
     task_navi4 = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point,finish_call_back,pose_left_desk)
     
     navigation_actuator = assign_tasks.Navigation_actuator()
-    navigation_actuator.run(task_navi1)
+    navigation_actuator.run(task_navi0)
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(1)
     while not rospy.is_shutdown():

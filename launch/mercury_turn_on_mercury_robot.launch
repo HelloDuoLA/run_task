@@ -1,12 +1,13 @@
 <launch>
   <!-- Arguments参数 -->
-  <arg name="car_mode"  default="brushless_senior_diff" 
-       doc="opt: mini_akm,senior_akm,top_akm_bs,top_akm_dl,
-                 mini_mec,senior_mec_bs,senior_mec_dl,top_mec_bs,top_mec_dl,senior_mec_EightDrive,top_mec_EightDrive,
-                 mini_omni,senior_omni,top_omni,
-                 mini_4wd,mini_4wd_moveit,senior_4wd_bs,senior_4wd_dl,top_4wd_bs,top_4wd_dl,flagship_4wd_bs,flagship_4wd_dl,
-                 mini_tank,mini_diff,senior_diff,four_wheel_diff_bs,four_wheel_diff_dl, brushless_senior_diff,
-                 mini_tank_moveit,mini_mec_moveit"/>
+  <arg name="car_mode"  default="brushless_senior_diff" />
+
+  <!-- doc="opt: mini_akm,senior_akm,top_akm_bs,top_akm_dl,
+            mini_mec,senior_mec_bs,senior_mec_dl,top_mec_bs,top_mec_dl,senior_mec_EightDrive,top_mec_EightDrive,
+            mini_omni,senior_omni,top_omni,
+            mini_4wd,mini_4wd_moveit,senior_4wd_bs,senior_4wd_dl,top_4wd_bs,top_4wd_dl,flagship_4wd_bs,flagship_4wd_dl,
+            mini_tank,mini_diff,senior_diff,four_wheel_diff_bs,four_wheel_diff_dl, brushless_senior_diff,
+            mini_tank_moveit,mini_mec_moveit" -->
 
   <!--是否为akm系列车型 在语音导航功能中需要进行判断-->
   <param name="if_akm_yes_or_no" value="no"/>
@@ -32,7 +33,7 @@
   <!-- 开启teb_local_planner导航算法 与dwa算法相比效果更佳-->
   <!-- <include file="$(find turn_on_mercury_robot)/launch/include/teb_local_planner.launch" if="$(arg navigation)"> -->
   <!-- 开启dwa_local_planner导航算法-->
-  <include file="$(find turn_on_mercury_robot)/launch/include/dwa_local_planner.launch" if="$(arg navigation)">
+  <include file="$(find run_task)/launch/include/dwa_local_planner.launch" if="$(arg navigation)">
     <arg name="car_mode" value="$(arg car_mode)"/>
   </include>
 
