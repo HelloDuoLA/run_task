@@ -15,8 +15,17 @@ mr.set_servo_calibration(1)
 mr.get_angles()
 mr.send_angle(1,0, 100)
 mr.send_angle(2,30, 100)
-
-
+mr.get_coords()
+mr.send_coords([42.8, 0.0,400, -1.54, -89.99, -178.45],50,0)
+mr.send_angles([0,0,0,0,90,0],50)
+mr_al = [69.97, 44.71, -44.99, -90.0, 89.99, 30.0]
+ml_al = [-70.0, 44.99, -45.00, 89.99, 89.99, 30.0]
+mr.set_servo_calibration(1)
+mr.set_servo_calibration(2)
+mr.set_servo_calibration(3)
+mr.set_servo_calibration(4)
+mr.set_servo_calibration(5)
+mr.set_servo_calibration(6)
 # 左臂
 from pymycobot import Mercury
 
