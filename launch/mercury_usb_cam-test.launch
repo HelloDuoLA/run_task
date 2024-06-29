@@ -8,12 +8,15 @@
   <!-- <node name="usb_cam" pkg="usb_cam" type="app_read.py" >
     <remap from="/usb_cam/image_raw/compressed" to="/image_raw/compressed"/>
   </node> -->
+
+  <arg name="image_width" default="1280"/>
+  <arg name="image_height" default="720"/>
   
   <!-- elephant bottom  /dev/video2  left /dev/video4  right /dev/video6-->
   <node name="usb_cam_left" pkg="usb_cam" type="usb_cam_node" output="screen" >
     <param name="video_device" value="/dev/video4" />
-    <param name="image_width" value="640" />
-    <param name="image_height" value="480" />
+    <param name="image_width" value="$(arg image_width)" />
+    <param name="image_height" value="$(arg image_height)" />
     <param name="pixel_format" value="yuyv" />
     <param name="camera_frame_id" value="usb_cam" />
     <param name="io_method" value="mmap"/>
@@ -22,8 +25,8 @@
 
   <node name="usb_cam_right" pkg="usb_cam" type="usb_cam_node" output="screen" >
     <param name="video_device" value="/dev/video6" />
-    <param name="image_width" value="640" />
-    <param name="image_height" value="480" />
+    <param name="image_width" value="$(arg image_width)" />
+    <param name="image_height" value="$(arg image_height)" />
     <param name="pixel_format" value="yuyv" />
     <param name="camera_frame_id" value="usb_cam" />
     <param name="io_method" value="mmap"/>
