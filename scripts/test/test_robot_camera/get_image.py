@@ -17,6 +17,7 @@ while 1:
         # firename=f'./01_right/{camera_id}_{u}.jpg'
         firename=f'./02_left/{camera_id}_{u}.jpg'
         # firename=f'./02_right/{camera_id}_{u}.jpg'
+        firename=f'./STag/{camera_id}_{u}.jpg'
         cv2.imwrite(firename, img)
         print('写入：',firename)
     if cv2.waitKey(1) & 0xFF == ord('q'):

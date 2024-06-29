@@ -35,5 +35,7 @@
     <remap from="image" to="/usb_cam/image_raw"/>
     <param name="autosize" value="true" />
   </node-->
+
+   <node pkg="rviz" type="rviz" name="rviz" args="-d /home/elephant/xzc_code/ros_ws/src/run_task/rviz/camera2.rviz"/>
 </launch>
 
