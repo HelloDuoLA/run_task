@@ -15,7 +15,6 @@ mr.set_servo_calibration(1)
 mr.get_angles()
 mr.send_angle(1,0, 100)
 mr.send_angle(2,30, 100)
-mr.get_coords()
 mr.get_base_coords()
 # 0点[362.1, -541.4, 309.9, -90.0, 0.0, -59.99]
 # [339.3, -243.1, 657.4, -125.86, -54.2, -29.61]
@@ -66,7 +65,6 @@ ml.set_gripper_state(0,100)
 ml.get_gripper_value()
 ml.set_gripper_value(0,100)
 ml.set_gripper_calibration()
-
 
 ml.get_angles()
 ml.set_servo_calibration(1)
