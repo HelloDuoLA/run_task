@@ -50,6 +50,7 @@ mr.set_servo_calibration(6)
 from pymycobot import Mercury
 
 ml = Mercury("/dev/left_arm")
+a = 2
 ml.power_on()
 ml.power_off()
 ml.release_all_servos()
