@@ -1,30 +1,31 @@
 # 左臂
 # 左臂空闲放置点
 LeftArmIdle:
-  x:  11.80
-  y:  20.819
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  angle1: 0
+  angle2: 0
+  angle3: 0
+  angle4: 0
+  angle5: 0
+  angle6: 0
+
 
 # 左臂食物框识别位点
 LeftArmContainerRec:
-  x:  11.80
-  y:  20.819
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  angle1: 0
+  angle2: 0
+  angle3: 0
+  angle4: 0
+  angle5: 0
+  angle6: 0
 
 # 左臂零食识别位点
 LeftArmSnackRec:
-  x:  11.80
-  y:  20.819
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  angle1: 0
+  angle2: 0
+  angle3: 0
+  angle4: 0
+  angle5: 0
+  angle6: 0
 
 # 左臂零食放置位点
 LeftArmSnackPlacement:

@@ -4,6 +4,7 @@ import rospy
 import sys
 import actionlib
 import random
+from pymycobot import Mercury
 
 # 增加头文件路径 
 import rospkg
@@ -22,11 +23,11 @@ class arm_controller():
         if(self.id == utilis.Device_id.LEFT):
             self.action_name      = utilis.Topic_name.left_arm_action            # action名称
             self.pub_pose_topic   = utilis.Topic_name.left_arm_pose              # 发布机械臂状态
-            self.control_instance = "left_arm_controller"                        # TODO需要修改 驱动句柄
+            self.control_instance = Mercury("/dev/left_arm")                     
         elif(self.id == utilis.Device_id.RIGHT):
             self.action_name      = utilis.Topic_name.right_arm_action           # action名称
             self.pub_pose_topic   = utilis.Topic_name.right_arm_pose             # 发布机械臂状态
-            self.control_instance = "right_arm_controller"                       # TODO需要修改 驱动句柄
+            self.control_instance = Mercury("/dev/right_arm")                    # TODO需要修改 驱动句柄
         
         self.action = self.arm_action(self.action_name,self.control_instance,id)
         self.action.start_action()
