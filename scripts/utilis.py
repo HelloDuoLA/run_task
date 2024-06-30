@@ -8,7 +8,7 @@ from tf.transformations import quaternion_from_euler, euler_from_quaternion
 # from geometry_msgs.msg import Pose
 import geometry_msgs
 import run_task.msg as msg
-import run_task.srv as srv
+# import run_task.srv as srv
 
 # 2D位姿数据结构
 class Pose2D():
@@ -66,6 +66,15 @@ class Pose3D():
         pose3D.yaw   = pose2d.theta
         pose3D.roll  = 0
         pose3D.pitch = 0
+    
+    @staticmethod
+    def instantiate_by_xyz_orientation(x,y,z,o_x,o_y,o_z,o_w):
+        pose3D   = Pose3D()
+        pose3D.x = x
+        pose3D.y = y
+        pose3D.z = z
+        pose3D.roll, pose3D.pitch, pose3D.yaw = euler_from_quaternion((o_x, o_y, o_z, o_w))
+        return pose3D
     
     # 数据转换为geometry_msg
     def to_geometry_msg(self):

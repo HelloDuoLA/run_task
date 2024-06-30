@@ -124,6 +124,18 @@ class System():
             pose.set_y(rospy.get_param(f'~{anchor_point_name}/position_y'))
             pose.set_theta(rospy.get_param(f'~{anchor_point_name}/yaw'))
             return pose
+        
+    def _constant_config_to_robot_anchor_pose_orientation(anchor_point_name):
+        x   = rospy.get_param(f'~{anchor_point_name}/position_x')
+        y   = rospy.get_param(f'~{anchor_point_name}/position_y')
+        z   = rospy.get_param(f'~{anchor_point_name}/position_z')
+        o_x = rospy.get_param(f'~{anchor_point_name}/orientation_x')
+        o_y = rospy.get_param(f'~{anchor_point_name}/orientation_y')
+        o_z = rospy.get_param(f'~{anchor_point_name}/orientation_z')
+        o_w = rospy.get_param(f'~{anchor_point_name}/orientation_w')
+        pose = utilis.Pose3D.instantiate_by_xyz_orientation(x,y,z,o_x,o_y,o_z,o_w)
+        return pose
+        
     
     # 初始化机械臂位点常量配置
     def _initialize_constant_config_arm_anchor_point(self):
@@ -153,6 +165,7 @@ class System():
             pose.set_ry(rospy.get_param(f'~{anchor_point_name}/ry'))
             pose.set_rz(rospy.get_param(f'~{anchor_point_name}/rz'))
             return pose
+        
     
     # TODO:半动态点的初始化
     # def 
@@ -208,7 +221,7 @@ class Navigation_actuator():
         # 订阅导航Action   
         self.ac = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         # TODO:调试需要,暂时注释
-        # self.ac.wait_for_server()
+        self.ac.wait_for_server()
 
     # 运行
     def run(self, navigation_task:task.Task_navigation):
@@ -216,10 +229,10 @@ class Navigation_actuator():
         goal = MoveBaseGoal()
         goal.target_pose.header.frame_id = "map"
         goal.target_pose.header.stamp    = rospy.Time.now()
-        goal.target_pose.pose.position.x = self.task.target_2D_pose.x
-        goal.target_pose.pose.position.y = self.task.target_2D_pose.y
+        goal.target_pose.pose.position.x = self.task.target_3D_pose.x
+        goal.target_pose.pose.position.y = self.task.target_3D_pose.y
         goal.target_pose.pose.position.z = 0
-        orientation = quaternion_from_euler(0, 0, self.task.target_2D_pose.theta)
+        orientation = quaternion_from_euler(0, 0, self.task.target_3D_pose.yaw)
         goal.target_pose.pose.orientation.x = orientation[0]
         goal.target_pose.pose.orientation.y = orientation[1]
         goal.target_pose.pose.orientation.z = orientation[2]
@@ -263,6 +276,7 @@ class Navigation_actuator():
     # 反馈回调
     @staticmethod
     def navigation_task_feedback_callback(feedback:MoveBaseFeedback):
+        global system
         pose = feedback.base_position.pose
         pose3D = utilis.Pose3D.instantiate_by_geometry_msg(pose)
         rospy.loginfo(f"node: {rospy.get_name()}, navigation feedback. pose:x = {pose3D.x} y = {pose3D.y} yaw = {pose3D.yaw}")

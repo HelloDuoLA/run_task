@@ -206,18 +206,18 @@ class Task():
                 )
 # 导航任务
 class Task_navigation(Task):
-    def __init__(self, task_name, finish_cb=None, target_2D_pose=utilis.Pose2D(), rotation_degree=0):
+    def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(), rotation_degree=0):
         super().__init__(task_name,finish_cb)
-        self.target_2D_pose = target_2D_pose
+        self.target_3D_pose  = target_3D_pose
         self.rotation_degree = rotation_degree         # 旋转度数
     
     # 设置目的点
-    def set_target(self,target_2D_pose:utilis.Pose2D):
-        self.target_2D_pose = target_2D_pose
+    def set_target(self,target_3D_pose:utilis.Pose3D):
+        self.target_3D_pose = target_3D_pose
         
     # 打印输出
     def __str__(self) -> str:
-        return super().__str__() + f"Target_2D_pose: {self.target_2D_pose} " + f"Rotation_degree: {self.rotation_degree}"
+        return super().__str__() + f"Target_2D_pose: {self.target_3D_pose} " + f"Rotation_degree: {self.rotation_degree}"
 
 # 图像识别任务
 class Task_image_rec(Task):
