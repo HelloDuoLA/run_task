@@ -236,3 +236,51 @@ class Arm_pose():
     
     def to_list(self):
         return [self.x, self.y, self.z, self.rx, self.ry, self.rz]
+    
+    
+class Arm_pose_angle():
+    def __init__(self,arm_angle:list=0):
+        if arm_angle == 0:
+            pass
+        else:
+            self.angle1 = arm_angle[0]
+            self.angle2 = arm_angle[1]
+            self.angle3 = arm_angle[2]
+            self.angle4 = arm_angle[3]
+            self.angle5 = arm_angle[4]
+            self.angle6 = arm_angle[5]
+    
+    def set_angle1(self,angle1):
+        self.angle1 = angle1
+    
+    def set_angle2(self,angle2):
+        self.angle2 = angle2
+        
+    def set_angle3(self,angle3):
+        self.angle3 = angle3
+        
+    def set_angle4(self,angle4):
+        self.angle4 = angle4
+        
+    def set_angle5(self,angle5):
+        self.angle5 = angle5
+        
+    def set_angle6(self,angle6):
+        self.angle6 = angle6
+    
+    def to_list(self):
+        return [self.angle1,self.angle2,self.angle3,self.angle4,self.angle5,self.angle6]
+    
+    def to_msg_with_id(self,id:Device_id=None):
+        arm_pose_msg = msg.ArmPoseWithID()
+        arm_pose_msg.x    = self.angle1
+        arm_pose_msg.y    = self.angle2
+        arm_pose_msg.z    = self.angle3
+        arm_pose_msg.rx   = self.angle4
+        arm_pose_msg.ry   = self.angle5
+        arm_pose_msg.rz   = self.angle6
+        arm_pose_msg.type = 1 # 1表示角度
+        if isinstance(id,Device_id):
+            self.arm_id = id
+        arm_pose_msg.id  = self.arm_id
+        return arm_pose_msg
