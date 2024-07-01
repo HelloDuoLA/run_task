@@ -1,6 +1,6 @@
 import cv2
 
-# 2 bottom 摄像头 4 
+# 2 bottom 摄像头 4 左 6右 
 camera_id = 6
 
 camera = cv2.VideoCapture(camera_id)
@@ -21,9 +21,9 @@ while 1:
         u = str(i)
         # firename=f'./01_left/{camera_id}_{u}.jpg'
         # firename=f'./01_right/{camera_id}_{u}.jpg'
-        firename=f'./01_right/{camera_id}_{u}.jpg'
+        firename=f'./image/{camera_id}_{u}630.jpg'
         # firename=f'./02_right/{camera_id}_{u}.jpg'
-        firename=f'./STag/{camera_id}_{u}.jpg'
+        # firename=f'./STag/{camera_id}_{u}.jpg'
         cv2.imwrite(firename, img)
         print('写入：',firename)
     if cv2.waitKey(1) & 0xFF == ord('q'):
