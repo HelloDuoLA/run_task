@@ -2,5 +2,7 @@
   <!-- <node pkg="run_task" type="test_service_server.py" name="test_service_server" output="screen"/>
   <node pkg="run_task" type="test_service_client.py" name="test_service_client" output="screen"/> -->
   <!-- <node pkg="run_task" type="teat_navigation.py" name="test_navigation" output="screen"/>  -->
-  <node pkg="run_task" type="test.py" name="test" output="screen"/> 
+  <node pkg="run_task" type="test.py" name="test" output="screen"> 
+      <rosparam file="$(find run_task)/config/arm_pose_anchor.yaml"     command="load" />
+  </node>
 </launch>

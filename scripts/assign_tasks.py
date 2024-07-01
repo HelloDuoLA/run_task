@@ -139,24 +139,24 @@ class System():
     
     # 初始化机械臂位点常量配置
     def _initialize_constant_config_arm_anchor_point(self):
-        self.left_arm_idle                 = _constant_config_to_arm_anchor_pose("LeftArmIdle")
-        self.left_arm_container_rec        = _constant_config_to_arm_anchor_pose("LeftArmContainerRec")
-        self.left_arm_snack_rec            = _constant_config_to_arm_anchor_pose("LeftArmSnackRec")
-        self.left_arm_container_delivery   = _constant_config_to_arm_anchor_pose("LeftArmContainerDelivery")
-        self.left_arm_container_placement  = _constant_config_to_arm_anchor_pose("LeftArmContainerPlacement")
-        self.right_arm_idle                = _constant_config_to_arm_anchor_pose("RightArmIdle")
-        self.right_arm_container_rec       = _constant_config_to_arm_anchor_pose("RightArmContainerRec")
-        self.right_arm_snack_rec           = _constant_config_to_arm_anchor_pose("RightArmSnackRec")
-        self.right_arm_container_delivery  = _constant_config_to_arm_anchor_pose("RightArmContainerDelivery")
-        self.right_arm_container_placement = _constant_config_to_arm_anchor_pose("RightArmContainerPlacement")
-        self.cup_rec                       = _constant_config_to_arm_anchor_pose("CupRec")
-        self.cup_water                     = _constant_config_to_arm_anchor_pose("CupWater")
-        self.cup_delivery                  = _constant_config_to_arm_anchor_pose("CupDelivery")
-        self.cup_placement                 = _constant_config_to_arm_anchor_pose("CupPlacement")
-        self.coffee_machine_rec            = _constant_config_to_arm_anchor_pose("CoffeeMachineRec")
+        self.left_arm_idle                 = _constant_config_to_arm_anchor_angle("LeftArmIdle")               # 左臂闲置
+        self.left_arm_container_rec        = _constant_config_to_arm_anchor_angle("LeftArmContainerRec")       # 左臂识别容器
+        self.left_arm_snack_rec            = _constant_config_to_arm_anchor_angle("LeftArmSnackRec")           # 左臂识别零食
+        self.left_arm_container_delivery   = _constant_config_to_arm_anchor_angle("LeftArmContainerDelivery")  # 左臂容器运送时的姿态
+        self.left_arm_container_placement  = _constant_config_to_arm_anchor_angle("LeftArmContainerPlacement") # 左臂容器放置
+        self.right_arm_idle                = _constant_config_to_arm_anchor_angle("RightArmIdle")              # 右臂空闲
+        self.right_arm_container_rec       = _constant_config_to_arm_anchor_angle("RightArmContainerRec")      # 右臂识别容器
+        self.right_arm_snack_rec           = _constant_config_to_arm_anchor_angle("RightArmSnackRec")          # 右臂识别零食
+        self.right_arm_container_delivery  = _constant_config_to_arm_anchor_angle("RightArmContainerDelivery") # 右臂容器运送时的姿态
+        self.right_arm_container_placement = _constant_config_to_arm_anchor_angle("RightArmContainerPlacement")# 右臂容器放置
+        self.cup_rec                       = _constant_config_to_arm_anchor_angle("CupRec")                    # 杯子识别
+        self.cup_water                     = _constant_config_to_arm_anchor_angle("CupWater")                  # !杯子接水
+        self.cup_delivery                  = _constant_config_to_arm_anchor_angle("CupDelivery")               # 杯子运送
+        self.cup_placement                 = _constant_config_to_arm_anchor_angle("CupPlacement")              # 杯子放置
+        self.coffee_machine_rec            = _constant_config_to_arm_anchor_angle("CoffeeMachineRec")          # 咖啡机识别
 
         # 通过名字获取机械臂定位点
-        def _constant_config_to_arm_anchor_pose(anchor_point_name):
+        def _constant_config_to_arm_anchor_pose_coordinate(anchor_point_name):
             pose = utilis.Arm_pose()
             pose.set_x(rospy.get_param(f'~{anchor_point_name}/x'))
             pose.set_y(rospy.get_param(f'~{anchor_point_name}/y'))
@@ -164,6 +164,15 @@ class System():
             pose.set_rx(rospy.get_param(f'~{anchor_point_name}/rx'))
             pose.set_ry(rospy.get_param(f'~{anchor_point_name}/ry'))
             pose.set_rz(rospy.get_param(f'~{anchor_point_name}/rz'))
+            return pose
+        
+        # 通过名字获取机械臂定位点
+        def _constant_config_to_arm_anchor_angle(anchor_point_name):
+            pose = utilis.Arm_pose_angle((rospy.get_param(f'~{anchor_point_name}/angles')))
+            return pose
+        
+        def _constant_config_to_arm_anchor_coordinates(anchor_point_name):
+            pose = utilis.Arm_pose_angle((rospy.get_param(f'~{anchor_point_name}/coords')))
             return pose
         
     

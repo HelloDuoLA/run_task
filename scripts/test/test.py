@@ -39,6 +39,9 @@ if __name__ == "__main__":
     # a = msg.MoveArmGoal()
     # print(isinstance(a.arm_pose, msg.ArmPose))
         # 设置发布消息的频率，1Hz
+    angles = rospy.get_param('~CupRec/angles', [])
+
+    print("Angles:", angles)
     rate = rospy.Rate(1)
 
     while not rospy.is_shutdown():

@@ -1,113 +1,65 @@
 # 左臂
 # 左臂空闲放置点
 LeftArmIdle:
-  angle1: 0
-  angle2: 0
-  angle3: 0
-  angle4: 0
-  angle5: 0
-  angle6: 0
+  angles: [0, 0, 0, 0, 0, 0]
 
 
 # 左臂食物框识别位点
 LeftArmContainerRec:
-  angle1: 0
-  angle2: 0
-  angle3: 0
-  angle4: 0
-  angle5: 0
-  angle6: 0
+  angles: [0, 0, 0, 0, 0, 0]
 
 # 左臂零食识别位点
 LeftArmSnackRec:
-  angle1: 0
-  angle2: 0
-  angle3: 0
-  angle4: 0
-  angle5: 0
-  angle6: 0
+  angles: [0, 0, 0, 0, 0, 0]
 
 # 左臂零食放置位点
 LeftArmSnackPlacement:
-  x:  11.80     # 不确定
-  y:  20.819    # 不确定
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  angles: [0, 0, 0, 0, 0, 0]
 
 # 左臂零食框递送时的位点
 LeftArmContainerDelivery:
-  x:  11.80     
-  y:  20.819    
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  angles: [0, 0, 0, 0, 0, 0]
 
 # 左臂零食框放置时的位点
 LeftArmContainerPlacement:
-  x:  11.80     
-  y:  20.819    
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  angles: [0, 0, 0, 0, 0, 0]
 
 # 右臂
 # 右臂空闲放置点
 RightArmIdle:
-  x:  11.80
-  y:  20.819
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  angles: [0, 0, 0, 0, 0, 0]
 
 # 右臂食物框识别位点
 RightArmContainerRec:
-  x:  11.80
-  y:  20.819
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  angles: [0, 0, 0, 0, 0, 0]
 
 # 右臂零食识别位点
 RightArmSnackRec:
-  x:  11.80
-  y:  20.819
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  angles: [0, 0, 0, 0, 0, 0]
 
 # 右臂零食放置位点
 RightArmSnackPlacement:
-  x:  11.80     # 不确定
-  y:  20.819    # 不确定
-  z:  0
+  x:  11.80      # 半确定, 根据架子距离, 桌角深度给出
+  y:  20.819     # 不确定, 需要识别给出
+  z:  0          # 不确定, 需要识别给出
   rx: 0 
   ry: 0 
   rz: 0
+  coords:  [0, 0, 0, 0, 0, 0]
 
 # 右臂零食框递送时的位点
 RightArmContainerDelivery:
-  x:  11.80     
-  y:  20.819    
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  angles: [0, 0, 0, 0, 0, 0]
 
 # 右臂零食框放置时的位点
 RightArmContainerPlacement:
-  x:  11.80     
-  y:  20.819    
-  z:  0
+  x:  11.80      # 半确定, 根据架子距离, 桌角深度给出
+  y:  20.819     # 不确定, 需要识别给出
+  z:  0          # 不确定, 需要识别给出
   rx: 0 
   ry: 0 
   rz: 0
+  coords:  [0, 0, 0, 0, 0, 0]
 
 # 共用
 # 杯子抓取位点
@@ -118,51 +70,27 @@ CupGrab:
   rx: 0 
   ry: 0 
   rz: 0
+  coords:  [0, 0, 0, 0, 0, 0]
 
 # 杯子识别位点
 CupRec:
-  x:  11.80
-  y:  20.819
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  angles: [0, 0, 0, 0, 0, 0]
 
-#! 杯子接水位点     # 理论上来说要通过识别给出, 但目前按照固定点位给出
+# 杯子接水位点     
 CupWater:
-  x:  11.80
-  y:  20.819
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  coords:  [0, 0, 0, 0, 0, 0]
   
 # 杯子转移位点
 CupDelivery:
-  x:  11.80
-  y:  20.819
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  angles: [0, 0, 0, 0, 0, 0]
 
 # 杯子的放置位姿
 CupPlacement:
-  x:  11.80
-  y:  20.819
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  angles: [0, 0, 0, 0, 0, 0]
 
 # 咖啡机识别位点
 CoffeeMachineRec:
-  x:  11.80
-  y:  20.819
-  z:  0
-  rx: 0 
-  ry: 0 
-  rz: 0
+  angles: [0, 0, 0, 0, 0, 0]
 
 # 咖啡机按下的位点
 CoffeeMachineClick:
@@ -172,6 +100,7 @@ CoffeeMachineClick:
   rx: 0 
   ry: 0 
   rz: 0
+  coords:  [0, 0, 0, 0, 0, 0]
 
 # 零食抓取位点
 SnackGrap:
@@ -181,4 +110,5 @@ SnackGrap:
   rx: 0 
   ry: 0 
   rz: 0
+  coords:  [0, 0, 0, 0, 0, 0]
 
