@@ -63,6 +63,7 @@ mr.set_gripper_mode(0)
 # 0开，1合
 ml.get_gripper_mode()
 ml.set_gripper_state(0,100)
+ml.set_gripper_state(1,100)
 mr.set_gripper_state(0,100)
 ml.get_gripper_value()
 ml.set_gripper_value(0,100)

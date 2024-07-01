@@ -139,19 +139,19 @@ if __name__ == "__main__":
         # 手臂末端坐标系转机械臂坐标系
         arm_base_coords = coords_trans(arm_end_coords, base_coords[:3], base_coords[3:])
         
-        
+        print(f"id: {xyz_list[i][0]}")
         print(f"                xyz {xyz} ")
         print(f"static_image_coords {static_image_coords} ")
         print(f"arm_end_coords      {arm_end_coords} ")
         print(f"arm_base_coords     {arm_base_coords} ")
         new_xyz_list.append([xyz_list[i][0],arm_base_coords])
-        print(f"id: {xyz_list[i][0]} xyz: {new_xyz_list[i][1][0]},{new_xyz_list[i][1][1]},{new_xyz_list[i][1][2]}\n\n")
+        print(f"         newxyz: {new_xyz_list[i][1][0]},{new_xyz_list[i][1][1]},{new_xyz_list[i][1][2]}")
         print("left")
         print(f"shousuanooo xyz:{base_coords[0] + xyz[2]}, {base_coords[1] - xyz[1]}, {base_coords[2] + xyz[0]}")
         print(f"shousuan    xyz:{base_coords[0] + xyz[2] - 90 }, {base_coords[1] - xyz[1]-78}, {base_coords[2] + xyz[0] +40}")
         print("right")
         print(f"shousuanooo xyz:{base_coords[0] + xyz[2]}, {base_coords[1] + xyz[1]}, {base_coords[2] - xyz[0]}")
-        print(f"shousuan    xyz:{base_coords[0] + xyz[2] - 90 }, {base_coords[1] + xyz[1] + 78}, {base_coords[2] - xyz[0] -40}")
+        print(f"shousuan    xyz:{base_coords[0] + xyz[2] - 90 }, {base_coords[1] + xyz[1] + 78}, {base_coords[2] - xyz[0] -40}\r\n\r\n")
     
     
     
