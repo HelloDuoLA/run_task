@@ -5,4 +5,4 @@ float32 rx
 float32 ry
 float32 rz
 uint8 id
-uint8 type # 0: coordinate, 1: joint
+uint8 type   # 0: coordinate, 1: joint

@@ -1,0 +1,8 @@
+# 客户端
+uint8 arm_id    
+uint8 type_id
+---
+# 服务器响应发送的数据
+uint8 arm_id    
+uint8 type_id
+float32[] arm_pose

@@ -77,6 +77,7 @@ add_service_files(
   # ImageRec.srv
   # OrderInfo.srv
   # grasp.srv
+  CheckArmPose.srv
 )
 
 ## Generate actions in the 'action' folder

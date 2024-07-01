@@ -13,6 +13,7 @@ package_path = rospack.get_path('run_task')
 sys.path.insert(0,package_path + "/scripts")
 import utilis
 import run_task.msg as msg
+import run_task.srv as srv
 import robot
 
 
@@ -31,36 +32,37 @@ class arm_controller():
         
         self.action = self.arm_action(self.action_name,self.control_instance,id)
         self.action.start_action()
-        
+    
+    # 暂时不发布状态了
     # 发布机械臂状态
-    class arm_pose_pub():
-        def __init__(self,topic_name,control_instance,id:utilis.Device_id) -> None:
-            self.pub = rospy.Publisher(topic_name,msg.ArmPoseGrabPoseWithID,queue_size=10)
-            self.control_instance = control_instance
-            self.id = id
+    # class arm_pose_pub():
+    #     def __init__(self,topic_name,control_instance,id:utilis.Device_id) -> None:
+    #         self.pub = rospy.Publisher(topic_name,msg.ArmPoseGrabPoseWithID,queue_size=10)
+    #         self.control_instance = control_instance
+    #         self.id = id
         
-        # 发布
-        def publish(self):
-            arm_pose    = self.get_arm_pose()
-            grab_status = self.get_grab_status()
-            pub_pose    = msg.ArmPoseGrabPoseWithID()
-            pub_pose.x  = arm_pose[0]
-            pub_pose.y  = arm_pose[1]
-            pub_pose.z  = arm_pose[2]
-            pub_pose.rx = arm_pose[3]
-            pub_pose.ry = arm_pose[4]
-            pub_pose.rz = arm_pose[5]
-            pub_pose.grab_status = grab_status
-            pub_pose.id = self.id.value
-            self.pub.publish(pub_pose)
+    #     # 发布
+    #     def publish(self):
+    #         arm_pose    = self.get_arm_pose()
+    #         grab_status = self.get_grab_status()
+    #         pub_pose    = msg.ArmPoseGrabPoseWithID()
+    #         pub_pose.x  = arm_pose[0]
+    #         pub_pose.y  = arm_pose[1]
+    #         pub_pose.z  = arm_pose[2]
+    #         pub_pose.rx = arm_pose[3]
+    #         pub_pose.ry = arm_pose[4]
+    #         pub_pose.rz = arm_pose[5]
+    #         pub_pose.grab_status = grab_status
+    #         pub_pose.id = self.id.value
+    #         self.pub.publish(pub_pose)
             
-        # 获取机械臂姿态
-        def get_arm_pose(self):
-            pass
+    #     # 获取机械臂姿态
+    #     def get_arm_pose(self):
+    #         pass
         
-        # 获取抓具状态
-        def get_grab_status(self):
-            pass
+    #     # 获取抓具状态
+    #     def get_grab_status(self):
+    #         pass
     
     
     # 机械臂 action 
@@ -144,29 +146,29 @@ class arm_controller():
             else:
                 self.action_server.set_aborted()   #TODO: 失败是否是这样的
         
-        # 抓紧
-        def grab_grip(speed=0):
-            pass
+        # # 抓紧
+        # def grab_grip(speed=0):
+        #     pass
         
-        # 松开
-        def grab_release(speed=0):
-            pass
+        # # 松开
+        # def grab_release(speed=0):
+        #     pass
         
-        # 获取抓具状态
-        def get_grab_status(self):
-            pass
+        # # 获取抓具状态
+        # def get_grab_status(self):
+        #     pass
         
-        # 获取机械臂状态
-        def get_arm_status(self):
-            pass
+        # # 获取机械臂状态
+        # def get_arm_status(self):
+        #     pass
         
-        # 是否在运动
-        def is_arm_moving(self):
-            pass
+        # # 是否在运动
+        # def is_arm_moving(self):
+        #     pass
         
-        # 是否在目标位置
-        def is_at_goal(self):
-            pass
+        # # 是否在目标位置
+        # def is_at_goal(self):
+        #     pass
         
         
 
@@ -176,16 +178,34 @@ def talker():
 
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(1)
-    
+    global left_arm_controller,right_arm_controller
     left_arm_controller  = arm_controller(utilis.Device_id.LEFT)
     right_arm_controller = arm_controller(utilis.Device_id.RIGHT)
-
+    
+    server = rospy.Service("CheckArmPose",srv.CheckArmPose,doCheckArmPose)
+    
     while not rospy.is_shutdown():
         rospy.loginfo("arm_node")
         # 发布机械臂状态
-        left_arm_controller.arm_pose_pub.publish()
-        right_arm_controller.arm_pose_pub.publish()
+        # left_arm_controller.arm_pose_pub.publish()
+        # right_arm_controller.arm_pose_pub.publish()
         rate.sleep()
+
+# 服务函数 
+def doCheckArmPose(req):
+    resp = srv.CheckArmPose()
+    
+    if req.arm_id == utilis.Device_id.LEFT:
+        if req.type_id == 0:
+            resp.pose = left_arm_controller.control_instance.get_base_coords()
+        elif req.type_id == 1:
+            resp.pose = left_arm_controller.control_instance.get_angles()
+    elif req.arm_id == utilis.Device_id.RIGHT:
+        if req.type_id == 0:
+            resp.pose = right_arm_controller.control_instance.get_base_coords()
+        elif req.type_id == 1:
+            resp.pose = right_arm_controller.control_instance.get_angles()
+    return resp
 
 if __name__ == '__main__':
     try:

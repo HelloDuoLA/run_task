@@ -129,6 +129,7 @@ class Topic_name():
     right_camera_raw_image    = "/right_camera_raw_image"# 右摄像头原始图像
     head_camera_raw_image     = "/head_camera_raw_image" # 头摄像头原始图像
     bottom_camera_raw_image   = "/bottom_camera_raw_image"# 底部摄像头原始图像
+    check_arm_pose            = "/check_arm_pose"        # 检查机械臂状态
 
 # 机械臂位姿
 class Arm_pose():
