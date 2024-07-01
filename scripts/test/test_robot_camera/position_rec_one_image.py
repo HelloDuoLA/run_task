@@ -15,6 +15,8 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
         [-tag_size/2, tag_size/2 ,  0]
     ], dtype=np.float32)
     
+    print(objectPoints)
+    
     (corners_list, ids, rejected_corners_list) = stag.detectMarkers(image, libraryHD)
     
     # draw detected markers with ids
@@ -28,7 +30,7 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
 
     # 计算图像中心作为圆心坐标
     center_coordinates = (width // 2, height // 2)
-    radius = 0  # 圆的半径
+    radius = 5  # 圆的半径
     color = (0, 255, 0)  # BGR颜色，这里为绿色
     thickness = -1  # 设置为-1表示填充整个圆
 
@@ -69,7 +71,7 @@ def coords_trans(xyz, translation, rpy):
     pitch = np.radians(rpy[1])
     yaw   = np.radians(rpy[2])
     rotation_matrix = euler_matrix(roll, pitch, yaw)[:3, :3]
-    
+    # print(f"rotation_matrix:\n {rotation_matrix}")
     new_xyz = np.dot(rotation_matrix, xyz) + translation
 
     return new_xyz
@@ -80,7 +82,7 @@ if __name__ == "__main__":
 
     # 添加参数
     parser.add_argument('image_path', type=str, help='The path to the image file.')
-    parser.add_argument('--calibration_path', type=str, default='./02_right', help='The path to the camera calibration folder. Default is ./calibration')
+    parser.add_argument('--calibration_path', type=str, default='./01_right', help='The path to the camera calibration folder. Default is ./calibration')
     parser.add_argument('--tag_size', type=float, default=20, help='The size of the tag in meters. Default is 20mm')
     
     # 解析参数
@@ -117,15 +119,18 @@ if __name__ == "__main__":
     # print(xyz_list[0][0])
     # print(xyz_list[0][1])
     new_xyz_list = []
-    base_coords  = [230, -170, 525, 90, 0, 90]
-    yaw = -base_coords[5]
+    base_coords  = [226.2, 179.5, 524.9, -90.86, 0.0, -89.69]
+    yaw = -(-90)
     
     print(f"arm end pose {base_coords[:3]}")
     for i in range(len(xyz_list)):
         # print(f"id: {xyz_list[i][0]} xyz: {xyz_list[i][1]}")
         xyz = xyz_list[i][1]
         # 动态摄像头坐标系转 静态摄像头坐标系
-        static_image_coords = coords_trans(xyz, [0,0,0], [0,0,yaw])
+        # static_image_coords = coords_trans(xyz, [0,0,0], [0,0,0])
+        static_image_coords = coords_trans(xyz, [0,0,0], [0,0,-yaw])
+        
+
         
         # 静态摄像头坐标系转手臂末端坐标系
         arm_end_coords = coords_trans(static_image_coords, [0,78,0], [0,0,0])
@@ -133,8 +138,16 @@ if __name__ == "__main__":
         # 手臂末端坐标系转机械臂坐标系
         arm_base_coords = coords_trans(arm_end_coords, base_coords[:3], base_coords[3:])
         
+        
+        print(f"                xyz {xyz} ")
+        print(f"static_image_coords {static_image_coords} ")
+        print(f"arm_end_coords      {arm_end_coords} ")
+        print(f"arm_base_coords     {arm_base_coords} ")
+        print(f"shousuan    xyz:{base_coords[0] + xyz[2] - 90 }, {base_coords[1] - xyz[1]-78}, {base_coords[2] + xyz[0] +40}")
+        print(f"shousuanooo xyz:{base_coords[0] + xyz[2]}, {base_coords[1] - xyz[1]}, {base_coords[2] + xyz[0]}")
+         
         new_xyz_list.append([xyz_list[i][0],arm_base_coords])
-        print(f"id: {xyz_list[i][0]} xyz: {new_xyz_list[i][1][0]},{new_xyz_list[i][1][1]},{new_xyz_list[i][1][2]}")
+        print(f"id: {xyz_list[i][0]} xyz: {new_xyz_list[i][1][0]},{new_xyz_list[i][1][1]},{new_xyz_list[i][1][2]}\n\n")
         
     
     
