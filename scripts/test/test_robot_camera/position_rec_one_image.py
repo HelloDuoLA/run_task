@@ -119,7 +119,8 @@ if __name__ == "__main__":
     # print(xyz_list[0][0])
     # print(xyz_list[0][1])
     new_xyz_list = []
-    base_coords  = [226.2, 179.5, 524.9, -90.86, 0.0, -89.69]
+    # base_coords  = [226.2, 179.5, 524.9, -90.86, 0.0, -89.69]
+    base_coords  = [230, -170, 525, 90, 0, 90]
     yaw = -(-90)
     
     print(f"arm end pose {base_coords[:3]}")
@@ -143,12 +144,14 @@ if __name__ == "__main__":
         print(f"static_image_coords {static_image_coords} ")
         print(f"arm_end_coords      {arm_end_coords} ")
         print(f"arm_base_coords     {arm_base_coords} ")
-        print(f"shousuan    xyz:{base_coords[0] + xyz[2] - 90 }, {base_coords[1] - xyz[1]-78}, {base_coords[2] + xyz[0] +40}")
-        print(f"shousuanooo xyz:{base_coords[0] + xyz[2]}, {base_coords[1] - xyz[1]}, {base_coords[2] + xyz[0]}")
-         
         new_xyz_list.append([xyz_list[i][0],arm_base_coords])
         print(f"id: {xyz_list[i][0]} xyz: {new_xyz_list[i][1][0]},{new_xyz_list[i][1][1]},{new_xyz_list[i][1][2]}\n\n")
-        
+        print("left")
+        print(f"shousuanooo xyz:{base_coords[0] + xyz[2]}, {base_coords[1] - xyz[1]}, {base_coords[2] + xyz[0]}")
+        print(f"shousuan    xyz:{base_coords[0] + xyz[2] - 90 }, {base_coords[1] - xyz[1]-78}, {base_coords[2] + xyz[0] +40}")
+        print("right")
+        print(f"shousuanooo xyz:{base_coords[0] + xyz[2]}, {base_coords[1] + xyz[1]}, {base_coords[2] - xyz[0]}")
+        print(f"shousuan    xyz:{base_coords[0] + xyz[2] - 90 }, {base_coords[1] + xyz[1] + 78}, {base_coords[2] - xyz[0] -40}")
     
     
     
