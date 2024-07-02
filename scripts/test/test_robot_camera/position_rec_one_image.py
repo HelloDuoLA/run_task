@@ -119,11 +119,12 @@ if __name__ == "__main__":
     # print(xyz_list[0][0])
     # print(xyz_list[0][1])
     new_xyz_list = []
-    # base_coords  = [226.2, 179.5, 524.9, -90.86, 0.0, -89.69]
-    base_coords  = [230, -170, 525, 90, 0, 90]
+    base_coords_left        = [230, 170, 525, -90, 0, -90]
+    base_coords_right       = [230, -170, 525, 90, 0, 90]
     yaw = -(-90)
     
-    print(f"arm end pose {base_coords[:3]}")
+    print(f"left   arm end pose {base_coords_left[:3]}")
+    print(f"right  arm end pose {base_coords_right[:3]}")
     for i in range(len(xyz_list)):
         # print(f"id: {xyz_list[i][0]} xyz: {xyz_list[i][1]}")
         xyz = xyz_list[i][1]
@@ -131,27 +132,32 @@ if __name__ == "__main__":
         # static_image_coords = coords_trans(xyz, [0,0,0], [0,0,0])
         static_image_coords = coords_trans(xyz, [0,0,0], [0,0,-yaw])
         
-
-        
         # 静态摄像头坐标系转手臂末端坐标系
         arm_end_coords = coords_trans(static_image_coords, [0,78,0], [0,0,0])
         
         # 手臂末端坐标系转机械臂坐标系
-        arm_base_coords = coords_trans(arm_end_coords, base_coords[:3], base_coords[3:])
+        arm_base_coords_left = coords_trans(arm_end_coords, base_coords_left[:3], base_coords_left[3:])
+        arm_base_coords_right = coords_trans(arm_end_coords, base_coords_right[:3], base_coords_right[3:])
         
         print(f"id: {xyz_list[i][0]}")
         print(f"                xyz {xyz} ")
         print(f"static_image_coords {static_image_coords} ")
         print(f"arm_end_coords      {arm_end_coords} ")
-        print(f"arm_base_coords     {arm_base_coords} ")
-        new_xyz_list.append([xyz_list[i][0],arm_base_coords])
-        print(f"         newxyz: {new_xyz_list[i][1][0]},{new_xyz_list[i][1][1]},{new_xyz_list[i][1][2]}")
+        
+        # new_xyz_list.append([xyz_list[i][0],arm_base_coords])
+        # print(f"         newxyz: {new_xyz_list[i][1][0]},{new_xyz_list[i][1][1]},{new_xyz_list[i][1][2]}")
         print("left")
-        print(f"shousuanooo xyz:{base_coords[0] + xyz[2]}, {base_coords[1] - xyz[1]}, {base_coords[2] + xyz[0]}")
-        print(f"shousuan    xyz:{base_coords[0] + xyz[2] - 90 }, {base_coords[1] - xyz[1]-78}, {base_coords[2] + xyz[0] +40}")
+        print(f"left   arm end pose {base_coords_left[:3]}")
+        print(f"arm_base_coords {arm_base_coords_left} ")
+        print(f"shousuanooo xyz:[{base_coords_left[0] + xyz[2]}, {base_coords_left[1] - xyz[1]}, {base_coords_left[2] + xyz[0]}]")
+        print(f"shousuan    xyz:[{base_coords_left[0] + xyz[2] - 90 }, {base_coords_left[1] - xyz[1]-78}, {base_coords_left[2] + xyz[0] +40}]")
+        print(f"shousuan    xyz:{base_coords_left[0] + xyz[2] - 90 }  {base_coords_left[1] - xyz[1]-78} {base_coords_left[2] + xyz[0] +40}")
         print("right")
-        print(f"shousuanooo xyz:{base_coords[0] + xyz[2]}, {base_coords[1] + xyz[1]}, {base_coords[2] - xyz[0]}")
-        print(f"shousuan    xyz:{base_coords[0] + xyz[2] - 90 }, {base_coords[1] + xyz[1] + 78}, {base_coords[2] - xyz[0] -40}\r\n\r\n")
+        print(f"right  arm end pose {base_coords_right[:3]}")
+        print(f"arm_base_coords {arm_base_coords_right} ")
+        print(f"shousuanooo xyz:[{base_coords_right[0] + xyz[2]}, {base_coords_right[1] + xyz[1]}, {base_coords_right[2] - xyz[0]}]")
+        print(f"shousuan    xyz:[{base_coords_right[0] + xyz[2] - 90 }, {base_coords_right[1] + xyz[1] + 78}, {base_coords_right[2] - xyz[0] -40}]")
+        print(f"shousuan    xyz:{base_coords_right[0] + xyz[2] - 90 }  {base_coords_right[1] + xyz[1] + 78}, {base_coords_right[2] - xyz[0] -40}\r\n\r\n")
     
     
     
