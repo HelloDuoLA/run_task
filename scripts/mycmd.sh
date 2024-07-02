@@ -6,5 +6,4 @@ rosrun tf view_frames
 
 rosrun map_server map_saver -f /home/elephant/xzc_code/ros_ws/src/run_task/map/C111
 
-
 git config --global credential.helper store  

@@ -106,8 +106,6 @@ if __name__ == "__main__":
     ml.set_gripper_mode(0)
     mr.set_gripper_mode(0)
 
-    ml.set_gripper_state(0,100)
-
     if args.arm_id == "left":
         grip(args.position,ml,"left")
     else:

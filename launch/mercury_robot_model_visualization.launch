@@ -1,0 +1,29 @@
+<launch>
+  <!-- Arguments参数 -->
+  <arg name="car_mode"  default="" />
+  
+  <!-- 用于robot_state_publisher节点-->
+  <node pkg="tf" type="static_transform_publisher" name="base_to_link" args="0 0 0 0 0 0 base_footprint base_link 100" />
+  
+  <!--坐标变换，需要实测 -->
+  <!-- car_mode and tf  brushless_senior_diff-->
+  <group if="$(eval car_mode == 'brushless_senior_diff')">
+      <node pkg="tf" type="static_transform_publisher" name="base_to_laser"  args="0.093   0.00   0.174 3.14 0 0  base_footprint laser 100" />
+      <node pkg="tf" type="static_transform_publisher" name="base_to_camera" args="0.091   0.00   0.965   0  0 0  base_footprint camera_link 100" />
+      <node pkg="tf" type="static_transform_publisher" name="base_to_gyro"   args="-0.050  0.035  0.23    0  0 0  base_footprint gyro_link 100" />
+  </group>
+
+  <!-- URDF 标准化机器人描述格式 -->
+  <group if="$(eval car_mode == 'brushless_senior_diff')">
+      <param name = "robot_description" textfile = "$(find turn_on_mercury_robot)/urdf/mercury_x1/mercury_x1.urdf"/> 
+  </group>
+  
+
+  <!-- 读取urdf信息(robot_description) 发布话题：/joint_states-->
+  <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> -->
+  <!-- 订阅话题：/joint_states，发布小车TF信息-->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+ </launch>
+
+
