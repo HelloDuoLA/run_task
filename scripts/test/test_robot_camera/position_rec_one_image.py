@@ -119,8 +119,8 @@ if __name__ == "__main__":
     # print(xyz_list[0][0])
     # print(xyz_list[0][1])
     new_xyz_list = []
-    base_coords_left        = [230, 170, 525, -90, 0, -90]
-    base_coords_right       = [230, -170, 525, 90, 0, 90]
+    base_coords_left        = [230, 170, 550, -90, 0, -90]
+    base_coords_right       = [230, -170, 550, 90, 0, 90]
     yaw = -(-90)
     
     print(f"left   arm end pose {base_coords_left[:3]}")
