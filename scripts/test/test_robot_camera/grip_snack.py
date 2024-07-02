@@ -3,9 +3,11 @@ import argparse
 import time
 import copy
 
-# elephant02 左臂z轴又正常了
+# elephant02 左臂z轴上偏
 # 右臂有点向下倾斜，不过夹取位姿刚刚好
 
+# elephant01 左臂完美
+# 右臂有点向上倾斜,需要加40,而不是减去40
 
 
 def grip(target_pose,arm:Mercury,arm_name:str):
