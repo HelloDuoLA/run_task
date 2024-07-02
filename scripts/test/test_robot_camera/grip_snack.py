@@ -4,7 +4,7 @@ import time
 import copy
 
 # elephant02 左臂z轴又正常了
-# 右臂
+# 右臂有点向下倾斜，不过夹取位姿刚刚好
 
 
 
