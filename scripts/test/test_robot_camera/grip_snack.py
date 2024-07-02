@@ -3,8 +3,8 @@ import argparse
 import time
 import copy
 
-# elephant02 左臂z轴上偏
-# 右臂 z轴需要-40
+# elephant02 左臂z轴向上偏
+# 右臂 z轴需要+20, 且无法抓取下层陈皮丹
 
 # elephant01 左臂完美
 # 右臂 z轴不作处理
