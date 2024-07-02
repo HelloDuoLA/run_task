@@ -6,11 +6,14 @@ mr = Mercury("/dev/right_arm")
 mr.power_on()
 
 mr.release_all_servos()
+ml.release_all_servos()
 
 mr.focus_all_servos()
 
-mr.release_servo(6)
-mr.focus_servo(6)
+mr.release_servo(1)
+ml.release_servo(1)
+mr.focus_servo(1)
+ml.focus_servo(1)
 mr.set_servo_calibration(1)
 mr.get_angles()
 mr.send_angle(1,0, 100)

@@ -4,10 +4,10 @@ import time
 import copy
 
 # elephant02 左臂z轴上偏
-# 右臂有点向下倾斜，不过夹取位姿刚刚好
+# 右臂 z轴需要-40
 
 # elephant01 左臂完美
-# 右臂有点向上倾斜,需要加40,而不是减去40
+# 右臂 z轴不作处理
 
 
 def grip(target_pose,arm:Mercury,arm_name:str):
@@ -82,9 +82,9 @@ def grip(target_pose,arm:Mercury,arm_name:str):
     
     
 def wait(arm:Mercury):
-    time.sleep(0.2)
+    time.sleep(0.3)
     while(arm.is_moving()):
-        print("arm is moving")
+        # print("arm is moving")
         time.sleep(0.03)
 
 
