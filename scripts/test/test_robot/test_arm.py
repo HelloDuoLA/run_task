@@ -70,10 +70,11 @@ mr.set_gripper_mode(0)
 ml.get_gripper_mode()
 ml.set_gripper_state(0,100)
 ml.set_gripper_state(1,100)
+
 mr.set_gripper_state(0,100)
-ml.get_gripper_value()
-ml.set_gripper_value(0,100)
-ml.set_gripper_calibration()
+mr.set_gripper_state(1,100)
+
+
 
 ml.get_angles()
 ml.set_servo_calibration(1)
