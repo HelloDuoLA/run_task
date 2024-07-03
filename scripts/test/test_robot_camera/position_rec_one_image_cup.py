@@ -39,11 +39,11 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
 
     timestamp = int(time.time())
 
-    cv2.imwrite(f'./result/{timestamp}.jpg', image)
+    cv2.imwrite(f'./cup_and_coffee/result/{timestamp}.jpg', image)
     
     xyz_list_with_id = []
     # 对于每个id都要进行位置检测
-    with open(f'./result/{timestamp}.txt', 'a') as file:
+    with open(f'./cup_and_coffee/result/{timestamp}.txt', 'a') as file:
         for i, id in enumerate(ids):
             print(f"Index: {i}, ID: {id[0]}")
             file.write(f"Index: {i}, ID: {id[0]}\n")
@@ -114,8 +114,8 @@ if __name__ == "__main__":
     image = cv2.imread(args.image_path)
     
     xyz_list = STag_rec(args.tag_size,camera_matrix,dist_coeffs,image,11)
-   
-    base_coords  = [50, -200, 200, 90, 0, 90]
+   #!!!!!!!!!!!!!!!!!!!!!!!!
+    base_coords  = [50, -210, 210, 90, 0, 90]
 
     print(f"right  arm end pose {base_coords[:3]}")
     
@@ -135,7 +135,7 @@ if __name__ == "__main__":
             print(f"id {id} water cup")
             print(f"base_coord {base_coords [:3]}")
             # print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 }  {base_coords[1] + xyz[1] + 78} {base_coords[2] - xyz[0]}\r\n\r\n")
-            print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 -85 }  {base_coords[1] + xyz[1] + 78 + 20} {210}\r\n\r\n")
+            print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 -85 - 10}  {base_coords[1] + xyz[1] + 78 + 20} {210}\r\n\r\n")
     
     # 杯子 
     # 实测 [510, -104, 221, 90, 0, 90]

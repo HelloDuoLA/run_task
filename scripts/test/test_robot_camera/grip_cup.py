@@ -3,17 +3,27 @@ import argparse
 import time
 import copy
 
-def grip_cup_cup(arm:Mercury,arm_name:str,cup_position:list,machine_position:list):
+def grip_cup(arm:Mercury,arm_name:str,cup_position:list,machine_position:list):
     print("griping cup")
     base_coords = arm.get_base_coords()
     print(f"{arm_name} get_base_coords : {base_coords}")
     
+    
+    change_x_1 = copy.deepcopy(base_coords)
+    change_x_1[0] = 250
+    print(f"change_x_1        :{change_x_1}")
+    ret = arm.send_base_coords(change_x_1,100)
+    wait(arm)
+    print(f"{arm_name} change hight ret : {ret}")
+    
+    
+    # 打开爪子
     print(f"{arm_name} open gripper")
     ret = arm.set_gripper_state(0,100)
     time.sleep(2)
     print(f"{arm_name} open gripper. ret : {ret}")
     
-    change_z     = copy.deepcopy(base_coords)
+    change_z     = copy.deepcopy(change_x_1)
     change_z[2]  = cup_position[2]
     print(f"change_z        :{change_z}")
     
@@ -45,7 +55,7 @@ def grip_cup_cup(arm:Mercury,arm_name:str,cup_position:list,machine_position:lis
     print(f"{arm_name} change x : {ret}")
     
     print(f"{arm_name} close gripper")
-    ret = arm.set_gripper_state(1,50)
+    ret = arm.set_gripper_state(1,10)
     time.sleep(2)
     print(f"{arm_name} close gripper. ret : {ret}")
     
@@ -79,7 +89,7 @@ def grip_cup_cup(arm:Mercury,arm_name:str,cup_position:list,machine_position:lis
     # 返回拿水杯处
     ret = arm.send_base_coords(change_x ,100)
     wait(arm)
-    print(f"return to machine_change_x : {machine_change_x}")
+    print(f"return to change_x: {change_x}")
     
     # 松手
     print(f"{arm_name} open gripper")
