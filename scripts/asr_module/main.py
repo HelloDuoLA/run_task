@@ -1,16 +1,41 @@
-# main.py
-
-import time
+import pyaudio
 from speech_recognition_module import recognize_speech
 from ai_interaction_module import get_ai_response_as_dict, chat_with_ai
 
 # 全局对话计数器
 global_count = 1
 
-def voice_to_json(APPID, APIKey, APISecret, messages, duration=10):
+
+def list_microphones():
+    """列出系统中连接的麦克风设备"""
+    p = pyaudio.PyAudio()
+    print("当前连接的麦克风设备：")
+    for i in range(p.get_device_count()):
+        device_info = p.get_device_info_by_index(i)
+        if device_info["maxInputChannels"] > 0:
+            print(f"{i}: {device_info['name']}")
+    p.terminate()
+
+
+def prompt_user():
+    """提示用户是否开始语音识别"""
+    while True:
+        choice = input("是否开始语音识别？ (y/n): ").strip().lower()
+        if choice in ['y', 'n']:
+            return choice == 'y'
+        else:
+            print("无效输入，请输入 'y' 或 'n'。")
+
+
+def voice_to_json(APPID, APIKey, APISecret, messages, duration=20, mic_index=None):
     global global_count
+
+    if not prompt_user():
+        print("已取消本次语音识别。")
+        return False, None, None, messages
+
     print("开始语音识别...")
-    recognized_text = recognize_speech(APPID, APIKey, APISecret, duration)
+    recognized_text = recognize_speech(APPID, APIKey, APISecret, duration, mic_index)
     print(f"识别到的文字: {recognized_text}")
 
     if recognized_text:
@@ -19,10 +44,10 @@ def voice_to_json(APPID, APIKey, APISecret, messages, duration=10):
         messages.append({"role": "assistant", "content": response})
         if response_files:
             global_count += 1  # 每次成功识别并生成文件后递增计数
-        return response_files, response_dict, messages
+        return True, response_files, response_dict, messages
     else:
         print("未识别到有效文字。")
-        return None, None, messages
+        return True, None, None, messages
 
 
 def main():
@@ -50,18 +75,21 @@ def main():
     if initial_response:
         print("AI初始化响应已准备完毕。")
 
+    # 列出当前连接的麦克风设备
+    list_microphones()
+    mic_index = int(input("请选择要使用的麦克风设备编号: "))
+
     # 开始语音对话
     while True:
-        result_files, result_dict, messages = voice_to_json(APPID, APIKey, APISecret, messages, duration=10)
-        if result_files:
-            print("生成的JSON文件:", result_files)
-            print("生成的字典对象:", result_dict)
-        else:
-            print("未能生成有效的JSON文件，请重试。")
-        user_input = input("是否继续对话？(y/n): ")
-        if user_input.lower() != 'y':
+        try:
+            continue_recognition, _, _, messages = voice_to_json(APPID, APIKey, APISecret, messages, duration=10,
+                                                                 mic_index=mic_index)
+            if not continue_recognition:
+                break
+        except KeyboardInterrupt:
+            print("程序已终止。")
             break
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

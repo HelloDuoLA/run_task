@@ -117,7 +117,7 @@ def get_ai_response_as_dict(messages, count):
     result = chat_with_ai(messages)
 
     if result is None:
-        return None, messages
+        return None, None, messages
 
     # 生成文件路径基础名
     json_dir = "ai_responses"
@@ -129,4 +129,4 @@ def get_ai_response_as_dict(messages, count):
     files, json_objects = save_json_to_file(result, file_path_base, count)
     if json_objects:
         return files, json.loads(json_objects[0]), result  # 返回第一个JSON对象的字典形式
-    return files, messages
+    return files, None, messages

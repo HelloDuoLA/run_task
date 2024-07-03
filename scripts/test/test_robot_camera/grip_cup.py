@@ -3,7 +3,7 @@ import argparse
 import time
 import copy
 
-def grip_cup(arm:Mercury,arm_name:str,cup_position:list,machine_position:list):
+def grip_cup_cup(arm:Mercury,arm_name:str,cup_position:list,machine_position:list):
     print("griping cup")
     base_coords = arm.get_base_coords()
     print(f"{arm_name} get_base_coords : {base_coords}")
