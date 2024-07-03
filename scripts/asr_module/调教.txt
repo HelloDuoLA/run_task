@@ -5,3 +5,6 @@ client_secret = "RyIpyqI4Rq7u0NZXGI9T3y1Qfp9qhpdL"
 拿两个伊利每益添乳酸菌到右边桌子上
 拿三个益达口香糖和十个果蔬果冻到左边桌子上，拿一百杯咖啡和一瓶雪碧到右边桌子上
 拿一个伊利每益添乳酸菌到左边桌子上，两个咖啡到右边桌子上，三个C酷果冻到左边桌子上
+
+
+pip install --no-index --find-links=downloaded_packages -r requirements.txt

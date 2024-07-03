@@ -10,6 +10,7 @@ import time
 import ssl
 import pyaudio
 from wsgiref.handlers import format_date_time
+import speech_recognition as sr
 from datetime import datetime
 from time import mktime
 from urllib.parse import urlencode
@@ -169,9 +170,27 @@ class SpeechRecognizer:
         return self.recognized_text
 
 
-def recognize_speech(APPID, APIKey, APISecret, duration=10):
-    recognizer = SpeechRecognizer(APPID, APIKey, APISecret)
-    thread.start_new_thread(recognizer.start_recognition, ())
-    time.sleep(duration)
-    recognized_text = recognizer.stop_recognition()
+def recognize_speech(APPID, APIKey, APISecret, duration=20, mic_index=None):
+    recognizer = sr.Recognizer()
+    mic = sr.Microphone(device_index=mic_index)
+
+    with mic as source:
+        recognizer.adjust_for_ambient_noise(source)
+        print("请开始说话...")
+        try:
+            audio = recognizer.listen(source, timeout=duration, phrase_time_limit=duration)
+        except sr.WaitTimeoutError:
+            print("等待语音输入超时。")
+            return ""
+
+    print("语音识别结束，正在处理...")
+
+    try:
+        recognized_text = recognizer.recognize_google(audio, language='zh-CN')
+    except sr.UnknownValueError:
+        recognized_text = ""
+    except sr.RequestError as e:
+        print(f"识别错误：{e}")
+        recognized_text = ""
+
     return recognized_text

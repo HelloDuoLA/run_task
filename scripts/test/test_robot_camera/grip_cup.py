@@ -3,7 +3,7 @@ import argparse
 import time
 import copy
 
-def grip(target_pose,arm:Mercury,arm_name:str):
+def grip_cup(target_pose,arm:Mercury,arm_name:str):
     print(f"{arm_name} open gripper")
     ret = arm.set_gripper_state(0,100)
     time.sleep(2)
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     print(f"args.cup_position : {args.cup_position}")
-    print(args.machine_position)
+    print(f"rgs.machine_position : {args.machine_position}")
     
     # ml = Mercury("/dev/left_arm")
     mr = Mercury("/dev/right_arm")
@@ -103,4 +103,4 @@ if __name__ == "__main__":
     # if args.arm_id == "left":
     #     grip(args.position,ml,"left")
     # else:
-    grip(args.position,mr,"right")
+    grip_cup(args.cup_position,args.machine_position)
