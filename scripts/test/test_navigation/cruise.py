@@ -44,12 +44,13 @@ def talker():
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(1)
     task_index = 0
-    
+    global can_run_task
     while not rospy.is_shutdown():
-        if can_run_task :
+        if can_run_task  and  task_index < len(task_list):
             can_run_task = False
             navigation_actuator.run(task_list[task_index])
             task_index += 1
+            
             
         rospy.loginfo("arm")
         # 按照设定的频率延时
@@ -71,6 +72,7 @@ class Navigation_actuator():
     def __init__(self):
         # 订阅导航Action   
         self.ac = actionlib.SimpleActionClient('move_base', MoveBaseAction)
+        rospy.loginfo("waitting for move_base server")
         self.ac.wait_for_server()
 
     # 运行
@@ -88,6 +90,7 @@ class Navigation_actuator():
         goal.target_pose.pose.orientation.y = orientation[1]
         goal.target_pose.pose.orientation.z = orientation[2]
         goal.target_pose.pose.orientation.w = orientation[3]
+        rospy.loginfo(f"navigation to position {goal.target_pose.pose.position}  orientation {goal.target_pose.pose.orientation}")
         self.task.update_start_status() # 刷新开始时间
         self.ac.send_goal(goal,self.navigation_task_done_callback,self.navigation_task_active_callback,self.navigation_task_feedback_callback)
     
@@ -110,6 +113,9 @@ class Navigation_actuator():
         else:
             rospy.loginfo(f"node: {rospy.get_name()}, navigation failed. status : {status}")
         
+        global can_run_task
+        can_run_task = True
+        
     # 激活回调
     @staticmethod
     def navigation_task_active_callback():
@@ -122,8 +128,6 @@ class Navigation_actuator():
         pose = feedback.base_position.pose
         pose3D = utilis.Pose3D.instantiate_by_geometry_msg(pose)
         rospy.loginfo(f"node: {rospy.get_name()}, navigation feedback. pose:x = {pose3D.x} y = {pose3D.y} yaw = {pose3D.yaw}")
-        # !调试阶段无法进行位姿更新
-        system.robot.update_robot_pose3d(pose3D) # 更新机器人位姿
         
 
 if __name__ == '__main__':
