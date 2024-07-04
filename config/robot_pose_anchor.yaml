@@ -1,34 +1,51 @@
 # 初始位姿
 InitialPose:
-  position_x: 11.80
-  position_y: 20.819
+  position_x: 0
+  position_y: 0
   position_z: 0
-  yaw: 3.14 
+  orientation_x: 0
+  orientation_y: 0
+  orientation_z: 0
+  orientation_w: 1
 
 # 零食台位姿
 SnackDesk:
-  position_x: 11.80
-  position_y: 20.819
+  position_x: 0.241447
+  position_y: -2.44073
   position_z: 0
-  yaw: 3.14 
-
+  orientation_x: 0
+  orientation_y: 0
+  orientation_z: 1
+  orientation_w: 0
+  
 # 饮料台位姿
 DrinkDesk:
-  position_x: 11.80
-  position_y: 20.819
+  position_x: 0.565304
+  position_y: -2.62046
   position_z: 0
-  yaw: 3.14 
+  orientation_x: 0
+  orientation_y: 0
+  orientation_z: -0.67278
+  orientation_w: 0.739843
+
 
 # 右服务台位姿
 RightServiceDesk:
-  position_x: 11.80
-  position_y: 20.819
+  position_x: 2.12
+  position_y: -0.705
   position_z: 0
-  yaw: 3.14 
+  orientation_x: 0
+  orientation_y: 0
+  orientation_z: 0
+  orientation_w: 1
+
 
 # 左服务台位姿
 LeftServiceDesk:
-  position_x: 11.80
-  position_y: 20.819
+  position_x:  2.1931
+  position_y: -2.07
   position_z: 0
-  yaw: 3.14
+  orientation_x: 0
+  orientation_y: 0
+  orientation_z: 0
+  orientation_w: 1

@@ -205,6 +205,7 @@ catkin_install_python(PROGRAMS
   scripts/test/test_action_server.py  # 测试action server
   scripts/test/test_order/test_order.py  # 测试下单
   scripts/test/test_task/test_task_info.py # 测试任务信息
+  scripts/test/test_navigation/cruise.py   # 5点巡航
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
