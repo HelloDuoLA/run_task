@@ -44,7 +44,7 @@ class Pose3D():
         self.yaw   = yaw
 
     def __str__(self):
-        return f"x:{self.x} y:{self.y} z:{self.z} roll:{self.roll} pitch:{self.pitch} yaw:{self.yaw}"
+        return f"x:{self.x:.2f} y:{self.y:.2f} z:{self.z:.2f} roll:{self.roll:.2f} pitch:{self.pitch:.2f} yaw:{self.yaw:.2f}"
     
     # 通过四元数初始化
     @staticmethod
