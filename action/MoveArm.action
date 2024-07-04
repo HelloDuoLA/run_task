@@ -1,7 +1,7 @@
 # 1.目标数据
 uint8 task_index 
 run_task/ArmPose arm_pose
-uint8 grasp_flag  # 0 - 打开 1 - 关闭，254 - 释放
+uint8 grasp_flag  # 0 - 打开 1 - 关闭，不变
 uint8 grasp_speed # 1 ~ 100 
 bool  grasp_first # 爪子优先 0 - 不优先 1 - 优先
 ---

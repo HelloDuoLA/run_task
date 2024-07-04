@@ -304,6 +304,7 @@ class Manipulator_actuator():
     
     # 运行
     def run(self, manipulation_task:task.Task_manipulation):
+        # 加在运行序列中
         task_index = self.running_tasks_manager.add_task(manipulation_task)
         
         # 任务开始

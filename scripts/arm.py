@@ -15,7 +15,7 @@ sys.path.insert(0,package_path + "/scripts")
 import utilis
 import run_task.msg as msg
 import run_task.srv as srv
-import robot
+
 
 
 class PoseType(Enum):
@@ -30,6 +30,68 @@ class PoseType(Enum):
             return self.value == value.value
         elif isinstance(value, int):
             return self.value == value
+        
+# 机械臂位姿
+class Arm_pose():
+    # 初始化
+    def __init__(self,arm_pose:msg.ArmPoseWithID=[-999,-999,-999,-999,-999,-999],type_id=PoseType.BASE_COORDS,arm_id=utilis.Device_id.TBD):
+        if isinstance(arm_pose, msg.ArmPose):
+            self.arm_pose = arm_pose.arm_pose
+            self.type_id  = arm_pose.type_id
+            self.arm_id   = arm_id
+        elif isinstance(arm_pose,msg.ArmPoseWithID):
+            self.arm_pose = arm_pose.arm_pose
+            self.type_id  = arm_pose.type_id
+            self.arm_id   = arm_pose.arm_id
+        elif isinstance(arm_pose, list) and len(arm_pose) == 6:
+            self.arm_pose = arm_pose
+            self.type_id  = type_id
+            self.arm_id   = arm_id
+        else:
+            raise ValueError("Invalid initialization parameter for arm_pose")
+    
+    def set_joint_angle(self,joint_index,angle):
+        self.arm_pose[joint_index] = angle
+    
+    def set_base_coords_x(self,x):
+        self.arm_pose[0] = x
+    def set_base_coords_y(self,y):
+        self.arm_pose[1] = y
+        
+    def set_base_coords_z(self,z):
+        self.arm_pose[2] = z
+    
+    def set_base_coords_rx(self,rx):
+        self.arm_pose[3] = rx
+    
+    def set_base_coords_ry(self,ry):
+        self.arm_pose[4] = ry
+    
+    def set_base_coords_rz(self,rz):
+        self.arm_pose[5] = rz
+        
+    def set_id(self,arm_id:utilis.Device_id):
+        self.arm_id = arm_id
+
+    # 重写等号
+    def __eq__(self, other):
+        if isinstance(other, Arm_pose):
+            return (self.arm_pose == other.arm_pose)
+        elif isinstance(other, list):
+            return (self.arm_pose == other)
+    # 重写打印输出
+    def __str__(self):
+        if self.type_id == PoseType.ANGLE:
+            return f"joint1:{self.arm_pose[0]} joint2:{self.arm_pose[1]} joint3:{self.arm_pose[2]} joint4:{self.arm_pose[3]} joint5:{self.arm_pose[4]} joint6:{self.arm_pose[5]}"
+        elif self.type_id == PoseType.BASE_COORDS:
+            return f"x:{self.arm_pose[0]} y:{self.arm_pose[1]} z:{self.arm_pose[2]} rx:{self.arm_pose[3]} ry:{self.arm_pose[4]} rz:{self.arm_pose[5]}"
+    # 将列表状态输出为action的数据结构
+    def list_to_msg(self,arm_list_status:list):
+        arm_pose = msg.ArmPose()
+        arm_pose.arm_pose = self.arm_pose
+        arm_pose.type_id  = self.type_id
+        return arm_pose
+
 
 # 机械臂控制器
 class arm_controller():
@@ -133,9 +195,9 @@ def doCheckArmPose(req:srv.CheckArmPoseRequest):
     rospy.loginfo(f"node: {rospy.get_name()}, doCheckArmPose. req: {req}")
     resp = srv.CheckArmPoseResponse()
     resp.type_id = req.type_id
-    if req.type_id == 0:
+    if req.type_id == PoseType.ANGLE:
         resp.arm_pose = arm_controller.control_instance.get_base_coords()
-    elif req.type_id == 1:
+    elif req.type_id == PoseType.BASE_COORDS:
         resp.arm_pose = arm_controller.control_instance.get_angles()
 
     rospy.loginfo(f"node: {rospy.get_name()}, doCheckArmPose. req: {req} resp arm : {resp.arm_pose}")
