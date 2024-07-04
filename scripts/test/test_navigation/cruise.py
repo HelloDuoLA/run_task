@@ -21,38 +21,38 @@ def talker():
     # 初始化节点，命名为'talker'
     rospy.init_node('template')
 
-    # init_pose = constant_config_to_robot_anchor_pose_orientation("InitialPose")
-    # SnackDesk = constant_config_to_robot_anchor_pose_orientation("SnackDesk")
-    # DrinkDesk = constant_config_to_robot_anchor_pose_orientation("DrinkDesk")
-    # RightServiceDesk = constant_config_to_robot_anchor_pose_orientation("RightServiceDesk")
-    # LeftServiceDesk  = constant_config_to_robot_anchor_pose_orientation("LeftServiceDesk")
+    init_pose = constant_config_to_robot_anchor_pose_orientation("InitialPose")
+    SnackDesk = constant_config_to_robot_anchor_pose_orientation("SnackDesk")
+    DrinkDesk = constant_config_to_robot_anchor_pose_orientation("DrinkDesk")
+    RightServiceDesk = constant_config_to_robot_anchor_pose_orientation("RightServiceDesk")
+    LeftServiceDesk  = constant_config_to_robot_anchor_pose_orientation("LeftServiceDesk")
     
-    # task_init_pose         = task.Task_navigation(init_pose)
-    # task_SnackDesk         = task.Task_navigation(SnackDesk)
-    # task_DrinkDesk         = task.Task_navigation(DrinkDesk)
-    # task_RightServiceDesk  = task.Task_navigation(RightServiceDesk)
-    # task_LeftServiceDesk   = task.Task_navigation(LeftServiceDesk)
+    task_init_pose         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point, None, init_pose)
+    task_SnackDesk         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_snack_desk, None, SnackDesk)
+    task_DrinkDesk         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_drink_desk, None, DrinkDesk)
+    task_RightServiceDesk  = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_right_service_desk, None, RightServiceDesk)
+    task_LeftServiceDesk   = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_left_service_desk, None, LeftServiceDesk)
     
-    # rospy.loginfo(f"init_pose        : {init_pose}")
-    # rospy.loginfo(f"SnackDesk        : {SnackDesk}")
-    # rospy.loginfo(f"DrinkDesk        : {DrinkDesk}")
-    # rospy.loginfo(f"RightServiceDesk : {RightServiceDesk}")
-    # rospy.loginfo(f"LeftServiceDesk  : {LeftServiceDesk}")
+    rospy.loginfo(f"init_pose        : {init_pose}")
+    rospy.loginfo(f"SnackDesk        : {SnackDesk}")
+    rospy.loginfo(f"DrinkDesk        : {DrinkDesk}")
+    rospy.loginfo(f"RightServiceDesk : {RightServiceDesk}")
+    rospy.loginfo(f"LeftServiceDesk  : {LeftServiceDesk}")
 
-    # task_list = [task_SnackDesk ,task_RightServiceDesk, task_DrinkDesk ,task_LeftServiceDesk,task_init_pose]
-    # navigation_actuator = Navigation_actuator()
+    task_list = [task_SnackDesk ,task_RightServiceDesk, task_DrinkDesk ,task_LeftServiceDesk,task_init_pose]
+    navigation_actuator = Navigation_actuator()
     
-    test()
+    # test()  # 单独前往某一节点
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(1)
     task_index = 0
     global can_run_task
     while not rospy.is_shutdown():
-        # if can_run_task  and  task_index < len(task_list):
-        #     can_run_task = False
-        #     navigation_actuator.run(task_list[task_index])
-        #     task_index += 1
+        if can_run_task  and  task_index < len(task_list):
+            can_run_task = False
+            navigation_actuator.run(task_list[task_index])
+            task_index += 1
             
             
         rospy.loginfo("arm")
@@ -115,7 +115,6 @@ class Navigation_actuator():
             rospy.loginfo(f"node: {rospy.get_name()}, navigation succeed. status : {status}")
         else:
             rospy.loginfo(f"node: {rospy.get_name()}, navigation failed. status : {status}")
-        
         global can_run_task
         can_run_task = True
         
@@ -136,9 +135,9 @@ class Navigation_actuator():
 def test():
     ac = actionlib.SimpleActionClient('move_base', MoveBaseAction)
     ac.wait_for_server()
-    # anchor_point_name = "InitialPose"
+    anchor_point_name = "InitialPose"
     # anchor_point_name = "DrinkDesk"
-    anchor_point_name = "SnackDesk"
+    # anchor_point_name = "SnackDesk"
     # anchor_point_name = "RightServiceDesk"
     # anchor_point_name = "LeftServiceDesk"
     x   = rospy.get_param(f'~{anchor_point_name}/position_x')
