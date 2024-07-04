@@ -311,36 +311,58 @@ class Manipulator_actuator():
         manipulation_task.start_time()
 
         # 单臂
-        if manipulation_task.arm_id == utilis.Device_id.LEFT or manipulation_task.arm_id == utilis.Device_id.RIGHT:
+        if manipulation_task.arm_id == utilis.Device_id.LEFT:
             # 设置机械臂状态
-            system.robot.update_arm_status(manipulation_task.arm_id,manipulation_task.target_arm_status,manipulation_task.target_arm_pose)
+            system.robot.update_arm_status(manipulation_task.arm_id,robot.manipulation_status.arm.status.BUSY)
             # 设置action 目标
-            goal             = msg.MoveArmGoal()
-            goal.task_index  = task_index
-            goal.arm_pose    = manipulation_task.target_arm_pose.to_msg_with_id(manipulation_task.arm_id)
-            goal.task_index  = manipulation_task.target_clamp_status
-            goal.grasp_first = manipulation_task.clamp_first
-            goal.grasp_speed = manipulation_task.clamp_speed
+            goal                      = msg.MoveArmGoal()
+            goal.task_index           = task_index
+            goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0]
+            goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
+            goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
+            goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
+            goal.grasp_first          = manipulation_task.clamp_first
+            goal.grasp_speed          = manipulation_task.clamp_speed
             self.left_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
-        # 需要考虑左右臂协同(要是有一个爪子先抓紧, 然后提升去了，另一个还没到位咋办)
-        elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
-            left_goal             = msg.MoveArmGoal()
-            left_goal.task_index  = task_index
-            left_goal.arm_pose    = manipulation_task.target_arm_pose.to_msg_with_id(utilis.Device_id.LEFT)
-            left_goal.task_index  = manipulation_task.target_clamp_status
-            left_goal.grasp_first = manipulation_task.clamp_first
-            left_goal.grasp_speed = manipulation_task.clamp_speed
-
-            right_goal             = msg.MoveArmGoal()
-            right_goal.task_index  = task_index
-            right_goal.arm_pose    = manipulation_task.target_right_arm_pose.to_msg_with_id(utilis.Device_id.RIGHT)
-            right_goal.task_index  = manipulation_task.target_right_clamp_status
-            right_goal.grasp_first = manipulation_task.clamp_first
-            right_goal.grasp_speed = manipulation_task.clamp_speed
-            
-            self.left_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
-            
+        
+        elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
+            # 设置机械臂状态
+            system.robot.update_arm_status(manipulation_task.arm_id,robot.manipulation_status.arm.status.BUSY)
+            # 设置action 目标
+            goal                      = msg.MoveArmGoal()
+            goal.task_index           = task_index
+            goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0]
+            goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
+            goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
+            goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
+            goal.grasp_first          = manipulation_task.clamp_first
+            goal.grasp_speed          = manipulation_task.clamp_speed
             self.right_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
+            
+        elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
+            left_goal              = msg.MoveArmGoal()
+            right_goal             = msg.MoveArmGoal()
+            for i in range(2):
+                if manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.LEFT:
+                    system.robot.update_arm_status(utilis.Device_id.LEFT,robot.manipulation_status.arm.status.BUSY)
+                    left_goal.task_index           = task_index
+                    left_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i]
+                    left_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
+                    left_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
+                    left_goal.grasp_first          = manipulation_task.clamp_first
+                    left_goal.grasp_speed          = manipulation_task.clamp_speed
+                    
+                elif manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.RIGHT:
+                    system.robot.update_arm_status(utilis.Device_id.RIGHT,robot.manipulation_status.arm.status.BUSY)
+                    right_goal.task_index           = task_index
+                    right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i]
+                    right_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
+                    right_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
+                    right_goal.grasp_first          = manipulation_task.clamp_first
+                    right_goal.grasp_speed          = manipulation_task.clamp_speed
+            
+            self.left_arm_ac.send_goal(left_goal,self.done_callback,self.active_callback,self.feedback_callback)
+            self.right_arm_ac.send_goal(right_goal,self.done_callback,self.active_callback,self.feedback_callback)
 
 
     # 完成回调
@@ -372,9 +394,8 @@ class Manipulator_actuator():
     # 反馈回调
     @staticmethod
     def feedback_callback(feedback:msg.MoveArmFeedback):
-        rospy.loginfo(f"node: {rospy.get_name()}, manipulator feedback. pose:x = {feedback.x} y = {feedback.y} z = {feedback.z} rx = {feedback.rx} ry = {feedback.ry} rz = {feedback.rz}")
-        # TODO:更新机械臂位置、状态与夹具状态
-        # myrobot.update_pose(pose) # 更新机器人位姿
+        rospy.loginfo(f"node: {rospy.get_name()}, manipulator feedback. {feedback}")
+
 
 # 图像识别任务执行器
 # TODO:修改为可并行

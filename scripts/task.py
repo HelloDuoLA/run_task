@@ -16,6 +16,7 @@ sys.path.insert(0,package_path + "/scripts")
 import utilis
 import robot
 import order
+import arm
 
 
 # 任务类型
@@ -249,25 +250,23 @@ class Task_image_rec(Task):
 
 # 机械臂运动、夹取任务
 class Task_manipulation(Task):
-    def __init__(self, task_name, fn_callback, arm_id:utilis.Device_id, target_arms_pose: List[utilis.Arm_pose] = [utilis.Arm_pose()],  \
+    def __init__(self, task_name, fn_callback,arm_id:utilis.Device_id, target_arms_pose: List[arm.Arm_pose] = [arm.Arm_pose()],  \
                 target_clamps_status: List[robot.manipulation_status.clamp.status] = [robot.manipulation_status.clamp.status.DONTCANGE], clamp_speed = 50):
         super().__init__(task_name,fn_callback)
         self.arm_id              = arm_id               # 操作对象
-        # rospy.loginfo(f"{rospy.get_name()} arm_id:{arm_id}")
         
         # 判断输入是不是列表
-        # if (arm_id == utilis.Device_id.LEFT or arm_id == utilis.Device_id.RIGHT) and isinstance(target_arms_pose,utilis.Arm_pose):
-        if isinstance(target_arms_pose,utilis.Arm_pose):
+        if isinstance(target_arms_pose,arm.Arm_pose):
             self.target_arms_pose    = [target_arms_pose]
         else: # 是
             self.target_arms_pose    = target_arms_pose
         
         # 判断输入是不是列表
-        # if (arm_id == utilis.Device_id.LEFT or arm_id == utilis.Device_id.RIGHT ) and isinstance(target_clamps_status,robot.manipulation_status.clamp.status):
         if isinstance(target_clamps_status,robot.manipulation_status.clamp.status):
             self.target_clamps_status = [target_clamps_status]
         else:
             self.target_clamps_status = target_clamps_status
+            
         self.clamp_speed         = clamp_speed          # 夹具速度
         self.clamp_first         = False                # 默认先动臂
     
@@ -281,19 +280,16 @@ class Task_manipulation(Task):
         self.clamp_first = False
     
     # 设置目标位置
-    def set_target_arm_pose(self,arm_pose:utilis.Arm_pose):
+    def set_target_arm_pose(self,arm_pose:arm.Arm_pose):
         self.target_arms_pose = arm_pose
         
-    
+    # 打印字符串
     def __str__(self) -> str:
-        # return super().__str__() + (
         for i in range(len(self.target_arms_pose)):
             if i == 0:
                 arms_pose_str = f"Arm_pose_{i}: {self.target_arms_pose[i]} "
             else:
                 arms_pose_str = arms_pose_str + f"Arm_pose_{i}: {self.target_arms_pose[i]} "
-        
-        
         
         for i in range(len(self.target_clamps_status)):
             if i == 0:
@@ -308,11 +304,6 @@ class Task_manipulation(Task):
             f"Clamp_speed         : {self.clamp_speed} \r\n"
             f"Clamp_first         : {self.clamp_first} \r\n"
         )
-# 用于暂停任务执行的任务
-# class Task_pause(Task):
-#     def __init__(self):
-#         super().__init__(Task_type.Task_function.PAUSE,None)
-#         self.status = Task.Task_status.NOTREADY
 
 # 任务队列
 class Task_sequence():
