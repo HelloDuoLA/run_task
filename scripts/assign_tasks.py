@@ -438,10 +438,10 @@ class Image_rec_actuator():
         elif task_obj.task_type == task.Task_type.Task_image_rec.CONTIANER:
             pass
         # 识别咖啡机
-        elif task_obj.task_type == task.Task_type.Task_image_rec.COFFEE_MACHIE:
+        elif task_obj.task_type == task.Task_type.Task_image_rec.COFFEE_MACHIE_SWITCH:
             pass
         # 识别杯子
-        elif task_obj.task_type == task.Task_type.Task_image_rec.CUP:
+        elif task_obj.task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE:
             pass
         else:
             raise ValueError("Invalid task type")
@@ -467,10 +467,7 @@ class Task_manager():
     def tm_task_finish_callback(self, task, status, result):
         rospy.loginfo(f"node: {rospy.get_name()}, task_manager, tasks: {task}")
     
-    # # 任务可并行回调
-    # def tm_task_parallel_callback(self):
-    #     pass
-    
+
     # 定时器任务
     @staticmethod
     def timer_callback(event):
@@ -500,7 +497,6 @@ class Task_manager():
                         system.robot.update_arm_status(current_task.camera_id,task.Task.Task_status.RUNNING)
                     # 运行
                     system.image_rec_actuator.run(task)
-    
     # 判断任务是否能够运行
     def task_is_ready_to_run(self,current_task:task.Task):
         if current_task.status == task.Task.Task_status.NOTREADY:
@@ -518,8 +514,7 @@ class Task_manager():
                     pass
                     # 判断前置任务是否完成
                     # 判断资源是否允许
-                
-        
+
         return True
 
 # 订单驱动的任务安排

@@ -1,0 +1,32 @@
+LeftArmGripSnack:
+  x_bias: 0.0
+  y_bias: 0.0
+  z_bias: 0.0
+
+LeftArmGripContainer:
+  x_bias : 0.0
+  y_bias : 0.0
+  z_const: 0.0
+
+LeftArmGripCoffeeSwitch:
+  x_bias: 0.0
+  y_bias: 0.0
+  z_bias: 0.0
+
+# 右臂抓零食
+RightArmGripSnack:
+  x_bias: 0.0
+  y_bias: 0.0
+  z_bias: 0.0
+
+# 右臂抓零食盒
+LeftArmGripContainer:
+  x_bias : 0.0
+  y_bias : 0.0
+  z_const: 0.0
+
+# 右臂抓杯子
+RightArmGripCup:
+  x_bias : 0.0
+  y_bias : 0.0
+  z_const: 0.0
