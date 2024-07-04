@@ -108,7 +108,10 @@ class Device_id(Enum):
         return self.name
     
     def __eq__(self, value: Device_id) -> bool:
-        return self.value == value.value
+        if isinstance(value, Device_id):
+            return self.value == value.value
+        elif isinstance(value, int):
+            return self.value == value
 
 
 # 订阅的话题名称
@@ -130,6 +133,7 @@ class Topic_name():
     head_camera_raw_image     = "/head_camera_raw_image" # 头摄像头原始图像
     bottom_camera_raw_image   = "/bottom_camera_raw_image"# 底部摄像头原始图像
     check_arm_pose            = "/check_arm_pose"        # 检查机械臂状态
+    
 
 # 机械臂位姿
 class Arm_pose():
