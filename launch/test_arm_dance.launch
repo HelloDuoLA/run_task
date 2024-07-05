@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="run_task" type="arm_dance.py" name="arm_dance" output="screen">
+        <rosparam file="$(find run_task)/config/arm_pose_anchor.yaml" command="load"/>
+    </node>
+</launch>

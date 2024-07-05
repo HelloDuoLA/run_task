@@ -13,8 +13,9 @@ import run_task.msg as msg
 rospack = rospkg.RosPack()
 package_path = rospack.get_path('run_task')
 sys.path.insert(0,package_path + "/scripts")
-import utilis
-import task
+# import utilis
+# import task
+import arm
 
 
 
@@ -22,9 +23,11 @@ import task
 def test():
     ac = actionlib.SimpleActionClient('right_arm_action', msg.MoveArmAction)
     ac.wait_for_server()
+    # goal = msg.MoveArmActionGoal()
     goal = msg.MoveArmGoal()
     goal.arm_pose.arm_pose = [66.27, 5.44, -148.83, -123.8, 72.58, -24.6]
     goal.arm_pose.type_id = 0
+    goal.arm_pose.arm_id = 0
     ac.send_goal(goal,navigation_task_done_callback,navigation_task_active_callback,navigation_task_feedback_callback)
     
 def navigation_task_done_callback(status, result):

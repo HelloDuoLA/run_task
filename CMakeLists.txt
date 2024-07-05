@@ -207,6 +207,7 @@ catkin_install_python(PROGRAMS
   scripts/test/test_task/test_task_info.py # 测试任务信息
   scripts/test/test_navigation/cruise.py   # 5点巡航
   scripts/test/test_robot/test_move_arm.py  # 机械臂运动
+  scripts/test/test_robot/arm_dance.py       # 多点位手臂运动
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

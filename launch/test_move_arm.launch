@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="run_task" type="test_move_arm.py" name="test_move_arm" output="screen">
+    </node>
+</launch>

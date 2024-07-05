@@ -55,6 +55,7 @@ class Arm_pose():
     
     def set_base_coords_x(self,x):
         self.arm_pose[0] = x
+        
     def set_base_coords_y(self,y):
         self.arm_pose[1] = y
         
@@ -94,7 +95,7 @@ class Arm_pose():
 
 
 # 机械臂控制器
-class arm_controller():
+class Arm_controller():
     def __init__(self,id:utilis.Device_id) -> None:
         self.id = id 
         if(self.id == utilis.Device_id.LEFT):
@@ -109,10 +110,11 @@ class arm_controller():
             self.arm_name = "right_arm"     
         
         power_on = self.control_instance.is_power_on() 
-        if power_on :
-            rospy.loginfo(f"{self.arm_name} is power on")
-        else:
-            rospy.loginfo(f"{self.arm_name} is not power on ret:{power_on} ")
+        
+        rospy.loginfo(f"{self.arm_name} is power status {power_on}")
+        while not power_on:
+            self.control_instance.power_on()
+            power_on = self.control_instance.is_power_on()
 
         
         self.action = self.arm_action(self.action_name,self.control_instance,id)
@@ -164,6 +166,7 @@ class arm_controller():
         def move_arm(self,pose_type:PoseType,pose_list):
             rospy.loginfo(f"{self.id} arm move to {pose_list} using {pose_type}")
             if pose_type == PoseType.ANGLE:
+                rospy.loginfo("!!!!!!!!!!!!!")
                 return self.control_instance.send_angles(pose_list,50)
             elif pose_type == PoseType.BASE_COORDS:
                 return self.control_instance.send_base_coords(pose_list,50)
@@ -177,9 +180,9 @@ def talker():
     arm_name   = rospy.get_param(f'~arm_name')
     global arm_controller
     if arm_name == "Left":
-        arm_controller  = arm_controller(utilis.Device_id.LEFT)
+        arm_controller  = Arm_controller(utilis.Device_id.LEFT)
     elif arm_name == "Right":
-        arm_controller = arm_controller(utilis.Device_id.RIGHT)
+        arm_controller = Arm_controller(utilis.Device_id.RIGHT)
     
     server = rospy.Service(f"Check{arm_name}ArmPose",srv.CheckArmPose,doCheckArmPose)
     # 设置发布消息的频率，1Hz
@@ -196,9 +199,9 @@ def doCheckArmPose(req:srv.CheckArmPoseRequest):
     resp = srv.CheckArmPoseResponse()
     resp.type_id = req.type_id
     if req.type_id == PoseType.ANGLE:
-        resp.arm_pose = arm_controller.control_instance.get_base_coords()
-    elif req.type_id == PoseType.BASE_COORDS:
         resp.arm_pose = arm_controller.control_instance.get_angles()
+    elif req.type_id == PoseType.BASE_COORDS:
+        resp.arm_pose = arm_controller.control_instance.get_base_coords()
 
     rospy.loginfo(f"node: {rospy.get_name()}, doCheckArmPose. req: {req} resp arm : {resp.arm_pose}")
     return resp
