@@ -83,9 +83,9 @@ class Arm_pose():
     # 重写打印输出
     def __str__(self):
         if self.type_id == PoseType.ANGLE:
-            return f"arm {self.arm_id} joint1:{self.arm_pose[0]} joint2:{self.arm_pose[1]} joint3:{self.arm_pose[2]} joint4:{self.arm_pose[3]} joint5:{self.arm_pose[4]} joint6:{self.arm_pose[5]}"
+            return f"arm {self.arm_id} joint:{self.arm_pose}"
         elif self.type_id == PoseType.BASE_COORDS:
-            return f"arm {self.arm_id} x:{self.arm_pose[0]} y:{self.arm_pose[1]} z:{self.arm_pose[2]} rx:{self.arm_pose[3]} ry:{self.arm_pose[4]} rz:{self.arm_pose[5]}"
+            return f"arm {self.arm_id} coords:{self.arm_pose}"
     # 将列表状态输出为action的数据结构
     def list_to_msg(self,arm_list_status:list):
         arm_pose = msg.ArmPose()
@@ -156,10 +156,13 @@ class Arm_controller():
             # 2. 给机械臂发送目标值
             self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose)
             
+            result = msg.MoveArmResult()
+            result.arm_id    = goal.arm_id
+            result.task_index = goal.task_index
             # 3. 发送连续反馈
             # rate = rospy.Rate(10) 
             # if result:
-            self.action_server.set_succeeded() #可以添加结果参数
+            self.action_server.set_succeeded(result) #可以添加结果参数
             # else:
             #     self.action_server.set_aborted()   #TODO: 失败是否是这样的
     

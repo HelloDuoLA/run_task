@@ -120,7 +120,7 @@ class Task():
     # 初始化 
     def __init__(self,task_name,finish_cb):
         self.task_type   = Task_type(task_name)     # 任务信息 
-        self.task_index  = -999                     # 任务序号 
+        self.task_index  = 0                        # 任务序号 
         self.task_group_id = -999                   # 任务组ID
         self.create_time = rospy.Time.now()         # 创建时间
         self.start_time  = -999                     # 开始时间

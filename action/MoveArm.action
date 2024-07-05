@@ -1,18 +1,21 @@
 # 1.目标数据
 uint8 task_index 
 run_task/ArmPoseWithID arm_pose
-uint8 grasp_flag  # 0 - 打开 1 - 关闭，不变
+uint8 arm_id # 0 - 左臂 1 - 右臂
+uint8 grasp_flag  # 0 - 打开 1 - 关闭 2. 不变
 uint8 grasp_speed # 1 ~ 100 
 bool  grasp_first # 爪子优先 0 - 不优先 1 - 优先
 ---
 # 2.最终返回数据
 uint8 task_index 
+run_task/ArmPoseWithID arm_pose
+uint8 arm_id 
+uint8 grasp_flag # 0 - 打开 1 - 关闭 
 int8  status
 uint8 result
-run_task/ArmPoseWithID arm_pose
-uint8 grasp_flag # 0 - 打开 1 - 关闭 
 ---
 # 3.连续反馈数据
 uint8 task_index 
 run_task/ArmPoseWithID arm_pose
+uint8 arm_id 
 uint8 grasp_flag # 0 - 打开 1 - 关闭 

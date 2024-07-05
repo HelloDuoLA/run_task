@@ -95,12 +95,12 @@ CoffeeMachineRec:
 # 咖啡机开启的位点
 CoffeeMachineOpenPrepare:
   # x y z 都不确定, 手势确定
-  coords:  [-999, -999, -999, 121.34, 73.92, 31.57]
+  coords:  [-999, -999, -999, -90, 0.0, -90]
 
 # 咖啡机关闭的位点
 CoffeeMachineClosePrepare:
   # x y z 都不确定, 手势确定
-  coords:  [-999, -999, -999, 121.34, 73.92, 31.57]
+  coords:  [-999, -999, -999, -90, 0.0, -90]
 
 # 零食抓取位点
 SnackGrap:
