@@ -11,7 +11,7 @@ import utilis
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from enum import Enum,auto # 任务字典
 import run_task.msg as msg
-
+import arm
 
 # 机械臂状态类
 class manipulation_status():
@@ -30,7 +30,7 @@ class manipulation_status():
             MOVING = auto()       # 正在移动
             BUSY   = auto()       # 忙碌
             
-        def __init__(self,arm_pose:utilis.Arm_pose=utilis.Arm_pose()):
+        def __init__(self,arm_pose:arm.Arm_pose=arm.Arm_pose()):
             self.status   = self.status.IDLE    # 机械臂状态,默认空闲
             self.arm_pose = arm_pose            # 机械臂位置
             
@@ -200,7 +200,7 @@ class Robot():
             self.right_manipulation_status.camera_info.status = camera_status
 
     # 更新机械臂和夹具状态
-    def update_arm_clamp_status(self,arm_id:utilis.Device_id,arm_status:manipulation_status.arm.status,arm_pose:utilis.Arm_pose,clamp_status:manipulation_status.clamp.status):
+    def update_arm_clamp_status(self,arm_id:utilis.Device_id,arm_status:manipulation_status.arm.status,arm_pose:arm.Arm_pose,clamp_status:manipulation_status.clamp.status):
         self.update_arm_status(arm_id,arm_status,arm_pose)
         self.update_clamp_status(arm_id,clamp_status)
     

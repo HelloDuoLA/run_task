@@ -251,7 +251,8 @@ class Task_image_rec(Task):
 # 机械臂运动、夹取任务
 class Task_manipulation(Task):
     def __init__(self, task_name, fn_callback,arm_id:utilis.Device_id, target_arms_pose: List[arm.Arm_pose] = [arm.Arm_pose()],  \
-                target_clamps_status: List[robot.manipulation_status.clamp.status] = [robot.manipulation_status.clamp.status.DONTCANGE], clamp_speed = 50):
+                target_clamps_status: List[robot.manipulation_status.clamp.status] = [robot.manipulation_status.clamp.status.DONTCANGE,robot.manipulation_status.clamp.status.DONTCANGE], \
+                clamp_speed = 50):
         super().__init__(task_name,fn_callback)
         self.arm_id              = arm_id               # 操作对象
         
