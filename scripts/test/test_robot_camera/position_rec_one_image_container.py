@@ -130,22 +130,23 @@ if __name__ == "__main__":
             print("left")
             print(f"left   arm end pose {base_coords_left[:3]}")
             print(f"stag xyz : {xyz}")
-            print(f"shousuan    xyz:{base_coords_left[0] + xyz[0]}  {base_coords_left[1] - xyz[1]- 78} {370}")
+            print(f"shousuan    xyz:{base_coords_left[0] + xyz[0] + 26}  {base_coords_left[1] - xyz[1]- 78 + 200} {370}")
             print("right")
             print(f"stag xyz : {xyz}")
             print(f"right  arm end pose {base_coords_right[:3]}")
-            print(f"shousuan    xyz:{base_coords_right[0] - xyz[0] - 20}  {base_coords_right[1] + xyz[1] + 78 - 20} {370}\r\n\r\n")
+            print(f"shousuan    xyz:{base_coords_right[0] - xyz[0] - 20}  {base_coords_right[1] + xyz[1] + 78 - 10} {370}\r\n\r\n")
     
 # 左臂
-    # 测量 360.58490866427036  3.1119778257105963 220
-    # 实际
+    # 测量 364.0008632433758  -22.241724454578787 370 
+    # 实际 390, 180, 370, -180, 0.0, -90
 
 
 # 右臂
     # 测量 400.9685837000625  -50.153911459306016 370
     # 实际[380, -70, 385, -180, 0.0, 90]
     
-    
+
+# 01 通过
 
 
     
