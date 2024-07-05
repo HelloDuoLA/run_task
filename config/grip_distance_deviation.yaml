@@ -1,17 +1,28 @@
+# 左臂抓零食
 LeftArmGripSnack:
   x_bias: 0.0
   y_bias: 0.0
   z_bias: 0.0
 
+# 左臂抓容器
 LeftArmGripContainer:
   x_bias : 0.0
   y_bias : 0.0
   z_const: 0.0
 
-LeftArmGripCoffeeSwitch:
+# 左臂准备按咖啡开关
+LeftArmGripTurnOnMachineSwitch:
   x_bias: 0.0
   y_bias: 0.0
   z_bias: 0.0
+
+# 左臂准备关咖啡开关
+LeftArmGripTurnOFFMachineSwitch:
+  x_bias: 0.0
+  y_bias: 0.0
+  z_bias: 0.0
+
+# !!!!!以下为右臂
 
 # 右臂抓零食
 RightArmGripSnack:
@@ -20,13 +31,19 @@ RightArmGripSnack:
   z_bias: 0.0
 
 # 右臂抓零食盒
-LeftArmGripContainer:
+RightArmGripContainer:
   x_bias : 0.0
   y_bias : 0.0
   z_const: 0.0
 
 # 右臂抓杯子
 RightArmGripCup:
+  x_bias : 0.0
+  y_bias : 0.0
+  z_const: 0.0
+
+# 右臂杯子倒水
+RightArmWaterCup:
   x_bias : 0.0
   y_bias : 0.0
   z_const: 0.0
