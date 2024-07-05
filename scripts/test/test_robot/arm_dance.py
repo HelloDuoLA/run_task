@@ -159,6 +159,7 @@ def talker():
     task_index = 0
     manipulator_actuator = Manipulator_actuator()
     global right_arm_idle_state ,left_arm_idle_state 
+    rospy.loginfo("111111111")
     while not rospy.is_shutdown():
         if  task_index < len(task_list):
             if task_list[task_index].arm_id == utilis.Device_id.LEFT and left_arm_idle == True:
@@ -205,6 +206,7 @@ class Manipulator_actuator():
     
     # 运行
     def run(self, manipulation_task:task.Task_manipulation):
+        rospy.loginfo("running")
         # 加在运行序列中
         # task_index = self.running_tasks_manager.add_task(manipulation_task)
         
@@ -218,11 +220,13 @@ class Manipulator_actuator():
             goal.task_index           = task_index
             print(task_index)
             goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0]
+            print(f"manipulation_task.target_arms_pose[0] {manipulation_task.target_arms_pose[0]}")
             goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
             goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
             goal.grasp_first          = manipulation_task.clamp_first
             goal.grasp_speed          = manipulation_task.clamp_speed
+            goal.arm_id               = utilis.Device_id.LEFT.value
             self.left_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
         
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
@@ -235,28 +239,34 @@ class Manipulator_actuator():
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
             goal.grasp_first          = manipulation_task.clamp_first
             goal.grasp_speed          = manipulation_task.clamp_speed
+            goal.arm_id               = utilis.Device_id.RIGHT.value
             self.right_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
             
         elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
+            rospy.loginfo("utilis.Device_id.LEFT_RIGHT")
             left_goal              = msg.MoveArmGoal()
             right_goal             = msg.MoveArmGoal()
             for i in range(2):
                 if manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.LEFT:
                     left_goal.task_index           = task_index
-                    left_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i]
+                    left_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
                     left_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
                     left_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
                     left_goal.grasp_first          = manipulation_task.clamp_first
                     left_goal.grasp_speed          = manipulation_task.clamp_speed
+                    left_goal.arm_id               = utilis.Device_id.LEFT.value
                     
                 elif manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.RIGHT:
                     right_goal.task_index           = task_index
-                    right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i]
+                    right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
                     right_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
                     right_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
                     right_goal.grasp_first          = manipulation_task.clamp_first
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
-            
+                    left_goal.arm_id                = utilis.Device_id.RIGHT.value
+            rospy.loginfo("send goal!!!")
+            rospy.loginfo(left_goal)
+            rospy.loginfo(right_goal)
             self.left_arm_ac.send_goal(left_goal,self.done_callback,self.active_callback,self.feedback_callback)
             self.right_arm_ac.send_goal(right_goal,self.done_callback,self.active_callback,self.feedback_callback)
 

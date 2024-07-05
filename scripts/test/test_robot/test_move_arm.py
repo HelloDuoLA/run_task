@@ -26,7 +26,7 @@ def test():
     ac.wait_for_server()
     # goal = msg.MoveArmActionGoal()
     goal = msg.MoveArmGoal()
-    goal.arm_pose.arm_pose = [-66.27, 5.44, -148.83, 123.8, 72.58, 24.6]
+    goal.arm_pose.arm_pose = [-48.48, 26.74, -87.21, 65.36, 46.82, 26.16]
     goal.arm_pose.type_id = 0
     goal.arm_pose.arm_id = 0
     goal.arm_id = 0
