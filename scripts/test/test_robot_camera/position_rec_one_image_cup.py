@@ -115,7 +115,7 @@ if __name__ == "__main__":
     
     xyz_list = STag_rec(args.tag_size,camera_matrix,dist_coeffs,image,11)
    #!!!!!!!!!!!!!!!!!!!!!!!!
-    base_coords  = [50, -210, 210, 90, 0, 90]
+    base_coords  = [50, -210, 200, 90, 0, 90]
 
     print(f"right  arm end pose {base_coords[:3]}")
     
