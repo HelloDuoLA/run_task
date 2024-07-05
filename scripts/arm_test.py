@@ -158,7 +158,11 @@ class Arm_controller():
             
             # 2. 给机械臂发送目标值
             # self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose)
-            time.sleep(0.1)
+            # time.sleep(0.1)
+            rospy.loginfo(f"sleep start")
+            time.sleep(0.2)
+            rospy.loginfo(f"sleep end")
+            
             
             result = msg.MoveArmResult()
             result.arm_id     = goal.arm_id

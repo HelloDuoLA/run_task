@@ -93,64 +93,63 @@ def talker():
     # 夹取杯子 6
     right_arm_cup_grab.set_base_coords_y(-200)
     right_arm_cup_grab.set_base_coords_x(400)
-    rospy.loginfo(f"right_arm_cup_grab  {right_arm_cup_grab}")
     task_right_arm_cup_grab         = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.RIGHT, right_arm_cup_grab,robot.manipulation_status.clamp.status.OPEN)
-    task_right_arm_cup_grab.set_clamp_first
+    task_right_arm_cup_grab.set_clamp_first()
     task_list.append(task_right_arm_cup_grab)
     
-    # 夹取杯子关闭夹子
+    # 夹取杯子关闭夹子 7
     task_right_arm_cup_grab_close    = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.RIGHT, [right_arm_cup_grab],robot.manipulation_status.clamp.status.CLOSE)
-    task_right_arm_cup_grab_close.set_clamp_first
+    task_right_arm_cup_grab_close.set_clamp_first()
     task_list.append(task_right_arm_cup_grab_close)
     
-    # 开启机器
-    # left_arm_coffee_machine_open_prepare.set_base_coords_x(300)
-    # left_arm_coffee_machine_open_prepare.set_base_coords_y(200)
-    # left_arm_coffee_machine_open_prepare.set_base_coords_z(400)
-    # task_left_arm_coffee_machine_open_prepare = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.LEFT, [left_arm_coffee_machine_open_prepare])
-    # task_list.append(task_left_arm_coffee_machine_open_prepare)
+    # 开启机器 8
+    left_arm_coffee_machine_open_prepare.set_base_coords_x(300)
+    left_arm_coffee_machine_open_prepare.set_base_coords_y(200)
+    left_arm_coffee_machine_open_prepare.set_base_coords_z(400)
+    task_left_arm_coffee_machine_open_prepare = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.LEFT, [left_arm_coffee_machine_open_prepare])
+    task_list.append(task_left_arm_coffee_machine_open_prepare)
     
+    # 向上拨一拨 9
+    left_arm_coffee_machine_open = copy.deepcopy(left_arm_coffee_machine_open_prepare)
+    left_arm_coffee_machine_open.arm_pose[2] = left_arm_coffee_machine_open.arm_pose[2] + 20
+    task_left_arm_coffee_machine_open         = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.LEFT, [left_arm_coffee_machine_open])
+    task_list.append(task_left_arm_coffee_machine_open)
     
-    # left_arm_coffee_machine_open = copy.deepcopy(left_arm_coffee_machine_open_prepare)
-    # left_arm_coffee_machine_open.arm_pose[2] = left_arm_coffee_machine_open.arm_pose[2] + 20
-    # task_left_arm_coffee_machine_open         = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.LEFT, [left_arm_coffee_machine_open])
-    # task_list.append(task_left_arm_coffee_machine_open)
+    # 杯子打水 10
+    right_arm_cup_water.set_base_coords_x(300)
+    right_arm_cup_water.set_base_coords_y(-50)
+    task_right_arm_cup_water         = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.RIGHT, [right_arm_cup_water])
+    task_list.append(task_right_arm_cup_water )
     
-    # # 杯子打水
-    # right_arm_cup_water.set_base_coords_x(300)
-    # right_arm_cup_water.set_base_coords_y(-50)
-    # task_right_arm_cup_water         = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.RIGHT, [right_arm_cup_water])
-    # task_list.append(task_right_arm_cup_water )
+    # 关闭机器 11
+    left_arm_coffee_machine_close_prepare.set_base_coords_x(350)
+    left_arm_coffee_machine_close_prepare.set_base_coords_y(200)
+    left_arm_coffee_machine_close_prepare.set_base_coords_z(450)
+    task_left_arm_coffee_machine_close_prepare = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.LEFT, [left_arm_coffee_machine_close_prepare])
+    task_list.append(task_left_arm_coffee_machine_close_prepare)
     
-    # # 关闭机器
-    # left_arm_coffee_machine_close_prepare.set_base_coords_x(350)
-    # left_arm_coffee_machine_close_prepare.set_base_coords_y(200)
-    # left_arm_coffee_machine_close_prepare.set_base_coords_z(450)
-    # task_left_arm_coffee_machine_close_prepare = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.LEFT, [left_arm_coffee_machine_close_prepare])
-    # task_list.append(task_left_arm_coffee_machine_close_prepare)
+    # 向下拨一拨12
+    left_arm_coffee_machine_close = copy.deepcopy(left_arm_coffee_machine_close_prepare)
+    left_arm_coffee_machine_close.arm_pose[2] = left_arm_coffee_machine_close.arm_pose[2] - 20
+    task_left_arm_coffee_machine_close         = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.LEFT, [left_arm_coffee_machine_close])
+    task_list.append(task_left_arm_coffee_machine_close)
     
-    # # 向上拨一拨12
-    # left_arm_coffee_machine_close = copy.deepcopy(left_arm_coffee_machine_close_prepare)
-    # left_arm_coffee_machine_close.arm_pose[2] = left_arm_coffee_machine_close.arm_pose[2] - 20
-    # task_left_arm_coffee_machine_close         = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.LEFT, [left_arm_coffee_machine_close])
-    # task_list.append(task_left_arm_coffee_machine_close)
+    # 移动杯子13
+    right_arm_cup_delivery.set_base_coords_z(210)
+    task_right_arm_cup_delivery = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.RIGHT, [right_arm_cup_delivery])
+    task_list.append(task_right_arm_cup_delivery)
     
-    # # 移动杯子13
-    # right_arm_cup_delivery.set_base_coords_z(210)
-    # task_right_arm_cup_delivery = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.RIGHT, [right_arm_cup_delivery])
-    # task_list.append(task_right_arm_cup_delivery)
+    # 放置杯子 14
+    right_arm_cup_placement.set_base_coords_z(210)
+    task_right_arm_cup_placement = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.RIGHT, [right_arm_cup_placement], robot.manipulation_status.clamp.status.OPEN)
+    task_list.append(task_right_arm_cup_placement)
     
-    # # 放置杯子 14
-    # right_arm_cup_placement.set_base_coords_z(210)
-    # task_right_arm_cup_placement = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.RIGHT, [right_arm_cup_placement], robot.manipulation_status.clamp.status.OPEN)
-    # task_list.append(task_right_arm_cup_placement)
-    
-    # # 回归空闲 15
-    # task_arms_to_idle       = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.LEFT_RIGHT, [left_arm_idle ,right_arm_idle],[robot.manipulation_status.clamp.status.CLOSE,robot.manipulation_status.clamp.status.CLOSE])
-    # task_list.append(task_arms_to_idle)
+    # 回归空闲 15
+    task_arms_to_idle       = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.LEFT_RIGHT, [left_arm_idle ,right_arm_idle],[robot.manipulation_status.clamp.status.CLOSE,robot.manipulation_status.clamp.status.CLOSE])
+    task_list.append(task_arms_to_idle)
     
     # 设置发布消息的频率，1Hz
-    rate = rospy.Rate(0.1)
+    rate = rospy.Rate(10)
 
     # with open('/home/elephant/xzc_code/ros_ws/src/run_task/scripts/test/test_robot/arm_dance_output.txt', 'w') as f:
     with open('/home/xiezhicong/code/airobot_ws/src/run_task/scripts/test/test_robot/arm_dance_output.txt', 'w') as f:
@@ -164,24 +163,27 @@ def talker():
     rospy.loginfo("111111111")
     while not rospy.is_shutdown():
         if  task_index < len(task_list):
+            # 左臂
             if task_list[task_index].arm_id == utilis.Device_id.LEFT and left_arm_idle == True:
-                rospy.loginfo(f"task index : {task_index }")
+                rospy.loginfo(f"task index : {task_index } run left")
                 left_arm_idle_state = False
                 manipulator_actuator.run(task_list[task_index])
                 task_index += 1
+            # 右臂
             elif task_list[task_index].arm_id == utilis.Device_id.RIGHT and right_arm_idle_state == True:
-                rospy.loginfo(f"task index : {task_index }")
+                rospy.loginfo(f"task index : {task_index } run right")
                 right_arm_idle_state = False
                 manipulator_actuator.run(task_list[task_index])
                 task_index += 1
             elif task_list[task_index].arm_id == utilis.Device_id.LEFT_RIGHT and left_arm_idle_state == True and right_arm_idle_state == True:
-                rospy.loginfo(f"task index : {task_index }")
+                rospy.loginfo(f"task index : {task_index } run right and left")
                 left_arm_idle_state = False
                 right_arm_idle_state = False
                 manipulator_actuator.run(task_list[task_index])
                 task_index += 1
-        rospy.loginfo(f"task index : {task_index }, right state : {right_arm_idle_state}, left state : {left_arm_idle_state}")
-        rospy.loginfo("arm")
+            else:
+                rospy.loginfo(f"task index : {task_index }, right state : {right_arm_idle_state}, left state : {left_arm_idle_state}")
+        # rospy.loginfo("arm")
         # 按照设定的频率延时
         rate.sleep()
         
@@ -196,7 +198,7 @@ def constant_config_to_arm_anchor_pose(anchor_point_name,type:arm.PoseType,arm_i
 
     arm_pose.type_id  = type
     arm_pose.arm_id   = arm_id
-    rospy.loginfo(f"{anchor_point_name} : type {type}, pose {arm_pose.arm_pose}")
+    # rospy.loginfo(f"{anchor_point_name} : type {type}, pose {arm_pose.arm_pose}")
     return arm_pose        
 
 
@@ -206,27 +208,23 @@ class Manipulator_actuator():
         self.left_arm_ac  = actionlib.SimpleActionClient(utilis.Topic_name.left_arm_action,  msg.MoveArmAction)
         self.right_arm_ac = actionlib.SimpleActionClient(utilis.Topic_name.right_arm_action, msg.MoveArmAction)
         # TODO:调试需要,暂时注释
+        rospy.loginfo("wait_for_server!!!")
         self.left_arm_ac.wait_for_server()
         self.right_arm_ac.wait_for_server()
+        
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
     
     # 运行
     def run(self, manipulation_task:task.Task_manipulation):
-        rospy.loginfo("running")
-        # 加在运行序列中
-        # task_index = self.running_tasks_manager.add_task(manipulation_task)
-        
-        # 任务开始
-        # manipulation_task.start_time()
         task_index = manipulation_task.task_index
+        rospy.loginfo(f"!!!!!!!!!!!!!!!!!!manipulation_task.arm_id {manipulation_task.arm_id}")
         # 单臂
         if manipulation_task.arm_id == utilis.Device_id.LEFT:
             # 设置action 目标
+            rospy.loginfo("utilis.Device_id.LEFT!")
             goal                      = msg.MoveArmGoal()
             goal.task_index           = task_index
-            print(task_index)
-            goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0]
-            print(f"manipulation_task.target_arms_pose[0] {manipulation_task.target_arms_pose[0]}")
+            goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0].arm_pose
             goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
             goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
@@ -234,12 +232,14 @@ class Manipulator_actuator():
             goal.grasp_speed          = manipulation_task.clamp_speed
             goal.arm_id               = utilis.Device_id.LEFT.value
             self.left_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
-            # rospy.loginfo(f"goal {goal}")
+            rospy.loginfo("utilis.Device_id.LEFT!!")
+            
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
             # 设置action 目标
+            rospy.loginfo("utilis.Device_id.RIGHT!")
             goal                      = msg.MoveArmGoal()
             goal.task_index           = task_index
-            goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0]
+            goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0].arm_pose
             goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
             goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
@@ -247,7 +247,6 @@ class Manipulator_actuator():
             goal.grasp_speed          = manipulation_task.clamp_speed
             goal.arm_id               = utilis.Device_id.RIGHT.value
             self.right_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
-            # rospy.loginfo(f"goal {goal}")
         
         elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
             rospy.loginfo("utilis.Device_id.LEFT_RIGHT")
@@ -293,12 +292,12 @@ class Manipulator_actuator():
             left_arm_idle_state = True
             right_arm_idle_state = True
         
-        # rospy.loginfo(f"task id {result.task_index} done")
+        rospy.loginfo(f"task id {result.task_index} done")
 
     # 激活回调
     @staticmethod
     def active_callback():
-        rospy.loginfo(f"node: {rospy.get_name()}, manipulator active")
+        rospy.loginfo(f"node: {rospy.get_name()}, manipulator active active_callback")
     
     # 反馈回调
     @staticmethod

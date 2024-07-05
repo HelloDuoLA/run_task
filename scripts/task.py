@@ -255,7 +255,6 @@ class Task_manipulation(Task):
         self.arm_id              = arm_id               # 操作对象
         
         # 判断输入是不是列表
-        rospy.loginfo(f"target_arms_pose {type(target_arms_pose)}")
         if isinstance(target_arms_pose,arm.Arm_pose):
             self.target_arms_pose    = [target_arms_pose]
         else: # 是
