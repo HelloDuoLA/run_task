@@ -1,11 +1,11 @@
 <launch>
     <arg name="left_arm_name"  default="Left" />
     <arg name="right_arm_name"  default="Right" />
-    <node pkg="run_task" type="arm_test.py" name="$(arg left_arm_name)_arm" output="screen">
+    <node pkg="run_task" type="arm.py" name="$(arg left_arm_name)_arm" output="screen">
         <param name="arm_name" value="$(arg left_arm_name)"/>
     </node>
 
-    <node pkg="run_task" type="arm_test.py" name="$(arg right_arm_name)_arm" output="screen">
+    <node pkg="run_task" type="arm.py" name="$(arg right_arm_name)_arm" output="screen">
         <param name="arm_name" value="$(arg right_arm_name)"/>
     </node>
 
