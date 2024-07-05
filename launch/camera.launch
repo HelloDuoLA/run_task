@@ -3,5 +3,6 @@
         <rosparam file="$(find run_task)/config/grip_distance_deviation.yaml" command="load"/>
         <param name="frame_width" value="1280"/>
         <param name="frame_height" value="960"/>
+        <param name="calibration_file" value="$(find run_task)/config/image_calibration/"/>
     </node>
 </launch>

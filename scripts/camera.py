@@ -22,6 +22,8 @@ import task
 import order
 
 
+LOG_DIR = "/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/log/"
+
 # 摄像头识别节点, 完成摄像头的识别功能
 
 
@@ -106,9 +108,6 @@ class  YOLO_result_list():
     # 增加
     def add(self,yolo_result:YOLO_result):
         self.yolo_result_list.append(yolo_result)
-    
-
-
 
 # 摄像头控制器
 class camera_controller():
@@ -133,29 +132,74 @@ class recognition_node():
     # 图像识别请求回调
     def do_image_rec_request(request:msg.ImageRecRequest,self:recognition_node):
         result = msg.ImageRecResult()
-        # 识别零食
+        # 识别零食,左右都要用
         if   request.task_type == task.Task_type.Task_image_rec.SNACK :
-            pass
-        # 识别杯子和咖啡机位置
+            right_img = right_camera.read()
+            left_img  = left_camera.read()
+            cv2.imwrite(f"snack_right_{timestamp}.jpg", right_img)
+            cv2.imwrite(f"snack_left_{timestamp}.jpg", left_img)
+            right_stag_result = STag_rec(right_img,mtx, distCoeffs,image_name=f"snack_right_{timestamp}")
+            left_stag_result  = STag_rec(left_img, mtx, distCoeffs,image_name=f"snack_left_{timestamp}")
+            
+        # 识别杯子和咖啡机位置, 只有右臂
         elif request.task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE :
-            pass
-        # 识别咖啡机开关
+            # 拍摄图片
+            grabbed, img = right_camera.read()
+            if grabbed:
+                timestamp = str(int(time.time()))
+                firename = f'LOG_DIR/image/cup_coffee_{timestamp}.jpg'
+                cv2.imwrite(firename, img)
+                # STag 识别
+                stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"cup_coffee_{timestamp}")
+                # TODO:STag 怎么转msg
+            
+        # 识别咖啡机开关, 只有左臂
         elif request.task_type == task.Task_type.Task_image_rec.COFFEE_MACHIE_SWITCH :
-            pass
+            # 拍摄图片
+            grabbed, img = right_camera.read()
+            if grabbed:
+                timestamp = str(int(time.time()))
+                firename = f'LOG_DIR/image/switch_{timestamp}'
+                cv2.imwrite(firename, img)
+                # STag识别
+                stag_result = STag_rec(img,mtx,distCoeffs)
+                # TODO:STag 怎么转msg
+                # TODO:偏移量怎么加
         
+        # 识别容器
+        elif request.task_type == task.Task_type.Task_image_rec.CONTAINER:
+            if request.camera_id == utilis.Device_id.LEFT:
+                # 拍摄图片
+                grabbed, img = left_camera.read()
+                if grabbed:
+                    timestamp = str(int(time.time()))
+                    firename = f'LOG_DIR/image/container_left_{timestamp}'
+                    cv2.imwrite(firename, img)
+                    stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"container_left_{timestamp}")
+                    
+            elif request.camera_id == utilis.Device_id.RIGHT:
+                # 拍摄图片
+                grabbed, img = left_camera.read()
+                if grabbed:
+                    timestamp = str(int(time.time()))
+                    firename = f'LOG_DIR/image/container_right_{timestamp}'
+                    cv2.imwrite(firename, img)
+                    stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"container_right_{timestamp}")
+        
+        
+        result.task_index = request.task_index
+        result.task_type  = request.task_type
+        result.camera_id  = request.camera_id
         # 发布结果
         self.pub_result.publish(result)
-    
-    # 使用yolo识别
-    def yolo(self):
-        pass
-    
-    # 识别stag码
-    def recognition_stag_code(self):
-        pass
+
+# YOLO识别
+def YOLO_rec(snack_id_list,image) -> YOLO_result_list:
+    pass
+
 
 # STag_rec识别
-def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
+def STag_rec(image,mtx,distCoeffs,libraryHD=11,tag_size=20,image_name="")->STag_result_list:
     # 假设的三维点 (例如，一个简单的正方形)
     objectPoints = np.array([
         [-tag_size/2, -tag_size/2,  0],
@@ -185,14 +229,15 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
     # 画圆
     cv2.circle(image, center_coordinates, radius, color, thickness)
 
-    timestamp = int(time.time())
+    if image_name == "":
+        image_name = int(time.time())
 
-    cv2.imwrite(f'/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/log/STag_result/{timestamp}.jpg', image)
+    cv2.imwrite(f'{LOG_DIR}/STag_result/STag_{image_name}.jpg', image)
     
     stag_result_list =  STag_result_list()
     
     # 对于每个id都要进行位置检测
-    with open(f'/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/log/STag_result/{timestamp}.txt', 'a') as file:
+    with open(f'{LOG_DIR}/STag_result/STag_{image_name}.txt', 'a') as file:
         for i, id in enumerate(ids):
             print(f"Index: {i}, ID: {id[0]}")
             file.write(f"Index: {i}, ID: {id[0]}\n")
@@ -207,6 +252,8 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
     
     return stag_result_list
 
+# 偏移量
+# TODO:后续用手眼矩阵覆盖一下
 class Grip_deviation():
     def __init__(self,x,y,z=-999,const_z=-999) -> None:
         self.x = x
@@ -262,12 +309,24 @@ def init_const():
     RightArmGripCup                 = get_deviation("RightArmGripCup",True)
     RightArmWaterCup                = get_deviation("RightArmWaterCup",True)
 
+def init_camera_calibration():
+    global mtx,distCoeffs
+    # 内参矩阵
+    mtx =  [[1.06924343e+03, 0.00000000e+00, 6.87783503e+02],
+            [0.00000000e+00, 1.06903179e+03, 4.49891603e+02],
+            [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]
+    # 畸变系数
+    distCoeffs = [1.836048608614118116e-01, -7.321056681877724515e-01, 3.828147183491327119e-05, 1.508161050588582202e-03, 9.120081467574957523e-01]
+
 def talker():
     # 初始化节点，命名为'camera'
     rospy.init_node('camera')
     
     init_camera()
     init_const()
+    init_camera_calibration()
+
+
 
 
     # 设置发布消息的频率，1Hz

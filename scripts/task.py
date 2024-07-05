@@ -42,12 +42,10 @@ class Task_type():
     
     # 图像识别任务
     class Task_image_rec(Enum):
-        TBD           = 300          # 待定
-        ALL_SNACK     = auto()     # 全部零食
-        SNACK         = auto()     # 零食
-        CONTIANER     = auto()     # 零食容器
-        # COFFEE_MACHIE = auto()     # 咖啡机
-        # CUP           = auto()     # 杯子
+        TBD           = 300           # 待定
+        ALL_SNACK     = auto()        # 全部零食
+        SNACK         = auto()        # 零食
+        CONTAINER     = auto()        # 零食容器
         CUP_COFFEE_MACHINE   = auto() # 杯子和咖啡机
         COFFEE_MACHIE_SWITCH = auto() # 咖啡机开关
         

@@ -1,3 +1,5 @@
+#! /usr/bin/env /usr/bin/python3
+# -*- coding: utf-8 -*-
 import argparse
 import numpy as np
 import cv2
@@ -99,7 +101,7 @@ if __name__ == "__main__":
 
     # 转换为numpy矩阵
     camera_matrix = np.array(data)
-    # print(f"Camera Matrix: {camera_matrix}")
+    print(f"Camera Matrix: {camera_matrix}")
     
     dist_file_path = f"{calibration_path}/dist.txt"
     
