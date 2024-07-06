@@ -152,10 +152,10 @@ def talker():
     rate = rospy.Rate(10)
 
     # with open('/home/elephant/xzc_code/ros_ws/src/run_task/scripts/test/test_robot/arm_dance_output.txt', 'w') as f:
-    with open('/home/xiezhicong/code/airobot_ws/src/run_task/scripts/test/test_robot/arm_dance_output.txt', 'w') as f:
-        for i in range(len(task_list)):
-            f.write(f"id {i}\n")
-            f.write(f"{task_list[i]}\n")
+    # with open('/home/xiezhicong/code/airobot_ws/src/run_task/scripts/test/test_robot/arm_dance_output.txt', 'w') as f:
+        # for i in range(len(task_list)):
+        #     f.write(f"id {i}\n")
+        #     f.write(f"{task_list[i]}\n")
     
     task_index = 0
     manipulator_actuator = Manipulator_actuator()
@@ -163,8 +163,9 @@ def talker():
     rospy.loginfo("111111111")
     while not rospy.is_shutdown():
         if  task_index < len(task_list):
+            task_list[task_index].task_index = task_index
             # 左臂
-            if task_list[task_index].arm_id == utilis.Device_id.LEFT and left_arm_idle == True:
+            if task_list[task_index].arm_id == utilis.Device_id.LEFT and left_arm_idle_state == True:
                 rospy.loginfo(f"task index : {task_index } run left")
                 left_arm_idle_state = False
                 manipulator_actuator.run(task_list[task_index])
