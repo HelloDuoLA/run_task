@@ -58,7 +58,7 @@ RightArmContainerDelivery:
 # 右臂零食框放置时的位点
 RightArmContainerPlacement:
 # y 与抓取框时相同,  z比抓取框高10mm
-  coords: [430, -999, 420, -180, 0, 90]
+  coords: [430, -999, 380, -180, 0, 90]
 
 # 识别杯子准备动作
 CupRecBefore:

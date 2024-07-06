@@ -117,7 +117,7 @@ def talker():
     
     # 杯子打水 10
     right_arm_cup_water.set_base_coords_x(300)
-    right_arm_cup_water.set_base_coords_y(-50)
+    right_arm_cup_water.set_base_coords_y(50)
     task_right_arm_cup_water         = task.Task_manipulation(task.Task_type.Task_manipulation.Move, None, utilis.Device_id.RIGHT, [right_arm_cup_water])
     task_list.append(task_right_arm_cup_water )
     
@@ -168,18 +168,21 @@ def talker():
             if task_list[task_index].arm_id == utilis.Device_id.LEFT and left_arm_idle_state == True:
                 rospy.loginfo(f"task index : {task_index } run left")
                 left_arm_idle_state = False
+                # input("Press Enter to continue...")
                 manipulator_actuator.run(task_list[task_index])
                 task_index += 1
             # 右臂
             elif task_list[task_index].arm_id == utilis.Device_id.RIGHT and right_arm_idle_state == True:
                 rospy.loginfo(f"task index : {task_index } run right")
                 right_arm_idle_state = False
+                # input("Press Enter to continue...")
                 manipulator_actuator.run(task_list[task_index])
                 task_index += 1
             elif task_list[task_index].arm_id == utilis.Device_id.LEFT_RIGHT and left_arm_idle_state == True and right_arm_idle_state == True:
                 rospy.loginfo(f"task index : {task_index } run right and left")
                 left_arm_idle_state = False
                 right_arm_idle_state = False
+                # input("Press Enter to continue...")
                 manipulator_actuator.run(task_list[task_index])
                 task_index += 1
             else:
@@ -199,7 +202,7 @@ def constant_config_to_arm_anchor_pose(anchor_point_name,type:arm.PoseType,arm_i
 
     arm_pose.type_id  = type
     arm_pose.arm_id   = arm_id
-    # rospy.loginfo(f"{anchor_point_name} : type {type}, pose {arm_pose.arm_pose}")
+    rospy.loginfo(f"{anchor_point_name} : type {type}, pose {arm_pose.arm_pose}")
     return arm_pose        
 
 
@@ -218,7 +221,6 @@ class Manipulator_actuator():
     # 运行
     def run(self, manipulation_task:task.Task_manipulation):
         task_index = manipulation_task.task_index
-        rospy.loginfo(f"!!!!!!!!!!!!!!!!!!manipulation_task.arm_id {manipulation_task.arm_id}")
         # 单臂
         if manipulation_task.arm_id == utilis.Device_id.LEFT:
             # 设置action 目标
@@ -293,7 +295,7 @@ class Manipulator_actuator():
             left_arm_idle_state = True
             right_arm_idle_state = True
         
-        rospy.loginfo(f"task id {result.task_index} done")
+        rospy.loginfo(f"task id {result.task_index} done status {status}")
 
     # 激活回调
     @staticmethod

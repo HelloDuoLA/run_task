@@ -6,6 +6,7 @@ import actionlib
 import random
 from pymycobot import Mercury
 from enum import Enum,auto # 任务字典
+import time
 
 # 增加头文件路径 
 import rospkg
@@ -169,10 +170,19 @@ class Arm_controller():
         def move_arm(self,pose_type:PoseType,pose_list):
             rospy.loginfo(f"{self.id} arm move to {pose_list} using {pose_type}")
             if pose_type == PoseType.ANGLE:
-                rospy.loginfo("!!!!!!!!!!!!!")
-                return self.control_instance.send_angles(pose_list,50)
+                result = self.control_instance.send_angles(pose_list,50)
+                self.wait()
+                return result 
             elif pose_type == PoseType.BASE_COORDS:
-                return self.control_instance.send_base_coords(pose_list,50)
+                result = self.control_instance.send_base_coords(pose_list,50)
+                self.wait()
+                return result 
+        
+        def wait(self):
+            time.sleep(0.3)
+            while(self.control_instance.is_moving()):
+                # print("arm is moving")
+                time.sleep(0.03)
             
 
     
