@@ -19,8 +19,10 @@ sys.path.insert(0,package_path + "/scripts")
 
 import utilis
 import run_task.msg as msg
+import run_task.srv as srv
 import task
 import order
+import arm
 
 
 LOG_DIR = "/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/log/"
@@ -62,6 +64,11 @@ class STag_result_list():
     
     def add(self,stag_result:STag_result):
         self.stag_result_list.append(stag_result)   
+    
+    def to_msg() -> List[msg.ObjPositionWithID]:
+        return_list = []
+        # TODO
+        return return_list
     
     # 绑定yolo结果进行输出
     def bind(self,yolo_result_list:YOLO_result_list)->Rec_result_list:
@@ -194,8 +201,10 @@ class Rec_result_list():
         self.rec_result_list:List[Rec_result] = []
     
     # 转为消息
-    def to_msg(self):
-        pass
+    def to_msg(self)->List[msg.ObjPositionWithID]:
+        return_list = []
+        # TODO
+        return return_list
     
     # 融合
     def fuse(self,other_list:Rec_result_list)->Rec_result_list:
@@ -236,20 +245,52 @@ class recognition_node():
         # 订阅图像识别需求
         self.sub_request = rospy.Subscriber(utilis.Topic_name.image_recognition_request,msg.ImageRecRequest,self.do_image_rec_request,callback_args=self,queue_size=10)
         # 发布图像识别结果
-        self.pub_result = rospy.Publisher(utilis.Topic_name.image_recognition_result,msg.ImageRecResult,queue_size=10)
+        self.pub_result  = rospy.Publisher(utilis.Topic_name.image_recognition_result,msg.ImageRecResult,queue_size=10)
+        # 请求手臂位置服务
+        self.left_arm_client  = rospy.ServiceProxy(utilis.Topic_name.left_arm_action  ,srv.CheckArmPose)
+        self.right_arm_client = rospy.ServiceProxy(utilis.Topic_name.right_arm_action ,srv.CheckArmPose)
     
     @staticmethod
     # 图像识别请求回调
     def do_image_rec_request(request:msg.ImageRecRequest,self:recognition_node):
         result = msg.ImageRecResult()
         # 识别零食,左右都要用
-        if   request.task_type == task.Task_type.Task_image_rec.SNACK :
+        if  request.task_type == task.Task_type.Task_image_rec.SNACK :
+            snacks = request.snacks
+            
             right_img = right_camera.read()
             left_img  = left_camera.read()
             cv2.imwrite(f"snack_right_{timestamp}.jpg", right_img)
             cv2.imwrite(f"snack_left_{timestamp}.jpg", left_img)
             right_stag_result = STag_rec(right_img,mtx, distCoeffs,image_name=f"snack_right_{timestamp}")
             left_stag_result  = STag_rec(left_img, mtx, distCoeffs,image_name=f"snack_left_{timestamp}")
+            
+            # 请求机械臂位置
+            arm_req = srv.CheckArmPoseRequest()
+            arm_req.type_id = arm.PoseType.BASE_COORDS.value
+            
+            left_resp  = self.left_arm_client.call(arm_req)
+            right_resp = self.right_arm_client.call(arm_req)
+            left_arm_poses  = left_resp.arm_pose
+            right_arm_poses = right_resp.arm_pose
+            right_stag_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
+            left_arm_poses  = left_resp.arm_pose
+            left_stag_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
+            
+            # YOLO识别
+            right_yolo_result = YOLO_rec(snacks, right_img)
+            left_yolo_result  = YOLO_rec(snacks, left_img)
+            
+            # YOLO 与 STag 结果绑定
+            right_rec_result = right_stag_result.bind(right_yolo_result)
+            left_rec_result  = left_stag_result.bind(left_yolo_result)
+            
+            # 两个结果融合
+            final_rec_result = right_rec_result.fuse(left_rec_result)
+            
+            # 转为消息
+            return_msg = final_rec_result.to_msg()
+            
             
         # 识别杯子和咖啡机位置, 只有右臂
         elif request.task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE :
@@ -261,7 +302,20 @@ class recognition_node():
                 cv2.imwrite(firename, img)
                 # STag 识别
                 stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"cup_coffee_{timestamp}")
-                # TODO:STag 怎么转msg
+                
+                # # 请求机械臂位置
+                arm_req = srv.CheckArmPoseRequest()
+                arm_req.type_id = arm.PoseType.BASE_COORDS.value
+            
+                right_resp = self.right_arm_client.call(arm_req)
+                right_arm_poses = right_resp.arm_pose
+                
+                # 修正位置
+                stag_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
+                
+                # 发送信息
+                obj_positions = stag_result.to_msg()
+
             
         # 识别咖啡机开关, 只有左臂
         elif request.task_type == task.Task_type.Task_image_rec.COFFEE_MACHIE_SWITCH :
@@ -273,11 +327,22 @@ class recognition_node():
                 cv2.imwrite(firename, img)
                 # STag识别
                 stag_result = STag_rec(img,mtx,distCoeffs)
-                # TODO:STag 怎么转msg
-                # TODO:偏移量怎么加
+                # # 请求机械臂位置
+                arm_req = srv.CheckArmPoseRequest()
+                arm_req.type_id = arm.PoseType.BASE_COORDS.value
+            
+                left_resp = self.left_arm_client.call(arm_req)
+                left_arm_poses = left_resp.arm_pose
+                
+                # 修正位置
+                stag_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
+                
+                # 发送信息
+                obj_positions = stag_result.to_msg()
         
         # 识别容器
         elif request.task_type == task.Task_type.Task_image_rec.CONTAINER:
+            # 左臂
             if request.camera_id == utilis.Device_id.LEFT:
                 # 拍摄图片
                 grabbed, img = left_camera.read()
@@ -287,6 +352,19 @@ class recognition_node():
                     cv2.imwrite(firename, img)
                     stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"container_left_{timestamp}")
                     
+                    # 请求机械臂位置
+                    arm_req = srv.CheckArmPoseRequest()
+                    arm_req.type_id = arm.PoseType.BASE_COORDS.value
+                
+                    left_resp = self.left_arm_client.call(arm_req)
+                    left_arm_poses = left_resp.arm_pose
+                    
+                    # 修正位置
+                    stag_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
+                    
+                    # 发送信息
+                    obj_positions = stag_result.to_msg()
+                    
             elif request.camera_id == utilis.Device_id.RIGHT:
                 # 拍摄图片
                 grabbed, img = left_camera.read()
@@ -295,11 +373,24 @@ class recognition_node():
                     firename = f'LOG_DIR/image/container_right_{timestamp}'
                     cv2.imwrite(firename, img)
                     stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"container_right_{timestamp}")
-        
-        
-        result.task_index = request.task_index
-        result.task_type  = request.task_type
-        result.camera_id  = request.camera_id
+                    
+                    # 请求机械臂位置
+                    arm_req = srv.CheckArmPoseRequest()
+                    arm_req.type_id = arm.PoseType.BASE_COORDS.value
+                
+                    right_resp      = self.right_arm_client.call(arm_req)
+                    right_arm_poses = right_resp.arm_pose
+                    
+                    # 修正位置
+                    stag_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
+                    
+                    # 发送信息
+                    obj_positions = stag_result.to_msg()
+
+        result.task_index    = request.task_index
+        result.task_type     =  request.task_type
+        result.camera_id     = request.camera_id
+        result.obj_positions = obj_positions
         # 发布结果
         self.pub_result.publish(result)
 
