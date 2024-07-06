@@ -39,6 +39,8 @@ class Task_type():
         Navigate_to_the_right_service_desk = auto()  # 导航到右侧服务台
         Navigate_to_one_service_desk       = auto()  # 导航到其中一个服务台
         Rotation_in_place                  = auto()  # 原地旋转
+        Move_backward                      = auto()  # 后退
+        
     
     # 图像识别任务
     class Task_image_rec(Enum):
@@ -61,16 +63,21 @@ class Task_type():
     class Task_manipulation(Enum):
         Grasp              = 400                     # 夹具夹取
         Move               = auto()                  # 机械臂移动
+        Move_to_IDLE       = auto()                  # 机械臂空闲
         Grasp_snack        = auto()                  # 夹零食
         Lossen_snack       = auto()                  # 放零食
+        Rec_snack          = auto()                  # 识别零食
         Grasp_container    = auto()                  # 夹容器
         Deliever_container = auto()                  # 送容器
+        Rec_container      = auto()                  # 识别容器
         Lossen_container   = auto()                  # 放容器
         Grasp_cup          = auto()                  # 夹杯子
         Deliever_cup       = auto()                  # 送杯子
         Lossen_cup         = auto()                  # 放杯子
+        Rec_cup_machine    = auto()                  # 识别杯子和咖啡机
         Turn_on_coffee_machine  = auto()             # 打开咖啡机
         Turn_off_coffee_machine = auto()             # 关闭咖啡机
+        Rec_machine_switch = auto()                  # 识别咖啡机开关
     
     # 初始化
     def __init__(self,task_name:Enum) -> None:
@@ -207,10 +214,10 @@ class Task():
                 )
 # 导航任务
 class Task_navigation(Task):
-    def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(), rotation_degree=0):
+    def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(), back_meters=0):
         super().__init__(task_name,finish_cb)
         self.target_3D_pose  = target_3D_pose
-        self.rotation_degree = rotation_degree         # 旋转度数
+        self.back_meters     = back_meters         # 旋转度数
     
     # 设置目的点
     def set_target(self,target_3D_pose:utilis.Pose3D):
