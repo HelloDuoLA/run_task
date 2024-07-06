@@ -46,8 +46,8 @@ class Task_type():
         ALL_SNACK     = auto()        # 全部零食
         SNACK         = auto()        # 零食
         CONTAINER     = auto()        # 零食容器
-        CUP_COFFEE_MACHINE   = auto() # 杯子和咖啡机
-        COFFEE_MACHIE_SWITCH = auto() # 咖啡机开关
+        CUP_COFFEE_MACHINE    = auto() # 杯子和咖啡机
+        COFFEE_MACHINE_SWITCH = auto() # 咖啡机开关
         
         def __eq__(self, value: object) -> bool:
             if isinstance(value,self.__class__):
@@ -220,6 +220,14 @@ class Task_navigation(Task):
 
 # 图像识别任务
 class Task_image_rec(Task):
+    class Rec_OBJ_type(Enum):
+        SNACK          = 0        # SNAKC有自己独立的ID
+        CONTAINER      = auto()   # 容器
+        MACHINE_SWITCH = auto()   # 机器开关
+        CUP            = auto()   # 杯子
+        WATER_POINT    = auto()   # 接水点
+        
+    
     def __init__(self, task_name,fn_callback, camera_id:utilis.Device_id, snack_list:order.Snack_list = order.Snack_list()):
         super().__init__(task_name,fn_callback)
         self.camera_id   = camera_id     # 摄像头id
