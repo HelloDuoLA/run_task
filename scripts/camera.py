@@ -74,6 +74,7 @@ class STag_result_list():
             obj_position.obj_id        = stag_result.obj_id
             obj_position.position      = stag_result.base_coords
             obj_position.position_type = arm.PoseType.BASE_COORDS.value
+            rospy.loginfo(f"msg.ObjPositionWithID \n{msg.ObjPositionWithID}")
             return_list.append(obj_position)
         return return_list
     
@@ -437,6 +438,7 @@ class Recognition_node():
         result.camera_id     = request.camera_id
         result.obj_positions = obj_positions
         # 发布结果
+        rospy.loginfo(f"result {result}")
         self.pub_result.publish(result)
 
 # YOLO识别
@@ -485,7 +487,7 @@ def STag_rec(image,mtx,distCoeffs,libraryHD=11,tag_size=20,image_name="")->STag_
     # 对于每个id都要进行位置检测
     with open(f'{LOG_DIR}/STag_result/STag_{image_name}.txt', 'a') as file:
         for i, id in enumerate(ids):
-            print(f"Index: {i}, ID: {id[0]}")
+            rospy.loginfo(f"Index: {i}, ID: {id[0]}")
             file.write(f"Index: {i}, ID: {id[0]}\n")
             imagePoints  = corners_list[i]
             success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
