@@ -18,7 +18,7 @@ DWAPlannerROS:
   acc_lim_y: 0.0          #机器人在y方向的极限加速度，单位：m/s^2。非全向移动机器人为0   
 
   #目标点误差允许值
-  xy_goal_tolerance: 0.1   #机器人到达目标点时附近时的弧度偏差允许量，在该偏差内认为已经到达目标点单位为：m
+  xy_goal_tolerance: 0.06   #机器人到达目标点时附近时的弧度偏差允许量，在该偏差内认为已经到达目标点单位为：m
   yaw_goal_tolerance: 0.1 #机器人到达目标点时附近时的弧度偏差允许量，在该偏差内认为已经到达目标点，单位为：rad
   latch_xy_goal_tolerance: false #设置为true时表示：如果到达容错距离内,机器人就会原地旋转；即使转动是会跑出容错距离外。
 
@@ -29,7 +29,7 @@ DWAPlannerROS:
   vtheta_samples: 20 #旋转方向的速度空间采样点数
 
   #轨迹评分参数
-  path_distance_bias: 60.0     #控制器与给定路径接近程度的权重
+  path_distance_bias: 60.0      #控制器与给定路径接近程度的权重
   goal_distance_bias: 24.0      #控制器与局部目标点的接近程度的权重，也用于速度控制
   occdist_scale: 0.5            #控制器躲避障碍物的程度
   forward_point_distance: 0.325 #以机器人为中心，额外放置一个计分点的距离
