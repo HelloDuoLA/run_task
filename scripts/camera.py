@@ -87,14 +87,20 @@ class STag_result_list():
     def modified_position(self,rec_task_type:task.Task_type.Task_image_rec,arm_id:utilis.Device_id,arm_poses):
         # 零食
         if rec_task_type == task.Task_type.Task_image_rec.SNACK:
+            # 左臂
             if arm_id == utilis.Device_id.LEFT:
                 for i in range(self.stag_result_list):
                     stag_result = self.stag_result_list[i]
-                    stag_result.base_coords[0] = arm_poses[0]          # x
-                    stag_result.base_coords[1] = arm_poses[1]          # y
-                    stag_result.base_coords[2] = arm_poses[2]          # z
+                    stag_result.base_coords[0] = arm_poses[0]  +  stag_result.image_coords[2] + LeftArmGripSnack.x    # x = x + z + bias
+                    stag_result.base_coords[1] = arm_poses[1]  -  stag_result.image_coords[1] + LeftArmGripSnack.y    # y = y - y + bias
+                    stag_result.base_coords[2] = arm_poses[2]  +  stag_result.image_coords[0] + LeftArmGripSnack.z    # z = z + x + bias
+            # 右臂
             elif arm_id == utilis.Device_id.RIGHT:
-                pass
+                for i in range(self.stag_result_list):
+                    stag_result = self.stag_result_list[i]
+                    stag_result.base_coords[0] = arm_poses[0]  +  stag_result.image_coords[2] + RightArmGripSnack.x   # x = x + z + bias
+                    stag_result.base_coords[1] = arm_poses[1]  +  stag_result.image_coords[1] + RightArmGripSnack.y   # y = y + y + bias
+                    stag_result.base_coords[2] = arm_poses[2]  -  stag_result.image_coords[0] + RightArmGripSnack.z   # z = z - x + bias
         # 容器
         elif rec_task_type == task.Task_type.Task_image_rec.CONTAINER:
             if arm_id == utilis.Device_id.LEFT:
@@ -104,8 +110,8 @@ class STag_result_list():
                     stag_result = self.stag_result_list[i] 
                     # 寻找容器STag
                     if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.CONTAINER]:
-                        stag_result.base_coords[0] = stag_result.base_coords[0] + LeftArmGripContainer.x
-                        stag_result.base_coords[1] = stag_result.base_coords[1] + LeftArmGripContainer.y
+                        stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[0] + LeftArmGripContainer.x # x = x + x + bias
+                        stag_result.base_coords[1] = arm_poses[1] - stag_result.image_coords[1] + LeftArmGripContainer.y # y = y - y + bias
                         stag_result.base_coords[2] = LeftArmGripContainer.const_z                     #固定z坐标
                         stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
                         new_stag_result_list.append(stag_result)
@@ -117,8 +123,8 @@ class STag_result_list():
                     stag_result = self.stag_result_list[i] 
                     # 寻找容器STag
                     if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.CONTAINER]:
-                        stag_result.base_coords[0] = stag_result.base_coords[0] + RightArmGripContainer.x
-                        stag_result.base_coords[1] = stag_result.base_coords[1] + RightArmGripContainer.y
+                        stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[0] + RightArmGripContainer.x # x = x - x + bias
+                        stag_result.base_coords[1] = arm_poses[1] + stag_result.image_coords[1] + RightArmGripContainer.y # y = y + y + bias
                         stag_result.base_coords[2] = RightArmGripContainer.const_z                     #固定z坐标
                         stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
                         new_stag_result_list.append(stag_result)
@@ -131,14 +137,16 @@ class STag_result_list():
                 stag_result = self.stag_result_list[i] 
                 # 先判断是不是杯子或接水点
                 if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.CUP]:
-                    stag_result.base_coords[0] = stag_result.base_coords[0] + RightArmGripCup.x
-                    stag_result.base_coords[1] = stag_result.base_coords[1] + RightArmGripCup.y
+                    # 杯子
+                    stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[2] + RightArmGripCup.x  # x = x + z + bias
+                    stag_result.base_coords[1] = arm_poses[1] + stag_result.image_coords[1] + RightArmGripCup.y  # y = y + y + bias
                     stag_result.base_coords[2] = RightArmGripCup.const_z                              #固定z坐标
                     stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CUP.value
                     new_stag_result_list.append(stag_result)
                 elif stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.WATER_POINT]:
-                    stag_result.base_coords[0] = stag_result.base_coords[0] + RightArmWaterCup.x
-                    stag_result.base_coords[1] = stag_result.base_coords[1] + RightArmWaterCup.y
+                    # 接水点
+                    stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[2] + RightArmWaterCup.x  # x = x + z + bias
+                    stag_result.base_coords[1] = arm_poses[1] + stag_result.image_coords[1] + RightArmWaterCup.y  # y = y + y + bias
                     stag_result.base_coords[2] = RightArmWaterCup.const_z                             #固定z坐标
                     stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value
                     new_stag_result_list.append(stag_result)
@@ -150,9 +158,9 @@ class STag_result_list():
             for i in range(self.stag_result_list):
                 stag_result = self.stag_result_list[i] 
                 if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH]:
-                    stag_result.base_coords[0] = stag_result.base_coords[0] + LeftArmGripTurnOnMachineSwitch.x
-                    stag_result.base_coords[1] = stag_result.base_coords[1] + LeftArmGripTurnOnMachineSwitch.y
-                    stag_result.base_coords[2] = stag_result.base_coords[2] + LeftArmGripTurnOnMachineSwitch.z
+                    stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[2] + LeftArmGripTurnOnMachineSwitch.x  # x = x + z + bias
+                    stag_result.base_coords[1] = arm_poses[1] - stag_result.image_coords[1] + LeftArmGripTurnOnMachineSwitch.y  # y = y - y + bias
+                    stag_result.base_coords[2] = arm_poses[2] + stag_result.image_coords[0] + LeftArmGripTurnOnMachineSwitch.z  # z = z + x + bias
                     stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value
                     new_stag_result_list.append(stag_result)
             self.stag_result_list = new_stag_result_list
@@ -163,9 +171,9 @@ class STag_result_list():
             for i in range(self.stag_result_list):
                 stag_result = self.stag_result_list[i] 
                 if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH]:
-                    stag_result.base_coords[0] = stag_result.base_coords[0] + LeftArmGripTurnOFFMachineSwitch.x
-                    stag_result.base_coords[1] = stag_result.base_coords[1] + LeftArmGripTurnOFFMachineSwitch.y
-                    stag_result.base_coords[2] = stag_result.base_coords[2] + LeftArmGripTurnOFFMachineSwitch.z
+                    stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[2] + LeftArmGripTurnOFFMachineSwitch.x # x = x + z + bias
+                    stag_result.base_coords[1] = arm_poses[1] - stag_result.image_coords[1] + LeftArmGripTurnOFFMachineSwitch.y # y = y - y + bias
+                    stag_result.base_coords[2] = arm_poses[2] + stag_result.image_coords[0] + LeftArmGripTurnOFFMachineSwitch.z # z = z + x + bias
                     stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value
                     new_stag_result_list.append(stag_result)
             self.stag_result_list = new_stag_result_list
@@ -428,8 +436,8 @@ def talker():
     init_const()
     init_camera_calibration()
 
-
-
+    a = rospy.get_param(f'~LeftArmGripContainer/y_bias')
+    rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!!!{a}")
 
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(1)
