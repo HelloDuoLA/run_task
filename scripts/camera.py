@@ -74,7 +74,6 @@ class STag_result_list():
             obj_position.obj_id        = stag_result.obj_id
             obj_position.position      = stag_result.base_coords
             obj_position.position_type = arm.PoseType.BASE_COORDS.value
-            rospy.loginfo(f"msg.ObjPositionWithID \n{msg.ObjPositionWithID}")
             return_list.append(obj_position)
         return return_list
     
@@ -120,9 +119,9 @@ class STag_result_list():
         elif rec_task_type == task.Task_type.Task_image_rec.CONTAINER:
             if arm_id == utilis.Device_id.LEFT:
                 # 左手
-                new_stag_result_list = copy.deepcopy(self.stag_result_list)
+                new_stag_result_list = [ ]
                 for i in range(len(self.stag_result_list)):
-                    stag_result = self.stag_result_list[i] 
+                    stag_result = copy.deepcopy(self.stag_result_list[i]) 
                     # 寻找容器STag
                     if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.CONTAINER]:
                         stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[0] + LeftArmGripContainer.x # x = x + x + bias
@@ -133,9 +132,9 @@ class STag_result_list():
                 self.stag_result_list = new_stag_result_list
             elif arm_id == utilis.Device_id.RIGHT:
                 # 右手
-                new_stag_result_list = copy.deepcopy(self.stag_result_list)
+                new_stag_result_list = [ ]
                 for i in range(len(self.stag_result_list)):
-                    stag_result = self.stag_result_list[i] 
+                    stag_result = copy.deepcopy(self.stag_result_list[i]) 
                     # 寻找容器STag
                     if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.CONTAINER]:
                         stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[0] + RightArmGripContainer.x # x = x - x + bias
@@ -146,10 +145,10 @@ class STag_result_list():
                 self.stag_result_list = new_stag_result_list
         # 咖啡机和杯子
         elif rec_task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE:
-            new_stag_result_list = copy.deepcopy(self.stag_result_list)
+            new_stag_result_list = [ ]
             # 只有右手
             for i in range(len(self.stag_result_list)):
-                stag_result = self.stag_result_list[i] 
+                stag_result = copy.deepcopy(self.stag_result_list[i])  
                 # 先判断是不是杯子或接水点
                 if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.CUP]:
                     # 杯子
@@ -169,9 +168,9 @@ class STag_result_list():
         # 打开咖啡机开关
         elif rec_task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON:
             # 识别开机, 只有左手
-            new_stag_result_list = copy.deepcopy(self.stag_result_list)
+            new_stag_result_list = [ ]
             for i in range(len(self.stag_result_list)):
-                stag_result = self.stag_result_list[i] 
+                stag_result = copy.deepcopy(self.stag_result_list[i])  
                 if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH]:
                     stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[2] + LeftArmGripTurnOnMachineSwitch.x  # x = x + z + bias
                     stag_result.base_coords[1] = arm_poses[1] - stag_result.image_coords[1] + LeftArmGripTurnOnMachineSwitch.y  # y = y - y + bias
@@ -182,9 +181,9 @@ class STag_result_list():
         # 关闭咖啡机开关
         elif rec_task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF:
             # 识别关机, 只有左手
-            new_stag_result_list = copy.deepcopy(self.stag_result_list)
+            new_stag_result_list = [ ]
             for i in range(len(self.stag_result_list)):
-                stag_result = self.stag_result_list[i] 
+                stag_result = copy.deepcopy(self.stag_result_list[i])  
                 if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH]:
                     stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[2] + LeftArmGripTurnOFFMachineSwitch.x # x = x + z + bias
                     stag_result.base_coords[1] = arm_poses[1] - stag_result.image_coords[1] + LeftArmGripTurnOFFMachineSwitch.y # y = y - y + bias
