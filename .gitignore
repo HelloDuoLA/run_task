@@ -2,3 +2,6 @@
 build/
 devel/
 .catkin_tools/
+log/image
+log/STag_result
+

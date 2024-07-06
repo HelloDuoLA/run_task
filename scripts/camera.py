@@ -103,14 +103,14 @@ class STag_result_list():
         if rec_task_type == task.Task_type.Task_image_rec.SNACK:
             # 左臂
             if arm_id == utilis.Device_id.LEFT:
-                for i in range(self.stag_result_list):
+                for i in range(len(self.stag_result_list)):
                     stag_result = self.stag_result_list[i]
                     stag_result.base_coords[0] = arm_poses[0]  +  stag_result.image_coords[2] + LeftArmGripSnack.x    # x = x + z + bias
                     stag_result.base_coords[1] = arm_poses[1]  -  stag_result.image_coords[1] + LeftArmGripSnack.y    # y = y - y + bias
                     stag_result.base_coords[2] = arm_poses[2]  +  stag_result.image_coords[0] + LeftArmGripSnack.z    # z = z + x + bias
             # 右臂
             elif arm_id == utilis.Device_id.RIGHT:
-                for i in range(self.stag_result_list):
+                for i in range(len(self.stag_result_list)):
                     stag_result = self.stag_result_list[i]
                     stag_result.base_coords[0] = arm_poses[0]  +  stag_result.image_coords[2] + RightArmGripSnack.x   # x = x + z + bias
                     stag_result.base_coords[1] = arm_poses[1]  +  stag_result.image_coords[1] + RightArmGripSnack.y   # y = y + y + bias
@@ -120,7 +120,7 @@ class STag_result_list():
             if arm_id == utilis.Device_id.LEFT:
                 # 左手
                 new_stag_result_list = copy.deepcopy(self.stag_result_list)
-                for i in range(self.stag_result_list):
+                for i in range(len(self.stag_result_list)):
                     stag_result = self.stag_result_list[i] 
                     # 寻找容器STag
                     if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.CONTAINER]:
@@ -133,7 +133,7 @@ class STag_result_list():
             elif arm_id == utilis.Device_id.RIGHT:
                 # 右手
                 new_stag_result_list = copy.deepcopy(self.stag_result_list)
-                for i in range(self.stag_result_list):
+                for i in range(len(self.stag_result_list)):
                     stag_result = self.stag_result_list[i] 
                     # 寻找容器STag
                     if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.CONTAINER]:
@@ -147,7 +147,7 @@ class STag_result_list():
         elif rec_task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE:
             new_stag_result_list = copy.deepcopy(self.stag_result_list)
             # 只有右手
-            for i in range(self.stag_result_list):
+            for i in range(len(self.stag_result_list)):
                 stag_result = self.stag_result_list[i] 
                 # 先判断是不是杯子或接水点
                 if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.CUP]:
@@ -169,7 +169,7 @@ class STag_result_list():
         elif rec_task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON:
             # 识别开机, 只有左手
             new_stag_result_list = copy.deepcopy(self.stag_result_list)
-            for i in range(self.stag_result_list):
+            for i in range(len(self.stag_result_list)):
                 stag_result = self.stag_result_list[i] 
                 if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH]:
                     stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[2] + LeftArmGripTurnOnMachineSwitch.x  # x = x + z + bias
@@ -182,7 +182,7 @@ class STag_result_list():
         elif rec_task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF:
             # 识别关机, 只有左手
             new_stag_result_list = copy.deepcopy(self.stag_result_list)
-            for i in range(self.stag_result_list):
+            for i in range(len(self.stag_result_list)):
                 stag_result = self.stag_result_list[i] 
                 if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH]:
                     stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[2] + LeftArmGripTurnOFFMachineSwitch.x # x = x + z + bias
@@ -261,13 +261,13 @@ class Recognition_node():
         # 发布图像识别结果
         self.pub_result  = rospy.Publisher(utilis.Topic_name.image_recognition_result,msg.ImageRecResult,queue_size=10)
         # 请求手臂位置服务
-        self.left_arm_client  = rospy.ServiceProxy(utilis.Topic_name.left_arm_action  ,srv.CheckArmPose)
-        self.right_arm_client = rospy.ServiceProxy(utilis.Topic_name.right_arm_action ,srv.CheckArmPose)
+        self.left_arm_client  = rospy.ServiceProxy(utilis.Topic_name.CheckLeftArmPose  ,srv.CheckArmPose)
+        self.right_arm_client = rospy.ServiceProxy(utilis.Topic_name.CheckRightArmPose ,srv.CheckArmPose)
     
     @staticmethod
     # 图像识别请求回调
     def do_image_rec_request(request:msg.ImageRecRequest,self:Recognition_node):
-        rospy.loginfo(f"node name :{rospy.get_name()}, get request {request}")
+        # rospy.loginfo(f"node name :{rospy.get_name()}, get request {request}")
         
         result = msg.ImageRecResult()
         # 识别零食,左右都要用
@@ -397,7 +397,7 @@ class Recognition_node():
                     arm_req = srv.CheckArmPoseRequest()
                     arm_req.type_id = arm.PoseType.BASE_COORDS.value
                 
-                    left_resp = self.left_arm_client.call(arm_req)
+                    left_resp:srv.CheckArmPoseResponse = self.left_arm_client.call(arm_req)
                     left_arm_poses = left_resp.arm_pose
                     
                     # 修正位置
@@ -435,7 +435,7 @@ class Recognition_node():
         result.task_index    = request.task_index
         result.task_type     = request.task_type
         result.camera_id     = request.camera_id
-        result.positions     = obj_positions
+        result.obj_positions = obj_positions
         # 发布结果
         self.pub_result.publish(result)
 
@@ -490,7 +490,7 @@ def STag_rec(image,mtx,distCoeffs,libraryHD=11,tag_size=20,image_name="")->STag_
             imagePoints  = corners_list[i]
             success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
             if success:
-                stag_result = STag_result(utilis.Device_id.LEFT, id[0], (imagePoints[0] + imagePoints[1])/2, [translationVector[0][0],translationVector[1][0],translationVector[2][0]])
+                stag_result = STag_result(utilis.Device_id.LEFT, id[0], (imagePoints[0][0] + imagePoints[0][2])/2, [translationVector[0][0],translationVector[1][0],translationVector[2][0]])
                 stag_result_list.add(stag_result)
                 file.write(f"平移向量 x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}\n\n\n")
             else:
@@ -558,11 +558,16 @@ def init_const():
 def init_camera_calibration():
     global mtx,distCoeffs
     # 内参矩阵
-    mtx =  [[1.06924343e+03, 0.00000000e+00, 6.87783503e+02],
-            [0.00000000e+00, 1.06903179e+03, 4.49891603e+02],
-            [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]
+    # mtx =  [[1.06924343e+03, 0.00000000e+00, 6.87783503e+02],
+    #         [0.00000000e+00, 1.06903179e+03, 4.49891603e+02],
+    #         [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]
+    mtx = np.array([[1.06924343e+03, 0.00000000e+00, 6.87783503e+02],
+                    [0.00000000e+00, 1.06903179e+03, 4.49891603e+02],
+                    [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]], dtype=np.float32)
     # 畸变系数
-    distCoeffs = [1.836048608614118116e-01, -7.321056681877724515e-01, 3.828147183491327119e-05, 1.508161050588582202e-03, 9.120081467574957523e-01]
+    distCoeffs = np.array([1.836048608614118116e-01, -7.321056681877724515e-01, 
+                           3.828147183491327119e-05, 1.508161050588582202e-03, 
+                           9.120081467574957523e-01], dtype=np.float32)
 
 def talker():
     # 初始化节点，命名为'camera'

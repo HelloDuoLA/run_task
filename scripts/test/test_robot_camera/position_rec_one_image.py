@@ -43,11 +43,12 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
     
     xyz_list_with_id = []
     # 对于每个id都要进行位置检测
-    with open(f'./result/{timestamp}.txt', 'a') as file:
+    with open(f'./STag/result/{timestamp}.txt', 'a') as file:
         for i, id in enumerate(ids):
             print(f"Index: {i}, ID: {id[0]}")
             file.write(f"Index: {i}, ID: {id[0]}\n")
             imagePoints  = corners_list[i]
+            print(f"imagePoints \n {imagePoints}")
             success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
             if success:
                 xyz_list_with_id.append([id[0],translationVector.flatten().tolist()])
