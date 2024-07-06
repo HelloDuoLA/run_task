@@ -267,6 +267,8 @@ class Recognition_node():
     @staticmethod
     # 图像识别请求回调
     def do_image_rec_request(request:msg.ImageRecRequest,self:Recognition_node):
+        rospy.loginfo(f"node name :{rospy.get_name()}, get request {request}")
+        
         result = msg.ImageRecResult()
         # 识别零食,左右都要用
         if  request.task_type == task.Task_type.Task_image_rec.SNACK :
@@ -337,10 +339,10 @@ class Recognition_node():
             grabbed, img = right_camera.read()
             if grabbed:
                 timestamp = str(int(time.time()))
-                firename = f'LOG_DIR/image/switch_on_{timestamp}'
+                firename = f'LOG_DIR/image/switch_on_{timestamp}.jpg'
                 cv2.imwrite(firename, img)
                 # STag识别
-                stag_result = STag_rec(img,mtx,distCoeffs)
+                stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"switch_on_{timestamp}")
                 # # 请求机械臂位置
                 arm_req = srv.CheckArmPoseRequest()
                 arm_req.type_id = arm.PoseType.BASE_COORDS.value
@@ -360,10 +362,10 @@ class Recognition_node():
             grabbed, img = right_camera.read()
             if grabbed:
                 timestamp = str(int(time.time()))
-                firename = f'LOG_DIR/image/switch_off_{timestamp}'
+                firename = f'LOG_DIR/image/switch_off_{timestamp}.jpg'
                 cv2.imwrite(firename, img)
                 # STag识别
-                stag_result = STag_rec(img,mtx,distCoeffs)
+                stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"switch_off_{timestamp}")
                 # # 请求机械臂位置
                 arm_req = srv.CheckArmPoseRequest()
                 arm_req.type_id = arm.PoseType.BASE_COORDS.value
@@ -379,14 +381,16 @@ class Recognition_node():
         
         # 识别容器
         elif request.task_type == task.Task_type.Task_image_rec.CONTAINER:
+            rospy.loginfo(f"request.task_type is task.Task_type.Task_image_rec.CONTAINER ")
             # 左臂
             if request.camera_id == utilis.Device_id.LEFT:
                 # 拍摄图片
                 grabbed, img = left_camera.read()
                 if grabbed:
                     timestamp = str(int(time.time()))
-                    firename = f'LOG_DIR/image/container_left_{timestamp}'
+                    firename = f'LOG_DIR/image/container_left_{timestamp}.jpg'
                     cv2.imwrite(firename, img)
+                    rospy.loginfo(f"sava image {firename}")
                     stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"container_left_{timestamp}")
                     
                     # 请求机械臂位置
@@ -407,7 +411,7 @@ class Recognition_node():
                 grabbed, img = left_camera.read()
                 if grabbed:
                     timestamp = str(int(time.time()))
-                    firename = f'LOG_DIR/image/container_right_{timestamp}'
+                    firename = f'LOG_DIR/image/container_right_{timestamp}.jpg'
                     cv2.imwrite(firename, img)
                     stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"container_right_{timestamp}")
                     
@@ -423,11 +427,15 @@ class Recognition_node():
                     
                     # 发送信息
                     obj_positions = stag_result.to_msg()
+            else:
+                raise ValueError("camera_id is not defined")
+        else:
+            raise ValueError("task_type is not defined")
 
         result.task_index    = request.task_index
-        result.task_type     =  request.task_type
+        result.task_type     = request.task_type
         result.camera_id     = request.camera_id
-        result.obj_positions = obj_positions
+        result.positions     = obj_positions
         # 发布结果
         self.pub_result.publish(result)
 
@@ -564,7 +572,7 @@ def talker():
     init_const()
     init_camera_calibration()
 
-    node = recognition_node()
+    recognition_node = Recognition_node()
 
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(1)

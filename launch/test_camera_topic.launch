@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="run_task" type="test_camera_topic.py" name="test_camera_topic" output="screen">
+    </node>
+</launch>
