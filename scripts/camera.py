@@ -65,9 +65,16 @@ class STag_result_list():
     def add(self,stag_result:STag_result):
         self.stag_result_list.append(stag_result)   
     
-    def to_msg() -> List[msg.ObjPositionWithID]:
+    # 转为msg
+    def to_msg(self,) -> List[msg.ObjPositionWithID]:
         return_list = []
-        # TODO
+        for stag_result in self.stag_result_list:
+            obj_position = msg.ObjPositionWithID()
+            obj_position.arm_id        = stag_result.camera_id
+            obj_position.obj_id        = stag_result.obj_id
+            obj_position.position      = stag_result.base_coords
+            obj_position.position_type = arm.PoseType.BASE_COORDS.value
+            return_list.append(obj_position)
         return return_list
     
     # 绑定yolo结果进行输出
@@ -203,10 +210,17 @@ class Rec_result_list():
     # 转为消息
     def to_msg(self)->List[msg.ObjPositionWithID]:
         return_list = []
-        # TODO
+        for stag_result in self.rec_result_list:
+            obj_position = msg.ObjPositionWithID()
+            obj_position.arm_id        = stag_result.camera_id
+            obj_position.obj_id        = stag_result.obj_id
+            obj_position.position      = stag_result.base_coords
+            obj_position.position_type = arm.PoseType.BASE_COORDS.value
+            return_list.append(obj_position)
         return return_list
     
     # 融合
+    # TODO:待完成
     def fuse(self,other_list:Rec_result_list)->Rec_result_list:
         final_result = Rec_result_list()
         return final_result
