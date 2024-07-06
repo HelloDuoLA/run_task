@@ -10,7 +10,7 @@ from geometry_msgs.msg  import PoseWithCovarianceStamped
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
 import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal, MoveBaseFeedback
-
+import copy
 
 # 自定义包
 rospack = rospkg.RosPack()
@@ -728,44 +728,49 @@ class Order_driven_task_schedul():
     # 拿饮料后
     def create_tasks_after_get_drink(self,table_id:utilis.Device_id):
         tasks_after_get_drink        = task.Task_sequence()
+        
         #  将左臂抬到指定位置(可并行，固定)
-        task_left_arm_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move,None,utilis.Device_id.LEFT,\
-            system.constant_config.arm_anchor_point.left_arm_idle,robot.manipulation_status.clamp.status.OPEN)
+        task_left_arm_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT,\
+            system.anchor_point.left_arm_idle,robot.manipulation_status.clamp.status.CLOSE)
         task_left_arm_idle.parallel = task.Task.Task_parallel.ALL
         tasks_after_get_drink.add(task_left_arm_idle)
+        
         #  将右臂(拿水)抬到指定位置(可并行，固定)
         task_right_arm_water_delivery = task.Task_manipulation(task.Task_type.Task_manipulation.Move,None,utilis.Device_id.RIGHT,\
-            system.constant_config.arm_anchor_point.cup_delivery)
+            system.anchor_point.right_arm_cup_delivery)
         task_right_arm_water_delivery.parallel = task.Task.Task_parallel.ALL
         tasks_after_get_drink.add(task_right_arm_water_delivery)
-        #  机器人原地转身(可前并行，固定)
-        task_rotation = task.Task_navigation(task.Task_type.Task_navigate.Rotation_in_place,None,rotation_degree=20)
+        
+        #  机器人后退(可前并行，固定)
+        task_rotation = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.4)
         task_rotation.parallel = task.Task.Task_parallel.ALL
         tasks_after_get_drink.add(task_rotation)
+        
         #  导航前往n号桌(不可并行，半动态)
-        if table_id == utilis.Device_id.LEFT.value:
-            task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_left_service_desk,None,system.constant_config.robot_anchor_point.left_service_desk)
-        elif table_id == utilis.Device_id.RIGHT.value:
-            task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_right_service_desk,None,system.constant_config.robot_anchor_point.right_service_desk)
+        if table_id == utilis.Device_id.LEFT:
+            task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_left_service_desk,None,system.anchor_point.map_left_service_desk)
+        elif table_id == utilis.Device_id.RIGHT:
+            task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_right_service_desk,None,system.anchor_point.map_right_service_desk)
         else:
             raise ValueError("Invalid table_id")
         tasks_after_get_drink.add(task_navigation_to_service_desk)
+        
         #  将饮料臂放到指定位置后松开(不可并行，固定)
         task_right_arm_placement_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_cup,None,utilis.Device_id.RIGHT,\
-            system.constant_config.arm_anchor_point.cup_placement,robot.manipulation_status.clamp.status.OPEN)
+            system.anchor_point.right_arm_cup_placement,robot.manipulation_status.clamp.status.OPEN)
         tasks_after_get_drink.add(task_right_arm_placement_cup)
         
         #  将左,右臂放到空闲位置(可并行，固定)
-        task_arm_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move,None,utilis.Device_id.LEFT_RIGHT,\
-                [system.constant_config.arm_anchor_point.right_arm_idle,system.constant_config.arm_anchor_point.right_arm_idle],\
+        task_arm_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
+                [system.anchor_point.right_arm_idle,system.anchor_point.right_arm_idle],\
                 [robot.manipulation_status.clamp.status.OPEN,robot.manipulation_status.clamp.status.OPEN])
         task_arm_idle.parallel = task.Task.Task_parallel.ALL
         tasks_after_get_drink.add(task_arm_idle)
         
-        # 机器人原地转身(可前并行，固定)
-        task_rotate2 = task.Task_navigation(task.Task_type.Task_navigate.Rotation_in_place,None,rotation_degree=20)
-        task_rotate2.parallel = task.Task.Task_parallel.ALL
-        tasks_after_get_drink.add(task_rotate2)
+        #  机器人后退(可前并行，固定)
+        task_rotation2 = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.4)
+        task_rotation2.parallel = task.Task.Task_parallel.ALL
+        tasks_after_get_drink.add(task_rotation2)
         
         # 赋值
         return tasks_after_get_drink
