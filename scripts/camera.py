@@ -25,7 +25,7 @@ import order
 import arm
 
 
-LOG_DIR = "/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/log/"
+LOG_DIR = "/home/elephant/xzc_code/ros_ws/src/run_task/log"
 
 # 摄像头识别节点, 完成摄像头的识别功能
 
@@ -314,7 +314,7 @@ class Recognition_node():
             grabbed, img = right_camera.read()
             if grabbed:
                 timestamp = str(int(time.time()))
-                firename = f'LOG_DIR/image/cup_coffee_{timestamp}.jpg'
+                firename = f'{LOG_DIR}/image/cup_coffee_{timestamp}.jpg'
                 cv2.imwrite(firename, img)
                 # STag 识别
                 stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"cup_coffee_{timestamp}")
@@ -339,7 +339,7 @@ class Recognition_node():
             grabbed, img = right_camera.read()
             if grabbed:
                 timestamp = str(int(time.time()))
-                firename = f'LOG_DIR/image/switch_on_{timestamp}.jpg'
+                firename = f'{LOG_DIR}/image/switch_on_{timestamp}.jpg'
                 cv2.imwrite(firename, img)
                 # STag识别
                 stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"switch_on_{timestamp}")
@@ -362,7 +362,7 @@ class Recognition_node():
             grabbed, img = right_camera.read()
             if grabbed:
                 timestamp = str(int(time.time()))
-                firename = f'LOG_DIR/image/switch_off_{timestamp}.jpg'
+                firename = f'{LOG_DIR}/image/switch_off_{timestamp}.jpg'
                 cv2.imwrite(firename, img)
                 # STag识别
                 stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"switch_off_{timestamp}")
@@ -388,7 +388,7 @@ class Recognition_node():
                 grabbed, img = left_camera.read()
                 if grabbed:
                     timestamp = str(int(time.time()))
-                    firename = f'LOG_DIR/image/container_left_{timestamp}.jpg'
+                    firename = f'{LOG_DIR}/image/container_left_{timestamp}.jpg'
                     cv2.imwrite(firename, img)
                     rospy.loginfo(f"sava image {firename}")
                     stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"container_left_{timestamp}")
@@ -411,7 +411,7 @@ class Recognition_node():
                 grabbed, img = left_camera.read()
                 if grabbed:
                     timestamp = str(int(time.time()))
-                    firename = f'LOG_DIR/image/container_right_{timestamp}.jpg'
+                    firename = f'{LOG_DIR}/image/container_right_{timestamp}.jpg'
                     cv2.imwrite(firename, img)
                     stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"container_right_{timestamp}")
                     

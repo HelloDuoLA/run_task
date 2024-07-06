@@ -18,6 +18,8 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
     ], dtype=np.float32)
     
     print(objectPoints)
+    print(f"mtx \n {mtx}")
+    print(f"distCoeffs \n {distCoeffs}")
     
     (corners_list, ids, rejected_corners_list) = stag.detectMarkers(image, libraryHD)
     
