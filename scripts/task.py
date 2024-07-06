@@ -46,8 +46,10 @@ class Task_type():
         ALL_SNACK     = auto()        # 全部零食
         SNACK         = auto()        # 零食
         CONTAINER     = auto()        # 零食容器
-        CUP_COFFEE_MACHINE    = auto() # 杯子和咖啡机
-        COFFEE_MACHINE_SWITCH = auto() # 咖啡机开关
+        CUP_COFFEE_MACHINE        = auto() # 杯子和咖啡机
+        COFFEE_MACHINE_SWITCH_ON  = auto() # 咖啡机开关, 用于开机
+        COFFEE_MACHINE_SWITCH_OFF = auto() # 咖啡机开关, 用于关机
+        
         
         def __eq__(self, value: object) -> bool:
             if isinstance(value,self.__class__):

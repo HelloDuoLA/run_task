@@ -30,22 +30,23 @@ LOG_DIR = "/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/log/"
 
 # STag 识别结果
 class STag_result():
-    def __init__(self,camera_id:utilis.Device_id, stag_id:int, image_xy=[], base_coords=[]) -> None:
-        self.camera_id   = camera_id
-        self.stag_id     = stag_id
-        self.image_xy    = image_xy
-        self.base_coords = base_coords
-        self.obj_id      = -999           # 识别非零食使用
+    def __init__(self,camera_id:utilis.Device_id, stag_id:int, image_xy=[], image_coords=[]) -> None:
+        self.camera_id    = camera_id
+        self.stag_id      = stag_id
+        self.image_xy     = image_xy
+        self.image_coords = image_coords                 # 图像三维坐标系
+        self.base_coords  = copy.deepcopy(image_coords)  # 机械臂基坐标系
+        self.obj_id       = -999           # 识别非零食使用
 
 # STag 识别结果列表
 class STag_result_list():
     # TODO:值域为STag码, 根据实际修改
     STag_Snack_dict = {
-        order.Snack.Snack_id.YIDA.value      : 1,
-        order.Snack.Snack_id.GUOSHU.value    : 2,
-        order.Snack.Snack_id.CKU.value       : 3,
-        order.Snack.Snack_id.RUSUANJUN.value : 4,
-        order.Snack.Snack_id.CHENPIDAN.value : 5,
+        order.Snack.Snack_id.YIDA    : 1,
+        order.Snack.Snack_id.GUOSHU  : 2,
+        order.Snack.Snack_id.CKU     : 3,
+        order.Snack.Snack_id.RUSUANJUN : 4,
+        order.Snack.Snack_id.CHENPIDAN : 5,
     }
     
     STag_other_dict = {
@@ -83,17 +84,46 @@ class STag_result_list():
         return rec_result_list
     
     # 根据任务与左右手对坐标值进行修正
-    def modified_position(self,rec_task_type:task.Task_type.Task_image_rec,arm_id:utilis.Device_id):
+    def modified_position(self,rec_task_type:task.Task_type.Task_image_rec,arm_id:utilis.Device_id,arm_poses):
+        # 零食
         if rec_task_type == task.Task_type.Task_image_rec.SNACK:
             if arm_id == utilis.Device_id.LEFT:
-                pass
+                for i in range(self.stag_result_list):
+                    stag_result = self.stag_result_list[i]
+                    stag_result.base_coords[0] = arm_poses[0]          # x
+                    stag_result.base_coords[1] = arm_poses[1]          # y
+                    stag_result.base_coords[2] = arm_poses[2]          # z
             elif arm_id == utilis.Device_id.RIGHT:
                 pass
+        # 容器
         elif rec_task_type == task.Task_type.Task_image_rec.CONTAINER:
             if arm_id == utilis.Device_id.LEFT:
-                pass
+                # 左手
+                new_stag_result_list = copy.deepcopy(self.stag_result_list)
+                for i in range(self.stag_result_list):
+                    stag_result = self.stag_result_list[i] 
+                    # 寻找容器STag
+                    if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.CONTAINER]:
+                        stag_result.base_coords[0] = stag_result.base_coords[0] + LeftArmGripContainer.x
+                        stag_result.base_coords[1] = stag_result.base_coords[1] + LeftArmGripContainer.y
+                        stag_result.base_coords[2] = LeftArmGripContainer.const_z                     #固定z坐标
+                        stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
+                        new_stag_result_list.append(stag_result)
+                self.stag_result_list = new_stag_result_list
             elif arm_id == utilis.Device_id.RIGHT:
-                pass
+                # 右手
+                new_stag_result_list = copy.deepcopy(self.stag_result_list)
+                for i in range(self.stag_result_list):
+                    stag_result = self.stag_result_list[i] 
+                    # 寻找容器STag
+                    if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.CONTAINER]:
+                        stag_result.base_coords[0] = stag_result.base_coords[0] + RightArmGripContainer.x
+                        stag_result.base_coords[1] = stag_result.base_coords[1] + RightArmGripContainer.y
+                        stag_result.base_coords[2] = RightArmGripContainer.const_z                     #固定z坐标
+                        stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
+                        new_stag_result_list.append(stag_result)
+                self.stag_result_list = new_stag_result_list
+        # 咖啡机和杯子
         elif rec_task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE:
             new_stag_result_list = copy.deepcopy(self.stag_result_list)
             # 只有右手
@@ -103,16 +133,42 @@ class STag_result_list():
                 if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.CUP]:
                     stag_result.base_coords[0] = stag_result.base_coords[0] + RightArmGripCup.x
                     stag_result.base_coords[1] = stag_result.base_coords[1] + RightArmGripCup.y
-                    stag_result.base_coords[2] = RightArmGripCup.const_z
+                    stag_result.base_coords[2] = RightArmGripCup.const_z                              #固定z坐标
+                    stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CUP.value
                     new_stag_result_list.append(stag_result)
                 elif stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.WATER_POINT]:
                     stag_result.base_coords[0] = stag_result.base_coords[0] + RightArmWaterCup.x
                     stag_result.base_coords[1] = stag_result.base_coords[1] + RightArmWaterCup.y
-                    stag_result.base_coords[2] = RightArmWaterCup.const_z
+                    stag_result.base_coords[2] = RightArmWaterCup.const_z                             #固定z坐标
+                    stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value
+                    new_stag_result_list.append(stag_result)
             self.stag_result_list = new_stag_result_list
-        elif rec_task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH:
-            # 只有左手
-            pass
+        # 打开咖啡机开关
+        elif rec_task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON:
+            # 识别开机, 只有左手
+            new_stag_result_list = copy.deepcopy(self.stag_result_list)
+            for i in range(self.stag_result_list):
+                stag_result = self.stag_result_list[i] 
+                if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH]:
+                    stag_result.base_coords[0] = stag_result.base_coords[0] + LeftArmGripTurnOnMachineSwitch.x
+                    stag_result.base_coords[1] = stag_result.base_coords[1] + LeftArmGripTurnOnMachineSwitch.y
+                    stag_result.base_coords[2] = stag_result.base_coords[2] + LeftArmGripTurnOnMachineSwitch.z
+                    stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value
+                    new_stag_result_list.append(stag_result)
+            self.stag_result_list = new_stag_result_list
+        # 关闭咖啡机开关
+        elif rec_task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF:
+            # 识别关机, 只有左手
+            new_stag_result_list = copy.deepcopy(self.stag_result_list)
+            for i in range(self.stag_result_list):
+                stag_result = self.stag_result_list[i] 
+                if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH]:
+                    stag_result.base_coords[0] = stag_result.base_coords[0] + LeftArmGripTurnOFFMachineSwitch.x
+                    stag_result.base_coords[1] = stag_result.base_coords[1] + LeftArmGripTurnOFFMachineSwitch.y
+                    stag_result.base_coords[2] = stag_result.base_coords[2] + LeftArmGripTurnOFFMachineSwitch.z
+                    stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value
+                    new_stag_result_list.append(stag_result)
+            self.stag_result_list = new_stag_result_list
         else:
             raise ValueError("rec_task_type is not defined")
 
