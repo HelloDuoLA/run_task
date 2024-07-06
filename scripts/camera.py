@@ -11,6 +11,7 @@ import stag
 import time
 from tf.transformations import euler_matrix
 from typing import List
+import copy
 
 rospack = rospkg.RosPack()
 package_path = rospack.get_path('run_task')
@@ -34,9 +35,11 @@ class STag_result():
         self.stag_id     = stag_id
         self.image_xy    = image_xy
         self.base_coords = base_coords
+        self.obj_id      = -999           # 识别非零食使用
 
 # STag 识别结果列表
 class STag_result_list():
+    # TODO:值域为STag码, 根据实际修改
     STag_Snack_dict = {
         order.Snack.Snack_id.YIDA.value      : 1,
         order.Snack.Snack_id.GUOSHU.value    : 2,
@@ -44,6 +47,15 @@ class STag_result_list():
         order.Snack.Snack_id.RUSUANJUN.value : 4,
         order.Snack.Snack_id.CHENPIDAN.value : 5,
     }
+    
+    STag_other_dict = {
+        task.Task_image_rec.Rec_OBJ_type.CONTAINER        : 1,
+        task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH   : 2,
+        task.Task_image_rec.Rec_OBJ_type.CUP              : 3,
+        task.Task_image_rec.Rec_OBJ_type.WATER_POINT      : 4,
+    }
+    
+    
     def __init__(self) -> None:
         self.stag_result_list:List[STag_result] = []
     
@@ -63,12 +75,46 @@ class STag_result_list():
         return rec_result_list
     
     # 通过已知STag id 与零食的关系进行绑定 
-    def modify(self)->Rec_result_list:
+    def to_rec_result(self)->Rec_result_list:
         rec_result_list = Rec_result_list()
         for stag_result in self.stag_result_list:
             rec_result = Rec_result(stag_result.camera_id, self.STag_Snack_dict[stag_result.stag_id], stag_result.image_xy, stag_result.base_coords)
             rec_result_list.rec_result_list.append(rec_result)
         return rec_result_list
+    
+    # 根据任务与左右手对坐标值进行修正
+    def modified_position(self,rec_task_type:task.Task_type.Task_image_rec,arm_id:utilis.Device_id):
+        if rec_task_type == task.Task_type.Task_image_rec.SNACK:
+            if arm_id == utilis.Device_id.LEFT:
+                pass
+            elif arm_id == utilis.Device_id.RIGHT:
+                pass
+        elif rec_task_type == task.Task_type.Task_image_rec.CONTAINER:
+            if arm_id == utilis.Device_id.LEFT:
+                pass
+            elif arm_id == utilis.Device_id.RIGHT:
+                pass
+        elif rec_task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE:
+            new_stag_result_list = copy.deepcopy(self.stag_result_list)
+            # 只有右手
+            for i in range(self.stag_result_list):
+                stag_result = self.stag_result_list[i] 
+                # 先判断是不是杯子或接水点
+                if stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.CUP]:
+                    stag_result.base_coords[0] = stag_result.base_coords[0] + RightArmGripCup.x
+                    stag_result.base_coords[1] = stag_result.base_coords[1] + RightArmGripCup.y
+                    stag_result.base_coords[2] = RightArmGripCup.const_z
+                    new_stag_result_list.append(stag_result)
+                elif stag_result.stag_id == self.STag_other_dict[task.Task_image_rec.Rec_OBJ_type.WATER_POINT]:
+                    stag_result.base_coords[0] = stag_result.base_coords[0] + RightArmWaterCup.x
+                    stag_result.base_coords[1] = stag_result.base_coords[1] + RightArmWaterCup.y
+                    stag_result.base_coords[2] = RightArmWaterCup.const_z
+            self.stag_result_list = new_stag_result_list
+        elif rec_task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH:
+            # 只有左手
+            pass
+        else:
+            raise ValueError("rec_task_type is not defined")
 
 # 识别结果
 class Rec_result():
