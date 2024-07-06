@@ -44,18 +44,18 @@ class STag_result():
 class STag_result_list():
     # TODO:值域为STag码, 根据实际修改
     STag_Snack_dict = {
-        order.Snack.Snack_id.YIDA    : 1,
-        order.Snack.Snack_id.GUOSHU  : 2,
-        order.Snack.Snack_id.CKU     : 3,
+        order.Snack.Snack_id.YIDA    : 8,
+        order.Snack.Snack_id.GUOSHU  : 7,
+        order.Snack.Snack_id.CKU     : 1,
         order.Snack.Snack_id.RUSUANJUN : 4,
-        order.Snack.Snack_id.CHENPIDAN : 5,
+        order.Snack.Snack_id.CHENPIDAN : 3,
     }
     
     STag_other_dict = {
-        task.Task_image_rec.Rec_OBJ_type.CONTAINER        : 1,
-        task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH   : 2,
+        task.Task_image_rec.Rec_OBJ_type.CONTAINER        : 9,
+        task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH   : 12,
         task.Task_image_rec.Rec_OBJ_type.CUP              : 3,
-        task.Task_image_rec.Rec_OBJ_type.WATER_POINT      : 4,
+        task.Task_image_rec.Rec_OBJ_type.WATER_POINT      : 11,
     }
     
     
@@ -254,7 +254,7 @@ class camera_controller():
             self.right_camera_controller = self
     
 
-class recognition_node():
+class Recognition_node():
     def __init__(self) -> None:
         # 订阅图像识别需求
         self.sub_request = rospy.Subscriber(utilis.Topic_name.image_recognition_request,msg.ImageRecRequest,self.do_image_rec_request,callback_args=self,queue_size=10)
@@ -266,7 +266,7 @@ class recognition_node():
     
     @staticmethod
     # 图像识别请求回调
-    def do_image_rec_request(request:msg.ImageRecRequest,self:recognition_node):
+    def do_image_rec_request(request:msg.ImageRecRequest,self:Recognition_node):
         result = msg.ImageRecResult()
         # 识别零食,左右都要用
         if  request.task_type == task.Task_type.Task_image_rec.SNACK :
@@ -332,12 +332,35 @@ class recognition_node():
 
             
         # 识别咖啡机开关, 只有左臂
-        elif request.task_type == task.Task_type.Task_image_rec.COFFEE_MACHIE_SWITCH :
+        elif request.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON :
             # 拍摄图片
             grabbed, img = right_camera.read()
             if grabbed:
                 timestamp = str(int(time.time()))
-                firename = f'LOG_DIR/image/switch_{timestamp}'
+                firename = f'LOG_DIR/image/switch_on_{timestamp}'
+                cv2.imwrite(firename, img)
+                # STag识别
+                stag_result = STag_rec(img,mtx,distCoeffs)
+                # # 请求机械臂位置
+                arm_req = srv.CheckArmPoseRequest()
+                arm_req.type_id = arm.PoseType.BASE_COORDS.value
+            
+                left_resp = self.left_arm_client.call(arm_req)
+                left_arm_poses = left_resp.arm_pose
+                
+                # 修正位置
+                stag_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
+                
+                # 发送信息
+                obj_positions = stag_result.to_msg()
+                
+        # 识别咖啡机开关, 只有左臂
+        elif request.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF :
+            # 拍摄图片
+            grabbed, img = right_camera.read()
+            if grabbed:
+                timestamp = str(int(time.time()))
+                firename = f'LOG_DIR/image/switch_off_{timestamp}'
                 cv2.imwrite(firename, img)
                 # STag识别
                 stag_result = STag_rec(img,mtx,distCoeffs)
@@ -541,8 +564,7 @@ def talker():
     init_const()
     init_camera_calibration()
 
-    a = rospy.get_param(f'~LeftArmGripContainer/y_bias')
-    rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!!!{a}")
+    node = recognition_node()
 
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(1)
