@@ -311,34 +311,33 @@ class Manipulator_actuator():
     # 运行
     def run(self, manipulation_task:task.Task_manipulation):
         # 加在运行序列中
-        self.running_tasks_manager.add_task(manipulation_task)
-        task_index = manipulation_task.task_index
-        
+        task_index = self.running_tasks_manager.add_task(manipulation_task)
+
         # 任务开始
         manipulation_task.update_start_status()
 
-        # 单臂
+        # 左臂
         if manipulation_task.arm_id == utilis.Device_id.LEFT:
             # 设置机械臂状态
             system.robot.update_arm_status(manipulation_task.arm_id,robot.manipulation_status.arm.status.BUSY)
             # 设置action 目标
             goal                      = msg.MoveArmGoal()
             goal.task_index           = task_index
-            goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0]
+            goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0].arm_pose
             goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
             goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
             goal.grasp_first          = manipulation_task.clamp_first
             goal.grasp_speed          = manipulation_task.clamp_speed
             self.left_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
-        
+        # 右臂
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
             # 设置机械臂状态
             system.robot.update_arm_status(manipulation_task.arm_id,robot.manipulation_status.arm.status.BUSY)
             # 设置action 目标
             goal                      = msg.MoveArmGoal()
             goal.task_index           = task_index
-            goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0]
+            goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0].arm_pose
             goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
             goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
@@ -353,7 +352,7 @@ class Manipulator_actuator():
                 if manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.LEFT:
                     system.robot.update_arm_status(utilis.Device_id.LEFT,robot.manipulation_status.arm.status.BUSY)
                     left_goal.task_index           = task_index
-                    left_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i]
+                    left_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
                     left_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
                     left_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
                     left_goal.grasp_first          = manipulation_task.clamp_first
@@ -362,7 +361,7 @@ class Manipulator_actuator():
                 elif manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.RIGHT:
                     system.robot.update_arm_status(utilis.Device_id.RIGHT,robot.manipulation_status.arm.status.BUSY)
                     right_goal.task_index           = task_index
-                    right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i]
+                    right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
                     right_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
                     right_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
                     right_goal.grasp_first          = manipulation_task.clamp_first
@@ -376,22 +375,30 @@ class Manipulator_actuator():
     @staticmethod
     def done_callback(status, result:msg.MoveArmResult):
         rospy.loginfo(f"node: {rospy.get_name()}, manipulator done. status:{status} result:{result}")
-        task_current =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
+        current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
+        
+        if result.arm_id == utilis.Device_id.LEFT:
+            system.robot.update_arm_status(utilis.Device_id.LEFT,robot.manipulation_status.arm.status.IDLE)
+        elif result.arm_id == utilis.Device_id.RIGHT:
+            system.robot.update_arm_status(utilis.Device_id.RIGHT,robot.manipulation_status.arm.status.IDLE)
+        elif result.arm_id == utilis.Device_id.LEFT_RIGHT:
+            system.robot.update_arm_status(utilis.Device_id.LEFT,robot.manipulation_status.arm.status.IDLE)
+            system.robot.update_arm_status(utilis.Device_id.RIGHT,robot.manipulation_status.arm.status.IDLE)
+        
         # 任务成功
         if status == actionlib.GoalStatus.SUCCEEDED:
             rospy.loginfo(f"node: {rospy.get_name()}, manipulator succeed. status : {status}")
-            task_current.update_end_status(task.Task.Task_result.SUCCEED)
+            current_task.update_end_status(task.Task.Task_result.SUCCEED)
         # 任务失败
-        # TODO: 需要分析是机械臂移动失败还是夹取失败
         else:
             rospy.loginfo(f"node: {rospy.get_name()}, manipulator failed. status : {status}")
-            task_current.update_end_status(task.Task.Task_result.FAILED)
+            current_task.update_end_status(task.Task.Task_result.FAILED)
         
         # 任务自带的回调
-        task_current.finish_cb(status, result)
+        current_task.finish_cb(status, result)
         
         # 给任务管理器的回调
-        system.task_manager.tm_task_finish_callback(system.manipulator_actuator.task, status, result)
+        system.task_manager.tm_task_finish_callback(current_task, status, result)
     
     # 激活回调
     @staticmethod
