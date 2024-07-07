@@ -44,11 +44,11 @@ class STag_result():
 class STag_result_list():
     # TODO:值域为STag码, 根据实际修改
     STag_Snack_dict = {
-        order.Snack.Snack_id.YIDA    : 8,
-        order.Snack.Snack_id.GUOSHU  : 7,
-        order.Snack.Snack_id.CKU     : 1,
-        order.Snack.Snack_id.RUSUANJUN : 4,
-        order.Snack.Snack_id.CHENPIDAN : 3,
+        8 : order.Snack.Snack_id.YIDA.value,
+        7 : order.Snack.Snack_id.GUOSHU.value,
+        1 : order.Snack.Snack_id.CKU.value,
+        4 : order.Snack.Snack_id.RUSUANJUN.value,
+        3 : order.Snack.Snack_id.CHENPIDAN.value,
     }
     
     STag_other_dict = {
@@ -274,38 +274,48 @@ class Recognition_node():
         if  request.task_type == task.Task_type.Task_image_rec.SNACK :
             snacks = request.snacks
             
-            right_img = right_camera.read()
-            left_img  = left_camera.read()
-            cv2.imwrite(f"snack_right_{timestamp}.jpg", right_img)
-            cv2.imwrite(f"snack_left_{timestamp}.jpg", left_img)
-            right_stag_result = STag_rec(right_img,mtx, distCoeffs,image_name=f"snack_right_{timestamp}")
-            left_stag_result  = STag_rec(left_img, mtx, distCoeffs,image_name=f"snack_left_{timestamp}")
-            
-            # 请求机械臂位置
-            arm_req = srv.CheckArmPoseRequest()
-            arm_req.type_id = arm.PoseType.BASE_COORDS.value
-            
-            left_resp  = self.left_arm_client.call(arm_req)
-            right_resp = self.right_arm_client.call(arm_req)
-            left_arm_poses  = left_resp.arm_pose
-            right_arm_poses = right_resp.arm_pose
-            right_stag_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
-            left_arm_poses  = left_resp.arm_pose
-            left_stag_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
-            
-            # YOLO识别
-            right_yolo_result = YOLO_rec(snacks, right_img)
-            left_yolo_result  = YOLO_rec(snacks, left_img)
-            
-            # YOLO 与 STag 结果绑定
-            right_rec_result = right_stag_result.bind(right_yolo_result)
-            left_rec_result  = left_stag_result.bind(left_yolo_result)
-            
-            # 两个结果融合
-            final_rec_result = right_rec_result.fuse(left_rec_result)
-            
-            # 转为消息
-            return_msg = final_rec_result.to_msg()
+            right_grabbed, right_img = right_camera.read()
+            left_grabbed,  left_img  = left_camera.read()
+            if right_grabbed == True and left_grabbed == True:
+                timestamp = str(int(time.time()))
+                cv2.imwrite(f"snack_right_{timestamp}.jpg", right_img)
+                cv2.imwrite(f"snack_left_{timestamp}.jpg", left_img)
+                timestamp = str(int(time.time()))
+                timestamp = str(int(time.time()))
+                right_stag_result = STag_rec(right_img,mtx, distCoeffs,image_name=f"snack_right_{timestamp}")
+                left_stag_result  = STag_rec(left_img, mtx, distCoeffs,image_name=f"snack_left_{timestamp}")
+                
+                # 请求机械臂位置
+                arm_req = srv.CheckArmPoseRequest()
+                arm_req.type_id = arm.PoseType.BASE_COORDS.value
+                
+                left_resp  = self.left_arm_client.call(arm_req)
+                right_resp = self.right_arm_client.call(arm_req)
+                
+                right_arm_poses = right_resp.arm_pose
+                right_stag_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
+                left_arm_poses  = left_resp.arm_pose
+                left_stag_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
+                
+                # # YOLO识别
+                # right_yolo_result = YOLO_rec(snacks, right_img)
+                # left_yolo_result  = YOLO_rec(snacks, left_img)
+                
+                # # YOLO 与 STag 结果绑定
+                # right_rec_result = right_stag_result.bind(right_yolo_result)
+                # left_rec_result  = left_stag_result.bind(left_yolo_result)
+                
+                # STag 使用已知信息转为rec_result
+                right_rec_result = right_stag_result.to_rec_result()
+                left_rec_result  = left_stag_result.to_rec_result()
+                
+                # 两个结果融合
+                final_rec_result = right_rec_result.fuse(left_rec_result)
+                
+                # 转为消息
+                obj_positions = final_rec_result.to_msg()
+            else:
+                raise ValueError(f"get image False. Right Image: {right_grabbed}, Left Image: {left_grabbed}")
             
             
         # 识别杯子和咖啡机位置, 只有右臂

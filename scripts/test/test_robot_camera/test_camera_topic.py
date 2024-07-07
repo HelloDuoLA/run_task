@@ -21,9 +21,10 @@ def talker():
     #3.组织消息
     task_index = 0
     request = msg.ImageRecRequest()
-    request.camera_id = utilis.Device_id.LEFT.value
-    
-    request.task_type = task.Task_type.Task_image_rec.CONTAINER.value
+    # request.camera_id = utilis.Device_id.LEFT.value
+    request.camera_id = utilis.Device_id.LEFT_RIGHT.value
+    request.task_type = task.Task_type.Task_image_rec.SNACK.value
+    request.snacks = [1,8]
     
     rospy.loginfo(f"request {request}")
 
