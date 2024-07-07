@@ -18,9 +18,9 @@ import utilis
 import run_task.msg as msg
 import run_task.srv as srv
 
+# 手臂移动方式
 class ArmMoveMethod(Enum):
-    ONLYGRIP   = 0
-    XYZ        = auto()
+    XYZ        = 0
     X_YZ       = auto()
     X_Y_Z      = auto()
     X_Z_Y      = auto()
@@ -33,6 +33,25 @@ class ArmMoveMethod(Enum):
     XY_Z       = auto()
     XZ_Y       = auto()
     YZ_X       = auto()
+    
+    def __str__(self) -> str:
+        return self.name
+    
+    def __eq__(self, value: object) -> bool:
+        if isinstance(value, self.__class__):
+            return self.value == value.value
+        elif isinstance(value, int):
+            return self.value == value
+
+# 抓取方式
+class GripMethod(Enum):
+    DONTCANGE  = 0       # 不改变
+    OPEN       = auto()  # 最后打开
+    OPEN_FIRST = auto()  # 先打开
+    CLOSE      = auto()  # 最后关闭
+    CLOSE_FIRST= auto()  # 先关闭
+    OPEN_CLOSE = auto()  # 先打开后关闭
+    CLOSE_OPEN = auto()  # 先关闭后打开
     
     def __str__(self) -> str:
         return self.name
@@ -120,7 +139,6 @@ class Arm_pose():
         arm_pose.type_id  = self.type_id
         return arm_pose
 
-
 # 机械臂控制器
 class Arm_controller():
     def __init__(self,id:utilis.Device_id) -> None:
@@ -142,6 +160,9 @@ class Arm_controller():
         while not power_on:
             self.control_instance.power_on()
             power_on = self.control_instance.is_power_on()
+            
+        # 开启机械抓爪通信
+        self.control_instance.set_gripper_mode(0)
 
         
         self.action = self.arm_action(self.action_name,self.control_instance,id)
@@ -159,38 +180,49 @@ class Arm_controller():
         def start_action(self):    
             self.action_server.start()
         
-        # TODO: 待完善
         # 执行
         def execute_cb(self, goal:msg.MoveArmGoal):
             rospy.loginfo(f"node: {rospy.get_name()}, arm action server execute. goal: {goal}")
             # 1. 解析目标值
             goal_arm_pose     = goal.arm_pose
-            goal_grasp_speed  = goal.grasp_speed
-            goal_grasp_first  = goal.grasp_first
             goal_grasp_flag   = goal.grasp_flag
-            change_grasp      = False # 是否改变夹具状态
             
-            # if goal_grasp_flag != robot.manipulation_status.clamp.status.DONTCANGE:
-            #     change_grasp = True
-            
-            # if change_grasp == True and goal_grasp_first == True:
-            #     rospy.loginfo(f"node: {rospy.get_name()}, goal_grasp_flag: {goal_grasp_flag}")
-            #     # 夹具动作
-            #     if goal_grasp_flag == robot.manipulation_status.clamp.status.OPEN:
-            #         self.grab_release(goal_grasp_speed)       # 松开
-            #     elif goal_grasp_flag == robot.manipulation_status.clamp.status.CLOSE:
-            #         self.grab_grip(goal_grasp_speed)          # 抓紧
+            # 先打开 and 先打开后关闭
+            if goal_grasp_flag == GripMethod.OPEN_CLOSE and goal_grasp_flag == GripMethod.OPEN_FIRST:
+                self.open_grasp()
+            # 先关闭 and 先关闭后打开
+            elif goal_grasp_flag == GripMethod.CLOSE_OPEN and goal_grasp_flag == GripMethod.CLOSE_FIRST:
+                self.close_grasp()
             
             
             # 2. 给机械臂发送目标值
             self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose)
+            
+            # 后打开 and 先关闭后打开
+            if goal_grasp_flag == GripMethod.CLOSE_OPEN and goal_grasp_flag == GripMethod.OPEN:
+                self.open_grasp()
+            # 后关闭 and 先打开后关闭
+            elif goal_grasp_flag == GripMethod.OPEN_CLOSE and goal_grasp_flag == GripMethod.CLOSE:
+                self.close_grasp()
             
             result = msg.MoveArmResult()
             result.arm_id    = goal.arm_id
             result.task_index = goal.task_index
 
             self.action_server.set_succeeded(result) #可以添加结果参数
-
+            
+        # 关闭抓爪 
+        def close_grasp(self):
+            result = self.control_instance.set_gripper_state(1,100)
+            time.sleep(1)
+            return result
+        
+        # 打开抓爪 
+        def open_grasp(self):
+            result = self.control_instance.set_gripper_state(0,100)
+            time.sleep(1)
+            return result
+            
         # 机械臂移动 
         def move_arm(self,pose_type:PoseType,target_pose,move_method:ArmMoveMethod):
             rospy.loginfo(f"{self.id} arm move to {target_pose} using {pose_type}")
