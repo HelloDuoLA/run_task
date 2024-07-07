@@ -8,7 +8,6 @@ Panels:
         - /Status1
         - /TF1
         - /TF1/Frames1
-        - /TF1/Frames1/odom1
         - /TF1/Tree1
       Splitter Ratio: 0.5
     Tree Height: 212
@@ -356,6 +355,16 @@ Visualization Manager:
       Topic: /move_base/GlobalPlanner/plan
       Unreliable: false
       Value: true
+    - Alpha: 0.699999988079071
+      Class: rviz/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic: /move_base/local_costmap/costmap
+      Unreliable: false
+      Use Timestamp: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -384,7 +393,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 5.980149745941162
+      Distance: 8.280695915222168
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1

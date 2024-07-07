@@ -23,6 +23,15 @@ global_costmap:
   height: 10.0 
   #代价地图分辨率（米/单元格）
   resolution: 0.05
+  #设置膨胀层参数
+  #根据obstacle_layer、static_layer和footprint生成代价地图
+  inflation_layer:
+    #是否开启膨胀层
+    enabled: true 
+    #代价地图数值随与障碍物距离下降的比值，越大会导致路径规划越靠近障碍物
+    cost_scaling_factor: 1.0
+    #机器人膨胀半径，影响路径规划，单位：m
+    inflation_radius: 0.5
   
   #为代价地图设置地图层，这里设置了三层，分别作为静态层、障碍层和膨胀层
   plugins:
@@ -36,12 +45,4 @@ global_costmap:
   #各地图层的参数，会以地图层名称作为命名空间
   #各地图层的参数，会在【costmap_common_params.yaml】内进行设置
 
-#设置膨胀层参数
-#根据obstacle_layer、static_layer和footprint生成代价地图
-inflation_layer:
-  #是否开启膨胀层
-  enabled: true 
-  #代价地图数值随与障碍物距离下降的比值，越大会导致路径规划越靠近障碍物
-  cost_scaling_factor: 1.0
-  #机器人膨胀半径，影响路径规划，单位：m
-  inflation_radius: 0.5
+
