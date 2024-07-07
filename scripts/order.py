@@ -111,6 +111,12 @@ class Snack_list():
             msg_snack_list.append(snack.to_snack_msg())
         return msg_snack_list
     
+    def to_list(self):
+        id_list = []
+        for snack in self.snack_list:
+            id_list.append(snack.id)
+        return id_list
+    
     # 由消息初始化
     @staticmethod
     def instantialize_from_msg(msg:List[msg.SnackIDWithCount]):

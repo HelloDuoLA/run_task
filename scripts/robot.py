@@ -181,6 +181,9 @@ class Robot():
             self.left_manipulation_status.arm_info.status     = arm_status
         elif arm_id == utilis.Device_id.RIGHT:
             self.right_manipulation_status.arm_info.status    = arm_status
+        elif arm_id == utilis.Device_id.LEFT_RIGHT:
+            self.left_manipulation_status.arm_info.status     = arm_status
+            self.right_manipulation_status.arm_info.status    = arm_status
         
     def update_robot_status(self,robot_status:Robot_status):
         self.robot_status = robot_status

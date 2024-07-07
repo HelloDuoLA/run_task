@@ -412,59 +412,58 @@ class Manipulator_actuator():
 
 
 # 图像识别任务执行器
-# TODO:修改为可并行
 class Image_rec_actuator():
     # instance = None
     def __init__(self):
         # image_rec_actuator.instance  = self 
         self.running_tasks_manager          = task.Task_manager_in_running()  # 正在执行的任务管理器       
-        self.pub = rospy.Publisher (utilis.Topic_name.image_recognition_request,msg.ImageRecRequest,self,queue_size=10) # 发布识别任务
-        self.sub = rospy.Subscriber(utilis.Topic_name.image_recognition_result,msg.ImageRecResult,queue_size=10)        # 订阅识别结果
+        self.pub = rospy.Publisher (utilis.Topic_name.image_recognition_request ,msg.ImageRecRequest ,self,queue_size=10) # 发布识别任务
+        self.sub = rospy.Subscriber(utilis.Topic_name.image_recognition_result  ,msg.ImageRecResult  ,queue_size=10)      # 订阅识别结果
 
     # 运行
     def run(self, task_image_rec_task:task.Task_image_rec):
         task_index = self.running_tasks_manager.add_task(task_image_rec_task)
+        system.robot.update_arm_status(utilis.Device_id.LEFT,robot.manipulation_status.arm.status.BUSY)
         # 发布任务
         task_info = msg.ImageRecRequest()
         task_info.task_index = task_index                    # 任务索引
+        task_info.task_type  = task_image_rec_task.task_type.task_type.value # 任务类型
         # 如果是识别零食, 则需要给出零食列表
-        if task_index == task.Task_type.Task_image_rec.SNACK:
-            task_info.snacks = task_image_rec_task.snack_list.to_msg() # 零食列表
-        task_info.task_type  = task_image_rec_task.task_type # 任务类型
-        task_info.arm_poses  = system.robot.get_msg_arms_pose_with_id(task_image_rec_task.camera_id) # 机械臂位姿
-        
+        if task_info.task_type == task.Task_type.Task_image_rec.SNACK:
+            task_info.snacks = task_image_rec_task.snack_list.to_list()      # 零食列表
         # 发布消息
         self.pub.publish(task_info)
-        
-        # TODO: 修改任务状态为等待消息回传
-    
+
     # 识别结果话题回调
     @staticmethod
     def do_image_rec_result_callback(result:msg.ImageRecResult):
         # 获取对应的服务对象
-        task_obj = system.image_rec_actuator.running_tasks_manager.get_task(result.task_index)
+        current_task = system.image_rec_actuator.running_tasks_manager.get_task(result.task_index)
         # 根据不同任务作出不同处理
         # TODO:待处理
         # 识别零食
-        if task_obj.task_type == task.Task_type.Task_image_rec.SNACK:
+        if current_task.task_type == task.Task_type.Task_image_rec.SNACK:
             pass
         # 识别容器
-        elif task_obj.task_type == task.Task_type.Task_image_rec.CONTAINER:
+        elif current_task.task_type == task.Task_type.Task_image_rec.CONTAINER:
             pass
         # 识别咖啡机, 开机
-        elif task_obj.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON:
+        elif current_task.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON:
             pass
-        elif task_obj.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF:
+        # # 识别咖啡机, 关机
+        elif current_task.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF:
             pass
         # 识别杯子
-        elif task_obj.task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE:
+        elif current_task.task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE:
             pass
         else:
             raise ValueError("Invalid task type")
+        
+        current_task.update_end_status(task.Task.Task_result.SUCCEED)
         # 任务自带的回调
-        task_obj.finish_cb(actionlib.GoalStatus.SUCCEEDED)
+        current_task.finish_cb(actionlib.GoalStatus.SUCCEEDED)
         # 给任务管理器的回调
-        system.task_manager.tm_task_finish_callback(task_obj, actionlib.GoalStatus.SUCCEEDED)
+        system.task_manager.tm_task_finish_callback(current_task, actionlib.GoalStatus.SUCCEEDED)
     
 
 # 任务管理器
