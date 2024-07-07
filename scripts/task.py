@@ -41,6 +41,15 @@ class Task_type():
         Rotation_in_place                  = auto()  # 原地旋转
         Move_backward                      = auto()  # 后退
         
+        def __eq__(self, value: object) -> bool:
+            try:
+                # 尝试比较对方的value属性
+                return self.value == value.value
+            except AttributeError:
+                # 如果对方没有value属性，比较对方本身
+                return self.value == value
+
+        
     
     # 图像识别任务
     class Task_image_rec(Enum):
@@ -215,10 +224,11 @@ class Task():
                 )
 # 导航任务
 class Task_navigation(Task):
-    def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(), back_meters=0):
+    def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(), back_meters=0,move_back_speed=0.2):
         super().__init__(task_name,finish_cb)
         self.target_3D_pose  = target_3D_pose
         self.back_meters     = back_meters         # 旋转度数
+        self.move_back_speed = move_back_speed
     
     # 设置目的点
     def set_target(self,target_3D_pose:utilis.Pose3D):

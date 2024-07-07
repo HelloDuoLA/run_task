@@ -202,33 +202,34 @@ class Navigation_actuator():
     # 运行
     def run(self, navigation_task:task.Task_navigation):
         self.task = navigation_task
-        goal = MoveBaseGoal()
-        goal.target_pose.header.frame_id = "map"
-        goal.target_pose.header.stamp    = rospy.Time.now()
-        goal.target_pose.pose.position.x = self.task.target_3D_pose.x
-        goal.target_pose.pose.position.y = self.task.target_3D_pose.y
-        goal.target_pose.pose.position.z = 0
-        orientation = quaternion_from_euler(0, 0, self.task.target_3D_pose.yaw)
-        goal.target_pose.pose.orientation.x = orientation[0]
-        goal.target_pose.pose.orientation.y = orientation[1]
-        goal.target_pose.pose.orientation.z = orientation[2]
-        goal.target_pose.pose.orientation.w = orientation[3]
         self.task.update_start_status() # 刷新开始时间
-        self.move_base_ac.send_goal(goal,self.navigation_task_done_callback,self.navigation_task_active_callback,self.navigation_task_feedback_callback)
-    
+        
+        # 后退任务
+        if navigation_task.task_type == task.Task_type.Task_navigate.Move_backward:
+            goal = msg.ControlCmdGoal()
+            goal.task_index = navigation_task.task_index
+            goal.operation  = task.Task_type.Task_navigate.Move_backward.value
+            goal.speed      = navigation_task.move_back_speed
+            goal.meters     = navigation_task.back_meters
+            self.control_cmd_ac.send_goal(goal,self.control_cmd_task_done_callback,self.control_cmd_active_callback,self.control_cmd_feedback_callback)
+        # 导航任务
+        else:
+            goal = MoveBaseGoal()
+            goal.target_pose.header.frame_id = "map"
+            goal.target_pose.header.stamp    = rospy.Time.now()
+            goal.target_pose.pose.position.x = self.task.target_3D_pose.x
+            goal.target_pose.pose.position.y = self.task.target_3D_pose.y
+            goal.target_pose.pose.position.z = 0
+            orientation = quaternion_from_euler(0, 0, self.task.target_3D_pose.yaw)
+            goal.target_pose.pose.orientation.x = orientation[0]
+            goal.target_pose.pose.orientation.y = orientation[1]
+            goal.target_pose.pose.orientation.z = orientation[2]
+            goal.target_pose.pose.orientation.w = orientation[3]
+            self.move_base_ac.send_goal(goal,self.navigation_task_done_callback,self.navigation_task_active_callback,self.navigation_task_feedback_callback)
+
     # 完成回调
     @staticmethod
     def navigation_task_done_callback(status, result):
-        # PENDING    = 0  # 目标已被接受，但处理尚未开始
-        # ACTIVE     = 1  # 目标正在被处理中
-        # PREEMPTED  = 2  # 目标在达成之前被另一个目标取代，或者在目标完成之前被取消。
-        # SUCCEEDED  = 3  # 目标已成功完成
-        # ABORTED    = 4  # 目标在完成前被中止，但不是因为外部的取消请求。
-        # REJECTED   = 5  # 目标被拒绝，不会被执行。
-        # PREEMPTING = 6  # 目标正在被取代之前的过程中。
-        # RECALLING  = 7  # 目标正在被取消之前的过程中，但尚未开始执行。
-        # RECALLED   = 8  # 目标已被成功取消，在开始执行之前。
-        # LOST       = 9  # 目标被认为丢失。
         rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
         if status == actionlib.GoalStatus.SUCCEEDED:
             rospy.loginfo(f"node: {rospy.get_name()}, navigation succeed. status : {status}")
