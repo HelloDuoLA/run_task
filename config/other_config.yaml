@@ -1,0 +1,4 @@
+# 后退距离 [m]
+SnackDeckMoveBackLength: 0.6
+DrinkDeckMoveBackLength: 0.6
+ServiceDeckMoveBackLength:  0.2

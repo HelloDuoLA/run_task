@@ -107,6 +107,15 @@ class System():
         def __init__(self):
             self._initialize_robot_anchor_point()
             self._initialize_arm_anchor_point()
+            self._initialize_other_config()
+            
+        def _initialize_other_config(self):
+            self.snack_deck_move_back_length = rospy.get_param(f'~SnackDeckMoveBackLength')
+            self.drink_deck_move_back_length = rospy.get_param(f'~DrinkDeckMoveBackLength')
+            # self.left_deck_move_back_length  = rospy.get_param(f'~LeftDeckMoveBackLength')
+            # self.right_deck_move_back_length = rospy.get_param(f'~RightDeckMoveBackLength')
+            self.service_deck_move_back_length = rospy.get_param(f'~ServiceDeckMoveBackLength')
+        
         # 初始化机器人位点常量配置
         def _initialize_robot_anchor_point(self):
             # 初始点
@@ -653,9 +662,10 @@ class Order_driven_task_schedul():
         tasks_pick_snack.add(task_arm_dilivery_container)
 
         # 机器人后退(可前并行，固定)
-        task_move_back = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.4)
-        task_move_back.parallel = task.Task.Task_parallel.ALL
-        tasks_pick_snack.add(task_move_back)
+        task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            back_meters=system.anchor_point.snack_deck_move_back_length)
+        task_move_back_from_snack_desk.parallel = task.Task.Task_parallel.ALL
+        tasks_pick_snack.add(task_move_back_from_snack_desk)
 
         #  导航前往n号桌(不可并行，半动态)
         if table_id == utilis.Device_id.LEFT.value:
@@ -680,9 +690,10 @@ class Order_driven_task_schedul():
         tasks_pick_snack.add(task_arms_idle)
         
         # 机器人后退(可前并行，固定)
-        task_move_back2 = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.4)
-        task_move_back2.parallel = task.Task.Task_parallel.ALL
-        tasks_pick_snack.add(task_move_back2)
+        task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            back_meters = system.anchor_point.service_deck_move_back_length)
+        task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
+        tasks_pick_snack.add(task_move_back_from_service_desk)
         
         return tasks_pick_snack
     
@@ -784,9 +795,10 @@ class Order_driven_task_schedul():
         tasks_get_drink.add(task_right_arm_water_delivery)
         
         #  机器人后退(可前并行，固定)
-        task_move_back_1 = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.4)
-        task_move_back_1.parallel = task.Task.Task_parallel.ALL
-        tasks_get_drink.add(task_move_back_1)
+        task_move_back_from_drink_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            back_meters = system.anchor_point.drink_deck_move_back_length)
+        task_move_back_from_drink_desk.parallel = task.Task.Task_parallel.ALL
+        tasks_get_drink.add(task_move_back_from_drink_desk)
         
         #  导航前往n号桌(不可并行，半动态)
         if table_id == utilis.Device_id.LEFT:
@@ -810,9 +822,10 @@ class Order_driven_task_schedul():
         tasks_get_drink.add(task_arms_idle)
         
         #  机器人后退(可前并行，固定)
-        task_move_back_2 = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.4)
-        task_move_back_2.parallel = task.Task.Task_parallel.ALL
-        tasks_get_drink.add(task_move_back_2)
+        task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            back_meters = system.anchor_point.service_deck_move_back_length)
+        task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
+        tasks_get_drink.add(task_move_back_from_service_desk)
 
         # 赋值
         return tasks_get_drink
