@@ -577,8 +577,8 @@ class Order_driven_task_schedul():
         tasks_pick_snack        = task.Task_sequence()
         
         #  手臂移到空闲位, 并关闭夹爪(不可并行，固定)
-        task_left_right_arms_idle      = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE, None, utilis.Device_id.LEFT_RIGHT, [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
-            [robot.manipulation_status.clamp.status.CLOSE,robot.manipulation_status.clamp.status.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ)
+        task_left_right_arms_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE, None, utilis.Device_id.LEFT_RIGHT, [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
+            [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ)
         task_left_right_arms_idle.parallel = task.Task.Task_parallel.ALL
         tasks_pick_snack.add(task_left_right_arms_idle)
         
@@ -632,7 +632,7 @@ class Order_driven_task_schedul():
         # 左臂夹取零食框
         task_left_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
                 [copy.deepcopy(system.anchor_point.left_arm_container_grip)],\
-                    [robot.manipulation_status.clamp.status.CLOSE], arm_move_method = arm.ArmMoveMethod.XY_Z)
+                    [arm.GripMethod.OPEN_CLOSE], arm_move_method = arm.ArmMoveMethod.XY_Z)
         tasks_pick_snack.add(task_left_arm_grap_container)
         
         task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container)
@@ -640,7 +640,7 @@ class Order_driven_task_schedul():
         # 右臂夹取零食框
         task_right_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
                 [copy.deepcopy(system.anchor_point.right_arm_container_grip_pre)],\
-                    [robot.manipulation_status.clamp.status.CLOSE], arm_move_method = arm.ArmMoveMethod.XY_Z)
+                    [arm.GripMethod.OPEN_CLOSE], arm_move_method = arm.ArmMoveMethod.XY_Z)
         tasks_pick_snack.add(task_right_arm_grap_container)
         
         # 识别容器绑定 夹取容器
@@ -669,13 +669,13 @@ class Order_driven_task_schedul():
         #  将左、右臂放到指定位置后，松开(不可并行，固定)
         task_arm_placement_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_container,None,utilis.Device_id.LEFT_RIGHT,\
                 [system.anchor_point.left_arm_container_placement,system.anchor_point.right_arm_container_placement],\
-                [robot.manipulation_status.clamp.status.OPEN,robot.manipulation_status.clamp.status.OPEN], arm_move_method = arm.ArmMoveMethod.XYZ)
+                [arm.GripMethod.OPEN,arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.XYZ)
         tasks_pick_snack.add(task_arm_placement_container)
     
         #  将左,右臂放到空闲位置(可并行，固定)
         task_arms_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
                 [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
-                [robot.manipulation_status.clamp.status.CLOSE,robot.manipulation_status.clamp.status.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ)
+                [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ)
         task_arms_idle.parallel = task.Task.Task_parallel.ALL
         tasks_pick_snack.add(task_arms_idle)
         
@@ -698,13 +698,13 @@ class Order_driven_task_schedul():
         
         #  左臂抬到指定位置识别咖啡机开关 开(可前后并行，固定)
         task_left_arm_to_rec_coffee_machine_turn_on = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_machine_switch, None, utilis.Device_id.LEFT, \
-            [system.anchor_point.left_arm_machine_turn_on_rec],[robot.manipulation_status.clamp.status.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ)
+            system.anchor_point.left_arm_machine_turn_on_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ)
         task_left_arm_to_rec_coffee_machine_turn_on.parallel = task.Task.Task_parallel.ALL
         tasks_get_drink.add(task_left_arm_to_rec_coffee_machine_turn_on)
         
         #  右臂抬到指定位置  进行准备 ，识别杯子和机器(可前后并行，固定)
         task_right_arm_to_rec_cup_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_cup_machine, None, utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_cup_rec_pre, arm_move_method = arm.ArmMoveMethod.XYZ)
+            system.anchor_point.right_arm_cup_rec_pre, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ)
         task_right_arm_to_rec_cup_pre.parallel = task.Task.Task_parallel.ALL
         tasks_get_drink.add(task_right_arm_to_rec_cup_pre)
         
@@ -727,22 +727,21 @@ class Order_driven_task_schedul():
         
         #  右臂夹取杯子(可并行，固定)
         task_right_arm_grasp_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_cup,None,utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_cup_grab,robot.manipulation_status.clamp.status.OPEN, arm_move_method = arm.ArmMoveMethod.XYZ)
+            system.anchor_point.right_arm_cup_grab,arm.GripMethod.OPEN_CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ)
         task_right_arm_grasp_cup.parallel = task.Task.Task_parallel.ALL
         task_right_arm_grasp_cup.status   = task.Task.Task_status.NOTREADY  # 需要参数
-        task_right_arm_grasp_cup.set_clamp_first()                          # 爪子优先
         tasks_get_drink.add(task_right_arm_grasp_cup)
-        # 右臂绑定 夹取杯子和移动杯子
+            # 右臂绑定 夹取杯子和移动杯子
         task_right_camera_rec_cup_machine.add_need_modify_task(task_right_arm_grasp_cup)
 
         # 左臂放置到按钮下方, 进行准备
         task_left_arm_prepare_turn_on_machine = task.Task_manipulation(task.Task_type.Task_manipulation.Turn_on_coffee_machine,None,utilis.Device_id.LEFT,\
-            copy.deepcopy(system.anchor_point.left_arm_machine_turn_off_pre),robot.manipulation_status.clamp.status.CLOSE,\
+            copy.deepcopy(system.anchor_point.left_arm_machine_turn_off_pre),arm.GripMethod.CLOSE,\
                 arm_move_method = arm.ArmMoveMethod.Y_X_Z, click_length=10)
         task_left_arm_prepare_turn_on_machine.parallel = task.Task.Task_parallel.ALL
         task_left_arm_prepare_turn_on_machine.status   = task.Task.Task_status.NOTREADY  # 需要参数
         tasks_get_drink.add(task_left_arm_prepare_turn_on_machine)
-        # 绑定左臂识别任务
+            # 绑定左臂识别任务
         task_left_camera_rec_coffee_machine_turn_on.add_need_modify_task(task_left_arm_prepare_turn_on_machine)  
         
         #  右臂将杯子挪到咖啡机(可并行,固定)
@@ -755,7 +754,7 @@ class Order_driven_task_schedul():
         
         #  左臂抬到指定位置识别咖啡机开关 关(可前后并行，固定)
         task_left_arm_to_rec_coffee_machine_turn_off = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_machine_switch, None, utilis.Device_id.LEFT, \
-            [system.anchor_point.left_arm_machine_turn_on_rec],[robot.manipulation_status.clamp.status.CLOSE], arm_move_method = arm.ArmMoveMethod.X_YZ)
+            system.anchor_point.left_arm_machine_turn_on_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.X_YZ)
         task_left_arm_to_rec_coffee_machine_turn_off.parallel = task.Task.Task_parallel.ALL
         tasks_get_drink.add(task_left_arm_to_rec_coffee_machine_turn_off)
 
@@ -772,10 +771,9 @@ class Order_driven_task_schedul():
         tasks_get_drink.add(task_left_arm_prepare_turn_off_machine)
         task_left_camera_rec_coffee_machine_turn_off.add_need_modify_task(task_left_arm_prepare_turn_off_machine) # 绑定左臂识别任务
         
-        
         #  左臂抬到休闲位
         task_left_arm_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT,\
-            system.anchor_point.left_arm_idle,robot.manipulation_status.clamp.status.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ)
+            system.anchor_point.left_arm_idle,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ)
         task_left_arm_idle.parallel = task.Task.Task_parallel.ALL
         tasks_get_drink.add(task_left_arm_idle)
         
@@ -801,13 +799,13 @@ class Order_driven_task_schedul():
 
         #  将饮料臂放到指定位置后松开(不可并行，固定)
         task_right_arm_placement_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_cup,None,utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_cup_placement,robot.manipulation_status.clamp.status.OPEN, arm_move_method = arm.ArmMoveMethod.XYZ)
+            system.anchor_point.right_arm_cup_placement,arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.XYZ)
         tasks_get_drink.add(task_right_arm_placement_cup)
         
         #  将左,右臂放到空闲位置(可并行，固定)
         task_arms_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
                 [system.anchor_point.right_arm_idle,system.anchor_point.right_arm_idle],\
-                [robot.manipulation_status.clamp.status.OPEN,robot.manipulation_status.clamp.status.OPEN], arm_move_method = arm.ArmMoveMethod.XYZ)
+                [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ)
         task_arms_idle.parallel = task.Task.Task_parallel.ALL
         tasks_get_drink.add(task_arms_idle)
         
@@ -833,7 +831,7 @@ class Order_driven_task_schedul():
         # 抓取坐标待定
         task_grasp_snack = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_snack,None,utilis.Device_id.TBD,\
             [system.anchor_point.left_arm_snack_grip,system.anchor_point.right_arm_snack_grip],\
-            target_clamps_status=robot.manipulation_status.clamp.status.CLOSE, arm_move_method = arm.ArmMoveMethod.YZ_X)
+            target_clamps_status = arm.GripMethod.OPEN_CLOSE, arm_move_method = arm.ArmMoveMethod.YZ_X)
         task_grasp_snack.parallel = task.Task.Task_parallel.ALL
         task_grasp_snack.status = task.Task.Task_status.NOTREADY       # 需要参数
         task_grasp_snack_seq.add(task_grasp_snack)
@@ -841,7 +839,7 @@ class Order_driven_task_schedul():
         # 放置零食
         task_placement_snack = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_snack,None,utilis.Device_id.TBD,\
             [system.anchor_point.left_arm_snack_placement,system.anchor_point.right_arm_snack_placement],\
-            target_clamps_status=robot.manipulation_status.clamp.status.OPEN, arm_move_method = arm.ArmMoveMethod.X_YZ)
+            target_clamps_status = arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.X_YZ)
         
         task_placement_snack.parallel = task.Task.Task_parallel.ALL
         task_placement_snack.status = task.Task.Task_status.NOTREADY   # 需要参数

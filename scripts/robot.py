@@ -43,31 +43,31 @@ class manipulation_status():
         def set_idle(self):
             self.status = self.status.IDLE
 
-    # 夹具类
-    class clamp():
-        class status(Enum):
-            OPEN    = 0           # 已经打开
-            CLOSE   = auto()      # 已经关闭
-            OPENING = auto()      # 正在打开
-            CLOSING = auto()      # 正在关闭
-            DONTCANGE = auto()    # 不改变
+    # # 夹具类
+    # class clamp():
+    #     class status(Enum):
+    #         OPEN    = 0           # 已经打开
+    #         CLOSE   = auto()      # 已经关闭
+    #         OPENING = auto()      # 正在打开
+    #         CLOSING = auto()      # 正在关闭
+    #         DONTCANGE = auto()    # 不改变
             
-            def __str__(self) -> str:
-                return self.name
+    #         def __str__(self) -> str:
+    #             return self.name
             
-            def __eq__(self, value: object) -> bool:
-                if isinstance(value, self.__class__):
-                    return self.value == value.value
-                elif isinstance(value, int):
-                    return self.value == value
+    #         def __eq__(self, value: object) -> bool:
+    #             if isinstance(value, self.__class__):
+    #                 return self.value == value.value
+    #             elif isinstance(value, int):
+    #                 return self.value == value
             
         
-        def __init__(self):
-            # TODO:可能实际情况默认不是打开
-            self.status = self.status.OPEN  # 夹具状态,默认打开
+    #     def __init__(self):
+    #         # TODO:可能实际情况默认不是打开
+    #         self.status = self.status.OPEN  # 夹具状态,默认打开
             
-        def set_status(self,status):
-            self.status = status
+    #     def set_status(self,status):
+    #         self.status = status
     
     # 摄像头类
     class camera():
