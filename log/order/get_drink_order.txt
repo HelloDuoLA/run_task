@@ -3,7 +3,7 @@
 Task       : Task_navigate Navigate_to_the_drink_desk 
 Group_id   : 3
 Index      : 0
-Create_time: 1720326863228271961
+Create_time: 1720328763895248174
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -19,7 +19,7 @@ Target_3D_pose: x:0.50 y:-2.52 z:0.00 roll:0.00 pitch:0.00 yaw:-1.48
 Task       : Task_manipulation Rec_machine_switch 
 Group_id   : 3
 Index      : 1
-Create_time: 1720326863228284597
+Create_time: 1720328763895258903
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -40,7 +40,7 @@ Clamp_first         : False
 Task       : Task_manipulation Rec_cup_machine 
 Group_id   : 3
 Index      : 2
-Create_time: 1720326863228294610
+Create_time: 1720328763895266056
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -61,7 +61,7 @@ Clamp_first         : False
 Task       : Task_manipulation Rec_cup_machine 
 Group_id   : 3
 Index      : 3
-Create_time: 1720326863228300809
+Create_time: 1720328763895270586
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -82,7 +82,7 @@ Clamp_first         : False
 Task       : Task_image_rec COFFEE_MACHINE_SWITCH_ON 
 Group_id   : 3
 Index      : 4
-Create_time: 1720326863228337049
+Create_time: 1720328763895276308
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -102,7 +102,7 @@ Need_modify_tasks:
 Task       : Task_image_rec CUP_COFFEE_MACHINE 
 Group_id   : 3
 Index      : 5
-Create_time: 1720326863228360891
+Create_time: 1720328763895281076
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -123,7 +123,7 @@ Need_modify_tasks:
 Task       : Task_manipulation Grasp_cup 
 Group_id   : 3
 Index      : 6
-Create_time: 1720326863228374481
+Create_time: 1720328763895285844
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -144,7 +144,7 @@ Clamp_first         : True
 Task       : Task_manipulation Turn_on_coffee_machine 
 Group_id   : 3
 Index      : 7
-Create_time: 1720326863228443622
+Create_time: 1720328763895370721
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -165,7 +165,7 @@ Clamp_first         : False
 Task       : Task_manipulation Water_cup 
 Group_id   : 3
 Index      : 8
-Create_time: 1720326863228482007
+Create_time: 1720328763895390510
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -186,7 +186,7 @@ Clamp_first         : False
 Task       : Task_manipulation Rec_machine_switch 
 Group_id   : 3
 Index      : 9
-Create_time: 1720326863228493452
+Create_time: 1720328763895395755
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -207,7 +207,7 @@ Clamp_first         : False
 Task       : Task_image_rec COFFEE_MACHINE_SWITCH_ON 
 Group_id   : 3
 Index      : 10
-Create_time: 1720326863228502035
+Create_time: 1720328763895399570
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -227,7 +227,7 @@ Need_modify_tasks:
 Task       : Task_manipulation Turn_off_coffee_machine 
 Group_id   : 3
 Index      : 11
-Create_time: 1720326863228535890
+Create_time: 1720328763895417928
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -248,7 +248,7 @@ Clamp_first         : False
 Task       : Task_manipulation Move_to_IDLE 
 Group_id   : 3
 Index      : 12
-Create_time: 1720326863228553295
+Create_time: 1720328763895423412
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -269,7 +269,7 @@ Clamp_first         : False
 Task       : Task_manipulation Deliever_cup 
 Group_id   : 3
 Index      : 13
-Create_time: 1720326863228561878
+Create_time: 1720328763895429134
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -290,7 +290,7 @@ Clamp_first         : False
 Task       : Task_navigate Move_backward 
 Group_id   : 3
 Index      : 14
-Create_time: 1720326863228573322
+Create_time: 1720328763895436763
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -303,10 +303,10 @@ Subtask_count_finished: 0
 Predecessor_tasks: 
 back_meters: 0.4
 
-Task       : Task_navigate Navigate_to_the_right_service_desk 
+Task       : Task_navigate Navigate_to_the_left_service_desk 
 Group_id   : 3
 Index      : 15
-Create_time: 1720326863228586196
+Create_time: 1720328763895441770
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -317,12 +317,12 @@ Parallel   : NOTALLOWED
 Subtask_count: 1
 Subtask_count_finished: 0
 Predecessor_tasks: 
-Target_3D_pose: x:2.12 y:-0.70 z:0.00 roll:0.00 pitch:-0.00 yaw:0.00 
+Target_3D_pose: x:2.13 y:-2.13 z:0.00 roll:0.00 pitch:-0.00 yaw:0.00 
 
 Task       : Task_manipulation Lossen_cup 
 Group_id   : 3
 Index      : 16
-Create_time: 1720326863228593349
+Create_time: 1720328763895445585
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -343,7 +343,7 @@ Clamp_first         : False
 Task       : Task_manipulation Move_to_IDLE 
 Group_id   : 3
 Index      : 17
-Create_time: 1720326863228600740
+Create_time: 1720328763895449876
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -364,7 +364,7 @@ Clamp_first         : False
 Task       : Task_navigate Move_backward 
 Group_id   : 3
 Index      : 18
-Create_time: 1720326863228607892
+Create_time: 1720328763895454168
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None

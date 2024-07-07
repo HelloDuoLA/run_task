@@ -520,20 +520,12 @@ class Order_driven_task_schedul():
         
         # 有零食请求
         if order.has_snack_request:
-            new_task_sequence.add(self.create_tasks_before_grasp_snack(order.snack_list))
-            snack_count = order.get_all_snack_count()
-            task_image_rec_snack = new_task_sequence.task_list[-1]
-            for i in range(snack_count):
-                new_task_sequence.add(self.create_task_grasp_snack(task_image_rec_snack))
-            new_task_sequence.add(self.create_tasks_after_grasp_snack(order.table_id))
-        
+            new_task_sequence.add(self.create_tasks_grasp_snack(order.snack_list,order.table_id))
+
         # 有饮料请求
         if order.has_drink_request:
-            # !!!!!!!!!!
-            new_task_sequence.add(self.create_tasks_get_drink())
-            # snack_count = order.get_all_snack_count()
-            # new_task_sequence.add(self.task_grasp_snack_seq * snack_count)
-            new_task_sequence.add(self.create_tasks_after_get_drink(order.table_id))
+            new_task_sequence.add(self.create_tasks_get_drink(order.table_id))
+
         
         # 更新组ID
         new_task_sequence.update_group_id(order.order_id)
@@ -541,9 +533,10 @@ class Order_driven_task_schedul():
         # 添加到任务管理器待执行队列 
         self.task_manager.waiting_task.add(new_task_sequence)
         # 新增任务输出到指定文件
-        log.log_add_tasks_info(new_task_sequence)
+        # log.log_add_tasks_info(new_task_sequence)
         # rospy.loginfo(f"new_task_sequence {new_task_sequence}")
         # print(context)
+        return new_task_sequence
         
     # 删除任务
     # TODO:需要考虑任务正在执行了怎么办
@@ -599,42 +592,17 @@ class Order_driven_task_schedul():
         task_rec_snack.set_snack_list(snack_list)
         tasks_pick_snack.add(task_rec_snack)
         
-        # TODO:添加零食
-        
-        # 左臂夹取零食框准备动作
-        # z变化
-        task_left_arm_grap_container_pre_z    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
-                [copy.deepcopy(system.anchor_point.left_arm_container_grip_pre)],\
-                    [robot.manipulation_status.clamp.status.OPEN])
-        tasks_pick_snack.add(task_left_arm_grap_container_pre_z)
-        
-        # x,y变化
-        task_left_arm_grap_container_pre_xy    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
-                [copy.deepcopy(system.anchor_point.left_arm_container_grip_pre)])
-        tasks_pick_snack.add(task_left_arm_grap_container_pre_xy)
-        
+        snack_count = snack_list.get_all_snack_count()
+        for i in range(snack_count):
+            tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
+
         # 左臂夹取零食框
         task_left_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
                 [copy.deepcopy(system.anchor_point.left_arm_container_grip)],\
                     [robot.manipulation_status.clamp.status.CLOSE])
         tasks_pick_snack.add(task_left_arm_grap_container)
         
-        # 识别容器绑定 夹取容器
-        task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_pre_z)
-        task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_pre_xy)
         task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container)
-        
-        # 右臂夹取零食框准备动作
-        # z变化
-        task_right_arm_grap_container_pre_z    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
-                [copy.deepcopy(system.anchor_point.right_arm_container_grip_pre)],\
-                    [robot.manipulation_status.clamp.status.OPEN])
-        tasks_pick_snack.add(task_right_arm_grap_container_pre_z)
-        
-        # x,y变化
-        task_right_arm_grap_container_pre_xy    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
-                [copy.deepcopy(system.anchor_point.right_arm_container_grip_pre)])
-        tasks_pick_snack.add(task_right_arm_grap_container_pre_xy)
         
         # 右臂夹取零食框
         task_right_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
@@ -643,8 +611,6 @@ class Order_driven_task_schedul():
         tasks_pick_snack.add(task_right_arm_grap_container)
         
         # 识别容器绑定 夹取容器
-        task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container_pre_z)
-        task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container_pre_xy)
         task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container)
         
         #  左、右臂将零食框放到指定高度(可后并行，固定)
@@ -674,11 +640,11 @@ class Order_driven_task_schedul():
         tasks_pick_snack.add(task_arm_placement_container)
     
         #  将左,右臂放到空闲位置(可并行，固定)
-        task_arm_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
+        task_arms_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
                 [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
                 [robot.manipulation_status.clamp.status.CLOSE,robot.manipulation_status.clamp.status.CLOSE])
-        task_arm_idle.parallel = task.Task.Task_parallel.ALL
-        tasks_pick_snack.add(task_arm_idle)
+        task_arms_idle.parallel = task.Task.Task_parallel.ALL
+        tasks_pick_snack.add(task_arms_idle)
         
         # 机器人后退(可前并行，固定)
         task_move_back2 = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.4)
@@ -819,28 +785,20 @@ class Order_driven_task_schedul():
         # 赋值
         return tasks_get_drink
 
-
     # 创建前往初始点的任务
     def create_task_navigate_to_init_point(self):
         #  前往初始位置
-        return task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point,None)
+        return task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point,None,system.anchor_point.map_initial_pose)
 
-    # 创建把左、右臂放到空闲位置的任务
-    def create_task_arms_to_idle(self):
-        #  将左、右臂抬到空闲位置(不可并行，共用)
-        task_arm_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move,None,utilis.Device_id.LEFT_RIGHT,\
-                [system.constant_config.arm_anchor_point.right_arm_idle,system.constant_config.arm_anchor_point.right_arm_idle],\
-                [robot.manipulation_status.clamp.status.OPEN,robot.manipulation_status.clamp.status.OPEN])
-        task_arm_idle.parallel = task.Task.Task_parallel.ALL
-        return task_arm_idle
-    
     # 创建抓取零食的任务
-    def create_task_grasp_snack(self,image_rec_task:task.Task_image_rec):
+    def create_task_grasp_snack(self,snack_rec_task:task.Task_image_rec,left_arm_container_rec_task:task.Task_image_rec, right_arm_container_rec_task:task.Task_image_rec):
         # 抓取零食任务序列
         task_grasp_snack_seq = task.Task_sequence()
         
         # 抓取零食
+        # 抓取坐标待定
         task_grasp_snack = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_snack,None,utilis.Device_id.TBD,\
+            [system.anchor_point.left_arm_snack_grip,system.anchor_point.right_arm_snack_grip],\
             target_clamps_status=robot.manipulation_status.clamp.status.CLOSE)
         task_grasp_snack.parallel = task.Task.Task_parallel.ALL
         task_grasp_snack.status = task.Task.Task_status.NOTREADY       # 需要参数
@@ -848,6 +806,7 @@ class Order_driven_task_schedul():
         
         # 放置零食
         task_placement_snack = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_snack,None,utilis.Device_id.TBD,\
+            [system.anchor_point.left_arm_snack_placement,system.anchor_point.right_arm_snack_placement],\
             target_clamps_status=robot.manipulation_status.clamp.status.OPEN)
         task_placement_snack.parallel = task.Task.Task_parallel.ALL
         task_placement_snack.status = task.Task.Task_status.NOTREADY   # 需要参数
@@ -855,11 +814,13 @@ class Order_driven_task_schedul():
         task_grasp_snack_seq.add(task_placement_snack)
         
         # 将抓取零食任务与图像识别任务绑定
-        image_rec_task.add_need_modify_task(task_grasp_snack) 
-        image_rec_task.add_need_modify_task(task_placement_snack)
+        snack_rec_task.add_need_modify_task(task_grasp_snack) 
+        snack_rec_task.add_need_modify_task(task_placement_snack)
+        left_arm_container_rec_task.add_need_modify_task(task_placement_snack)
+        right_arm_container_rec_task.add_need_modify_task(task_placement_snack)
         
         return task_grasp_snack_seq
-    
+
 
 # TODO:待完成
 # 图像识别驱动的任务安排
@@ -920,7 +881,7 @@ def ensure_directory_exists(path):
         os.makedirs(path)
 
 def test_order_before_grasp_snack():
-    order_info = order.Snack_list()
+    order_info = order.Order()
 
     snack  = order.Snack(order.Snack.Snack_id.YIDA,1)
     snack2 = order.Snack(order.Snack.Snack_id.CHENPIDAN,1)
@@ -928,21 +889,27 @@ def test_order_before_grasp_snack():
 
     order_info.add_snack(snack)
     order_info.add_snack(snack2)
+    order_info.order_id = 2
+    order_info.table_id = utilis.Device_id.LEFT
     
     path = '/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/log/order'
     ensure_directory_exists(path)
     
-    tasks_grasp_snack = system.order_driven_task_schedul.create_tasks_grasp_snack(order_info,utilis.Device_id.LEFT)
+    tasks_grasp_snack = system.order_driven_task_schedul.create_tasks_grasp_snack(order_info.snack_list,order_info.table_id)
     tasks_grasp_snack.update_group_id(2)
 
     with open(f"{path}/grasp_snack_order.txt", 'w') as file:
         file.write(str(tasks_grasp_snack))
         
-    tasks_get_drink = system.order_driven_task_schedul.create_tasks_get_drink(utilis.Device_id.RIGHT)
+    tasks_get_drink = system.order_driven_task_schedul.create_tasks_get_drink(order_info.table_id)
     tasks_get_drink.update_group_id(3)
 
     with open(f"{path}/get_drink_order.txt", 'w') as file:
         file.write(str(tasks_get_drink))
+    
+    tasks = system.order_driven_task_schedul.add_task(order_info)
+    with open(f"{path}/orders.txt", 'w') as file:
+        file.write(str(tasks))
 
 
 if __name__ == '__main__':

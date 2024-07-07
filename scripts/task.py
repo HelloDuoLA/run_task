@@ -290,6 +290,19 @@ class Task_manipulation(Task):
         self.clamp_speed         = clamp_speed          # 夹具速度
         self.clamp_first         = False                # 默认先动臂
     
+    def set_left_arm_snack_selected_position(self,target_arms_pose: List[arm.Arm_pose]):
+        # 判断输入是不是列表
+        if isinstance(target_arms_pose,arm.Arm_pose):
+            self.target_left_arm_pose    = [target_arms_pose]
+        else: # 是
+            self.target_left_arm_pose    = target_arms_pose
+    
+    def set_right_arm_snack_selected_position(self,target_arms_pose: List[arm.Arm_pose]):
+        # 判断输入是不是列表
+        if isinstance(target_arms_pose,arm.Arm_pose):
+            self.target_right_arm_pose    = [target_arms_pose]
+        else: # 是
+            self.target_right_arm_pose    = target_arms_pose
     
     # 设置爪子先走
     def set_clamp_first(self):

@@ -120,6 +120,12 @@ class Snack_list():
             snack_list.add_snack(snack)
         return snack_list
     
+    def get_all_snack_count(self):
+        count = 0
+        for snack in self.snack_list:
+            count += snack.count
+        return count
+    
 
 # 饮料类
 class Drink():
