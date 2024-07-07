@@ -478,27 +478,14 @@ class Task_manager():
             if system.task_manager.task_is_ready_to_run(current_task):
                 # 导航任务
                 if current_task.task_type == task.Task_type.Task_navigate:
-                    system.robot.update_robot_status(robot.Robot.Robot_status.MOVING)
                     system.navigation_actuator.run(task)
                 # 机械臂任务
                 elif current_task.task_type == task.Task_type.Task_manipulation:
-                    # 设置状态
-                    if current_task.arm_id == utilis.Device_id.LEFT_RIGHT:
-                        system.robot.update_arm_status(utilis.Device_id.LEFT, task.Task.Task_status.RUNNING)
-                        system.robot.update_arm_status(utilis.Device_id.RIGHT,task.Task.Task_status.RUNNING)
-                    else:
-                        system.robot.update_arm_status(current_task.arm_id,task.Task.Task_status.RUNNING)
                     system.manipulator_actuator.run(task)
                 # 图像识别任务
                 elif current_task.task_type == task.Task_type.Task_image_rec:
-                    # 设置状态
-                    if current_task.camera_id == utilis.Device_id.LEFT_RIGHT:
-                        system.robot.update_arm_status(utilis.Device_id.LEFT, task.Task.Task_status.RUNNING)
-                        system.robot.update_arm_status(utilis.Device_id.RIGHT,task.Task.Task_status.RUNNING)
-                    else:
-                        system.robot.update_arm_status(current_task.camera_id,task.Task.Task_status.RUNNING)
-                    # 运行
                     system.image_rec_actuator.run(task)
+    
     # 判断任务是否能够运行
     def task_is_ready_to_run(self,current_task:task.Task):
         if current_task.status == task.Task.Task_status.NOTREADY:
