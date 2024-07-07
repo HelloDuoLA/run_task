@@ -72,6 +72,7 @@ class Task_type():
         Rec_container      = auto()                  # 识别容器
         Lossen_container   = auto()                  # 放容器
         Grasp_cup          = auto()                  # 夹杯子
+        Water_cup          = auto()                  # 杯子接水
         Deliever_cup       = auto()                  # 送杯子
         Lossen_cup         = auto()                  # 放杯子
         Rec_cup_machine    = auto()                  # 识别杯子和咖啡机

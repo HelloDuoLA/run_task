@@ -1,0 +1,378 @@
+
+
+Task       : Task_navigate Navigate_to_the_drink_desk 
+Group_id   : 3
+Index      : 0
+Create_time: 1720326863228271961
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Target_3D_pose: x:0.50 y:-2.52 z:0.00 roll:0.00 pitch:0.00 yaw:-1.48 
+
+Task       : Task_manipulation Rec_machine_switch 
+Group_id   : 3
+Index      : 1
+Create_time: 1720326863228284597
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT joint:[-71.36, -7.87, -155.8, 121.34, 73.92, 31.57] } 
+Target_clamps_status: Clamp_status_0: CLOSE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Rec_cup_machine 
+Group_id   : 3
+Index      : 2
+Create_time: 1720326863228294610
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT joint:[0, 0, -90, 0, 90, 0] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Rec_cup_machine 
+Group_id   : 3
+Index      : 3
+Create_time: 1720326863228300809
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT joint:[-138.4, 22.23, -154.04, 43.12, 57.25, 2.93] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_image_rec COFFEE_MACHINE_SWITCH_ON 
+Group_id   : 3
+Index      : 4
+Create_time: 1720326863228337049
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [1:Task_manipulation Rec_machine_switch ] 
+Camera_id: LEFT 
+Snack_list: []
+Need_modify_tasks: 
+          [7:Task_manipulation Turn_on_coffee_machine ]
+ 
+
+Task       : Task_image_rec CUP_COFFEE_MACHINE 
+Group_id   : 3
+Index      : 5
+Create_time: 1720326863228360891
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Camera_id: RIGHT 
+Snack_list: []
+Need_modify_tasks: 
+          [6:Task_manipulation Grasp_cup ]
+          [8:Task_manipulation Water_cup ]
+ 
+
+Task       : Task_manipulation Grasp_cup 
+Group_id   : 3
+Index      : 6
+Create_time: 1720326863228374481
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT coords:[-999, -999, 210, 90, 0, 90] } 
+Target_clamps_status: Clamp_status_0: OPEN  
+Clamp_speed         : 50 
+Clamp_first         : True 
+
+
+Task       : Task_manipulation Turn_on_coffee_machine 
+Group_id   : 3
+Index      : 7
+Create_time: 1720326863228443622
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT coords:[-999, -999, -999, -90, 0.0, -90] } 
+Target_clamps_status: Clamp_status_0: CLOSE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Water_cup 
+Group_id   : 3
+Index      : 8
+Create_time: 1720326863228482007
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT coords:[-999, -999, 230, 90, 0, 90] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Rec_machine_switch 
+Group_id   : 3
+Index      : 9
+Create_time: 1720326863228493452
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT joint:[-71.36, -7.87, -155.8, 121.34, 73.92, 31.57] } 
+Target_clamps_status: Clamp_status_0: CLOSE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_image_rec COFFEE_MACHINE_SWITCH_ON 
+Group_id   : 3
+Index      : 10
+Create_time: 1720326863228502035
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [9:Task_manipulation Rec_machine_switch ] 
+Camera_id: LEFT 
+Snack_list: []
+Need_modify_tasks: 
+          [11:Task_manipulation Turn_off_coffee_machine ]
+ 
+
+Task       : Task_manipulation Turn_off_coffee_machine 
+Group_id   : 3
+Index      : 11
+Create_time: 1720326863228535890
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT coords:[-999, -999, -999, -90, 0.0, -90] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Move_to_IDLE 
+Group_id   : 3
+Index      : 12
+Create_time: 1720326863228553295
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT joint:[-48.48, 26.74, -87.21, 65.36, 46.82, 26.16] } 
+Target_clamps_status: Clamp_status_0: CLOSE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Deliever_cup 
+Group_id   : 3
+Index      : 13
+Create_time: 1720326863228561878
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT coords:[300, 0, -1, 90, 0, 90] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_navigate Move_backward 
+Group_id   : 3
+Index      : 14
+Create_time: 1720326863228573322
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+back_meters: 0.4
+
+Task       : Task_navigate Navigate_to_the_right_service_desk 
+Group_id   : 3
+Index      : 15
+Create_time: 1720326863228586196
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Target_3D_pose: x:2.12 y:-0.70 z:0.00 roll:0.00 pitch:-0.00 yaw:0.00 
+
+Task       : Task_manipulation Lossen_cup 
+Group_id   : 3
+Index      : 16
+Create_time: 1720326863228593349
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT coords:[300, 0, -1, 90, 0, 90] } 
+Target_clamps_status: Clamp_status_0: OPEN  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Move_to_IDLE 
+Group_id   : 3
+Index      : 17
+Create_time: 1720326863228600740
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT_RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT joint:[48.48, 26.74, -87.21, -65.36, 46.82, -26.16] Arm_pose_1: arm RIGHT joint:[48.48, 26.74, -87.21, -65.36, 46.82, -26.16] } 
+Target_clamps_status: Clamp_status_0: OPEN Clamp_status_1: OPEN  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_navigate Move_backward 
+Group_id   : 3
+Index      : 18
+Create_time: 1720326863228607892
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+back_meters: 0.4

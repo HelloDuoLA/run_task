@@ -42,7 +42,12 @@ LeftArmContainerPlacement:
   coords:  [430, -999, 380, -180, 0.0, -90]
 
 # 咖啡机识别位点
-LeftArmCoffeeMachineRec:
+LeftArmMachineTurnOnRec:
+  angles: [-71.36, -7.87, -155.8, 121.34, 73.92, 31.57]
+
+# 咖啡机识别位点
+# TODO:根据实际情况修改
+LeftArmMachineTurnOFFRec:
   angles: [-71.36, -7.87, -155.8, 121.34, 73.92, 31.57]
 
 # 咖啡机开启的位点
