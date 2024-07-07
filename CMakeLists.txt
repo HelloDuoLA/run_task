@@ -210,6 +210,7 @@ catkin_install_python(PROGRAMS
   scripts/test/test_robot/test_move_arm.py  # 机械臂运动
   scripts/test/test_robot/arm_dance.py       # 多点位手臂运动
   scripts/test/test_robot_camera/test_camera_topic.py  # 测试摄像头节点功能
+  scripts/test/test_order/test_assgin_order.py   # 测试 assign_order.py 的 order功能
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

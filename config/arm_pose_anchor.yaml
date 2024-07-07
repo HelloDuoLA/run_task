@@ -75,7 +75,7 @@ RightArmContainerPlacement:
   coords: [430, -999, 380, -180, 0, 90]
 
 # 识别杯子准备动作
-RightArmCupRec:
+RightArmCupRecPre:
   angles: [0,0,-90,0,90,0]
 
 # 杯子识别位点

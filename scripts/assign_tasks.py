@@ -109,75 +109,75 @@ class System():
         # 初始化机器人位点常量配置
         def _initialize_robot_anchor_point(self):
             # 初始点
-            self.map_initial_pose =  _get_robot_anchor_pose("InitialPose")
+            self.map_initial_pose =  self._get_robot_anchor_pose("InitialPose")
             # 零食桌
-            self.map_snack_desk   =  _get_robot_anchor_pose("SnackDesk")
+            self.map_snack_desk   =  self._get_robot_anchor_pose("SnackDesk")
             # 饮料桌
-            self.map_drink_desl   =  _get_robot_anchor_pose("DrinkDesk")
+            self.map_drink_desl   =  self._get_robot_anchor_pose("DrinkDesk")
             # 右服务台位姿
-            self.map_right_service_desk =  _get_robot_anchor_pose("RightServiceDesk")
+            self.map_right_service_desk =  self._get_robot_anchor_pose("RightServiceDesk")
             # 左服务台位姿
-            self.map_left_service_desk  =  _get_robot_anchor_pose("LeftServiceDesk")
+            self.map_left_service_desk  =  self._get_robot_anchor_pose("LeftServiceDesk")
             
-            # 通过名字获取机器人定位点
-            def _get_robot_anchor_pose(anchor_point_name):
-                x = rospy.get_param(f'~{anchor_point_name}/position_x')
-                y = rospy.get_param(f'~{anchor_point_name}/position_y')
-                z = rospy.get_param(f'~{anchor_point_name}/position_z')
-                o_x = rospy.get_param(f'~{anchor_point_name}/orientation_x')
-                o_y = rospy.get_param(f'~{anchor_point_name}/orientation_y')
-                o_z = rospy.get_param(f'~{anchor_point_name}/orientation_z')
-                o_w = rospy.get_param(f'~{anchor_point_name}/orientation_w')
-                pose = utilis.Pose3D.instantiate_by_xyz_orientation(x,y,z,o_x,o_y,o_z,o_w)
-                return pose
+        # 通过名字获取机器人定位点
+        def _get_robot_anchor_pose(self,anchor_point_name):
+            x = rospy.get_param(f'~{anchor_point_name}/position_x')
+            y = rospy.get_param(f'~{anchor_point_name}/position_y')
+            z = rospy.get_param(f'~{anchor_point_name}/position_z')
+            o_x = rospy.get_param(f'~{anchor_point_name}/orientation_x')
+            o_y = rospy.get_param(f'~{anchor_point_name}/orientation_y')
+            o_z = rospy.get_param(f'~{anchor_point_name}/orientation_z')
+            o_w = rospy.get_param(f'~{anchor_point_name}/orientation_w')
+            pose = utilis.Pose3D.instantiate_by_xyz_orientation(x,y,z,o_x,o_y,o_z,o_w)
+            return pose
         
         # 初始化机械臂位点常量配置
         def _initialize_arm_anchor_point(self):
-            self.left_arm_idle                 = _get_arm_anchor_angle("LeftArmIdle")                # 左臂闲置
-            self.left_arm_container_rec        = _get_arm_anchor_angle("LeftArmContainerRec")        # 左臂识别容器
-            self.left_arm_snack_rec            = _get_arm_anchor_angle("LeftArmSnackRec")            # 左臂识别零食
-            self.left_arm_snack_placement      = _get_arm_anchor_coord("LeftArmSnackPlacement")     # 左臂零食放置
-            self.left_arm_container_delivery   = _get_arm_anchor_coord("LeftArmContainerDelivery")  # 左臂容器运送时的姿态
-            self.left_arm_container_placement  = _get_arm_anchor_coord("LeftArmContainerPlacement") # 左臂容器放置
-            self.left_arm_coffee_machine_rec   = _get_arm_anchor_angle("LeftArmCoffeeMachineRec")    # 左臂咖啡机识别
-            self.left_arm_machine_turn_on_pre  = _get_arm_anchor_coord("LeftArmMachineTurnOnPre")   # 左臂咖啡机预备动作
-            self.left_arm_machine_turn_off_pre = _get_arm_anchor_coord("LeftArmMachineTurnOffPre")  # 左臂咖啡机预备动作
+            self.left_arm_idle                 = self._get_arm_anchor_angle("LeftArmIdle")                # 左臂闲置
+            self.left_arm_container_rec        = self._get_arm_anchor_angle("LeftArmContainerRec")        # 左臂识别容器
+            self.left_arm_snack_rec            = self._get_arm_anchor_angle("LeftArmSnackRec")            # 左臂识别零食
+            self.left_arm_snack_placement      = self._get_arm_anchor_coord("LeftArmSnackPlacement")     # 左臂零食放置
+            self.left_arm_container_delivery   = self._get_arm_anchor_coord("LeftArmContainerDelivery")  # 左臂容器运送时的姿态
+            self.left_arm_container_placement  = self._get_arm_anchor_coord("LeftArmContainerPlacement") # 左臂容器放置
+            self.left_arm_coffee_machine_rec   = self._get_arm_anchor_angle("LeftArmCoffeeMachineRec")    # 左臂咖啡机识别
+            self.left_arm_machine_turn_on_pre  = self._get_arm_anchor_coord("LeftArmMachineTurnOnPre")   # 左臂咖啡机预备动作
+            self.left_arm_machine_turn_off_pre = self._get_arm_anchor_coord("LeftArmMachineTurnOffPre")  # 左臂咖啡机预备动作
             
             
-            self.right_arm_idle                = _get_arm_anchor_angle("RightArmIdle")               # 右臂空闲
-            self.right_arm_container_rec       = _get_arm_anchor_angle("RightArmContainerRec")       # 右臂识别容器
-            self.right_arm_snack_rec           = _get_arm_anchor_angle("RightArmSnackRec")           # 右臂识别零食
-            self.right_arm_snack_placement     = _get_arm_anchor_coord("RightArmSnackPlacement")    # 左臂零食放置
-            self.right_arm_container_delivery  = _get_arm_anchor_coord("RightArmContainerDelivery") # 右臂容器运送时的姿态
-            self.right_arm_container_placement = _get_arm_anchor_coord("RightArmContainerPlacement")# 右臂容器放置
-            self.right_arm_cup_rec_pre         = _get_arm_anchor_angle("RightArmCupRecPre")          # 右臂杯子识别预备
-            self.right_arm_cup_rec             = _get_arm_anchor_angle("RightArmCupRec")             # 右臂杯子识别
-            self.right_arm_cup_grab            = _get_arm_anchor_coord("RightArmCupGrab")           # 右臂杯子夹取
-            self.right_arm_cup_water           = _get_arm_anchor_coord("RightArmCupWater")          # 右臂杯子接水
-            self.right_arm_cup_delivery        = _get_arm_anchor_coord("CupDelivery")               # 右臂杯子运送
-            self.right_arm_cup_placement       = _get_arm_anchor_coord("CupPlacement")              # 右臂杯子放置
+            self.right_arm_idle                = self._get_arm_anchor_angle("RightArmIdle")               # 右臂空闲
+            self.right_arm_container_rec       = self._get_arm_anchor_angle("RightArmContainerRec")       # 右臂识别容器
+            self.right_arm_snack_rec           = self._get_arm_anchor_angle("RightArmSnackRec")           # 右臂识别零食
+            self.right_arm_snack_placement     = self._get_arm_anchor_coord("RightArmSnackPlacement")    # 左臂零食放置
+            self.right_arm_container_delivery  = self._get_arm_anchor_coord("RightArmContainerDelivery") # 右臂容器运送时的姿态
+            self.right_arm_container_placement = self._get_arm_anchor_coord("RightArmContainerPlacement")# 右臂容器放置
+            self.right_arm_cup_rec_pre         = self._get_arm_anchor_angle("RightArmCupRecPre")          # 右臂杯子识别预备
+            self.right_arm_cup_rec             = self._get_arm_anchor_angle("RightArmCupRec")             # 右臂杯子识别
+            self.right_arm_cup_grab            = self._get_arm_anchor_coord("RightArmCupGrab")           # 右臂杯子夹取
+            self.right_arm_cup_water           = self._get_arm_anchor_coord("RightArmCupWater")          # 右臂杯子接水
+            self.right_arm_cup_delivery        = self._get_arm_anchor_coord("CupDelivery")               # 右臂杯子运送
+            self.right_arm_cup_placement       = self._get_arm_anchor_coord("CupPlacement")              # 右臂杯子放置
 
-            # 通过名字获取机械臂定位点
-            def _get_arm_anchor_coord(anchor_point_name):
-                if "left" in  anchor_point_name.lower() :
-                    arm_id = utilis.Device_id.LEFT
-                elif "right" in  anchor_point_name.lower() :
-                    arm_id = utilis.Device_id.RIGHT
-                else:
-                    arm_id = utilis.Device_id.TBD
-                pose = arm.Arm_pose(rospy.get_param(f'~{anchor_point_name}/coords'),arm.PoseType.BASE_COORDS,arm_id)
-                return pose
-            
-            # 通过名字获取机械臂定位点(角度)
-            def _get_arm_anchor_angle(anchor_point_name):
-                if "left" in  anchor_point_name.lower() :
-                    arm_id = utilis.Device_id.LEFT
-                elif "right" in  anchor_point_name.lower() :
-                    arm_id = utilis.Device_id.RIGHT
-                else:
-                    arm_id = utilis.Device_id.TBD
-                pose = arm.Arm_pose(rospy.get_param(f'~{anchor_point_name}/angles'),arm.PoseType.ANGLE,arm_id)
-                return pose
+        # 通过名字获取机械臂定位点
+        def _get_arm_anchor_coord(self,anchor_point_name):
+            if "left" in  anchor_point_name.lower() :
+                arm_id = utilis.Device_id.LEFT
+            elif "right" in  anchor_point_name.lower() :
+                arm_id = utilis.Device_id.RIGHT
+            else:
+                arm_id = utilis.Device_id.TBD
+            pose = arm.Arm_pose(rospy.get_param(f'~{anchor_point_name}/coords'),arm.PoseType.BASE_COORDS,arm_id)
+            return pose
+        
+        # 通过名字获取机械臂定位点(角度)
+        def _get_arm_anchor_angle(self,anchor_point_name):
+            if "left" in  anchor_point_name.lower() :
+                arm_id = utilis.Device_id.LEFT
+            elif "right" in  anchor_point_name.lower() :
+                arm_id = utilis.Device_id.RIGHT
+            else:
+                arm_id = utilis.Device_id.TBD
+            pose = arm.Arm_pose(rospy.get_param(f'~{anchor_point_name}/angles'),arm.PoseType.ANGLE,arm_id)
+            return pose
         
 
 # 导航任务执行器
@@ -856,14 +856,12 @@ class Image_rec_driven_task_schedul():
             turn_off_switch.status   = task.Task.Task_status.BEREADY
             
 
-
-
 def talker():
     # 初始化节点，命名为'talker'
     rospy.init_node('assign_tasks')
     global system
     system = System()
-
+    test_order_before_grasp_snack()
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(1)
 
@@ -872,7 +870,27 @@ def talker():
         # 按照设定的频率延时
         rate.sleep()
     # rospy.spin()
+    
+def ensure_directory_exists(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
 
+def test_order_before_grasp_snack():
+    order_info = order.Snack_list()
+
+    snack  = order.Snack(order.Snack.Snack_id.YIDA,1)
+    snack2 = order.Snack(order.Snack.Snack_id.CHENPIDAN,1)
+    drink  = order.Drink(order.Drink.Drink_id.COFFEE,1)
+
+    order_info.add_snack(snack)
+    order_info.add_snack(snack2)
+    
+    
+    tasks_before_grasp_snack = system.order_driven_task_schedul.create_tasks_before_grasp_snack(order_info)
+    path = './src/run_task/log/order'
+    ensure_directory_exists(path)
+    with open(f"{path}/order.txt", 'w') as file:
+        file.write(tasks_before_grasp_snack)
 
 
 if __name__ == '__main__':

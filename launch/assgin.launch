@@ -1,0 +1,6 @@
+<launch>
+    <node pkg="run_task" type="assign_tasks.py" name="assign_tasks" output="screen">
+        <rosparam file="$(find run_task)/config/arm_pose_anchor.yaml" command="load"/>
+        <rosparam file="$(find run_task)/config/robot_pose_anchor.yaml" command="load"/>
+    </node>
+</launch>
