@@ -312,14 +312,13 @@ class Manipulator_actuator():
     def run(self, manipulation_task:task.Task_manipulation):
         # 加在运行序列中
         task_index = self.running_tasks_manager.add_task(manipulation_task)
-
+        system.robot.update_arm_status(manipulation_task.arm_id,robot.manipulation_status.arm.status.BUSY)
+        
         # 任务开始
         manipulation_task.update_start_status()
 
         # 左臂
         if manipulation_task.arm_id == utilis.Device_id.LEFT:
-            # 设置机械臂状态
-            system.robot.update_arm_status(manipulation_task.arm_id,robot.manipulation_status.arm.status.BUSY)
             # 设置action 目标
             goal                      = msg.MoveArmGoal()
             goal.task_index           = task_index
@@ -332,8 +331,6 @@ class Manipulator_actuator():
             self.left_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
         # 右臂
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
-            # 设置机械臂状态
-            system.robot.update_arm_status(manipulation_task.arm_id,robot.manipulation_status.arm.status.BUSY)
             # 设置action 目标
             goal                      = msg.MoveArmGoal()
             goal.task_index           = task_index
@@ -350,7 +347,6 @@ class Manipulator_actuator():
             right_goal             = msg.MoveArmGoal()
             for i in range(2):
                 if manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.LEFT:
-                    system.robot.update_arm_status(utilis.Device_id.LEFT,robot.manipulation_status.arm.status.BUSY)
                     left_goal.task_index           = task_index
                     left_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
                     left_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
@@ -359,7 +355,6 @@ class Manipulator_actuator():
                     left_goal.grasp_speed          = manipulation_task.clamp_speed
                     
                 elif manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.RIGHT:
-                    system.robot.update_arm_status(utilis.Device_id.RIGHT,robot.manipulation_status.arm.status.BUSY)
                     right_goal.task_index           = task_index
                     right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
                     right_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
@@ -376,15 +371,7 @@ class Manipulator_actuator():
     def done_callback(status, result:msg.MoveArmResult):
         rospy.loginfo(f"node: {rospy.get_name()}, manipulator done. status:{status} result:{result}")
         current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
-        
-        if result.arm_id == utilis.Device_id.LEFT:
-            system.robot.update_arm_status(utilis.Device_id.LEFT,robot.manipulation_status.arm.status.IDLE)
-        elif result.arm_id == utilis.Device_id.RIGHT:
-            system.robot.update_arm_status(utilis.Device_id.RIGHT,robot.manipulation_status.arm.status.IDLE)
-        elif result.arm_id == utilis.Device_id.LEFT_RIGHT:
-            system.robot.update_arm_status(utilis.Device_id.LEFT,robot.manipulation_status.arm.status.IDLE)
-            system.robot.update_arm_status(utilis.Device_id.RIGHT,robot.manipulation_status.arm.status.IDLE)
-        
+        system.robot.update_arm_status(current_task.arm_id,robot.manipulation_status.arm.status.IDLE)
         # 任务成功
         if status == actionlib.GoalStatus.SUCCEEDED:
             rospy.loginfo(f"node: {rospy.get_name()}, manipulator succeed. status : {status}")
@@ -423,7 +410,7 @@ class Image_rec_actuator():
     # 运行
     def run(self, task_image_rec_task:task.Task_image_rec):
         task_index = self.running_tasks_manager.add_task(task_image_rec_task)
-        system.robot.update_arm_status(utilis.Device_id.LEFT,robot.manipulation_status.arm.status.BUSY)
+        system.robot.update_arm_status(task_image_rec_task.camera_id,robot.manipulation_status.arm.status.BUSY)
         # 发布任务
         task_info = msg.ImageRecRequest()
         task_info.task_index = task_index                    # 任务索引
