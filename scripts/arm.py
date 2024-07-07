@@ -17,6 +17,31 @@ import utilis
 import run_task.msg as msg
 import run_task.srv as srv
 
+class ArmMoveMethod(Enum):
+    ONLYGRIP   = 0
+    XYZ        = auto()
+    X_YZ       = auto()
+    X_Y_Z      = auto()
+    X_Z_Y      = auto()
+    Y_XZ       = auto()
+    Y_X_Z      = auto()
+    Y_Z_X      = auto()
+    Z_XY       = auto()
+    Z_X_Y      = auto()
+    Z_Y_X      = auto()
+    XY_Z       = auto()
+    XZ_Y       = auto()
+    YZ_X       = auto()
+    
+    def __str__(self) -> str:
+        return self.name
+    
+    def __eq__(self, value: object) -> bool:
+        if isinstance(value, self.__class__):
+            return self.value == value.value
+        elif isinstance(value, int):
+            return self.value == value
+
 
 
 class PoseType(Enum):
@@ -132,6 +157,8 @@ class Arm_controller():
         # 启动action
         def start_action(self):    
             self.action_server.start()
+        
+        # TODO: 待完善
         # 执行
         def execute_cb(self, goal:msg.MoveArmGoal):
             rospy.loginfo(f"node: {rospy.get_name()}, arm action server execute. goal: {goal}")

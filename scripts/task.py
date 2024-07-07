@@ -282,7 +282,7 @@ class Task_image_rec(Task):
 class Task_manipulation(Task):
     def __init__(self, task_name, fn_callback,arm_id:utilis.Device_id, target_arms_pose: List[arm.Arm_pose] = [arm.Arm_pose()],  \
                 target_clamps_status: List[robot.manipulation_status.clamp.status] = [robot.manipulation_status.clamp.status.DONTCANGE,robot.manipulation_status.clamp.status.DONTCANGE], \
-                clamp_speed = 50):
+                clamp_speed = 50, arm_move_method = arm.ArmMoveMethod.XYZ, click_length = 0):
         super().__init__(task_name,fn_callback)
         self.arm_id              = arm_id               # 操作对象
         
@@ -300,6 +300,8 @@ class Task_manipulation(Task):
             
         self.clamp_speed         = clamp_speed          # 夹具速度
         self.clamp_first         = False                # 默认先动臂
+        self.arm_move_method     = arm_move_method      # 移动方式
+        self.click_length        = click_length         # 点击长度
     
     def set_left_arm_snack_selected_position(self,target_arms_pose: List[arm.Arm_pose]):
         # 判断输入是不是列表
