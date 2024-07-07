@@ -114,7 +114,7 @@ class Arm_pose():
         elif self.type_id == PoseType.BASE_COORDS:
             return f"arm {self.arm_id} coords:{self.arm_pose}"
     # 将列表状态输出为action的数据结构
-    def list_to_msg(self,arm_list_status:list):
+    def list_to_msg(self):
         arm_pose = msg.ArmPose()
         arm_pose.arm_pose = self.arm_pose
         arm_pose.type_id  = self.type_id
@@ -191,7 +191,7 @@ class Arm_controller():
 
             self.action_server.set_succeeded(result) #可以添加结果参数
 
-    
+        # 机械臂移动 
         def move_arm(self,pose_type:PoseType,target_pose,move_method:ArmMoveMethod):
             rospy.loginfo(f"{self.id} arm move to {target_pose} using {pose_type}")
             arm_speed =  50
@@ -352,13 +352,12 @@ class Arm_controller():
                     self.wait()  
         
                 return result 
-        
+        # 等待机械臂运动结束
         def wait(self):
             time.sleep(0.3)
             while(self.control_instance.is_moving()):
                 # print("arm is moving")
                 time.sleep(0.03)
-            
         #  可靠地获取当前的基座标
         def get_base_coords(self):
             current_base_coords     = self.control_instance.get_base_coords()
@@ -366,9 +365,6 @@ class Arm_controller():
                 current_base_coords = self.control_instance.get_base_coords()
                 time.sleep(0.3)
             return current_base_coords
-            
-
-    
 def talker():
     # 初始化节点，命名为'talker'
     rospy.init_node('arm_node')
