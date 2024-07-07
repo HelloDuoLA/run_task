@@ -30,11 +30,11 @@ class Snack:
     
     class Snack_id(Enum):
         TBD       = 0
-        YIDA      = auto()
-        GUOSHU    = auto()
-        CKU       = auto()
-        RUSUANJUN = auto()
-        CHENPIDAN = auto()
+        YIDA      = auto() #1
+        GUOSHU    = auto() #2
+        CKU       = auto() #3
+        RUSUANJUN = auto() #4
+        CHENPIDAN = auto() #5
         
         # def __str__(self) -> str:
         #     return self.value

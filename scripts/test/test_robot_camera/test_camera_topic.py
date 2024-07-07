@@ -24,7 +24,7 @@ def talker():
     # request.camera_id = utilis.Device_id.LEFT.value
     request.camera_id = utilis.Device_id.LEFT_RIGHT.value
     request.task_type = task.Task_type.Task_image_rec.SNACK.value
-    request.snacks = [1,8]
+    request.snacks = [1,3]
     
     rospy.loginfo(f"request {request}")
 

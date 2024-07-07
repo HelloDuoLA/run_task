@@ -212,9 +212,17 @@ def doCheckArmPose(req:srv.CheckArmPoseRequest):
     resp = srv.CheckArmPoseResponse()
     resp.type_id = req.type_id
     if req.type_id == PoseType.ANGLE:
-        resp.arm_pose = arm_controller.control_instance.get_angles()
+        result = arm_controller.control_instance.get_angles()
+        while result == None:
+            result = arm_controller.control_instance.get_angles()
+            time.sleep(0.3)
+        resp.arm_pose = result
     elif req.type_id == PoseType.BASE_COORDS:
-        resp.arm_pose = arm_controller.control_instance.get_base_coords()
+        result = arm_controller.control_instance.get_base_coords()
+        while result == None:
+            result = arm_controller.control_instance.get_base_coords()
+            time.sleep(0.3)
+        resp.arm_pose = result
 
     rospy.loginfo(f"node: {rospy.get_name()}, doCheckArmPose. req: {req} resp arm : {resp.arm_pose}")
     return resp

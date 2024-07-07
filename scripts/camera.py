@@ -201,11 +201,20 @@ class Rec_result():
         self.obj_id    = obj_id
         self.image_xy  = image_xy
         self.base_coords = base_coords
+    
+    def __str__(self) -> None:
+        return f"camera_id : {self.camera_id}\n obj_id : {self.obj_id } \n image_xy : {self.image_xy} \n base_coords : {self.base_coords}"
 
 # 识别结果列表
 class Rec_result_list():
     def __init__(self) -> None:
         self.rec_result_list:List[Rec_result] = []
+    
+    def __str__(self) -> None:
+        str_print = ""
+        for rec_result in self.rec_result_list:
+            str_print += str(rec_result) + "\n"
+        return str_print
     
     # 转为消息
     def to_msg(self)->List[msg.ObjPositionWithID]:
@@ -220,10 +229,47 @@ class Rec_result_list():
         return return_list
     
     # 融合
-    # TODO:待完成
-    def fuse(self,other_list:Rec_result_list)->Rec_result_list:
+    def fuse(self,left_arm_rec_result_list:Rec_result_list)->Rec_result_list:
         final_result = Rec_result_list()
+        processed_ids = set()
+
+        # 处理self.rec_result_list中的结果
+        for rec_result in self.rec_result_list:
+            snack_id = rec_result.obj_id
+            same_id_rec_result = left_arm_rec_result_list.get_snack_from_id(snack_id)
+            if same_id_rec_result is not None:
+                # 如果两个列表中都有，根据y值决定使用哪个结果
+                if same_id_rec_result.base_coords[1] < 0 and rec_result.base_coords[1] < 0:
+                    final_result.rec_result_list.append(rec_result)
+                elif same_id_rec_result.base_coords[1] > 0 and rec_result.base_coords[1] > 0:
+                    final_result.rec_result_list.append(same_id_rec_result)
+                else:
+                    raise ValueError("Rec result list fuse error G!")
+                processed_ids.add(snack_id)
+            else:
+                # 只在self.rec_result_list中有
+                final_result.rec_result_list.append(rec_result)
+
+        # 处理left_arm_rec_result_list中独有的结果
+        for rec_result in left_arm_rec_result_list.rec_result_list:
+            if rec_result.obj_id not in processed_ids:
+                final_result.rec_result_list.append(rec_result)
+
         return final_result
+    
+    # 过滤掉不需要的零食
+    def filter(self,snack_ids:List[int])->Rec_result_list:
+        final_result = Rec_result_list()
+        for i in range(len(self.rec_result_list)):
+            if self.rec_result_list[i].obj_id in snack_ids:
+                final_result.rec_result_list.append(self.rec_result_list[i])
+        return final_result
+    
+    def get_snack_from_id(self,snack_id:int)->Rec_result:
+        for rec_result in self.rec_result_list:
+            if rec_result.obj_id == snack_id:
+                return rec_result
+        return None
 
 # YOLO 识别结果
 class YOLO_result():
@@ -282,8 +328,8 @@ class Recognition_node():
                 cv2.imwrite(f"snack_left_{timestamp}.jpg", left_img)
                 timestamp = str(int(time.time()))
                 timestamp = str(int(time.time()))
-                right_stag_result = STag_rec(right_img,mtx, distCoeffs,image_name=f"snack_right_{timestamp}")
-                left_stag_result  = STag_rec(left_img, mtx, distCoeffs,image_name=f"snack_left_{timestamp}")
+                right_stag_result = STag_rec(right_img,mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"snack_right_{timestamp}")
+                left_stag_result  = STag_rec(left_img, mtx, distCoeffs, utilis.Device_id.LEFT, image_name=f"snack_left_{timestamp}")
                 
                 # 请求机械臂位置
                 arm_req = srv.CheckArmPoseRequest()
@@ -309,11 +355,19 @@ class Recognition_node():
                 right_rec_result = right_stag_result.to_rec_result()
                 left_rec_result  = left_stag_result.to_rec_result()
                 
-                # 两个结果融合
-                final_rec_result = right_rec_result.fuse(left_rec_result)
+                # rospy.loginfo(f"right_rec_result : {right_rec_result}")
+                # rospy.loginfo(f"left_rec_result : {left_rec_result}")
                 
+                # 两个结果融合
+                fuse_rec_result = right_rec_result.fuse(left_rec_result)
+                
+                # 结果过滤
+                final_rec_result = fuse_rec_result.filter(request.snacks)
+                # rospy.loginfo(f"fuse_rec_result :\n {fuse_rec_result}")
+                # rospy.loginfo(f"final_rec_result :\n {final_rec_result}")
                 # 转为消息
                 obj_positions = final_rec_result.to_msg()
+                rospy.loginfo(f"snack rec finish")
             else:
                 raise ValueError(f"get image False. Right Image: {right_grabbed}, Left Image: {left_grabbed}")
             
@@ -457,7 +511,7 @@ class Recognition_node():
         result.camera_id     = request.camera_id
         result.obj_positions = obj_positions
         # 发布结果
-        rospy.loginfo(f"result {result}")
+        rospy.loginfo(f"rec result :\n {result}")
         self.pub_result.publish(result)
 
 # YOLO识别
@@ -466,7 +520,7 @@ def YOLO_rec(snack_id_list,image) -> YOLO_result_list:
 
 
 # STag_rec识别
-def STag_rec(image,mtx,distCoeffs,libraryHD=11,tag_size=20,image_name="")->STag_result_list:
+def STag_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LEFT ,libraryHD=11,tag_size=20,image_name="")->STag_result_list:
     # 假设的三维点 (例如，一个简单的正方形)
     objectPoints = np.array([
         [-tag_size/2, -tag_size/2,  0],
@@ -511,7 +565,7 @@ def STag_rec(image,mtx,distCoeffs,libraryHD=11,tag_size=20,image_name="")->STag_
             imagePoints  = corners_list[i]
             success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
             if success:
-                stag_result = STag_result(utilis.Device_id.LEFT, id[0], (imagePoints[0][0] + imagePoints[0][2])/2, [translationVector[0][0],translationVector[1][0],translationVector[2][0]])
+                stag_result = STag_result(device_id, id[0], (imagePoints[0][0] + imagePoints[0][2])/2, [translationVector[0][0],translationVector[1][0],translationVector[2][0]])
                 stag_result_list.add(stag_result)
                 file.write(f"平移向量 x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}\n\n\n")
             else:
