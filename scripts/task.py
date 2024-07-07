@@ -225,7 +225,10 @@ class Task_navigation(Task):
         
     # 打印输出
     def __str__(self) -> str:
-        return super().__str__() + f"Target_2D_pose: {self.target_3D_pose} " + f"Rotation_degree: {self.rotation_degree}"
+        if self.back_meters == 0:
+            return super().__str__() + f"Target_3D_pose: {self.target_3D_pose} "
+        else:
+            return super().__str__() +  f"back_meters: {self.back_meters}"
 
 # 图像识别任务
 class Task_image_rec(Task):
@@ -260,7 +263,7 @@ class Task_image_rec(Task):
         need_modify_tasks_str = "\r\n"
         for task in self.need_modify_tasks.task_list:
             need_modify_tasks_str = need_modify_tasks_str + 10 * " " + f"[{task.task_index}:{task.task_type}]\r\n"
-        return super().__str__() + f"Camera_id: {self.camera_id} " + f"Snack_list: {self.snack_list}" + f"\r\nNeed_modify_tasks: {need_modify_tasks_str} "
+        return super().__str__() + f"Camera_id: {self.camera_id} \n" + f"Snack_list: {self.snack_list}" + f"\nNeed_modify_tasks: {need_modify_tasks_str} "
 
 
 # 机械臂运动、夹取任务

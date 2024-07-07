@@ -154,8 +154,8 @@ class System():
             self.right_arm_cup_rec             = self._get_arm_anchor_angle("RightArmCupRec")             # 右臂杯子识别
             self.right_arm_cup_grab            = self._get_arm_anchor_coord("RightArmCupGrab")           # 右臂杯子夹取
             self.right_arm_cup_water           = self._get_arm_anchor_coord("RightArmCupWater")          # 右臂杯子接水
-            self.right_arm_cup_delivery        = self._get_arm_anchor_coord("CupDelivery")               # 右臂杯子运送
-            self.right_arm_cup_placement       = self._get_arm_anchor_coord("CupPlacement")              # 右臂杯子放置
+            self.right_arm_cup_delivery        = self._get_arm_anchor_coord("RightArmCupDelivery")               # 右臂杯子运送
+            self.right_arm_cup_placement       = self._get_arm_anchor_coord("RightArmCupPlacement")              # 右臂杯子放置
 
         # 通过名字获取机械臂定位点
         def _get_arm_anchor_coord(self,anchor_point_name):
@@ -187,7 +187,7 @@ class Navigation_actuator():
         # 订阅导航Action   
         self.ac = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         # TODO:调试需要,暂时注释
-        self.ac.wait_for_server()
+        # self.ac.wait_for_server()
     # 运行
     def run(self, navigation_task:task.Task_navigation):
         self.task = navigation_task
@@ -549,6 +549,7 @@ class Order_driven_task_schedul():
         #  手臂移到空闲位, 并关闭夹爪(不可并行，固定)
         task_left_right_arms_idle      = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE, None, utilis.Device_id.LEFT_RIGHT, [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
             [robot.manipulation_status.clamp.status.CLOSE,robot.manipulation_status.clamp.status.CLOSE])
+        task_left_right_arms_idle.parallel = task.Task.Task_parallel.ALL
         tasks_before_pick_snack.add(task_left_right_arms_idle)
         
         #  前往零食桌(不可并行，固定)
@@ -887,10 +888,11 @@ def test_order_before_grasp_snack():
     
     
     tasks_before_grasp_snack = system.order_driven_task_schedul.create_tasks_before_grasp_snack(order_info)
-    path = './src/run_task/log/order'
+    tasks_before_grasp_snack.update_group_id(2)
+    path = '/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/log/order'
     ensure_directory_exists(path)
     with open(f"{path}/order.txt", 'w') as file:
-        file.write(tasks_before_grasp_snack)
+        file.write(str(tasks_before_grasp_snack))
 
 
 if __name__ == '__main__':

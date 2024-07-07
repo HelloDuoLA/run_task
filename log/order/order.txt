@@ -1,0 +1,179 @@
+
+
+Task       : Task_manipulation Move_to_IDLE 
+Group_id   : 2
+Index      : 0
+Create_time: 1720315811004170417
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT_RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT joint:[-48.48, 26.74, -87.21, 65.36, 46.82, 26.16] Arm_pose_1: arm RIGHT joint:[48.48, 26.74, -87.21, -65.36, 46.82, -26.16] } 
+Target_clamps_status: Clamp_status_0: CLOSE Clamp_status_1: CLOSE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_navigate Navigate_to_the_snack_desk 
+Group_id   : 2
+Index      : 1
+Create_time: 1720315811004198551
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Target_3D_pose: x:0.29 y:-2.42 z:0.00 roll:0.00 pitch:-0.00 yaw:3.14 
+
+Task       : Task_manipulation Rec_container 
+Group_id   : 2
+Index      : 2
+Create_time: 1720315811004206657
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT joint:[-48.48, 26.74, -87.21, 65.36, 46.82, 26.16] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Rec_container 
+Group_id   : 2
+Index      : 3
+Create_time: 1720315811004212617
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT joint:[48.48, 26.74, -87.21, -65.36, 46.82, -26.16] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_image_rec CONTAINER 
+Group_id   : 2
+Index      : 4
+Create_time: 1720315811004223346
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Camera_id: LEFT 
+Snack_list: []
+Need_modify_tasks: 
+ 
+
+Task       : Task_image_rec CONTAINER 
+Group_id   : 2
+Index      : 5
+Create_time: 1720315811004230737
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Camera_id: RIGHT 
+Snack_list: []
+Need_modify_tasks: 
+ 
+
+Task       : Task_manipulation Rec_snack 
+Group_id   : 2
+Index      : 6
+Create_time: 1720315811004235506
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT joint:[-66.27, 5.44, -148.83, 123.8, 72.58, 24.6] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_manipulation Rec_snack 
+Group_id   : 2
+Index      : 7
+Create_time: 1720315811004239320
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT joint:[66.27, 5.44, -148.83, -123.8, 72.58, -24.6] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
+Clamp_speed         : 50 
+Clamp_first         : False 
+
+
+Task       : Task_image_rec SNACK 
+Group_id   : 2
+Index      : 8
+Create_time: 1720315811004242897
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Camera_id: LEFT_RIGHT 
+Snack_list: ['id:1,name:YIDA,count:1', 'id:5,name:CHENPIDAN,count:1']
+Need_modify_tasks: 
+ 
