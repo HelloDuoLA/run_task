@@ -199,21 +199,26 @@ class Navigation_actuator():
         # self.move_base_ac.wait_for_server()
         # self.control_cmd_ac.wait_for_server()
         
+        self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
+        
     # 运行
     def run(self, navigation_task:task.Task_navigation):
-        self.task = navigation_task
-        self.task.update_start_status() # 刷新开始时间
+        # !!!!! 需要修改为序列
+        task_index = self.running_tasks_manager.add_task(navigation_task)
+        navigation_task.update_start_status() # 刷新开始时间
+        system.robot.robot_status = robot.Robot.Robot_status.MOVING  # 机器人状态更新
         
         # 后退任务
         if navigation_task.task_type == task.Task_type.Task_navigate.Move_backward:
             goal = msg.ControlCmdGoal()
-            goal.task_index = navigation_task.task_index
+            goal.task_index = task_index
             goal.operation  = task.Task_type.Task_navigate.Move_backward.value
             goal.speed      = navigation_task.move_back_speed
             goal.meters     = navigation_task.back_meters
             self.control_cmd_ac.send_goal(goal,self.control_cmd_task_done_callback,self.control_cmd_active_callback,self.control_cmd_feedback_callback)
         # 导航任务
         else:
+            self.move_base_task_index = task_index
             goal = MoveBaseGoal()
             goal.target_pose.header.frame_id = "map"
             goal.target_pose.header.stamp    = rospy.Time.now()
@@ -231,19 +236,22 @@ class Navigation_actuator():
     @staticmethod
     def navigation_task_done_callback(status, result):
         rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
+        current_task = system.navigation_actuator.running_tasks_manager.get_task(system.navigation_actuator.move_base_task_index)
+        system.robot.robot_status = robot.Robot.Robot_status.IDLE  # 机器人状态更新
+        
         if status == actionlib.GoalStatus.SUCCEEDED:
             rospy.loginfo(f"node: {rospy.get_name()}, navigation succeed. status : {status}")
-            system.navigation_actuator.task.update_end_status(task.Task.Task_result.SUCCEED)
+            current_task.update_end_status(task.Task.Task_result.SUCCEED)
         else:
             rospy.loginfo(f"node: {rospy.get_name()}, navigation failed. status : {status}")
-            system.navigation_actuator.task.update_end_status(task.Task.Task_result.FAILED)
+            current_task.update_end_status(task.Task.Task_result.FAILED)
         
         # 任务自带的回调
-        if system.navigation_actuator.task.finish_cb is not None:
-            system.navigation_actuator.task.finish_cb(status, result)
+        if current_task.finish_cb is not None:
+            current_task.finish_cb(status, result)
         
         # 给任务管理器的回调
-        system.task_manager.tm_task_finish_callback(system.navigation_actuator.task, status, result)
+        system.task_manager.tm_task_finish_callback(current_task, status, result)
     
     # 激活回调
     @staticmethod
@@ -253,30 +261,30 @@ class Navigation_actuator():
     # 反馈回调
     @staticmethod
     def navigation_task_feedback_callback(feedback:MoveBaseFeedback):
-        global system
         pose = feedback.base_position.pose
         pose3D = utilis.Pose3D.instantiate_by_geometry_msg(pose)
         rospy.loginfo(f"node: {rospy.get_name()}, navigation feedback. pose:x = {pose3D.x} y = {pose3D.y} yaw = {pose3D.yaw}")
-        # !调试阶段无法进行位姿更新
-        # system.robot.update_robot_pose3d(pose3D) # 更新机器人位姿
-    
+
     # 直接控制完成回调
     @staticmethod
-    def control_cmd_task_done_callback(status, result):
+    def control_cmd_task_done_callback(status, result:msg.ControlCmdResult):
         rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
+        current_task = system.navigation_actuator.running_tasks_manager.get_task(result.task_index)
+        system.robot.robot_status = robot.Robot.Robot_status.IDLE  # 机器人状态更新
+        
         if status == actionlib.GoalStatus.SUCCEEDED:
             rospy.loginfo(f"node: {rospy.get_name()}, navigation succeed. status : {status}")
-            system.navigation_actuator.task.update_end_status(task.Task.Task_result.SUCCEED)
+            current_task.update_end_status(task.Task.Task_result.SUCCEED)
         else:
             rospy.loginfo(f"node: {rospy.get_name()}, navigation failed. status : {status}")
-            system.navigation_actuator.task.update_end_status(task.Task.Task_result.FAILED)
+            current_task.update_end_status(task.Task.Task_result.FAILED)
         
         # 任务自带的回调
-        if system.navigation_actuator.task.finish_cb is not None:
-            system.navigation_actuator.task.finish_cb(status, result)
+        if current_task.finish_cb is not None:
+            current_task.finish_cb(status, result)
         
         # 给任务管理器的回调
-        system.task_manager.tm_task_finish_callback(system.navigation_actuator.task, status, result)
+        system.task_manager.tm_task_finish_callback(current_task, status, result)
     
     # 激活回调
     @staticmethod
@@ -303,10 +311,11 @@ class Manipulator_actuator():
     # 运行
     def run(self, manipulation_task:task.Task_manipulation):
         # 加在运行序列中
-        task_index = self.running_tasks_manager.add_task(manipulation_task)
+        self.running_tasks_manager.add_task(manipulation_task)
+        task_index = manipulation_task.task_index
         
         # 任务开始
-        manipulation_task.start_time()
+        manipulation_task.update_start_status()
 
         # 单臂
         if manipulation_task.arm_id == utilis.Device_id.LEFT:

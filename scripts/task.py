@@ -393,23 +393,12 @@ class Task_sequence():
 
 # 任务执行器中的任务管理器
 class Task_manager_in_running():
-    def __init__(self,parallel=True) -> None:
+    def __init__(self) -> None:
         self.task_dict = {}
-        self.total_task_index = 0
-        self._parallel = parallel
 
     def add_task(self,task:Task):
-        if self._parallel:
-            self.task_dict[self.total_task_index] = task
-            self.total_task_index += 1
-            return self.total_task_index - 1
-        else:
-            if len(self.task_dict) == 0:
-                self.add_task(task)
-                return 0
-            else:
-                # 抛出异常
-                raise ValueError("Task is not allowed to parallel")
+        self.task_dict[task.task_index] = task
+        return task.task_index
     
     def get_task(self,index=0)->Task:
         task = self.task_dict.pop(index)
