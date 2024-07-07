@@ -3,12 +3,17 @@
 import rospy
 import sys
 import rospkg
+
+# 自定义包
 rospack = rospkg.RosPack()
 package_path = rospack.get_path('run_task')
 sys.path.insert(0,package_path + "/scripts")
+import run_task.msg as msg
+import task
 import utilis
-
-from std_msgs.msg import String
+import robot
+import order
+import log
 
 # 模板文件
 

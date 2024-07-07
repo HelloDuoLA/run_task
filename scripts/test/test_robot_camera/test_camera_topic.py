@@ -19,9 +19,10 @@ def talker():
     
     pub = rospy.Publisher(utilis.Topic_name.image_recognition_request,msg.ImageRecRequest,queue_size=10)
     #3.组织消息
+    task_index = 0
     request = msg.ImageRecRequest()
     request.camera_id = utilis.Device_id.LEFT.value
-    request.task_index = 99 
+    
     request.task_type = task.Task_type.Task_image_rec.CONTAINER.value
     
     rospy.loginfo(f"request {request}")
@@ -30,6 +31,10 @@ def talker():
     rate = rospy.Rate(1)
 
     while not rospy.is_shutdown():
+        request.task_index = task_index
+        task_index += 1
+        if task_index > 100:
+            task_index = 0
         rospy.loginfo("test_camera_topic")
         pub.publish(request)
         # 按照设定的频率延时

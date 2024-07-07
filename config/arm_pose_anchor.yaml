@@ -32,6 +32,20 @@ LeftArmContainerPlacement:
 # y 与转移框时相同, z比抓取框高10mm, x轴写死
   coords:  [430, -999, 380, -180, 0.0, -90]
 
+# 咖啡机识别位点
+LeftArmCoffeeMachineRec:
+  angles: [-71.36, -7.87, -155.8, 121.34, 73.92, 31.57]
+
+# 咖啡机开启的位点
+LeftArmMachineTurnOnPre:
+  # x y z 都不确定, 手势确定
+  coords:  [-999, -999, -999, -90, 0.0, -90]
+
+# 咖啡机关闭的位点
+LeftArmMachineTurnOffPre:
+  # x y z 都不确定, 手势确定
+  coords:  [-999, -999, -999, -90, 0.0, -90]
+
 # !TODO:右臂
 # 右臂空闲放置点
 RightArmIdle:
@@ -61,49 +75,29 @@ RightArmContainerPlacement:
   coords: [430, -999, 380, -180, 0, 90]
 
 # 识别杯子准备动作
-CupRecBefore:
+RightArmCupRec:
   angles: [0,0,-90,0,90,0]
 
 # 杯子识别位点
-CupRec:
+RightArmCupRec:
   angles: [-138.4, 22.23, -154.04, 43.12, 57.25, 2.93]
 
 # 杯子抓取位点
-CupGrab:
+RightArmCupGrab:
   # xy不确定, z确定
   coords:  [-999, -999, 210, 90, 0, 90]
 
 # 杯子接水位点     
-CupWater:
+RightArmCupWater:
   # xy不确定, z确定
   coords:  [-999, -999, 230, 90, 0, 90]
   
 # 杯子转移位点
 # z轴是夹杯子是多少, 这里就是多少
-CupDelivery:
+RightArmCupDelivery:
   coords: [300, 0, -1, 90, 0, 90]
 
 # 杯子的放置位姿
-CupPlacement:
+RightArmCupPlacement:
   # 同杯子转移位点
   coords: [300, 0, -1, 90, 0, 90]
-
-# 咖啡机识别位点
-CoffeeMachineRec:
-  angles: [-71.36, -7.87, -155.8, 121.34, 73.92, 31.57]
-
-# 咖啡机开启的位点
-CoffeeMachineOpenPrepare:
-  # x y z 都不确定, 手势确定
-  coords:  [-999, -999, -999, -90, 0.0, -90]
-
-# 咖啡机关闭的位点
-CoffeeMachineClosePrepare:
-  # x y z 都不确定, 手势确定
-  coords:  [-999, -999, -999, -90, 0.0, -90]
-
-# 零食抓取位点
-SnackGrap:
-  # x,y,z待定
-  coords:  [-999, -999, -999, -90, 0, -90]
-

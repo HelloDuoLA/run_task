@@ -18,6 +18,8 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
     ], dtype=np.float32)
     
     print(objectPoints)
+    print(f"mtx \n {mtx}")
+    print(f"distCoeffs \n {distCoeffs}")
     
     (corners_list, ids, rejected_corners_list) = stag.detectMarkers(image, libraryHD)
     
@@ -128,7 +130,7 @@ if __name__ == "__main__":
     for i in range(len(xyz_list)):
         id  = xyz_list[i][0]
         xyz = xyz_list[i][1]
-        if id == 5:
+        if id == 9:
             print("left")
             print(f"left   arm end pose {base_coords_left[:3]}")
             print(f"stag xyz : {xyz}")
