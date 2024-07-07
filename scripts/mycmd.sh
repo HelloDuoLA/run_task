@@ -8,4 +8,5 @@ rosrun map_server map_saver -f /home/elephant/xzc_code/ros_ws/src/run_task/map/C
 
 git config --global credential.helper store  ·
 
-# test
+# 调参
+rosrun rqt_reconfigure rqt_reconfigure

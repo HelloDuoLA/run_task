@@ -3,8 +3,8 @@
 #局部路径规划器DWAPlannerROS命名空间
 DWAPlannerROS:
   #机器人参数设置
-  max_vel_x: 0.3         #x方向最大线速度绝对值，单位：m/s
-  min_vel_x: 0            #x方向最小线速度绝对值，负数代表可后退，单位：m/s
+  max_vel_x: 0.3          #x方向最大线速度绝对值，单位：m/s
+  min_vel_x: -0.1            #x方向最小线速度绝对值，负数代表可后退，单位：m/s
   max_vel_y: 0.0          #y方向最大线速度绝对值，单位：m/s。非全向移动机器人为0    
   min_vel_y: 0.0          #y方向最小线速度绝对值，单位：m/s。非全向移动机器人为0   
   max_vel_trans: 0.3      #机器人最大移动速度的绝对值，单位为：m/s
@@ -18,7 +18,7 @@ DWAPlannerROS:
   acc_lim_y: 0.0          #机器人在y方向的极限加速度，单位：m/s^2。非全向移动机器人为0   
 
   #目标点误差允许值
-  xy_goal_tolerance: 0.06   #机器人到达目标点时附近时的弧度偏差允许量，在该偏差内认为已经到达目标点单位为：m
+  xy_goal_tolerance: 0.05   #机器人到达目标点时附近时的弧度偏差允许量，在该偏差内认为已经到达目标点单位为：m
   yaw_goal_tolerance: 0.1 #机器人到达目标点时附近时的弧度偏差允许量，在该偏差内认为已经到达目标点，单位为：rad
   latch_xy_goal_tolerance: false #设置为true时表示：如果到达容错距离内,机器人就会原地旋转；即使转动是会跑出容错距离外。
 
@@ -44,7 +44,7 @@ DWAPlannerROS:
   #调试参数
   publish_traj_pc : true     #将规划的轨迹在rviz上进行可视化
   publish_cost_grid_pc: true #将代价值进行可视化显示
-  global_frame_id: map       #全局参考坐标系
+  global_frame_id: odom      #全局参考坐标系 !!!!!从map改为odom
 
   #是否将走过的路径从路径规划中清除
   prune_plan: true
