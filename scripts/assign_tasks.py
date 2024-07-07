@@ -23,6 +23,7 @@ import robot
 import order
 import log
 import arm
+import control_cmd
 
 
 # 初始化
@@ -211,7 +212,7 @@ class Navigation_actuator():
         if navigation_task.task_type == task.Task_type.Task_navigate.Move_backward:
             goal = msg.ControlCmdGoal()
             goal.task_index = task_index
-            goal.operation  = task.Task_type.Task_navigate.Move_backward.value
+            goal.operation  = control_cmd.Control_cmd.MOVEBACK.value
             goal.speed      = navigation_task.move_back_speed
             goal.meters     = navigation_task.back_meters
             self.control_cmd_ac.send_goal(goal,self.control_cmd_task_done_callback,self.control_cmd_active_callback,self.control_cmd_feedback_callback)

@@ -14,7 +14,7 @@ sys.path.insert(0,package_path + "/scripts")
 import utilis
 import task
 import run_task.msg as msg
-
+import control_cmd
 
 can_run_task = True
 # 让小车在5点之间进行巡航
@@ -44,7 +44,8 @@ def talker():
     rospy.loginfo(f"RightServiceDesk : {RightServiceDesk}")
     rospy.loginfo(f"LeftServiceDesk  : {LeftServiceDesk}")
 
-    task_list = [task_SnackDesk ,task_RightServiceDesk, task_DrinkDesk ,task_LeftServiceDesk,task_init_pose]
+    # task_list = [task_SnackDesk ,task_RightServiceDesk, task_DrinkDesk ,task_LeftServiceDesk,task_init_pose]
+    task_list = [task_move_back1,task_move_back2,task_move_back3]
     navigation_actuator = Navigation_actuator()
     
     # test()  # 单独前往某一节点
@@ -79,12 +80,12 @@ class Navigation_actuator():
     # 初始化
     def __init__(self):
         # 订阅导航Action   
-        self.move_base_ac   = actionlib.SimpleActionClient('move_base', MoveBaseAction)
-        # self.control_cmd_ac = actionlib.SimpleActionClient(utilis.Topic_name.control_cmd_action, msg.ControlCmdAction)
+        # self.move_base_ac   = actionlib.SimpleActionClient('move_base', MoveBaseAction)
+        self.control_cmd_ac = actionlib.SimpleActionClient(utilis.Topic_name.control_cmd_action, msg.ControlCmdAction)
         rospy.loginfo("waiting for move_base, control cmd server")
         # TODO:调试需要,暂时注释
-        self.move_base_ac.wait_for_server()
-        # self.control_cmd_ac.wait_for_server()
+        # self.move_base_ac.wait_for_server()
+        self.control_cmd_ac.wait_for_server()
         rospy.loginfo("move_base, control cmd server start")
         
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
@@ -98,7 +99,7 @@ class Navigation_actuator():
         if navigation_task.task_type == task.Task_type.Task_navigate.Move_backward:
             goal = msg.ControlCmdGoal()
             goal.task_index = task_index
-            goal.operation  = task.Task_type.Task_navigate.Move_backward.value
+            goal.operation  = control_cmd.Control_cmd.MOVEBACK.value
             goal.speed      = navigation_task.move_back_speed
             goal.meters     = navigation_task.back_meters
             self.control_cmd_ac.send_goal(goal,self.control_cmd_task_done_callback,self.control_cmd_active_callback,self.control_cmd_feedback_callback)
