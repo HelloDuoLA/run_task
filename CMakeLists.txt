@@ -85,6 +85,7 @@ add_action_files(
   FILES
   MoveArm.action
   AddInts.action
+  ControlCmd.action
 )
 
 ## Generate added messages and services with any dependencies listed here
@@ -196,6 +197,7 @@ catkin_install_python(PROGRAMS
   scripts/camera.py
   scripts/robot.py
   scripts/log.py
+  scripts/control_cmd.py          # 控制命令
   scripts/test/test.py
   scripts/test/test_amcl.py
   scripts/test/test_opencv.py

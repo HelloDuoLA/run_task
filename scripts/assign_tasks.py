@@ -6,7 +6,7 @@ import rospy
 import os
 import sys
 import rospkg
-from geometry_msgs.msg  import PoseWithCovarianceStamped
+from geometry_msgs.msg  import PoseWithCovarianceStamped,Twist
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
 import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal, MoveBaseFeedback
@@ -192,9 +192,13 @@ class Navigation_actuator():
     # 初始化
     def __init__(self):
         # 订阅导航Action   
-        self.ac = actionlib.SimpleActionClient('move_base', MoveBaseAction)
+        self.move_base_ac   = actionlib.SimpleActionClient('move_base', MoveBaseAction)
+        self.control_cmd_ac = actionlib.SimpleActionClient(utilis.Topic_name.control_cmd_action, msg.ControlCmdAction)
+        rospy.loginfo("waiting for move_base, control cmd server")
         # TODO:调试需要,暂时注释
-        # self.ac.wait_for_server()
+        # self.move_base_ac.wait_for_server()
+        # self.control_cmd_ac.wait_for_server()
+        
     # 运行
     def run(self, navigation_task:task.Task_navigation):
         self.task = navigation_task
@@ -210,7 +214,7 @@ class Navigation_actuator():
         goal.target_pose.pose.orientation.z = orientation[2]
         goal.target_pose.pose.orientation.w = orientation[3]
         self.task.update_start_status() # 刷新开始时间
-        self.ac.send_goal(goal,self.navigation_task_done_callback,self.navigation_task_active_callback,self.navigation_task_feedback_callback)
+        self.move_base_ac.send_goal(goal,self.navigation_task_done_callback,self.navigation_task_active_callback,self.navigation_task_feedback_callback)
     
     # 完成回调
     @staticmethod
@@ -253,13 +257,43 @@ class Navigation_actuator():
         pose3D = utilis.Pose3D.instantiate_by_geometry_msg(pose)
         rospy.loginfo(f"node: {rospy.get_name()}, navigation feedback. pose:x = {pose3D.x} y = {pose3D.y} yaw = {pose3D.yaw}")
         # !调试阶段无法进行位姿更新
-        system.robot.update_robot_pose3d(pose3D) # 更新机器人位姿
+        # system.robot.update_robot_pose3d(pose3D) # 更新机器人位姿
+    
+    # 直接控制完成回调
+    @staticmethod
+    def control_cmd_task_done_callback(status, result):
+        rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
+        if status == actionlib.GoalStatus.SUCCEEDED:
+            rospy.loginfo(f"node: {rospy.get_name()}, navigation succeed. status : {status}")
+            system.navigation_actuator.task.update_end_status(task.Task.Task_result.SUCCEED)
+        else:
+            rospy.loginfo(f"node: {rospy.get_name()}, navigation failed. status : {status}")
+            system.navigation_actuator.task.update_end_status(task.Task.Task_result.FAILED)
+        
+        # 任务自带的回调
+        if system.navigation_actuator.task.finish_cb is not None:
+            system.navigation_actuator.task.finish_cb(status, result)
+        
+        # 给任务管理器的回调
+        system.task_manager.tm_task_finish_callback(system.navigation_actuator.task, status, result)
+    
+    # 激活回调
+    @staticmethod
+    def control_cmd_active_callback():
+        rospy.loginfo(f"node: {rospy.get_name()}, control cmd active")
+
+    # 反馈回调
+    @staticmethod
+    def control_cmd_feedback_callback(feedback:MoveBaseFeedback):
+        rospy.loginfo(f"node: {rospy.get_name()}, control cmd feedback. feedback = {feedback}")
+    
     
 # 机械臂执行器 
 class Manipulator_actuator():
     def __init__(self):
         self.left_arm_ac  = actionlib.SimpleActionClient(utilis.Topic_name.left_arm_action,  msg.MoveArmAction)
         self.right_arm_ac = actionlib.SimpleActionClient(utilis.Topic_name.right_arm_action, msg.MoveArmAction)
+        rospy.loginfo("waiting for arm action server")
         # TODO:调试需要,暂时注释
         # self.left_arm_ac.wait_for_server()
         # self.right_arm_ac.wait_for_server()
@@ -398,10 +432,12 @@ class Image_rec_actuator():
         if task_obj.task_type == task.Task_type.Task_image_rec.SNACK:
             pass
         # 识别容器
-        elif task_obj.task_type == task.Task_type.Task_image_rec.CONTIANER:
+        elif task_obj.task_type == task.Task_type.Task_image_rec.CONTAINER:
             pass
-        # 识别咖啡机
-        elif task_obj.task_type == task.Task_type.Task_image_rec.COFFEE_MACHIE_SWITCH:
+        # 识别咖啡机, 开机
+        elif task_obj.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON:
+            pass
+        elif task_obj.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF:
             pass
         # 识别杯子
         elif task_obj.task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE:

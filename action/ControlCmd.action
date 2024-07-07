@@ -1,0 +1,13 @@
+# 1.目标数据
+uint16  task_index
+uint8   operation
+uint8   speed
+float32 meter
+---
+# 2.最终返回数据
+uint16 task_index 
+int8  status
+uint8 result
+---
+# 3.连续反馈数据
+uint16 task_index 

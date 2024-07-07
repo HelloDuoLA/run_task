@@ -135,3 +135,4 @@ class Topic_name():
     check_arm_pose            = "/check_arm_pose"        # 检查机械臂状态
     CheckLeftArmPose          = "/CheckLeftArmPose"
     CheckRightArmPose         = "/CheckRightArmPose"
+    control_cmd_action        = "/control_cmd_action"
