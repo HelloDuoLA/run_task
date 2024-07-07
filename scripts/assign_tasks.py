@@ -203,7 +203,6 @@ class Navigation_actuator():
         
     # 运行
     def run(self, navigation_task:task.Task_navigation):
-        # !!!!! 需要修改为序列
         task_index = self.running_tasks_manager.add_task(navigation_task)
         navigation_task.update_start_status() # 刷新开始时间
         system.robot.robot_status = robot.Robot.Robot_status.MOVING  # 机器人状态更新
@@ -222,10 +221,10 @@ class Navigation_actuator():
             goal = MoveBaseGoal()
             goal.target_pose.header.frame_id = "map"
             goal.target_pose.header.stamp    = rospy.Time.now()
-            goal.target_pose.pose.position.x = self.task.target_3D_pose.x
-            goal.target_pose.pose.position.y = self.task.target_3D_pose.y
+            goal.target_pose.pose.position.x = navigation_task.target_3D_pose.x
+            goal.target_pose.pose.position.y = navigation_task.target_3D_pose.y
             goal.target_pose.pose.position.z = 0
-            orientation = quaternion_from_euler(0, 0, self.task.target_3D_pose.yaw)
+            orientation = quaternion_from_euler(0, 0, navigation_task.target_3D_pose.yaw)
             goal.target_pose.pose.orientation.x = orientation[0]
             goal.target_pose.pose.orientation.y = orientation[1]
             goal.target_pose.pose.orientation.z = orientation[2]
@@ -487,6 +486,7 @@ class Task_manager():
                     system.image_rec_actuator.run(task)
     
     # 判断任务是否能够运行
+    # TODO:重头戏
     def task_is_ready_to_run(self,current_task:task.Task):
         if current_task.status == task.Task.Task_status.NOTREADY:
             return False
@@ -503,7 +503,6 @@ class Task_manager():
                     pass
                     # 判断前置任务是否完成
                     # 判断资源是否允许
-
         return True
 
 # 订单驱动的任务安排
@@ -513,7 +512,7 @@ class Order_driven_task_schedul():
     def __init__(self,task_manager:Task_manager):
         self.task_manager = task_manager
         self.order_list = []
-        self.server = rospy.Subscriber(utilis.Topic_name.make_order,msg.OrderInfo,self.do_order_req,self,queue_size=10)
+        self.server = rospy.Subscriber(utilis.Topic_name.make_order,msg.OrderInfo,self.do_order_req,self,queue_size=10,)
     
     # 下单服务回调
     @staticmethod
@@ -527,13 +526,17 @@ class Order_driven_task_schedul():
     # 根据订单更新任务
     def update_task(self,order:order.Order):
         result = False
+        # 增
         if order.operation == order.Operation.ADD:
             rospy.loginfo(f"node name {rospy.get_name()}, order driven task schedul, add new order")
             result = self.add_task(order)
+        # 删
         elif order.operation == order.Operation.DELETE:
             result = self.delete_task(order)
+        # 改
         elif order.operation == order.Operation.MODIFY:
             pass
+        # 查
         elif order.operation == order.Operation.CHECK:
             pass
         else:
@@ -552,12 +555,12 @@ class Order_driven_task_schedul():
         if order.has_drink_request:
             new_task_sequence.add(self.create_tasks_get_drink(order.table_id))
 
-        
         # 更新组ID
         new_task_sequence.update_group_id(order.order_id)
         
         # 添加到任务管理器待执行队列 
         self.task_manager.waiting_task.add(new_task_sequence)
+        
         # 新增任务输出到指定文件
         # log.log_add_tasks_info(new_task_sequence)
         # rospy.loginfo(f"new_task_sequence {new_task_sequence}")
@@ -565,7 +568,6 @@ class Order_driven_task_schedul():
         return new_task_sequence
         
     # 删除任务
-    # TODO:需要考虑任务正在执行了怎么办
     def delete_task(self,task):
         pass
         
@@ -850,6 +852,7 @@ class Order_driven_task_schedul():
 
 # TODO:待完成
 # 图像识别驱动的任务安排
+# 感觉和上面的有点重复了
 class Image_rec_driven_task_schedul():
     def __init__(self,task_manager:Task_manager):
         self.task_manager = task_manager

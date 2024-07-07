@@ -4,12 +4,19 @@ import rospy
 import sys
 import rospkg
 import datetime
+import os
 rospack = rospkg.RosPack()
 package_path = rospack.get_path('run_task')
 sys.path.insert(0,package_path + "/scripts")
 
 
-log_dir = package_path + "/log"
+LOGDIR = package_path + "/log"
+SUBDIR = ["order","task"]
+
+for sub_dir in SUBDIR:
+    if not os.path.exists(LOGDIR + sub_dir):
+        os.makedirs(LOGDIR + sub_dir)
+
 
 def get_current_time():
     # 获取当前时间的秒数
@@ -24,7 +31,7 @@ def get_current_time():
 def log_add_tasks_info(context):
     rospy.loginfo(f"{rospy.get_name()} log_add_tasks_info ")
     part_filename = get_current_time() 
-    file_path = log_dir  + "/add_tasks_info.log"
+    file_path = LOGDIR  + "task/add_tasks_info.log"
     with open(file_path, 'a') as file:
         file.write("\r\n\r\n\r\n")
         file.write(part_filename + '\n')
@@ -36,7 +43,7 @@ def log_add_tasks_info(context):
 def log_new_order_info(context):
     rospy.loginfo(f"{rospy.get_name()} log_new_order_info ")
     part_filename = get_current_time() 
-    file_path = log_dir  + "/new_order_info.log"
+    file_path = LOGDIR  + "order/new_order_info.log"
     with open(file_path, 'a') as file:
         file.write("\r\n\r\n\r\n")
         file.write(part_filename + '\n')
