@@ -135,27 +135,33 @@ class System():
         def _initialize_arm_anchor_point(self):
             self.left_arm_idle                 = self._get_arm_anchor_angle("LeftArmIdle")                # 左臂闲置
             self.left_arm_container_rec        = self._get_arm_anchor_angle("LeftArmContainerRec")        # 左臂识别容器
-            self.left_arm_snack_rec            = self._get_arm_anchor_angle("LeftArmSnackRec")            # 左臂识别零食
-            self.left_arm_snack_placement      = self._get_arm_anchor_coord("LeftArmSnackPlacement")     # 左臂零食放置
-            self.left_arm_container_delivery   = self._get_arm_anchor_coord("LeftArmContainerDelivery")  # 左臂容器运送时的姿态
-            self.left_arm_container_placement  = self._get_arm_anchor_coord("LeftArmContainerPlacement") # 左臂容器放置
+            self.left_arm_snack_rec            = self._get_arm_anchor_angle("LeftArmSnackRec")            # 左臂零食识别
+            self.left_arm_snack_grip           = self._get_arm_anchor_coord("LeftArmGripSnack")           # 左臂零食抓取
+            self.left_arm_snack_placement      = self._get_arm_anchor_coord("LeftArmSnackPlacement")      # 左臂零食放置
+            self.left_arm_container_grip_pre   = self._get_arm_anchor_coord("LeftArmGripContainerPre")    # 左臂抓取容器准备状态
+            self.left_arm_container_grip       = self._get_arm_anchor_coord("LeftArmGripContainer")       # 左臂抓取容器
+            self.left_arm_container_delivery   = self._get_arm_anchor_coord("LeftArmContainerDelivery")   # 左臂容器运送时的姿态
+            self.left_arm_container_placement  = self._get_arm_anchor_coord("LeftArmContainerPlacement")  # 左臂容器放置
             self.left_arm_coffee_machine_rec   = self._get_arm_anchor_angle("LeftArmCoffeeMachineRec")    # 左臂咖啡机识别
-            self.left_arm_machine_turn_on_pre  = self._get_arm_anchor_coord("LeftArmMachineTurnOnPre")   # 左臂咖啡机预备动作
-            self.left_arm_machine_turn_off_pre = self._get_arm_anchor_coord("LeftArmMachineTurnOffPre")  # 左臂咖啡机预备动作
+            self.left_arm_machine_turn_on_pre  = self._get_arm_anchor_coord("LeftArmMachineTurnOnPre")    # 左臂咖啡机预备动作
+            self.left_arm_machine_turn_off_pre = self._get_arm_anchor_coord("LeftArmMachineTurnOffPre")   # 左臂咖啡机预备动作
             
             
             self.right_arm_idle                = self._get_arm_anchor_angle("RightArmIdle")               # 右臂空闲
             self.right_arm_container_rec       = self._get_arm_anchor_angle("RightArmContainerRec")       # 右臂识别容器
             self.right_arm_snack_rec           = self._get_arm_anchor_angle("RightArmSnackRec")           # 右臂识别零食
-            self.right_arm_snack_placement     = self._get_arm_anchor_coord("RightArmSnackPlacement")    # 左臂零食放置
-            self.right_arm_container_delivery  = self._get_arm_anchor_coord("RightArmContainerDelivery") # 右臂容器运送时的姿态
-            self.right_arm_container_placement = self._get_arm_anchor_coord("RightArmContainerPlacement")# 右臂容器放置
+            self.right_arm_snack_grip          = self._get_arm_anchor_coord("RightArmGripSnack")          # 右臂零食抓取
+            self.right_arm_snack_placement     = self._get_arm_anchor_coord("RightArmSnackPlacement")     # 右臂零食放置
+            self.right_arm_container_grip_pre  = self._get_arm_anchor_coord("RightArmGripContainerPre")   # 右臂抓取容器准备状态
+            self.right_arm_container_grip      = self._get_arm_anchor_coord("RightArmGripContainer")      # 右臂抓取容器
+            self.right_arm_container_delivery  = self._get_arm_anchor_coord("RightArmContainerDelivery")  # 右臂容器运送时的姿态
+            self.right_arm_container_placement = self._get_arm_anchor_coord("RightArmContainerPlacement") # 右臂容器放置
             self.right_arm_cup_rec_pre         = self._get_arm_anchor_angle("RightArmCupRecPre")          # 右臂杯子识别预备
             self.right_arm_cup_rec             = self._get_arm_anchor_angle("RightArmCupRec")             # 右臂杯子识别
-            self.right_arm_cup_grab            = self._get_arm_anchor_coord("RightArmCupGrab")           # 右臂杯子夹取
-            self.right_arm_cup_water           = self._get_arm_anchor_coord("RightArmCupWater")          # 右臂杯子接水
-            self.right_arm_cup_delivery        = self._get_arm_anchor_coord("RightArmCupDelivery")               # 右臂杯子运送
-            self.right_arm_cup_placement       = self._get_arm_anchor_coord("RightArmCupPlacement")              # 右臂杯子放置
+            self.right_arm_cup_grab            = self._get_arm_anchor_coord("RightArmCupGrab")            # 右臂杯子夹取
+            self.right_arm_cup_water           = self._get_arm_anchor_coord("RightArmCupWater")           # 右臂杯子接水
+            self.right_arm_cup_delivery        = self._get_arm_anchor_coord("RightArmCupDelivery")        # 右臂杯子运送
+            self.right_arm_cup_placement       = self._get_arm_anchor_coord("RightArmCupPlacement")       # 右臂杯子放置
 
         # 通过名字获取机械臂定位点
         def _get_arm_anchor_coord(self,anchor_point_name):
@@ -543,7 +549,7 @@ class Order_driven_task_schedul():
         pass
         
     #  拿零食前准备
-    def create_tasks_before_grasp_snack(self,snack_list:order.Snack_list):
+    def create_tasks_before_grasp_snack(self,snack_list:order.Snack_list,table_id:utilis.Device_id):
         tasks_before_pick_snack        = task.Task_sequence()
         
         #  手臂移到空闲位, 并关闭夹爪(不可并行，固定)
@@ -591,59 +597,94 @@ class Order_driven_task_schedul():
         task_rec_snack.set_snack_list(snack_list)
         tasks_before_pick_snack.add(task_rec_snack)
         
-        return tasks_before_pick_snack
-    
-    #  拿零食后
-    def create_tasks_after_grasp_snack(self,table_id:utilis.Device_id):
-        #  把左,右臂放到指定位置(不可并行，固定),并夹取食物框
-        tasks_after_pick_snack        = task.Task_sequence()
-        task_grap_container           = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT_RIGHT,\
-                [system.constant_config.arm_anchor_point.left_arm_container_grasp,system.constant_config.arm_anchor_point.right_arm_container_grasp],\
-                    [robot.manipulation_status.clamp.status.CLOSE,robot.manipulation_status.clamp.status.CLOSE])
-        tasks_after_pick_snack.add(task_grap_container)
+        # TODO:添加零食
+        
+        # 左臂夹取零食框准备动作
+        # z变化
+        task_left_arm_grap_container_pre_z    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
+                [copy.deepcopy(system.anchor_point.left_arm_container_grip_pre)],\
+                    [robot.manipulation_status.clamp.status.OPEN])
+        tasks_before_pick_snack.add(task_left_arm_grap_container_pre_z)
+        
+        # x,y变化
+        task_left_arm_grap_container_pre_xy    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
+                [copy.deepcopy(system.anchor_point.left_arm_container_grip_pre)])
+        tasks_before_pick_snack.add(task_left_arm_grap_container_pre_xy)
+        
+        # 左臂夹取零食框
+        task_left_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
+                [copy.deepcopy(system.anchor_point.left_arm_container_grip)],\
+                    [robot.manipulation_status.clamp.status.CLOSE])
+        tasks_before_pick_snack.add(task_left_arm_grap_container)
+        
+        # 识别容器绑定 夹取容器
+        task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_pre_z)
+        task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_pre_xy)
+        task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container)
+        
+        # 右臂夹取零食框准备动作
+        # z变化
+        task_right_arm_grap_container_pre_z    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
+                [copy.deepcopy(system.anchor_point.right_arm_container_grip_pre)],\
+                    [robot.manipulation_status.clamp.status.OPEN])
+        tasks_before_pick_snack.add(task_right_arm_grap_container_pre_z)
+        
+        # x,y变化
+        task_right_arm_grap_container_pre_xy    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
+                [copy.deepcopy(system.anchor_point.right_arm_container_grip_pre)])
+        tasks_before_pick_snack.add(task_right_arm_grap_container_pre_xy)
+        
+        # 右臂夹取零食框
+        task_right_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
+                [copy.deepcopy(system.anchor_point.right_arm_container_grip_pre)],\
+                    [robot.manipulation_status.clamp.status.CLOSE])
+        tasks_before_pick_snack.add(task_right_arm_grap_container)
+        
+        # 识别容器绑定 夹取容器
+        task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container_pre_z)
+        task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container_pre_xy)
+        task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container)
         
         #  左、右臂将零食框放到指定高度(可后并行，固定)
         task_arm_dilivery_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Deliever_container,None,utilis.Device_id.LEFT_RIGHT,\
-                [system.constant_config.arm_anchor_point.left_arm_container_delivery,system.constant_config.arm_anchor_point.right_arm_container_delivery])
+                [system.anchor_point.left_arm_container_delivery,system.anchor_point.right_arm_container_delivery])
         task_arm_dilivery_container.parallel = task.Task.Task_parallel.ALL
-        tasks_after_pick_snack.add(task_arm_dilivery_container)
-        
-        # 机器人原地转身(可前并行，固定)
-        task_rotate = task.Task_navigation(task.Task_type.Task_navigate.Rotation_in_place,None,rotation_degree=20)
-        task_rotate.parallel = task.Task.Task_parallel.ALL
-        tasks_after_pick_snack.add(task_rotate)
-        
+        tasks_before_pick_snack.add(task_arm_dilivery_container)
+
+        # 机器人后退(可前并行，固定)
+        task_move_back = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.4)
+        task_move_back.parallel = task.Task.Task_parallel.ALL
+        tasks_before_pick_snack.add(task_move_back)
+
         #  导航前往n号桌(不可并行，半动态)
         if table_id == utilis.Device_id.LEFT.value:
-            task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_left_service_desk,None,system.constant_config.robot_anchor_point.left_service_desk)
+            task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_left_service_desk,None,system.anchor_point.map_left_service_desk)
         elif table_id == utilis.Device_id.RIGHT.value:
-            task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_right_service_desk,None,system.constant_config.robot_anchor_point.right_service_desk)
+            task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_right_service_desk,None,system.anchor_point.map_right_service_desk)
         else:
             raise ValueError("Invalid table_id")
-        task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_one_service_desk,None)
-        task_navigation_to_service_desk.parallel = task.Task.Task_parallel.NOTALLOWED
-        tasks_after_pick_snack.add(task_navigation_to_service_desk)
+        tasks_before_pick_snack.add(task_navigation_to_service_desk)
         
         #  将左、右臂放到指定位置后，松开(不可并行，固定)
         task_arm_placement_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_container,None,utilis.Device_id.LEFT_RIGHT,\
-                [system.constant_config.arm_anchor_point.left_arm_container_placement,system.constant_config.arm_anchor_point.right_arm_container_placement],\
+                [system.anchor_point.left_arm_container_placement,system.anchor_point.right_arm_container_placement],\
                 [robot.manipulation_status.clamp.status.OPEN,robot.manipulation_status.clamp.status.OPEN])
-        tasks_after_pick_snack.add(task_arm_placement_container)
+        tasks_before_pick_snack.add(task_arm_placement_container)
     
         #  将左,右臂放到空闲位置(可并行，固定)
-        task_arm_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move,None,utilis.Device_id.LEFT_RIGHT,\
-                [system.constant_config.arm_anchor_point.right_arm_idle,system.constant_config.arm_anchor_point.right_arm_idle],\
-                [robot.manipulation_status.clamp.status.OPEN,robot.manipulation_status.clamp.status.OPEN])
+        task_arm_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
+                [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
+                [robot.manipulation_status.clamp.status.CLOSE,robot.manipulation_status.clamp.status.CLOSE])
         task_arm_idle.parallel = task.Task.Task_parallel.ALL
-        tasks_after_pick_snack.add(task_arm_idle)
+        tasks_before_pick_snack.add(task_arm_idle)
         
-        # 机器人原地转身(可前并行，固定)
-        task_rotate2 = task.Task_navigation(task.Task_type.Task_navigate.Rotation_in_place,None,rotation_degree=20)
-        task_rotate2.parallel = task.Task.Task_parallel.ALL
-        tasks_after_pick_snack.add(task_rotate2)
+        # 机器人后退(可前并行，固定)
+        task_move_back2 = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.4)
+        task_move_back2.parallel = task.Task.Task_parallel.ALL
+        tasks_before_pick_snack.add(task_move_back2)
         
-        # 赋值
-        return tasks_after_pick_snack
+        return tasks_before_pick_snack
+    
         
     # 拿饮料前
     def create_tasks_before_get_drink(self):
@@ -887,7 +928,7 @@ def test_order_before_grasp_snack():
     order_info.add_snack(snack2)
     
     
-    tasks_before_grasp_snack = system.order_driven_task_schedul.create_tasks_before_grasp_snack(order_info)
+    tasks_before_grasp_snack = system.order_driven_task_schedul.create_tasks_before_grasp_snack(order_info,utilis.Device_id.LEFT)
     tasks_before_grasp_snack.update_group_id(2)
     path = '/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/log/order'
     ensure_directory_exists(path)

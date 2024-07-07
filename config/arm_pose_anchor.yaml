@@ -11,16 +11,25 @@ LeftArmContainerRec:
 LeftArmSnackRec:
   angles: [-66.27, 5.44, -148.83, 123.8, 72.58, 24.6]
 
+# 左臂抓零食位点
+LeftArmGripSnack:
+  # x y z待定(与识别框的偏移量), 手势确定
+  coords:  [-999, -999, -999, -90, 0.0, -90]
+
 # 左臂零食放置位点
 LeftArmSnackPlacement:
   # x y 待定(与识别框的偏移量), z比抓取框高10mm 
   coords:  [-999, -999, 380, -180, 0.0, -90]
 
-# 左臂抓框递送时的位点
-# z轴写在 grip_distance_deviation.yaml
-# LeftArmContainerGrip:
-# # x,y 与抓取框时相同, z比抓取框高50mm
-#   coords:  [-999, -999, 420, -180, 0.0, -90]
+# 左臂抓框时的准备位点
+LeftArmGripContainerPre:
+  # x y 待定(与识别框的偏移量), TODO:z待定 
+  coords:  [-999, -999, 420, -180, 0.0, -90]
+
+# 左臂抓框时的位点
+LeftArmGripContainer:
+  # x y 待定(与识别框的偏移量)
+  coords:  [-999, -999, 370, -180, 0.0, -90]
 
 # 左臂零食框递送时的位点
 LeftArmContainerDelivery:
@@ -59,10 +68,25 @@ RightArmContainerRec:
 RightArmSnackRec:
   angles: [66.27, 5.44, -148.83, -123.8, 72.58, -24.6]
 
+# 右臂抓零食位点
+RightArmGripSnack:
+  # x y z待定(与识别框的偏移量), 手势确定
+  coords:  [-999, -999, -999, 90, 0, 90]
+
 # 右臂零食放置位点
 RightArmSnackPlacement:
   # x y 待定(与识别框的偏移量), z比抓取框高10mm 
   coords:  [-999, -999, 380, -180, 0, 90]
+
+# 右臂抓框时的准备位点
+RightArmGripContainerPre:
+  # x y 待定(与识别框的偏移量), TODO:z待定 
+  coords:  [-999, -999, 420, -180, 0.0, 90]
+
+# 右臂抓框时的位点
+RightArmGripContainer:
+  # x y 待定(与识别框的偏移量)
+  coords:  [-999, -999, 370, -180, 0.0, 90]
 
 # 右臂零食框递送时的位点
 RightArmContainerDelivery:
