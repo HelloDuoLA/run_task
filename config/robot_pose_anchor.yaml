@@ -28,7 +28,6 @@ DrinkDesk:
   orientation_z: -0.67278
   orientation_w: 0.739843
 
-
 # 右服务台位姿
 RightServiceDesk:
   position_x: 2.12

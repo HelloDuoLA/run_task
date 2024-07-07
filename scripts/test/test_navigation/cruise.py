@@ -58,8 +58,7 @@ def talker():
             can_run_task = False
             navigation_actuator.run(task_list[task_index])
             task_index += 1
-            
-            
+
         rospy.loginfo("arm")
         # 按照设定的频率延时
         rate.sleep()
@@ -81,11 +80,12 @@ class Navigation_actuator():
     def __init__(self):
         # 订阅导航Action   
         self.move_base_ac   = actionlib.SimpleActionClient('move_base', MoveBaseAction)
-        self.control_cmd_ac = actionlib.SimpleActionClient(utilis.Topic_name.control_cmd_action, msg.ControlCmdAction)
+        # self.control_cmd_ac = actionlib.SimpleActionClient(utilis.Topic_name.control_cmd_action, msg.ControlCmdAction)
         rospy.loginfo("waiting for move_base, control cmd server")
         # TODO:调试需要,暂时注释
-        # self.move_base_ac.wait_for_server()
+        self.move_base_ac.wait_for_server()
         # self.control_cmd_ac.wait_for_server()
+        rospy.loginfo("move_base, control cmd server start")
         
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
         
@@ -193,16 +193,6 @@ def test():
     ac.send_goal(goal,navigation_task_done_callback,navigation_task_active_callback,navigation_task_feedback_callback)
     
 def navigation_task_done_callback(status, result):
-    # PENDING    = 0  # 目标已被接受，但处理尚未开始
-    # ACTIVE     = 1  # 目标正在被处理中
-    # PREEMPTED  = 2  # 目标在达成之前被另一个目标取代，或者在目标完成之前被取消。
-    # SUCCEEDED  = 3  # 目标已成功完成
-    # ABORTED    = 4  # 目标在完成前被中止，但不是因为外部的取消请求。
-    # REJECTED   = 5  # 目标被拒绝，不会被执行。
-    # PREEMPTING = 6  # 目标正在被取代之前的过程中。
-    # RECALLING  = 7  # 目标正在被取消之前的过程中，但尚未开始执行。
-    # RECALLED   = 8  # 目标已被成功取消，在开始执行之前。
-    # LOST       = 9  # 目标被认为丢失。
     rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
     
 # 激活回调
