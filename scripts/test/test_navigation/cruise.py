@@ -23,20 +23,23 @@ def talker():
     # 初始化节点，命名为'talker'
     rospy.init_node('template')
 
-    init_pose = constant_config_to_robot_anchor_pose_orientation("InitialPose")
-    SnackDesk = constant_config_to_robot_anchor_pose_orientation("SnackDesk")
-    DrinkDesk = constant_config_to_robot_anchor_pose_orientation("DrinkDesk")
+    init_pose    = constant_config_to_robot_anchor_pose_orientation("InitialPose")
+    middle_point = constant_config_to_robot_anchor_pose_orientation("MiddlePoint")
+    SnackDesk    = constant_config_to_robot_anchor_pose_orientation("SnackDesk")
+    DrinkDesk    = constant_config_to_robot_anchor_pose_orientation("DrinkDesk")
     RightServiceDesk = constant_config_to_robot_anchor_pose_orientation("RightServiceDesk")
     LeftServiceDesk  = constant_config_to_robot_anchor_pose_orientation("LeftServiceDesk")
     
     task_init_pose         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point, None, init_pose)
+    task_init_pose         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_middle_point, None, init_pose)
     task_SnackDesk         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_snack_desk, None, SnackDesk)
-    task_move_back1        = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.4)
+    task_snack_desk_back   = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.6)
     task_DrinkDesk         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_drink_desk, None, DrinkDesk)
-    task_move_back2        = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.4)
+    task_drink_desk_back   = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.6)
     task_RightServiceDesk  = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_right_service_desk, None, RightServiceDesk)
-    task_move_back3        = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.4)
+    task_right_service_back= task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.2)
     task_LeftServiceDesk   = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_left_service_desk, None, LeftServiceDesk)
+    task_left_service_back = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.2)
     
     rospy.loginfo(f"init_pose        : {init_pose}")
     rospy.loginfo(f"SnackDesk        : {SnackDesk}")
@@ -45,7 +48,9 @@ def talker():
     rospy.loginfo(f"LeftServiceDesk  : {LeftServiceDesk}")
 
     # task_list = [task_SnackDesk ,task_RightServiceDesk, task_DrinkDesk ,task_LeftServiceDesk,task_init_pose]
-    task_list = [task_move_back1,task_move_back2,task_move_back3]
+    # task_list = [task_move_back1]
+    task_list = [task_SnackDesk , task_snack_desk_back, task_RightServiceDesk, task_right_service_back , task_DrinkDesk, task_drink_desk_back, task_LeftServiceDesk, task_left_service_back,  task_init_pose]
+    
     navigation_actuator = Navigation_actuator()
     
     # test()  # 单独前往某一节点
@@ -60,7 +65,7 @@ def talker():
             navigation_actuator.run(task_list[task_index])
             task_index += 1
 
-        rospy.loginfo("arm")
+        rospy.loginfo("crui")
         # 按照设定的频率延时
         rate.sleep()
         
@@ -80,11 +85,11 @@ class Navigation_actuator():
     # 初始化
     def __init__(self):
         # 订阅导航Action   
-        # self.move_base_ac   = actionlib.SimpleActionClient('move_base', MoveBaseAction)
+        self.move_base_ac   = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         self.control_cmd_ac = actionlib.SimpleActionClient(utilis.Topic_name.control_cmd_action, msg.ControlCmdAction)
         rospy.loginfo("waiting for move_base, control cmd server")
         # TODO:调试需要,暂时注释
-        # self.move_base_ac.wait_for_server()
+        self.move_base_ac.wait_for_server()
         self.control_cmd_ac.wait_for_server()
         rospy.loginfo("move_base, control cmd server start")
         

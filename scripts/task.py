@@ -34,6 +34,7 @@ class Task_type():
         Navigate_to_destination    = 200             # 导航到目的地(任意目的点,还没确定点)
         Navigate_to_the_init_point = auto()          # 导航到起始点
         Navigate_to_the_snack_desk = auto()          # 导航到零食柜
+        Navigate_to_middle_point   = auto()          # 导航到中间点
         Navigate_to_the_drink_desk = auto()          # 导航到饮料柜
         Navigate_to_the_left_service_desk  = auto()  # 导航到左侧服务台
         Navigate_to_the_right_service_desk = auto()  # 导航到右侧服务台
@@ -224,7 +225,7 @@ class Task():
                 )
 # 导航任务
 class Task_navigation(Task):
-    def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(), back_meters=0,move_back_speed=0.2):
+    def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(), back_meters=0,move_back_speed=0.15):
         super().__init__(task_name,finish_cb)
         self.target_3D_pose  = target_3D_pose
         self.back_meters     = back_meters         # 旋转度数
