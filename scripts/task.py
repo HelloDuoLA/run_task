@@ -230,6 +230,17 @@ class Task():
                 f"Subtask_count_finished: {self.subtask_count_finished}\r\n"
                 f"Predecessor_tasks: {predecessor_tasks_str}\r\n"
                 )
+        
+# 功能任务
+class Task_function(Task):
+    def __init__(self, task_name:Task_type.Task_function, finish_cb=None):
+        super().__init__(task_name,finish_cb)
+    
+    # 打印输出
+    def __str__(self) -> str:
+        return super().__str__() 
+
+        
 # 导航任务
 class Task_navigation(Task):
     def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(), back_meters=0,move_back_speed=0.15):
