@@ -3,7 +3,6 @@
 import requests
 import json
 import os
-import time
 
 def get_access_token():
     """
@@ -85,21 +84,20 @@ def split_orders(json_content):
         return [data]
 
 
-def save_json_to_file(json_content, file_path_base, count):
+def save_json_to_file(json_content, base_dir, count):
     """
     将JSON内容保存到文件中
     :param json_content: JSON字符串
-    :param file_path_base: 文件路径基础名
+    :param base_dir: 基础目录路径
     :param count: 第几次对话
     :return: 文件路径列表和JSON对象列表
     """
     json_objects = extract_json_objects(json_content)
     all_files = []
-    timestamp = int(time.time())  # 获取当前时间戳
     for i, json_obj in enumerate(json_objects):
         orders = split_orders(json_obj)
         for order in orders:
-            file_path = f"{file_path_base}_{count}_{timestamp}_{i+1}.json"
+            file_path = os.path.join(base_dir, f"order_{count}_{i+1}.json")
             with open(file_path, 'w', encoding='utf-8') as json_file:
                 json.dump(order, json_file, ensure_ascii=False, indent=4)
             print(f"JSON内容已保存到文件 {file_path}")
@@ -107,7 +105,7 @@ def save_json_to_file(json_content, file_path_base, count):
     return all_files, json_objects
 
 
-def get_ai_response_as_dict(messages, count):
+def get_ai_response_as_dict(messages, count, start_timestamp):
     """
     获取AI的回答并转换为字典
     :param messages: 聊天记录
@@ -115,18 +113,16 @@ def get_ai_response_as_dict(messages, count):
     :return: AI的回答（字典形式）
     """
     result = chat_with_ai(messages)
-
     if result is None:
-        return None, None, messages
+        return None, None, result
 
     # 生成文件路径基础名
-    json_dir = "ai_responses"
-    if not os.path.exists(json_dir):
-        os.makedirs(json_dir)
-    file_path_base = os.path.join(json_dir, f"order")
+    base_dir = os.path.join("ai_responses", start_timestamp)
+    if not os.path.exists(base_dir):
+        os.makedirs(base_dir)
 
     # 保存JSON并返回文件路径列表和JSON对象
-    files, json_objects = save_json_to_file(result, file_path_base, count)
+    files, json_objects = save_json_to_file(result, base_dir, count)
     if json_objects:
         return files, json.loads(json_objects[0]), result  # 返回第一个JSON对象的字典形式
-    return files, None, messages
+    return files, None, result
