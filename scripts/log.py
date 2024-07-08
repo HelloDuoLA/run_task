@@ -10,7 +10,7 @@ package_path = rospack.get_path('run_task')
 sys.path.insert(0,package_path + "/scripts")
 
 
-LOGDIR = package_path + "/log"
+LOGDIR = package_path + "/log/"
 SUBDIR = ["orders","tasks","STag_result","image"]
 
 for sub_dir in SUBDIR:
@@ -29,14 +29,14 @@ def get_current_time():
 
 # 记录任务信息
 def log_tasks_info(context,filename):
-    file_path = f"{LOGDIR} + '/' + {filename}"
+    file_path = f"{LOGDIR}/{filename}"
     rospy.loginfo(f"{rospy.get_name()} add log f{file_path}")
     with open(file_path, 'a') as file:
-        file.write("\r\n\r\n\r\n")
         file.write(get_current_time() + '\n')
         file.write("\r\n" + "-"*50 + "\r\n")
         file.write(str(context))
         file.write("\r\n" + "-"*50 + "\r\n")
+        file.write("\n\n")
 
 # 把新增任务列表写入
 def log_add_tasks_info(context):

@@ -93,7 +93,7 @@ class Task_type():
     # 初始化
     def __init__(self,task_name:Enum) -> None:
         self.task_name = task_name                   # 任务名称
-        self.task_type = task_name.__class__         # 任务类型
+        self.task_type = task_name                   # 任务类型
         
     def __str__(self) -> str:
         return f"{self.task_type.__name__} {self.task_name.name} "

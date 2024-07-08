@@ -101,16 +101,16 @@ class Robot():
         # 状态信息订阅
         # TODO:细节还需处理, 话题名称、消息类型
         # 摄像头状态更新
-        rospy.Subscriber(utilis.Topic_name.camera_status , msg.CommonStatusDouble, self.update_camera_status, queue_size=10)
+        # rospy.Subscriber(utilis.Topic_name.camera_status , msg.CommonStatusDouble, self.update_camera_status, queue_size=10)
         # 机械臂状态更新
-        rospy.Subscriber(utilis.Topic_name.right_arm_pose, msg.ArmPoseWithID, self.update_arm_status,    queue_size=10)
-        rospy.Subscriber(utilis.Topic_name.left_arm_pose , msg.ArmPoseWithID, self.update_arm_status,    queue_size=10)
+        # rospy.Subscriber(utilis.Topic_name.right_arm_pose, msg.ArmPoseWithID, self.update_arm_status,    queue_size=10)
+        # rospy.Subscriber(utilis.Topic_name.left_arm_pose , msg.ArmPoseWithID, self.update_arm_status,    queue_size=10)
         # 爪具状态更新
         # rospy.Subscriber(utilis.Topic_name.clamp_status  , msg.CommonStatusDouble, self.update_clamp_status,  queue_size=10)
         # 图像模型状态更新 
-        rospy.Subscriber(utilis.Topic_name.image_model_status, msg.CommonStatus, self.update_image_model_status_status,  queue_size=10)
+        # rospy.Subscriber(utilis.Topic_name.image_model_status, msg.CommonStatus, self.update_image_model_status_status,  queue_size=10)
         # 语音模型状态更新 
-        rospy.Subscriber(utilis.Topic_name.image_model_status, msg.CommonStatus, self.update_image_model_status_status,  queue_size=10)
+        # rospy.Subscriber(utilis.Topic_name.image_model_status, msg.CommonStatus, self.update_image_model_status_status,  queue_size=10)
         # TODO:可能需要通过TF解决
         # 机器人位姿更新
         # rospy.Subscriber(utilis.Topic_name.robot_status, msg.Pose3D, self.update_robot_pose3d, queue_size=10)

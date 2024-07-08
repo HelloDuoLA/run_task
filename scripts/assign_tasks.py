@@ -432,7 +432,7 @@ class Image_rec_actuator():
         current_task:task.Task_image_rec = system.image_rec_actuator.running_tasks_manager.get_task(result.task_index)
         # 根据不同任务作出不同处理
         # 识别零食
-        if current_task.task_type == task.Task_type.Task_image_rec.SNACK:
+        if current_task.task_type.task_type == task.Task_type.Task_image_rec.SNACK:
             snack_count = len(result.obj_positions)
             
             for i in range(snack_count):
@@ -444,7 +444,7 @@ class Image_rec_actuator():
                 task_lossen_snack.status = task.Task.Task_status.BEREADY
                 
         # 识别容器
-        elif current_task.task_type == task.Task_type.Task_image_rec.CONTAINER:
+        elif current_task.task_type.task_type == task.Task_type.Task_image_rec.CONTAINER:
             # 获取结果
             for obj_position in result.obj_positions:
                 if obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.CONTAINER:
@@ -467,8 +467,8 @@ class Image_rec_actuator():
                     need_modify_task.status = task.Task.Task_status.BEREADY
 
         # 识别咖啡机, 开机 or 关机
-        elif current_task.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON or \
-            current_task.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF :
+        elif current_task.task_type.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON or \
+            current_task.task_type.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF :
             # 获取结果
             for obj_position in result.obj_positions:
                 if obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH:
@@ -482,7 +482,7 @@ class Image_rec_actuator():
                     need_modify_task.status = task.Task.Task_status.BEREADY
 
         # 识别杯子
-        elif current_task.task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE:
+        elif current_task.task_type.task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE:
             # 获取结果
             for obj_position in result.obj_positions:
                 if obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.CUP:
@@ -565,10 +565,14 @@ class Task_manager():
                 elif current_task.task_type.__class__ == task.Task_type.Task_image_rec:
                     system.image_rec_actuator.run(current_task)
                 # 功能性暂停任务
-                elif current_task.task_type == task.Task_type.Task_function.PAUSE.__class__:
+                elif current_task.task_type.task_type == task.Task_type.Task_function.PAUSE:
                     system.task_manager.tm_task_finish_callback(current_task,None,None)
                     rospy.loginfo(f"node: {rospy.get_name()}, run a PAUSE task")
                     break
+                
+                # 将运行任务添加到正在执行的任务列表中
+                system.task_manager.waiting_task.remove_task(current_task)
+                system.task_manager.executed_tasks.add(current_task)
                 
                 # 能运行, 但是不能下一个
                 if return_code == Task_manager.Run_task_return_code.can_run_cannot_next:
@@ -619,31 +623,34 @@ class Task_manager():
                 elif current_task.status == task.Task.Task_status.BEREADY:
                     # 硬件资源是否支持运行
                     # 导航任务检测机器人是否在运动
-                    if current_task.task_type.__class__ == task.Task_type.Task_navigate:
+                    if current_task.task_type.task_type.__class__ == task.Task_type.Task_navigate:
                         robot_status = system.robot.get_robot_status()
                         if robot_status == robot.Robot.Robot_status.MOVING:
                             rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because robot is moving")
                             return Task_manager.Run_task_return_code.cannot_run_can_next
                         elif robot_status == robot.Robot.Robot_status.IDLE:
+                            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can run. navigation task")
                             return Task_manager.Run_task_return_code.can_run_can_next
                         else:
                             raise ValueError("robot.Robot.Robot_status error!!!!!!!")
                     # 手臂任务检测手臂是否闲置
-                    elif current_task.task_type.__class__ == task.Task_type.Task_manipulation:
+                    elif current_task.task_type.task_type.__class__ == task.Task_type.Task_manipulation:
                         if system.robot.is_arm_idle(current_task.arm_id) == True:
+                            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can run. manipulation task")
                             return Task_manager.Run_task_return_code.can_run_can_next
                         else:
                             rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because arm {current_task.camera_id} is busy")
                             return Task_manager.Run_task_return_code.cannot_run_can_next
                     # 图像任务检测手臂是否闲置
-                    elif current_task.task_type.__class__ == task.Task_type.Task_image_rec:
+                    elif current_task.task_type.task_type.__class__ == task.Task_type.Task_image_rec:
                         if system.robot.is_arm_idle(current_task.camera_id) == True:
+                            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can run. image_rec task")
                             return Task_manager.Run_task_return_code.can_run_can_next
                         else:
                             rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because arm {current_task.camera_id} is busy")
                             return Task_manager.Run_task_return_code.cannot_run_can_next
                     else:
-                        raise ValueError("task.Task.Task_type error!!!!!!!")
+                        raise ValueError(f"task.Task.Task_type {current_task.task_type.task_type.__class__} error!!!!!!!")
                 else:
                     raise ValueError("task.Task.Task_status error!!!!!!!")
             else:
@@ -1037,7 +1044,7 @@ class Order_driven_task_schedul():
         return task_grasp_snack_seq
 
 def test_other():
-    # rospy.loginfo(f"task.Task_type.Task_image_rec == task.Task_type.Task_image_rec.SNACK : {task.Task_type.Task_image_rec == task.Task_type.Task_image_rec.SNACK.__class__}")
+    rospy.loginfo(f"task.Task_type.Task_image_rec == task.Task_type.Task_image_rec.SNACK : {task.Task_type.Task_image_rec == task.Task_type.Task_image_rec.SNACK.__class__}")
 
 def talker():
     # 初始化节点，命名为'talker'
@@ -1045,7 +1052,7 @@ def talker():
     global system
     system = System()
     # test_order_snack()
-    test_other()
+    # test_other()
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(1)
