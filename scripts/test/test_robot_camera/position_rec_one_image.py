@@ -39,7 +39,7 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
 
     timestamp = int(time.time())
 
-    cv2.imwrite(f'./result/{timestamp}.jpg', image)
+    cv2.imwrite(f'./STag/result/{timestamp}.jpg', image)
     
     xyz_list_with_id = []
     # 对于每个id都要进行位置检测

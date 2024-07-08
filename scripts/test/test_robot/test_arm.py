@@ -3,6 +3,7 @@ from pymycobot import Mercury
 ml = Mercury("/dev/left_arm")
 mr = Mercury("/dev/right_arm")
 
+ml.power_on()
 mr.power_on()
 
 mr.release_all_servos()
