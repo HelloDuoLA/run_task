@@ -434,24 +434,76 @@ class Image_rec_actuator():
     @staticmethod
     def do_image_rec_result_callback(result:msg.ImageRecResult):
         # 获取对应的服务对象
-        current_task = system.image_rec_actuator.running_tasks_manager.get_task(result.task_index)
+        current_task:task.Task_image_rec = system.image_rec_actuator.running_tasks_manager.get_task(result.task_index)
         # 根据不同任务作出不同处理
-        # TODO:待处理
         # 识别零食
         if current_task.task_type == task.Task_type.Task_image_rec.SNACK:
-            pass
+            snack_count = len(result.obj_positions)
+            
+            for i in range(snack_count):
+                snack_xyz                = result.obj_positions[i].position
+                arm_id                   = result.obj_positions[i].arm_id
+                task_grasp_snack         = current_task.need_modify_tasks.task_list[i*2].modify_xyz_select_arm(snack_xyz,arm_id)
+                task_lossen_snack        = current_task.need_modify_tasks.task_list[i*2+1].select_arm(arm_id)
+                task_grasp_snack.status  = task.Task.Task_status.BEREADY
+                task_lossen_snack.status = task.Task.Task_status.BEREADY
+                
         # 识别容器
         elif current_task.task_type == task.Task_type.Task_image_rec.CONTAINER:
-            pass
-        # 识别咖啡机, 开机
-        elif current_task.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON:
-            pass
-        # # 识别咖啡机, 关机
-        elif current_task.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF:
-            pass
+            # 获取结果
+            for obj_position in result.obj_positions:
+                if obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.CONTAINER:
+                    container_xyz = obj_position.position
+                elif obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK:
+                    lossen_snack_xyz = obj_position.position
+            
+            # 修改值 
+            for need_modify_task in current_task.need_modify_tasks.task_list:
+                # 松开零食
+                if need_modify_task.task_type == task.Task_type.Task_manipulation.Lossen_snack:
+                    need_modify_task.modify_target_xyz(lossen_snack_xyz,result.camera_id)
+                    # 修改任务状态
+                    need_modify_task.status = task.Task.Task_status.BEREADY
+                # 抓容器, 变的是xy坐标
+                elif need_modify_task.task_type == task.Task_type.Task_manipulation.Grasp_container:
+                    need_modify_task.modify_target_xyz(container_xyz,result.camera_id)
+                
+                    # 修改任务状态
+                    need_modify_task.status = task.Task.Task_status.BEREADY
+
+        # 识别咖啡机, 开机 or 关机
+        elif current_task.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON or \
+            current_task.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF :
+            # 获取结果
+            for obj_position in result.obj_positions:
+                if obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH:
+                    switch_xyz = obj_position.position
+            # 修改值 
+            for need_modify_task in current_task.need_modify_tasks.task_list:
+                if need_modify_task.task_type == task.Task_type.Task_manipulation.Turn_on_coffee_machine or \
+                    need_modify_task.task_type == task.Task_type.Task_manipulation.Turn_off_coffee_machine:
+                    need_modify_task.modify_target_xyz(switch_xyz,result.camera_id)
+                    # 修改任务状态
+                    need_modify_task.status = task.Task.Task_status.BEREADY
+
         # 识别杯子
         elif current_task.task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE:
-            pass
+            # 获取结果
+            for obj_position in result.obj_positions:
+                if obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.CUP:
+                    cup_xyz = obj_position.position
+                elif obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.WATER_POINT:
+                    water_xyz = obj_position.position
+            # 修改值 
+            for need_modify_task in current_task.need_modify_tasks.task_list:
+                if need_modify_task.task_type == task.Task_type.Task_manipulation.Grasp_cup:
+                    # 修改任务
+                    need_modify_task.modify_target_xyz(cup_xyz,result.camera_id)
+                    need_modify_task.status = task.Task.Task_status.BEREADY
+                elif need_modify_task.task_type == task.Task_type.Task_manipulation.Water_cup:
+                    need_modify_task.modify_target_xyz(water_xyz,result.camera_id)
+                    need_modify_task.status = task.Task.Task_status.BEREADY
+                    
         else:
             raise ValueError("Invalid task type")
         

@@ -245,7 +245,7 @@ class Task_navigation(Task):
 # 图像识别任务
 class Task_image_rec(Task):
     class Rec_OBJ_type(Enum):
-        SNACK          = 0        # SNAKC有自己独立的ID
+        LOSSEN_SNACK   = 0        # 松开零食
         CONTAINER      = auto()   # 容器
         MACHINE_SWITCH = auto()   # 机器开关
         CUP            = auto()   # 杯子
@@ -302,24 +302,38 @@ class Task_manipulation(Task):
         self.arm_move_method     = arm_move_method      # 移动方式
         self.click_length        = click_length         # 点击长度
     
-    def set_left_arm_snack_selected_position(self,target_arms_pose: List[arm.Arm_pose]):
-        # 判断输入是不是列表
-        if isinstance(target_arms_pose,arm.Arm_pose):
-            self.target_left_arm_pose    = [target_arms_pose]
-        else: # 是
-            self.target_left_arm_pose    = target_arms_pose
-    
-    def set_right_arm_snack_selected_position(self,target_arms_pose: List[arm.Arm_pose]):
-        # 判断输入是不是列表
-        if isinstance(target_arms_pose,arm.Arm_pose):
-            self.target_right_arm_pose    = [target_arms_pose]
-        else: # 是
-            self.target_right_arm_pose    = target_arms_pose
-    
-    
     # 设置目标位置
-    def set_target_arm_pose(self,arm_pose:arm.Arm_pose):
-        self.target_arms_pose = arm_pose
+    def set_target_arm_pose(self,arm_pose:arm.Arm_pose,device_id:utilis.Device_id):
+        if len(self.target_arms_pose) == 2:
+            if device_id == utilis.Device_id.LEFT:
+                self.target_arms_pose[0] = arm_pose
+            elif device_id == utilis.Device_id.RIGHT:
+                self.target_arms_pose[1] = arm_pose
+        else:
+            self.target_arms_pose[0] = arm_pose
+            
+    # 修改目标xyz
+    def modify_target_xyz(self,arm_pose:List[float],device_id:utilis.Device_id):
+        if device_id == utilis.Device_id.LEFT:
+            self.target_arms_pose[0].arm_pose[0] = arm_pose[0]
+            self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
+            self.target_arms_pose[0].arm_pose[2] = arm_pose[2]
+        elif device_id == utilis.Device_id.RIGHT:
+            self.target_arms_pose[1].arm_pose[0] = arm_pose[0]
+            self.target_arms_pose[1].arm_pose[1] = arm_pose[1]
+            self.target_arms_pose[1].arm_pose[2] = arm_pose[2]
+            
+    def modify_xyz_select_arm(self,arm_pose:List[float],device_id:utilis.Device_id):
+        self.modify_target_xyz(arm_pose,device_id)
+        self.select_arm(device_id)
+    
+    def select_arm(self,device_id:utilis.Device_id):
+        if device_id == utilis.Device_id.LEFT:
+            self.arm_id = utilis.Device_id.LEFT
+            self.target_arms_pose.pop(1)
+        elif device_id == utilis.Device_id.RIGHT:
+            self.arm_id = utilis.Device_id.RIGHT
+            self.target_arms_pose.pop(0)
         
     # 打印字符串
     def __str__(self) -> str:
