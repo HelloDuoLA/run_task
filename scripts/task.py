@@ -199,6 +199,13 @@ class Task():
         else:
             return False
     
+    # 判断任务是否相等
+    def __eq__(self, value: object) -> bool:
+        if self.task_group_id == value.task_group_id and self.task_index == value.task_index:
+            return True
+        else:
+            return False
+    
     # 打印输出
     def __str__(self) -> str:
         rospy.loginfo(f"{rospy.get_name()} task id : {self.task_index}")
@@ -369,8 +376,6 @@ class Task_sequence():
         for task in self.task_list:
             task_str = task_str + f"\r\n\r\n{task}"
         return task_str
-        # return "OK"
-        # return
     
     # 添加任务
     def add(self,task):
@@ -398,8 +403,13 @@ class Task_sequence():
                 return False
         return True
 
+    # 获取任务数量
     def get_task_count(self):
         return len(self.task_list)
+
+    # 删除任务
+    def remove_task(self,task:Task):
+        self.task_list.remove(task)
 
 # 任务执行器中的任务管理器
 class Task_manager_in_running():

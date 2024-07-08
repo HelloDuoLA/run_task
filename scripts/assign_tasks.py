@@ -11,6 +11,8 @@ from tf.transformations import quaternion_from_euler, euler_from_quaternion
 import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal, MoveBaseFeedback
 import copy
+from enum import Enum,auto
+
 
 # 自定义包
 rospack = rospkg.RosPack()
@@ -511,20 +513,33 @@ class Image_rec_actuator():
     
 
 # 任务管理器
+# 判断哪些任务能够运行
 class Task_manager():
+    class Run_task_return_code(Enum):
+        cannot_run_cannot_next = 0      # 不能运行, 也不能执行下一个
+        cannot_run_can_next    = auto() # 不能运行, 但可以执行下一个
+        can_run_cannot_next    = auto() # 可以运行, 但不能执行下一个
+        can_run_can_next       = auto() # 可以运行, 也可以执行下一个
+    
     def __init__(self,robot=None):
         self.robot            = robot                 # 执行任务的机器人
         self.finished_tasks   = task.Task_sequence()  # 已经完成的任务列表
         self.executed_tasks   = task.Task_sequence()  # 正在执行的任务列表
         # self.conflicting_task = task.Task_sequence()  # 冲突的任务列表(可以并行, 但因为硬件冲突暂时无法并行)
         self.waiting_task     = task.Task_sequence()  # 等待执行的任务列表
-        
+        self.can_run_state    = True                  #是否能够执行任务
         # 每0.5s执行一次任务
         timer = rospy.Timer(rospy.Duration(0.5), self.timer_callback)
     
     # 任务完成回调
-    def tm_task_finish_callback(self, task, status, result):
-        rospy.loginfo(f"node: {rospy.get_name()}, task_manager, tasks: {task}")
+    def tm_task_finish_callback(self, current_task:task.Task, status, result):
+        rospy.loginfo(f"node: {rospy.get_name()}, task_manager, tasks: {current_task}")
+        # 让任务管理器恢复正常
+        if current_task.parallel == task.Task.Task_parallel.NOTALLOWED:
+            self.can_run_state = True
+        self.executed_tasks.remove_task(current_task) # 在执行的任务中移除
+        self.finished_tasks.add(current_task)         # 添加到已完成的任务中
+        log.log_finish_tasks_info(current_task)       # 记录完成的任务信息
     
 
     # 定时器任务
@@ -532,21 +547,42 @@ class Task_manager():
     def timer_callback(event):
         rospy.loginfo("Task manager timer callback")
         for current_task in system.task_manager.waiting_task.task_list:
-            # TODO:需要分情况进行判断, 如果任务不支持并行, 且前方还有任务未执行,就停下
-            if system.task_manager.task_is_ready_to_run(current_task):
+            return_code = system.task_manager.task_can_run(current_task)
+            # 不能运行, 也不能下一个
+            if return_code == Task_manager.Run_task_return_code.cannot_run_cannot_next:
+                break
+            # 不能运行, 但是能下一个
+            elif return_code == Task_manager.Run_task_return_code.cannot_run_can_next:
+                continue
+            else:
                 # 导航任务
                 if current_task.task_type == task.Task_type.Task_navigate:
-                    system.navigation_actuator.run(task)
+                    system.navigation_actuator.run(current_task)
                 # 机械臂任务
                 elif current_task.task_type == task.Task_type.Task_manipulation:
-                    system.manipulator_actuator.run(task)
+                    system.manipulator_actuator.run(current_task)
                 # 图像识别任务
                 elif current_task.task_type == task.Task_type.Task_image_rec:
-                    system.image_rec_actuator.run(task)
+                    system.image_rec_actuator.run(current_task)
+                
+                # 能运行, 但是不能下一个
+                if return_code == Task_manager.Run_task_return_code.can_run_cannot_next:
+                    # 完成前, 不允许进行下一个任务
+                    system.task_manager.can_run_state = False
+                    break
+                # 能运行, 也能下一个
+                elif return_code == Task_manager.Run_task_return_code.can_run_can_next:
+                    continue
+                else:
+                    raise ValueError("Invalid return code")
     
     # 判断任务是否能够运行
     # TODO:重头戏
-    def task_is_ready_to_run(self,current_task:task.Task):
+    def task_can_run(self,current_task:task.Task):
+        # 不能执行下一个任务
+        if self.can_run_state == False:
+            return Task_manager.Run_task_return_code.cannot_run_cannot_next
+        
         if current_task.status == task.Task.Task_status.NOTREADY:
             return False
         else:
