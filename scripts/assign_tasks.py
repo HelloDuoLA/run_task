@@ -27,6 +27,8 @@ import log
 import arm
 import control_cmd
 
+DEBUG_NAVIGATION = True     # 导航调试中, 则运动到桌子的任务均为非并行任务, 并且在完成之后需要输入任意字符才能下一步
+
 
 # 初始化
 class System():
@@ -249,6 +251,8 @@ class Navigation_actuator():
         if current_task.finish_cb is not None:
             current_task.finish_cb(status, result)
         
+        if DEBUG_NAVIGATION:
+            input("The navigation point has been reached, whether to continue running ")
         # 机器人状态更新
         system.robot.robot_status = robot.Robot.Robot_status.IDLE  
         
@@ -543,8 +547,6 @@ class Task_manager():
     def timer_callback(event):
         rospy.loginfo("Task manager timer callback")
         for current_task in system.task_manager.waiting_task.task_list:
-            # !
-            # time.sleep(1)
             return_code = system.task_manager.task_can_run(current_task)
             rospy.loginfo(f"task {current_task.task_index} return code is {return_code}")
             # 不能运行, 也不能下一个
@@ -736,12 +738,14 @@ class Order_driven_task_schedul():
         task_left_right_arms_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE, None, utilis.Device_id.LEFT_RIGHT, \
             [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
             [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ)
+        
         task_left_right_arms_idle.parallel = task.Task.Task_parallel.ALL
         tasks_pick_snack.add(task_left_right_arms_idle)
         
         #  前往零食桌
         task_navigation_to_snack_desk  = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_snack_desk, None, system.anchor_point.map_snack_desk)
-        task_navigation_to_snack_desk.parallel = task.Task.Task_parallel.ALL
+        if not DEBUG_NAVIGATION:
+            task_navigation_to_snack_desk.parallel = task.Task.Task_parallel.ALL
         tasks_pick_snack.add(task_navigation_to_snack_desk)
         
         #  将左臂抬到指定位置(食物框识别位置)
@@ -841,7 +845,8 @@ class Order_driven_task_schedul():
             task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_right_service_desk,None,system.anchor_point.map_right_service_desk)
         else:
             raise ValueError("Invalid table_id")
-        task_navigation_to_service_desk.parallel = task.Task.Task_parallel.ALL
+        if not DEBUG_NAVIGATION:
+            task_navigation_to_service_desk.parallel = task.Task.Task_parallel.ALL
         tasks_pick_snack.add(task_navigation_to_service_desk)
         
         #  将左、右臂放到指定位置后，松开
@@ -875,7 +880,8 @@ class Order_driven_task_schedul():
         
         # 导航前往饮料桌
         task_navigation_to_drink_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_drink_desk,None,system.anchor_point.map_drink_desk)
-        task_navigation_to_drink_desk.parallel = task.Task.Task_parallel.ALL
+        if not DEBUG_NAVIGATION:
+            task_navigation_to_drink_desk.parallel = task.Task.Task_parallel.ALL
         tasks_get_drink.add(task_navigation_to_drink_desk)
         
         #  左臂抬到指定位置识别咖啡机开关 开
@@ -984,7 +990,8 @@ class Order_driven_task_schedul():
             task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_right_service_desk,None,system.anchor_point.map_right_service_desk)
         else:
             raise ValueError("Invalid table_id")
-        task_navigation_to_service_desk.parallel = task.Task.Task_parallel.ALL
+        if not DEBUG_NAVIGATION:
+            task_navigation_to_service_desk.parallel = task.Task.Task_parallel.ALL
         tasks_get_drink.add(task_navigation_to_service_desk)
 
         #  将饮料臂放到指定位置后松开(不可并行)
