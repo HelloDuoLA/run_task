@@ -129,9 +129,9 @@ class Arm_pose():
     # 重写打印输出
     def __str__(self):
         if self.type_id == PoseType.ANGLE:
-            return f"arm {self.arm_id} joint:{self.arm_pose}"
+            return f"arm {self.arm_id}, pose type {self.type_id}, joint:{self.arm_pose}"
         elif self.type_id == PoseType.BASE_COORDS:
-            return f"arm {self.arm_id} coords:{self.arm_pose}"
+            return f"arm {self.arm_id}, pose type {self.type_id}, coords:{self.arm_pose}"
     # 将列表状态输出为action的数据结构
     def list_to_msg(self):
         arm_pose = msg.ArmPose()

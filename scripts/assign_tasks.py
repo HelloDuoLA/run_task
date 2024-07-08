@@ -642,7 +642,9 @@ class Order_driven_task_schedul():
         task_left_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
                 [copy.deepcopy(system.anchor_point.left_arm_container_grip)],\
                     [arm.GripMethod.OPEN_CLOSE], arm_move_method = arm.ArmMoveMethod.XY_Z)
+        task_left_arm_grap_container.status = task.Task.Task_status.NOTREADY       # 需要参数
         tasks_pick_snack.add(task_left_arm_grap_container)
+        
         
         task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container)
         
@@ -650,6 +652,7 @@ class Order_driven_task_schedul():
         task_right_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
                 [copy.deepcopy(system.anchor_point.right_arm_container_grip_pre)],\
                     [arm.GripMethod.OPEN_CLOSE], arm_move_method = arm.ArmMoveMethod.XY_Z)
+        task_right_arm_grap_container.status = task.Task.Task_status.NOTREADY   
         tasks_pick_snack.add(task_right_arm_grap_container)
         
         # 识别容器绑定 夹取容器
@@ -659,6 +662,8 @@ class Order_driven_task_schedul():
         task_arm_dilivery_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Deliever_container,None,utilis.Device_id.LEFT_RIGHT,\
                 [system.anchor_point.left_arm_container_delivery,system.anchor_point.right_arm_container_delivery], arm_move_method = arm.ArmMoveMethod.XYZ)
         task_arm_dilivery_container.parallel = task.Task.Task_parallel.ALL
+        task_arm_dilivery_container.add_predecessor_task(task_left_arm_grap_container)
+        task_arm_dilivery_container.add_predecessor_task(task_right_arm_grap_container)
         tasks_pick_snack.add(task_arm_dilivery_container)
 
         # 机器人后退(可前并行，固定)
@@ -913,7 +918,7 @@ def talker():
     rospy.init_node('assign_tasks')
     global system
     system = System()
-    test_order_before_grasp_snack()
+    test_order_snack()
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(1)
 
@@ -927,7 +932,7 @@ def ensure_directory_exists(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
-def test_order_before_grasp_snack():
+def test_order_snack():
     order_info = order.Order()
 
     snack  = order.Snack(order.Snack.Snack_id.YIDA,1)

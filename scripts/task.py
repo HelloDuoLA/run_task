@@ -293,7 +293,7 @@ class Task_manipulation(Task):
             self.target_arms_pose    = target_arms_pose
         
         # 判断输入是不是列表
-        if isinstance(target_clamps_status,robot.manipulation_status.clamp.status):
+        if isinstance(target_clamps_status,arm.GripMethod):
             self.target_clamps_status = [target_clamps_status]
         else:
             self.target_clamps_status = target_clamps_status
@@ -327,7 +327,7 @@ class Task_manipulation(Task):
             if i == 0:
                 arms_pose_str = f"Arm_pose_{i}: {self.target_arms_pose[i]} "
             else:
-                arms_pose_str = arms_pose_str + f"Arm_pose_{i}: {self.target_arms_pose[i]} "
+                arms_pose_str = arms_pose_str+ "\n" +  23 * " " + f"Arm_pose_{i}: {self.target_arms_pose[i]} "
         
         for i in range(len(self.target_clamps_status)):
             if i == 0:
@@ -340,7 +340,8 @@ class Task_manipulation(Task):
             f"Target_arms_pose    : {{{arms_pose_str}}} \r\n" 
             f"Target_clamps_status: {clamps_status_str} \r\n" 
             f"Clamp_speed         : {self.clamp_speed} \r\n"
-            f"Clamp_first         : {self.clamp_first} \r\n"
+            f"arm_move_method     : {self.arm_move_method} \r\n"
+            f"click_length        : {self.click_length } \r\n"
         )
 
 # 任务队列

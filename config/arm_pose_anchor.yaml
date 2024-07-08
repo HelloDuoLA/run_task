@@ -122,11 +122,10 @@ RightArmCupWater:
   coords:  [-999, -999, 230, 90, 0, 90]
   
 # 杯子转移位点
-# z轴是夹杯子是多少, 这里就是多少
 RightArmCupDelivery:
-  coords: [300, 0, -1, 90, 0, 90]
+  coords: [300, 0, 210, 90, 0, 90]
 
 # 杯子的放置位姿
 RightArmCupPlacement:
   # 同杯子转移位点
-  coords: [300, 0, -1, 90, 0, 90]
+  coords: [300, 0, 210, 90, 0, 90]
