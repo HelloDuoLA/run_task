@@ -10,3 +10,7 @@ git config --global credential.helper store  ·
 
 # 调参
 rosrun rqt_reconfigure rqt_reconfigure
+
+source ./devel/setup.bash 
+roslaunch run_task mercury_mapping.launch 
+roslaunch run_task mercury_navigation.launch 
