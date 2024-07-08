@@ -876,7 +876,7 @@ class Order_driven_task_schedul():
     
     # 拿饮料
     def create_tasks_get_drink(self, table_id:utilis.Device_id):
-        tasks_get_drink = task.Task_sequence()
+        tasks_get_drink = task.Task_sequence()  
         
         # 导航前往饮料桌
         task_navigation_to_drink_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_drink_desk,None,system.anchor_point.map_drink_desk)
