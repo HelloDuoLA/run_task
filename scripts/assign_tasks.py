@@ -6,7 +6,7 @@ import rospy
 import os
 import sys
 import rospkg
-from geometry_msgs.msg  import PoseWithCovarianceStamped,Twist
+from geometry_msgs.msg  import PoseWithCovarianceStamped
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
 import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal, MoveBaseFeedback
@@ -32,7 +32,7 @@ class System():
     # 初始化
     def __init__(self):
         System.instance = self
-        self.anchor_point = self.Anchor_point()
+        self.anchor_point = self.Anchor_point()  # 固定参数读取
         
         rospy.loginfo(f"node: {rospy.get_name()}, system init")
         # 执行器初始化
@@ -52,28 +52,16 @@ class System():
         # 订单驱动任务增加器
         self.order_driven_task_schedul     = Order_driven_task_schedul(self.task_manager)
         
-        # 图像识别驱动任务修改器
-        self.image_rec_driven_task_schedul = Image_rec_driven_task_schedul(self.task_manager)
-        
         # 设置初始位姿
         # TODO:调试需要,暂时注释
         # self.set_initial_pose()
     
     # 设置初始位姿
     def set_initial_pose(self):
-        # 获得初始位姿
-        x = rospy.get_param('~InitialPose/position_x')
-        y = rospy.get_param('~InitialPose/position_y')
-        yaw = rospy.get_param('~InitialPose/yaw')
-        rospy.loginfo(f"node: {rospy.get_name()}, get params x:{x} y:{y} yaw: {yaw}")
-        
-        # 设置初始位置
-        initial_pose = utilis.Pose2D(x,y,yaw)
-        self.robot.update_robot_pose3d(utilis.Pose3D.instantiate_by_pose2d(initial_pose))
-        self.set_amcl_pose(initial_pose)
+        self.set_amcl_pose(self.anchor_point.map_initial_pose)
     
     # 初始化AMCL位姿
-    def set_amcl_pose(self,pose:utilis.Pose2D):
+    def set_amcl_pose(self,pose:utilis.Pose3D):
         rospy.loginfo(f"node: {rospy.get_name()} : set initial pose {pose}")
         pub = rospy.Publisher('/initialpose', PoseWithCovarianceStamped, queue_size=10)
         # 等待发布者成为有效的
@@ -98,7 +86,7 @@ class System():
         initial_pose.pose.covariance[6 * 1 + 1] = 0.25
         initial_pose.pose.covariance[6 * 5 + 5] = 0.06853891945200942
     
-        rospy.loginfo(f"node: {rospy.get_name()}, orientation: {q}")
+        rospy.loginfo(f"node: {rospy.get_name()}, set_amcl_pose position {initial_pose.pose.pose.position} orientation: {q}")
         # 发布初始位置
         pub.publish(initial_pose)
         
@@ -109,6 +97,7 @@ class System():
             self._initialize_arm_anchor_point()
             self._initialize_other_config()
             
+        # 后退距离
         def _initialize_other_config(self):
             self.snack_deck_move_back_length = rospy.get_param(f'~SnackDeckMoveBackLength')
             self.drink_deck_move_back_length = rospy.get_param(f'~DrinkDeckMoveBackLength')
@@ -246,7 +235,6 @@ class Navigation_actuator():
     def navigation_task_done_callback(status, result):
         rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
         current_task = system.navigation_actuator.running_tasks_manager.get_task(system.navigation_actuator.move_base_task_index)
-        system.robot.robot_status = robot.Robot.Robot_status.IDLE  # 机器人状态更新
         
         if status == actionlib.GoalStatus.SUCCEEDED:
             rospy.loginfo(f"node: {rospy.get_name()}, navigation succeed. status : {status}")
@@ -258,6 +246,9 @@ class Navigation_actuator():
         # 任务自带的回调
         if current_task.finish_cb is not None:
             current_task.finish_cb(status, result)
+        
+        # 机器人状态更新
+        system.robot.robot_status = robot.Robot.Robot_status.IDLE  
         
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
@@ -277,15 +268,15 @@ class Navigation_actuator():
     # 直接控制完成回调
     @staticmethod
     def control_cmd_task_done_callback(status, result:msg.ControlCmdResult):
-        rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
+        rospy.loginfo(f"node: {rospy.get_name()}, control cmd task done. status:{status} result:{result}")
         current_task = system.navigation_actuator.running_tasks_manager.get_task(result.task_index)
         system.robot.robot_status = robot.Robot.Robot_status.IDLE  # 机器人状态更新
         
         if status == actionlib.GoalStatus.SUCCEEDED:
-            rospy.loginfo(f"node: {rospy.get_name()}, navigation succeed. status : {status}")
+            rospy.loginfo(f"node: {rospy.get_name()}, control cmd succeed. status : {status}")
             current_task.update_end_status(task.Task.Task_result.SUCCEED)
         else:
-            rospy.loginfo(f"node: {rospy.get_name()}, navigation failed. status : {status}")
+            rospy.loginfo(f"node: {rospy.get_name()}, control cmd failed. status : {status}")
             current_task.update_end_status(task.Task.Task_result.FAILED)
         
         # 任务自带的回调
@@ -380,7 +371,7 @@ class Manipulator_actuator():
     def done_callback(status, result:msg.MoveArmResult):
         rospy.loginfo(f"node: {rospy.get_name()}, manipulator done. status:{status} result:{result}")
         current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
-        system.robot.update_arm_status(current_task.arm_id,robot.manipulation_status.arm.status.IDLE)
+
         # 任务成功
         if status == actionlib.GoalStatus.SUCCEEDED:
             rospy.loginfo(f"node: {rospy.get_name()}, manipulator succeed. status : {status}")
@@ -392,6 +383,9 @@ class Manipulator_actuator():
         
         # 任务自带的回调
         current_task.finish_cb(status, result)
+    
+        # 更新机械臂状态
+        system.robot.update_arm_status(current_task.arm_id,robot.manipulation_status.arm.status.IDLE)
         
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
@@ -409,20 +403,19 @@ class Manipulator_actuator():
 
 # 图像识别任务执行器
 class Image_rec_actuator():
-    # instance = None
     def __init__(self):
-        # image_rec_actuator.instance  = self 
-        self.running_tasks_manager          = task.Task_manager_in_running()  # 正在执行的任务管理器       
+        self.running_tasks_manager  = task.Task_manager_in_running()  # 正在执行的任务管理器       
         self.pub = rospy.Publisher (utilis.Topic_name.image_recognition_request ,msg.ImageRecRequest ,self,queue_size=10) # 发布识别任务
         self.sub = rospy.Subscriber(utilis.Topic_name.image_recognition_result  ,msg.ImageRecResult  ,queue_size=10)      # 订阅识别结果
 
     # 运行
     def run(self, task_image_rec_task:task.Task_image_rec):
         task_index = self.running_tasks_manager.add_task(task_image_rec_task)
+        # 更新机械臂状态
         system.robot.update_arm_status(task_image_rec_task.camera_id,robot.manipulation_status.arm.status.BUSY)
         # 发布任务
         task_info = msg.ImageRecRequest()
-        task_info.task_index = task_index                    # 任务索引
+        task_info.task_index = task_index                                    # 任务索引
         task_info.task_type  = task_image_rec_task.task_type.task_type.value # 任务类型
         # 如果是识别零食, 则需要给出零食列表
         if task_info.task_type == task.Task_type.Task_image_rec.SNACK:
@@ -507,9 +500,12 @@ class Image_rec_actuator():
         else:
             raise ValueError("Invalid task type")
         
+        # 更新任务状态
         current_task.update_end_status(task.Task.Task_result.SUCCEED)
         # 任务自带的回调
         current_task.finish_cb(actionlib.GoalStatus.SUCCEEDED)
+        # 更新机械臂状态
+        system.robot.update_arm_status(current_task.camera_id,robot.manipulation_status.arm.status.IDLE)
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, actionlib.GoalStatus.SUCCEEDED)
     
@@ -536,6 +532,7 @@ class Task_manager():
     def timer_callback(event):
         rospy.loginfo("Task manager timer callback")
         for current_task in system.task_manager.waiting_task.task_list:
+            # TODO:需要分情况进行判断, 如果任务不支持并行, 且前方还有任务未执行,就停下
             if system.task_manager.task_is_ready_to_run(current_task):
                 # 导航任务
                 if current_task.task_type == task.Task_type.Task_navigate:
@@ -574,7 +571,7 @@ class Order_driven_task_schedul():
     def __init__(self,task_manager:Task_manager):
         self.task_manager = task_manager
         self.order_list = []
-        self.server = rospy.Subscriber(utilis.Topic_name.make_order,msg.OrderInfo,self.do_order_req,self,queue_size=10,)
+        self.server = rospy.Subscriber(utilis.Topic_name.make_order,msg.OrderInfo,self.do_order_req,self,queue_size=10)
     
     # 下单服务回调
     @staticmethod
@@ -923,48 +920,7 @@ class Order_driven_task_schedul():
         right_arm_container_rec_task.add_need_modify_task(task_placement_snack)
         
         return task_grasp_snack_seq
-
-
-# TODO:待完成
-# 图像识别驱动的任务安排
-# 感觉和上面的有点重复了
-class Image_rec_driven_task_schedul():
-    def __init__(self,task_manager:Task_manager):
-        self.task_manager = task_manager
-    
-    # 更新任务参数
-    # TODO:待更新
-    def updata_task_params(self,current_task:task.Task_image_rec,image_rec_result:msg.ImageRecResult):
-        if current_task.task_type == task.Task_type.Task_image_rec.SNACK:
-            snack_positions = image_rec_result.obj_positions
-            for i in range (current_task.get_need_modify_task_count()/2):
-                grasp_snack :task.Task_manipulation  = current_task.need_modify_tasks[i]
-                lossen_snack:task.Task_manipulation  = current_task.need_modify_tasks[i + 1]
-                
-                grasp_snack.status  = task.Task.Task_status.BEREADY
-                lossen_snack.status = task.Task.Task_status.BEREADY
-        elif current_task.task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE:
-            cup_position       = image_rec_result.obj_positions[0]   # 杯子位置
-            water_cup_position = image_rec_result.obj_positions[1]   # 装咖啡位置
             
-            grasp_cup:task.Task_manipulation  = current_task.get_need_modify_task(0)
-            move_cup :task.Task_manipulation  = current_task.get_need_modify_task(1)
-            
-            grasp_cup.status   = task.Task.Task_status.BEREADY
-            move_cup.status    = task.Task.Task_status.BEREADY
-            
-        elif current_task.task_type == task.Task_type.Task_image_rec.COFFEE_MACHIE_SWITCH:
-            move_under_switch:task.Task_manipulation   = current_task.get_need_modify_task(0)
-            turn_on_switch   :task.Task_manipulation   = current_task.get_need_modify_task(1)
-            move_over_switch :task.Task_manipulation   = current_task.get_need_modify_task(2)
-            turn_off_switch  :task.Task_manipulation   = current_task.get_need_modify_task(3)
-            
-            move_under_switch.status = task.Task.Task_status.BEREADY
-            turn_on_switch.status    = task.Task.Task_status.BEREADY
-            move_over_switch.status  = task.Task.Task_status.BEREADY
-            turn_off_switch.status   = task.Task.Task_status.BEREADY
-            
-
 def talker():
     # 初始化节点，命名为'talker'
     rospy.init_node('assign_tasks')
