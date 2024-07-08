@@ -1,10 +1,11 @@
 import pyaudio
+import time
 from speech_recognition_module import recognize_speech
 from ai_interaction_module import get_ai_response_as_dict, chat_with_ai
 
 # 全局对话计数器
 global_count = 1
-
+start_timestamp = time.strftime('%Y-%m-%d_%H-%M-%S')
 
 def list_microphones():
     """列出系统中连接的麦克风设备"""
@@ -16,6 +17,21 @@ def list_microphones():
             print(f"{i}: {device_info['name']}")
     p.terminate()
 
+def get_valid_microphone_index():
+    """提示用户选择有效的麦克风设备编号"""
+    p = pyaudio.PyAudio()
+    device_count = p.get_device_count()
+    p.terminate()
+
+    while True:
+        try:
+            mic_index = int(input("请选择要使用的麦克风设备编号: "))
+            if 0 <= mic_index < device_count:
+                return mic_index
+            else:
+                print(f"无效的设备编号，请输入一个介于 0 和 {device_count - 1} 之间的数字。")
+        except ValueError:
+            print("无效输入，请输入一个数字。")
 
 def prompt_user():
     """提示用户是否开始语音识别"""
@@ -27,7 +43,7 @@ def prompt_user():
             print("无效输入，请输入 'y' 或 'n'。")
 
 
-def voice_to_json(APPID, APIKey, APISecret, messages, duration=20, mic_index=None):
+def voice_to_json(APPID, APIKey, APISecret, messages, duration=10, mic_index=None):
     global global_count
 
     if not prompt_user():
@@ -35,15 +51,19 @@ def voice_to_json(APPID, APIKey, APISecret, messages, duration=20, mic_index=Non
         return False, None, None, messages
 
     print("开始语音识别...")
-    recognized_text = recognize_speech(APPID, APIKey, APISecret, duration, mic_index)
+    recognized_text = recognize_speech(APPID, APIKey, APISecret, global_count, start_timestamp, duration, mic_index)
     print(f"识别到的文字: {recognized_text}")
 
     if recognized_text:
+        print("将识别的文字传递给AI处理...")
         messages.append({"role": "user", "content": recognized_text})
-        response_files, response_dict, response = get_ai_response_as_dict(messages, count=global_count)
+        response_files, response_dict, response = get_ai_response_as_dict(messages, count=global_count, start_timestamp=start_timestamp)
         messages.append({"role": "assistant", "content": response})
         if response_files:
             global_count += 1  # 每次成功识别并生成文件后递增计数
+            print("AI处理完成并生成了文件。")
+        else:
+            print("AI处理完成，但未生成文件。")
         return True, response_files, response_dict, messages
     else:
         print("未识别到有效文字。")
@@ -73,11 +93,11 @@ def main():
     initial_response = chat_with_ai(messages)
     messages.append({"role": "assistant", "content": initial_response})
     if initial_response:
-        print("AI初始化响应已准备完毕。")
+        print("系统初始化完成，等待语音识别...")
 
     # 列出当前连接的麦克风设备
     list_microphones()
-    mic_index = int(input("请选择要使用的麦克风设备编号: "))
+    mic_index = get_valid_microphone_index()
 
     # 开始语音对话
     while True:
