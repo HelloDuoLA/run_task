@@ -1,21 +1,20 @@
 <launch>
-    <!-- 底盘节点 -->
-    <!-- <include file="$(find pkg_base_function)/launch/robot_base.launch" />  -->
-    <!-- 摄像头节点 -->
-    <!-- 机械臂节点 -->
-    <!-- LiDAR节点 -->
-    <include file="$(find pkg_base_function)/launch/rslidar.launch" /> 
-    <!-- 任务发放节点 -->
-    <!-- tf树节点 -->
-    <include file="$(find run_task)/launch/tf.launch" /> 
-     <!--打印轨迹节点 -->
-    <!-- <node pkg="tf_demo" name="show_path_pose" type="show_path_pose"  /> -->
-    <!-- 地图读取节点-->
-    <include file="$(find run_task)/launch/map_pub.launch" /> 
-    <!-- amcl节点 -->
-    <include file="$(find run_task)/launch/amcl.launch" /> 
-    <!-- move_base节点 -->
-    <include file="$(find run_task)/launch/teb_base.launch" /> 
-    <!-- rviz节点 -->
-    <node pkg="rviz" name="rviz" type="rviz" args="-d $(find run_task)/rviz/rviz.rviz" />
+    <!-- 导航节点 -->
+    <!-- 包含了导航、地盘、RVIZ、激光LiDAR -->
+    <include file="$(find run_task)/launch/mercury_navigation.launch" /> 
+
+    <!-- 自己的节点 -->
+    <!-- 机械臂 -->
+    <include file="$(find run_task)/launch/arm.launch" /> 
+    <!-- 识别模块 -->
+    <include file="$(find run_task)/launch/camera.launch" /> 
+    <!-- 安排模块 -->
+    <include file="$(find run_task)/launch/assgin_task.launch" /> 
+    <!-- 控制倒车模块 -->
+    <include file="$(find run_task)/launch/control_cmd.launch" /> 
+
+    <!-- 语音识别模块 -->
+    
+
+
 </launch> 

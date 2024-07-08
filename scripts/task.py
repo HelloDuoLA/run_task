@@ -281,8 +281,8 @@ class Task_image_rec(Task):
 # 机械臂运动、夹取任务
 class Task_manipulation(Task):
     def __init__(self, task_name, fn_callback,arm_id:utilis.Device_id, target_arms_pose: List[arm.Arm_pose] = [arm.Arm_pose()],  \
-                target_clamps_status: List[robot.manipulation_status.clamp.status] = [robot.manipulation_status.clamp.status.DONTCANGE,robot.manipulation_status.clamp.status.DONTCANGE], \
-                clamp_speed = 50):
+                target_clamps_status: List[arm.GripMethod] = [arm.GripMethod.DONTCANGE,arm.GripMethod.DONTCANGE], \
+                clamp_speed = 50, arm_move_method = arm.ArmMoveMethod.XYZ, click_length = 0):
         super().__init__(task_name,fn_callback)
         self.arm_id              = arm_id               # 操作对象
         
@@ -293,13 +293,14 @@ class Task_manipulation(Task):
             self.target_arms_pose    = target_arms_pose
         
         # 判断输入是不是列表
-        if isinstance(target_clamps_status,robot.manipulation_status.clamp.status):
+        if isinstance(target_clamps_status,arm.GripMethod):
             self.target_clamps_status = [target_clamps_status]
         else:
             self.target_clamps_status = target_clamps_status
             
         self.clamp_speed         = clamp_speed          # 夹具速度
-        self.clamp_first         = False                # 默认先动臂
+        self.arm_move_method     = arm_move_method      # 移动方式
+        self.click_length        = click_length         # 点击长度
     
     def set_left_arm_snack_selected_position(self,target_arms_pose: List[arm.Arm_pose]):
         # 判断输入是不是列表
@@ -315,13 +316,6 @@ class Task_manipulation(Task):
         else: # 是
             self.target_right_arm_pose    = target_arms_pose
     
-    # 设置爪子先走
-    def set_clamp_first(self):
-        self.clamp_first = True
-    
-    # 设置臂先走
-    def set_arm_first(self):
-        self.clamp_first = False
     
     # 设置目标位置
     def set_target_arm_pose(self,arm_pose:arm.Arm_pose):
@@ -333,7 +327,7 @@ class Task_manipulation(Task):
             if i == 0:
                 arms_pose_str = f"Arm_pose_{i}: {self.target_arms_pose[i]} "
             else:
-                arms_pose_str = arms_pose_str + f"Arm_pose_{i}: {self.target_arms_pose[i]} "
+                arms_pose_str = arms_pose_str+ "\n" +  23 * " " + f"Arm_pose_{i}: {self.target_arms_pose[i]} "
         
         for i in range(len(self.target_clamps_status)):
             if i == 0:
@@ -346,7 +340,8 @@ class Task_manipulation(Task):
             f"Target_arms_pose    : {{{arms_pose_str}}} \r\n" 
             f"Target_clamps_status: {clamps_status_str} \r\n" 
             f"Clamp_speed         : {self.clamp_speed} \r\n"
-            f"Clamp_first         : {self.clamp_first} \r\n"
+            f"arm_move_method     : {self.arm_move_method} \r\n"
+            f"click_length        : {self.click_length } \r\n"
         )
 
 # 任务队列

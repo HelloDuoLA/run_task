@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="run_task" type="control_cmd.py" name="control_cmd" output="screen">
+    </node>
+</launch>

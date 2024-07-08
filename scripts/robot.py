@@ -20,7 +20,7 @@ class manipulation_status():
     def __init__(self,id:utilis.Device_id):
         self.id          = id                # 机械臂编号
         self.arm_info    = self.arm()        # 机械臂状态
-        self.clamp_info  = self.clamp()      # 夹具信息
+        # self.clamp_info  = self.clamp()      # 夹具信息
         self.camera_info = self.camera()     # 摄像头信息
         
     # 机械臂状态
@@ -43,31 +43,31 @@ class manipulation_status():
         def set_idle(self):
             self.status = self.status.IDLE
 
-    # 夹具类
-    class clamp():
-        class status(Enum):
-            OPEN    = 0           # 已经打开
-            CLOSE   = auto()      # 已经关闭
-            OPENING = auto()      # 正在打开
-            CLOSING = auto()      # 正在关闭
-            DONTCANGE = auto()    # 不改变
+    # # 夹具类
+    # class clamp():
+    #     class status(Enum):
+    #         OPEN    = 0           # 已经打开
+    #         CLOSE   = auto()      # 已经关闭
+    #         OPENING = auto()      # 正在打开
+    #         CLOSING = auto()      # 正在关闭
+    #         DONTCANGE = auto()    # 不改变
             
-            def __str__(self) -> str:
-                return self.name
+    #         def __str__(self) -> str:
+    #             return self.name
             
-            def __eq__(self, value: object) -> bool:
-                if isinstance(value, self.__class__):
-                    return self.value == value.value
-                elif isinstance(value, int):
-                    return self.value == value
+    #         def __eq__(self, value: object) -> bool:
+    #             if isinstance(value, self.__class__):
+    #                 return self.value == value.value
+    #             elif isinstance(value, int):
+    #                 return self.value == value
             
         
-        def __init__(self):
-            # TODO:可能实际情况默认不是打开
-            self.status = self.status.OPEN  # 夹具状态,默认打开
+    #     def __init__(self):
+    #         # TODO:可能实际情况默认不是打开
+    #         self.status = self.status.OPEN  # 夹具状态,默认打开
             
-        def set_status(self,status):
-            self.status = status
+    #     def set_status(self,status):
+    #         self.status = status
     
     # 摄像头类
     class camera():
@@ -106,7 +106,7 @@ class Robot():
         rospy.Subscriber(utilis.Topic_name.right_arm_pose, msg.ArmPoseWithID, self.update_arm_status,    queue_size=10)
         rospy.Subscriber(utilis.Topic_name.left_arm_pose , msg.ArmPoseWithID, self.update_arm_status,    queue_size=10)
         # 爪具状态更新
-        rospy.Subscriber(utilis.Topic_name.clamp_status  , msg.CommonStatusDouble, self.update_clamp_status,  queue_size=10)
+        # rospy.Subscriber(utilis.Topic_name.clamp_status  , msg.CommonStatusDouble, self.update_clamp_status,  queue_size=10)
         # 图像模型状态更新 
         rospy.Subscriber(utilis.Topic_name.image_model_status, msg.CommonStatus, self.update_image_model_status_status,  queue_size=10)
         # 语音模型状态更新 
@@ -188,12 +188,12 @@ class Robot():
     def update_robot_status(self,robot_status:Robot_status):
         self.robot_status = robot_status
     
-    # 更新夹具状态
-    def update_clamp_status(self,arm_id:utilis.Device_id,clamp_status:manipulation_status.clamp.status):
-        if arm_id == utilis.Device_id.LEFT:
-            self.left_manipulation_status.clamp_info.status = clamp_status
-        elif arm_id == utilis.Device_id.RIGHT:
-            self.right_manipulation_status.clamp_info.status = clamp_status
+    # # 更新夹具状态
+    # def update_clamp_status(self,arm_id:utilis.Device_id,clamp_status:manipulation_status.clamp.status):
+    #     if arm_id == utilis.Device_id.LEFT:
+    #         self.left_manipulation_status.clamp_info.status = clamp_status
+    #     elif arm_id == utilis.Device_id.RIGHT:
+    #         self.right_manipulation_status.clamp_info.status = clamp_status
     
     # 更新摄像头状态
     def update_camera_status(self,arm_id:utilis.Device_id,camera_status:manipulation_status.camera.status):
@@ -203,9 +203,9 @@ class Robot():
             self.right_manipulation_status.camera_info.status = camera_status
 
     # 更新机械臂和夹具状态
-    def update_arm_clamp_status(self,arm_id:utilis.Device_id,arm_status:manipulation_status.arm.status,arm_pose:arm.Arm_pose,clamp_status:manipulation_status.clamp.status):
-        self.update_arm_status(arm_id,arm_status,arm_pose)
-        self.update_clamp_status(arm_id,clamp_status)
+    # def update_arm_clamp_status(self,arm_id:utilis.Device_id,arm_status:manipulation_status.arm.status,arm_pose:arm.Arm_pose,clamp_status:manipulation_status.clamp.status):
+    #     self.update_arm_status(arm_id,arm_status,arm_pose)
+        # self.update_clamp_status(arm_id,clamp_status)
     
     # 更新图像识别模型状态
     def update_image_model_status_status():

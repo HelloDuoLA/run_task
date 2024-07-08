@@ -7,6 +7,7 @@ import random
 from pymycobot import Mercury
 from enum import Enum,auto # 任务字典
 import time
+import copy
 
 # 增加头文件路径 
 import rospkg
@@ -16,6 +17,50 @@ sys.path.insert(0,package_path + "/scripts")
 import utilis
 import run_task.msg as msg
 import run_task.srv as srv
+
+# 手臂移动方式
+class ArmMoveMethod(Enum):
+    XYZ        = 0
+    X_YZ       = auto()
+    X_Y_Z      = auto()
+    X_Z_Y      = auto()
+    Y_XZ       = auto()
+    Y_X_Z      = auto()
+    Y_Z_X      = auto()
+    Z_XY       = auto()
+    Z_X_Y      = auto()
+    Z_Y_X      = auto()
+    XY_Z       = auto()
+    XZ_Y       = auto()
+    YZ_X       = auto()
+    
+    def __str__(self) -> str:
+        return self.name
+    
+    def __eq__(self, value: object) -> bool:
+        if isinstance(value, self.__class__):
+            return self.value == value.value
+        elif isinstance(value, int):
+            return self.value == value
+
+# 抓取方式
+class GripMethod(Enum):
+    DONTCANGE  = 0       # 不改变
+    OPEN       = auto()  # 最后打开
+    OPEN_FIRST = auto()  # 先打开
+    CLOSE      = auto()  # 最后关闭
+    CLOSE_FIRST= auto()  # 先关闭
+    OPEN_CLOSE = auto()  # 先打开后关闭
+    CLOSE_OPEN = auto()  # 先关闭后打开
+    
+    def __str__(self) -> str:
+        return self.name
+    
+    def __eq__(self, value: object) -> bool:
+        if isinstance(value, self.__class__):
+            return self.value == value.value
+        elif isinstance(value, int):
+            return self.value == value
 
 
 
@@ -84,16 +129,15 @@ class Arm_pose():
     # 重写打印输出
     def __str__(self):
         if self.type_id == PoseType.ANGLE:
-            return f"arm {self.arm_id} joint:{self.arm_pose}"
+            return f"arm {self.arm_id}, pose type {self.type_id}, joint:{self.arm_pose}"
         elif self.type_id == PoseType.BASE_COORDS:
-            return f"arm {self.arm_id} coords:{self.arm_pose}"
+            return f"arm {self.arm_id}, pose type {self.type_id}, coords:{self.arm_pose}"
     # 将列表状态输出为action的数据结构
-    def list_to_msg(self,arm_list_status:list):
+    def list_to_msg(self):
         arm_pose = msg.ArmPose()
         arm_pose.arm_pose = self.arm_pose
         arm_pose.type_id  = self.type_id
         return arm_pose
-
 
 # 机械臂控制器
 class Arm_controller():
@@ -107,7 +151,7 @@ class Arm_controller():
         elif(self.id == utilis.Device_id.RIGHT):
             self.action_name      = utilis.Topic_name.right_arm_action           # action名称
             self.pub_pose_topic   = utilis.Topic_name.right_arm_pose             # 发布机械臂状态
-            self.control_instance = Mercury("/dev/right_arm")                    # TODO需要修改 驱动句柄
+            self.control_instance = Mercury("/dev/right_arm")                    
             self.arm_name = "right_arm"     
         
         power_on = self.control_instance.is_power_on() 
@@ -116,6 +160,9 @@ class Arm_controller():
         while not power_on:
             self.control_instance.power_on()
             power_on = self.control_instance.is_power_on()
+            
+        # 开启机械抓爪通信
+        self.control_instance.set_gripper_mode(0)
 
         
         self.action = self.arm_action(self.action_name,self.control_instance,id)
@@ -132,60 +179,236 @@ class Arm_controller():
         # 启动action
         def start_action(self):    
             self.action_server.start()
+        
         # 执行
         def execute_cb(self, goal:msg.MoveArmGoal):
             rospy.loginfo(f"node: {rospy.get_name()}, arm action server execute. goal: {goal}")
             # 1. 解析目标值
             goal_arm_pose     = goal.arm_pose
-            goal_grasp_speed  = goal.grasp_speed
-            goal_grasp_first  = goal.grasp_first
             goal_grasp_flag   = goal.grasp_flag
-            change_grasp      = False # 是否改变夹具状态
             
-            # if goal_grasp_flag != robot.manipulation_status.clamp.status.DONTCANGE:
-            #     change_grasp = True
-            
-            # if change_grasp == True and goal_grasp_first == True:
-            #     rospy.loginfo(f"node: {rospy.get_name()}, goal_grasp_flag: {goal_grasp_flag}")
-            #     # 夹具动作
-            #     if goal_grasp_flag == robot.manipulation_status.clamp.status.OPEN:
-            #         self.grab_release(goal_grasp_speed)       # 松开
-            #     elif goal_grasp_flag == robot.manipulation_status.clamp.status.CLOSE:
-            #         self.grab_grip(goal_grasp_speed)          # 抓紧
+            # 先打开 and 先打开后关闭
+            if goal_grasp_flag == GripMethod.OPEN_CLOSE and goal_grasp_flag == GripMethod.OPEN_FIRST:
+                self.open_grasp()
+            # 先关闭 and 先关闭后打开
+            elif goal_grasp_flag == GripMethod.CLOSE_OPEN and goal_grasp_flag == GripMethod.CLOSE_FIRST:
+                self.close_grasp()
             
             
             # 2. 给机械臂发送目标值
             self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose)
             
+            # 后打开 and 先关闭后打开
+            if goal_grasp_flag == GripMethod.CLOSE_OPEN and goal_grasp_flag == GripMethod.OPEN:
+                self.open_grasp()
+            # 后关闭 and 先打开后关闭
+            elif goal_grasp_flag == GripMethod.OPEN_CLOSE and goal_grasp_flag == GripMethod.CLOSE:
+                self.close_grasp()
+                
+            # 最终位移
+            if goal.clicked_length != 0:
+                self.clicked_length(goal.clicked_length) 
+            
+            
             result = msg.MoveArmResult()
             result.arm_id    = goal.arm_id
             result.task_index = goal.task_index
-            # 3. 发送连续反馈
-            # rate = rospy.Rate(10) 
-            # if result:
+
             self.action_server.set_succeeded(result) #可以添加结果参数
-            # else:
-            #     self.action_server.set_aborted()   #TODO: 失败是否是这样的
-    
-        def move_arm(self,pose_type:PoseType,pose_list):
-            rospy.loginfo(f"{self.id} arm move to {pose_list} using {pose_type}")
+        
+        # 最终z轴移动 
+        def clicked_length(self, length_mm):
+            current_base_coords = self.get_base_coords()
+            current_base_coords[2] = current_base_coords[2] + length_mm
+            result = self.control_instance.send_coords(current_base_coords,100)
+            self.wait()
+            return result
+        # 关闭抓爪 
+        def close_grasp(self):
+            result = self.control_instance.set_gripper_state(1,100)
+            time.sleep(1)
+            return result
+        
+        # 打开抓爪 
+        def open_grasp(self):
+            result = self.control_instance.set_gripper_state(0,100)
+            time.sleep(1)
+            return result
+            
+        # 机械臂移动 
+        def move_arm(self,pose_type:PoseType,target_pose,move_method:ArmMoveMethod):
+            rospy.loginfo(f"{self.id} arm move to {target_pose} using {pose_type}")
+            arm_speed =  50
             if pose_type == PoseType.ANGLE:
-                result = self.control_instance.send_angles(pose_list,50)
+                result = self.control_instance.send_angles(target_pose,arm_speed)
                 self.wait()
                 return result 
             elif pose_type == PoseType.BASE_COORDS:
-                result = self.control_instance.send_base_coords(pose_list,50)
-                self.wait()
-                return result 
+                if move_method == ArmMoveMethod.XYZ:
+                    result = self.control_instance.send_coords(target_pose,arm_speed)
+                    self.wait()
+                elif move_method == ArmMoveMethod.X_YZ:
+                    current_base_coords = self.get_base_coords()
+                    base_coords_change_x = copy.deepcopy(current_base_coords)
+                    base_coords_change_x[0] = target_pose[0]
+                    result = self.control_instance.send_coords(base_coords_change_x,arm_speed)
+                    self.wait()
+                    
+                    result = self.control_instance.send_coords(target_pose,arm_speed)
+                    self.wait()
+                    
+                elif move_method == ArmMoveMethod.X_Y_Z:
+                    current_base_coords = self.get_base_coords()
+                    base_coords_change_x = copy.deepcopy(current_base_coords)
+                    base_coords_change_x[0] = target_pose[0]
+                    result = self.control_instance.send_coords(base_coords_change_x,arm_speed)
+                    self.wait()
+                    
+                    base_coords_change_y = copy.deepcopy(base_coords_change_x)
+                    base_coords_change_y[1] = target_pose[1]
+                    result = self.control_instance.send_coords(base_coords_change_y,arm_speed)
+                    self.wait()
+                    
+                    result = self.control_instance.send_coords(target_pose,arm_speed)
+                    self.wait()
+                    
+                elif move_method == ArmMoveMethod.X_Z_Y:
+                    current_base_coords = self.get_base_coords()
+                    base_coords_change_x = copy.deepcopy(current_base_coords)
+                    base_coords_change_x[0] = target_pose[0]
+                    result = self.control_instance.send_coords(base_coords_change_x,arm_speed)
+                    self.wait()
+                    
+                    base_coords_change_z = copy.deepcopy(base_coords_change_x)
+                    base_coords_change_z[2] = target_pose[2]
+                    result = self.control_instance.send_coords(base_coords_change_z,arm_speed)
+                    self.wait()
+                    
+                    result = self.control_instance.send_coords(target_pose,arm_speed)
+                    self.wait()
+                    
+                elif move_method == ArmMoveMethod.Y_XZ:
+                    current_base_coords = self.get_base_coords()
+                    base_coords_change_y = copy.deepcopy(current_base_coords)
+                    base_coords_change_y[1] = target_pose[1]
+                    result = self.control_instance.send_coords(base_coords_change_y,arm_speed)
+                    self.wait()
+                    
+                    result = self.control_instance.send_coords(target_pose,arm_speed)
+                    self.wait()
+                    
+                elif move_method == ArmMoveMethod.Y_X_Z:
+                    current_base_coords = self.get_base_coords()
+                    base_coords_change_y = copy.deepcopy(current_base_coords)
+                    base_coords_change_y[1] = target_pose[1]
+                    result = self.control_instance.send_coords(base_coords_change_y,arm_speed)
+                    self.wait()
+                    
+                    base_coords_change_x = copy.deepcopy(base_coords_change_y)
+                    base_coords_change_x[0] = target_pose[0]
+                    result = self.control_instance.send_coords(base_coords_change_x,arm_speed)
+                    self.wait()
+                    
+                    result = self.control_instance.send_coords(target_pose,arm_speed)
+                    self.wait()
+                    
+                elif move_method == ArmMoveMethod.Y_Z_X:
+                    current_base_coords = self.get_base_coords()
+                    base_coords_change_y = copy.deepcopy(current_base_coords)
+                    base_coords_change_y[1] = target_pose[1]
+                    result = self.control_instance.send_coords(base_coords_change_y,arm_speed)
+                    self.wait()
+                    
+                    base_coords_change_z = copy.deepcopy(base_coords_change_y)
+                    base_coords_change_z[2] = target_pose[2]
+                    result = self.control_instance.send_coords(base_coords_change_z,arm_speed)
+                    self.wait()
+                    
+                    result = self.control_instance.send_coords(target_pose,arm_speed)
+                    self.wait()
+                elif move_method == ArmMoveMethod.Z_XY:
+                    current_base_coords = self.get_base_coords()
+                    base_coords_change_z = copy.deepcopy(current_base_coords)
+                    base_coords_change_z[2] = target_pose[2]
+                    result = self.control_instance.send_coords(base_coords_change_z,arm_speed)
+                    self.wait()
+                    
+                    result = self.control_instance.send_coords(target_pose,arm_speed)
+                    self.wait()
+                elif move_method == ArmMoveMethod.Z_X_Y:
+                    current_base_coords = self.get_base_coords()
+                    base_coords_change_z = copy.deepcopy(current_base_coords)
+                    base_coords_change_z[2] = target_pose[2]
+                    result = self.control_instance.send_coords(base_coords_change_z,arm_speed)
+                    self.wait()
+                    
+                    base_coords_change_x = copy.deepcopy(base_coords_change_z)
+                    base_coords_change_x[0] = target_pose[0]
+                    result = self.control_instance.send_coords(base_coords_change_z,arm_speed)
+                    self.wait()
+                    
+                    result = self.control_instance.send_coords(target_pose,arm_speed)
+                    self.wait()
+                elif move_method == ArmMoveMethod.Z_Y_X:
+                    current_base_coords = self.get_base_coords()
+                    base_coords_change_z = copy.deepcopy(current_base_coords)
+                    base_coords_change_z[2] = target_pose[2]
+                    result = self.control_instance.send_coords(base_coords_change_z,arm_speed)
+                    self.wait()
+                    
+                    base_coords_change_y = copy.deepcopy(base_coords_change_z)
+                    base_coords_change_y[1] = target_pose[1]
+                    result = self.control_instance.send_coords(base_coords_change_z,arm_speed)
+                    self.wait()
+                    
+                    result = self.control_instance.send_coords(target_pose,arm_speed)
+                    self.wait()
+                elif move_method == ArmMoveMethod.XY_Z:
+                    current_base_coords = self.get_base_coords()
+                    base_coords_change_xy = copy.deepcopy(current_base_coords)
+                    base_coords_change_xy[0] = target_pose[0]
+                    base_coords_change_xy[1] = target_pose[1]
+                    result = self.control_instance.send_coords(base_coords_change_xy,arm_speed)
+                    self.wait()
+                    
+                    result = self.control_instance.send_coords(target_pose,arm_speed)
+                    self.wait()
+                    
+                elif move_method == ArmMoveMethod.XZ_Y:
+                    current_base_coords = self.get_base_coords()
+                    base_coords_change_xz = copy.deepcopy(current_base_coords)
+                    base_coords_change_xz[0] = target_pose[0]
+                    base_coords_change_xz[2] = target_pose[2]
+                    result = self.control_instance.send_coords(base_coords_change_xz,arm_speed)
+                    self.wait()
+                    
+                    result = self.control_instance.send_coords(target_pose,arm_speed)
+                    self.wait()
+                elif move_method == ArmMoveMethod.YZ_X:
+                    current_base_coords = self.get_base_coords()
+                    base_coords_change_yz = copy.deepcopy(current_base_coords)
+                    base_coords_change_yz[1] = target_pose[1]
+                    base_coords_change_yz[2] = target_pose[2]
+                    result = self.control_instance.send_coords(base_coords_change_yz,arm_speed)
+                    self.wait()
+                    
+                    result = self.control_instance.send_coords(target_pose,arm_speed)
+                    self.wait()  
         
+                return result 
+        # 等待机械臂运动结束
         def wait(self):
             time.sleep(0.3)
             while(self.control_instance.is_moving()):
                 # print("arm is moving")
                 time.sleep(0.03)
-            
-
-    
+        #  可靠地获取当前的基座标
+        def get_base_coords(self):
+            current_base_coords     = self.control_instance.get_base_coords()
+            while current_base_coords == None:
+                current_base_coords = self.control_instance.get_base_coords()
+                time.sleep(0.3)
+            return current_base_coords
 def talker():
     # 初始化节点，命名为'talker'
     rospy.init_node('arm_node')
