@@ -556,14 +556,19 @@ class Task_manager():
                 continue
             else:
                 # 导航任务
-                if current_task.task_type == task.Task_type.Task_navigate:
+                if current_task.task_type.__class__ == task.Task_type.Task_navigate:
                     system.navigation_actuator.run(current_task)
                 # 机械臂任务
-                elif current_task.task_type == task.Task_type.Task_manipulation:
+                elif current_task.task_type.__class__ == task.Task_type.Task_manipulation:
                     system.manipulator_actuator.run(current_task)
                 # 图像识别任务
-                elif current_task.task_type == task.Task_type.Task_image_rec:
+                elif current_task.task_type.__class__ == task.Task_type.Task_image_rec:
                     system.image_rec_actuator.run(current_task)
+                # 功能性暂停任务
+                elif current_task.task_type == task.Task_type.Task_function.PAUSE.__class__:
+                    system.task_manager.tm_task_finish_callback(current_task,None,None)
+                    rospy.loginfo(f"node: {rospy.get_name()}, run a PAUSE task")
+                    break
                 
                 # 能运行, 但是不能下一个
                 if return_code == Task_manager.Run_task_return_code.can_run_cannot_next:
@@ -577,7 +582,6 @@ class Task_manager():
                     raise ValueError("Invalid return code")
     
     # 判断任务是否能够运行
-    # TODO:重头戏
     def task_can_run(self,current_task:task.Task):
         # 不能执行下一个任务
         if self.can_run_state == False:
@@ -585,23 +589,66 @@ class Task_manager():
         
         # 任务不支持并行
         if current_task.parallel == task.Task.Task_parallel.NOTALLOWED:
-            # 任务是否准备好
-            if current_task.status == task.Task.Task_status.NOTREADY:
-                return Task_manager.Run_task_return_code.cannot_run_cannot_next
-            elif current_task.status == task.Task.Task_status.BEREADY:
-                # 正在执行的任务是否为0
-                if self.executed_tasks.get_task_count() == 0:
-                    return Task_manager.Run_task_return_code.can_run_cannot_next
-                else:
+            # 任务的前置任务是否完成
+            if current_task.predecessor_tasks.has_been_done() == True:
+                # 任务是否准备好
+                if current_task.status == task.Task.Task_status.NOTREADY:
+                    rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because it is not ready")
                     return Task_manager.Run_task_return_code.cannot_run_cannot_next
+                elif current_task.status == task.Task.Task_status.BEREADY:
+                    # 正在执行的任务是否为0
+                    if self.executed_tasks.get_task_count() == 0:
+                        return Task_manager.Run_task_return_code.can_run_cannot_next
+                    else:
+                        rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because other task is running")
+                        return Task_manager.Run_task_return_code.cannot_run_cannot_next
+                else:
+                    raise ValueError("task.Task.Task_status error!!!!!!!")
+            else:
+                rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because predecessor task has not been done")
+                return Task_manager.Run_task_return_code.cannot_run_cannot_next
+        
         # 任务支持并行
         elif current_task.parallel == task.Task.Task_parallel.ALL:
-            # 任务是否准备好
-            if current_task.status == task.Task.Task_status.NOTREADY:
+            # 任务的前置任务是否完成
+            if current_task.predecessor_tasks.has_been_done() == True:
+                # 任务是否准备好
+                if current_task.status == task.Task.Task_status.NOTREADY:
+                    rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because it is not ready")
+                    return Task_manager.Run_task_return_code.cannot_run_can_next
+                elif current_task.status == task.Task.Task_status.BEREADY:
+                    # 硬件资源是否支持运行
+                    # 导航任务检测机器人是否在运动
+                    if current_task.task_type.__class__ == task.Task_type.Task_navigate:
+                        robot_status = system.robot.get_robot_status()
+                        if robot_status == robot.Robot.Robot_status.MOVING:
+                            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because robot is moving")
+                            return Task_manager.Run_task_return_code.cannot_run_can_next
+                        elif robot_status == robot.Robot.Robot_status.IDLE:
+                            return Task_manager.Run_task_return_code.can_run_can_next
+                        else:
+                            raise ValueError("robot.Robot.Robot_status error!!!!!!!")
+                    # 手臂任务检测手臂是否闲置
+                    elif current_task.task_type.__class__ == task.Task_type.Task_manipulation:
+                        if system.robot.is_arm_idle(current_task.arm_id) == True:
+                            return Task_manager.Run_task_return_code.can_run_can_next
+                        else:
+                            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because arm {current_task.camera_id} is busy")
+                            return Task_manager.Run_task_return_code.cannot_run_can_next
+                    # 图像任务检测手臂是否闲置
+                    elif current_task.task_type.__class__ == task.Task_type.Task_image_rec:
+                        if system.robot.is_arm_idle(current_task.camera_id) == True:
+                            return Task_manager.Run_task_return_code.can_run_can_next
+                        else:
+                            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because arm {current_task.camera_id} is busy")
+                            return Task_manager.Run_task_return_code.cannot_run_can_next
+                    else:
+                        raise ValueError("task.Task.Task_type error!!!!!!!")
+                else:
+                    raise ValueError("task.Task.Task_status error!!!!!!!")
+            else:
+                rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because predecessor task has not been done")
                 return Task_manager.Run_task_return_code.cannot_run_can_next
-            elif current_task.status == task.Task.Task_status.BEREADY:
-                # TODO:
-                pass
         else :
             raise ValueError("task_can_run function error!!!!!!!")
 
@@ -988,13 +1035,18 @@ class Order_driven_task_schedul():
         right_arm_container_rec_task.add_need_modify_task(task_placement_snack)
         
         return task_grasp_snack_seq
-            
+
+def test_other():
+    # rospy.loginfo(f"task.Task_type.Task_image_rec == task.Task_type.Task_image_rec.SNACK : {task.Task_type.Task_image_rec == task.Task_type.Task_image_rec.SNACK.__class__}")
+
 def talker():
     # 初始化节点，命名为'talker'
     rospy.init_node('assign_tasks')
     global system
     system = System()
-    test_order_snack()
+    # test_order_snack()
+    test_other()
+    
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(1)
 
@@ -1020,7 +1072,7 @@ def test_order_snack():
     order_info.order_id = 2
     order_info.table_id = utilis.Device_id.LEFT
     
-    path = '/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/log/order'
+    path = '/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/log/orders'
     ensure_directory_exists(path)
     
     tasks_grasp_snack = system.order_driven_task_schedul.create_tasks_grasp_snack(order_info.snack_list,order_info.table_id)

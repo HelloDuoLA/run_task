@@ -170,6 +170,19 @@ class Robot():
             arm_poses.append(self.right_manipulation_status.arm_info.arm_pose.to_msg_with_id())
         return arm_poses
     
+    def get_robot_status(self):
+        return self.robot_status
+    
+    def is_arm_idle(self,arm_id:utilis.Device_id):
+        if arm_id == utilis.Device_id.LEFT:
+            return self.left_manipulation_status.arm_info.status == manipulation_status.arm.status.IDLE
+        elif arm_id == utilis.Device_id.RIGHT:
+            return self.right_manipulation_status.arm_info.status == manipulation_status.arm.status.IDLE
+        elif arm_id == utilis.Device_id.LEFT_RIGHT:
+            return self.left_manipulation_status.arm_info.status == manipulation_status.arm.status.IDLE and \
+                self.right_manipulation_status.arm_info.status == manipulation_status.arm.status.IDLE
+            
+    
     # TODO:更新状态均需要通过话题订阅!!!!!
     # 更新3D位姿
     def update_robot_pose3d(self,pose:utilis.Pose3D):

@@ -115,6 +115,12 @@ class Task():
     
         def __str__(self) -> str:
             return self.name
+        
+        def __eq__(self, value: object) -> bool:
+            if isinstance(value,self.__class__):
+                return self.value == value.value
+            elif isinstance(value,int):
+                return self.value == value
     
     # 任务结果
     class Task_result(Enum):
@@ -124,6 +130,12 @@ class Task():
         
         def __str__(self) -> str:
             return self.name
+        
+        def __eq__(self, value: object) -> bool:
+            if isinstance(value,self.__class__):
+                return self.value == value.value
+            elif isinstance(value,int):
+                return self.value == value
     
     # 任务的可并行性
     class Task_parallel(Enum):
@@ -134,6 +146,12 @@ class Task():
         
         def __str__(self) -> str:
             return self.name
+        
+        def __eq__(self, value: object) -> bool:
+            if isinstance(value,self.__class__):
+                return self.value == value.value
+            elif isinstance(value,int):
+                return self.value == value
         
     # 初始化 
     def __init__(self,task_name,finish_cb):
