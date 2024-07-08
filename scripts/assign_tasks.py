@@ -12,7 +12,7 @@ import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal, MoveBaseFeedback
 import copy
 from enum import Enum,auto
-
+import time
 
 # 自定义包
 rospack = rospkg.RosPack()
@@ -315,7 +315,7 @@ class Manipulator_actuator():
         # 加在运行序列中
         task_index = self.running_tasks_manager.add_task(manipulation_task)
         system.robot.update_arm_status(manipulation_task.arm_id,robot.manipulation_status.arm.status.BUSY)
-        
+        rospy.loginfo(f"manipulation task {manipulation_task.task_index} is running ")
         # 任务开始
         manipulation_task.update_start_status()
 
@@ -328,7 +328,6 @@ class Manipulator_actuator():
             goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
             goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
-            goal.grasp_first          = manipulation_task.clamp_first
             goal.grasp_speed          = manipulation_task.clamp_speed
             self.left_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
         # 右臂
@@ -340,7 +339,6 @@ class Manipulator_actuator():
             goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
             goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
-            goal.grasp_first          = manipulation_task.clamp_first
             goal.grasp_speed          = manipulation_task.clamp_speed
             self.right_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
             
@@ -353,7 +351,6 @@ class Manipulator_actuator():
                     left_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
                     left_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
                     left_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
-                    left_goal.grasp_first          = manipulation_task.clamp_first
                     left_goal.grasp_speed          = manipulation_task.clamp_speed
                     
                 elif manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.RIGHT:
@@ -361,7 +358,6 @@ class Manipulator_actuator():
                     right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
                     right_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
                     right_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
-                    right_goal.grasp_first          = manipulation_task.clamp_first
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
             
             self.left_arm_ac.send_goal(left_goal,self.done_callback,self.active_callback,self.feedback_callback)
@@ -533,7 +529,7 @@ class Task_manager():
     
     # 任务完成回调
     def tm_task_finish_callback(self, current_task:task.Task, status, result):
-        rospy.loginfo(f"node: {rospy.get_name()}, task_manager, tasks: {current_task}")
+        rospy.loginfo(f"node: {rospy.get_name()}, task_manager, task : {current_task.task_index} is finish")
         # 让任务管理器恢复正常
         if current_task.parallel == task.Task.Task_parallel.NOTALLOWED:
             self.can_run_state = True
@@ -547,7 +543,10 @@ class Task_manager():
     def timer_callback(event):
         rospy.loginfo("Task manager timer callback")
         for current_task in system.task_manager.waiting_task.task_list:
+            # !
+            # time.sleep(1)
             return_code = system.task_manager.task_can_run(current_task)
+            rospy.loginfo(f"task {current_task.task_index} return code is {return_code}")
             # 不能运行, 也不能下一个
             if return_code == Task_manager.Run_task_return_code.cannot_run_cannot_next:
                 break
@@ -556,13 +555,16 @@ class Task_manager():
                 continue
             else:
                 # 导航任务
-                if current_task.task_type.__class__ == task.Task_type.Task_navigate:
+                if current_task.task_type.task_type.__class__ == task.Task_type.Task_navigate:
+                    # rospy.loginfo("navigation task!!561")
                     system.navigation_actuator.run(current_task)
                 # 机械臂任务
-                elif current_task.task_type.__class__ == task.Task_type.Task_manipulation:
+                elif current_task.task_type.task_type.__class__ == task.Task_type.Task_manipulation:
+                    # rospy.loginfo("manipulation task!!565")
                     system.manipulator_actuator.run(current_task)
                 # 图像识别任务
-                elif current_task.task_type.__class__ == task.Task_type.Task_image_rec:
+                elif current_task.task_type.task_type.__class__ == task.Task_type.Task_image_rec:
+                    # rospy.loginfo("image rec task!!565")
                     system.image_rec_actuator.run(current_task)
                 # 功能性暂停任务
                 elif current_task.task_type.task_type == task.Task_type.Task_function.PAUSE:
@@ -639,7 +641,7 @@ class Task_manager():
                             rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can run. manipulation task")
                             return Task_manager.Run_task_return_code.can_run_can_next
                         else:
-                            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because arm {current_task.camera_id} is busy")
+                            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because arm {current_task.arm_id} is busy")
                             return Task_manager.Run_task_return_code.cannot_run_can_next
                     # 图像任务检测手臂是否闲置
                     elif current_task.task_type.task_type.__class__ == task.Task_type.Task_image_rec:

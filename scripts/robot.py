@@ -31,7 +31,7 @@ class manipulation_status():
             BUSY   = auto()       # 忙碌
             
         def __init__(self,arm_pose:arm.Arm_pose=arm.Arm_pose()):
-            self.status   = self.status.IDLE    # 机械臂状态,默认空闲
+            self.arm_status   = self.status.IDLE    # 机械臂状态,默认空闲
             self.arm_pose = arm_pose            # 机械臂位置
             
         def set_status(self,status):
@@ -173,14 +173,15 @@ class Robot():
     def get_robot_status(self):
         return self.robot_status
     
+    # 判断手臂是否空闲
     def is_arm_idle(self,arm_id:utilis.Device_id):
         if arm_id == utilis.Device_id.LEFT:
-            return self.left_manipulation_status.arm_info.status == manipulation_status.arm.status.IDLE
+            return self.left_manipulation_status.arm_info.arm_status == manipulation_status.arm.status.IDLE
         elif arm_id == utilis.Device_id.RIGHT:
-            return self.right_manipulation_status.arm_info.status == manipulation_status.arm.status.IDLE
+            return self.right_manipulation_status.arm_info.arm_status == manipulation_status.arm.status.IDLE
         elif arm_id == utilis.Device_id.LEFT_RIGHT:
-            return self.left_manipulation_status.arm_info.status == manipulation_status.arm.status.IDLE and \
-                self.right_manipulation_status.arm_info.status == manipulation_status.arm.status.IDLE
+            return self.left_manipulation_status.arm_info.arm_status == manipulation_status.arm.status.IDLE and \
+                self.right_manipulation_status.arm_info.arm_status == manipulation_status.arm.status.IDLE
             
     
     # TODO:更新状态均需要通过话题订阅!!!!!
@@ -191,12 +192,12 @@ class Robot():
     # 更新机械臂状态
     def update_arm_status(self,arm_id:utilis.Device_id,arm_status:manipulation_status.arm.status):
         if arm_id == utilis.Device_id.LEFT:
-            self.left_manipulation_status.arm_info.status     = arm_status
+            self.left_manipulation_status.arm_info.arm_status     = arm_status
         elif arm_id == utilis.Device_id.RIGHT:
-            self.right_manipulation_status.arm_info.status    = arm_status
+            self.right_manipulation_status.arm_info.arm_status    = arm_status
         elif arm_id == utilis.Device_id.LEFT_RIGHT:
-            self.left_manipulation_status.arm_info.status     = arm_status
-            self.right_manipulation_status.arm_info.status    = arm_status
+            self.left_manipulation_status.arm_info.arm_status     = arm_status
+            self.right_manipulation_status.arm_info.arm_status    = arm_status
         
     def update_robot_status(self,robot_status:Robot_status):
         self.robot_status = robot_status
