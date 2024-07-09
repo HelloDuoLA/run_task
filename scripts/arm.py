@@ -203,7 +203,7 @@ class Arm_controller():
             
             
             # 2. 给机械臂发送目标值
-            self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose)
+            self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose, goal.arm_move_method)
             
             # 后打开 and 先关闭后打开
             if goal_grasp_flag == GripMethod.CLOSE_OPEN and goal_grasp_flag == GripMethod.OPEN:
@@ -216,7 +216,7 @@ class Arm_controller():
             if goal.clicked_length != 0:
                 self.clicked_length(goal.clicked_length) 
             
-            
+            # 构建返回数据
             result = msg.MoveArmResult()
             result.arm_id    = goal.arm_id
             result.task_index = goal.task_index

@@ -198,10 +198,11 @@ class Navigation_actuator():
         # 订阅导航Action   
         self.move_base_ac   = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         self.control_cmd_ac = actionlib.SimpleActionClient(utilis.Topic_name.control_cmd_action, msg.ControlCmdAction)
-        rospy.loginfo("waiting for move_base, control cmd server")
+        rospy.loginfo("waiting for move_base")
         # TODO:调试需要,暂时注释
-        # self.move_base_ac.wait_for_server()
-        # self.control_cmd_ac.wait_for_server()
+        self.move_base_ac.wait_for_server()
+        rospy.loginfo("waiting for control cmd server")
+        self.control_cmd_ac.wait_for_server()
         
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
         
@@ -270,7 +271,7 @@ class Navigation_actuator():
     def navigation_task_feedback_callback(feedback:MoveBaseFeedback):
         pose = feedback.base_position.pose
         pose3D = utilis.Pose3D.instantiate_by_geometry_msg(pose)
-        rospy.loginfo(f"node: {rospy.get_name()}, navigation feedback. pose:x = {pose3D.x} y = {pose3D.y} yaw = {pose3D.yaw}")
+        # rospy.loginfo(f"node: {rospy.get_name()}, navigation feedback. pose:x = {pose3D.x} y = {pose3D.y} yaw = {pose3D.yaw}")
 
     # 直接控制完成回调
     @staticmethod
@@ -301,8 +302,8 @@ class Navigation_actuator():
     # 反馈回调
     @staticmethod
     def control_cmd_feedback_callback(feedback:MoveBaseFeedback):
-        rospy.loginfo(f"node: {rospy.get_name()}, control cmd feedback. feedback = {feedback}")
-    
+        # rospy.loginfo(f"node: {rospy.get_name()}, control cmd feedback. feedback = {feedback}")
+        pass 
     
 # 机械臂执行器 
 class Manipulator_actuator():
@@ -311,8 +312,8 @@ class Manipulator_actuator():
         self.right_arm_ac = actionlib.SimpleActionClient(utilis.Topic_name.right_arm_action, msg.MoveArmAction)
         rospy.loginfo("waiting for arm action server")
         # TODO:调试需要,暂时注释
-        # self.left_arm_ac.wait_for_server()
-        # self.right_arm_ac.wait_for_server()
+        self.left_arm_ac.wait_for_server()
+        self.right_arm_ac.wait_for_server()
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
     
     # 运行
@@ -334,6 +335,7 @@ class Manipulator_actuator():
             goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
             goal.grasp_speed          = manipulation_task.clamp_speed
+            goal.arm_move_method      = manipulation_task.arm_move_method.value
             self.left_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
         # 右臂
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
@@ -345,6 +347,7 @@ class Manipulator_actuator():
             goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
             goal.grasp_speed          = manipulation_task.clamp_speed
+            goal.arm_move_method      = manipulation_task.arm_move_method.value
             self.right_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
             
         elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
@@ -357,6 +360,7 @@ class Manipulator_actuator():
                     left_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
                     left_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
                     left_goal.grasp_speed          = manipulation_task.clamp_speed
+                    left_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     
                 elif manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.RIGHT:
                     right_goal.task_index           = task_index
@@ -364,6 +368,7 @@ class Manipulator_actuator():
                     right_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
                     right_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
+                    right_goal.arm_move_method      = manipulation_task.arm_move_method.value
             
             self.left_arm_ac.send_goal(left_goal,self.done_callback,self.active_callback,self.feedback_callback)
             self.right_arm_ac.send_goal(right_goal,self.done_callback,self.active_callback,self.feedback_callback)
@@ -402,8 +407,8 @@ class Manipulator_actuator():
     # 反馈回调
     @staticmethod
     def feedback_callback(feedback:msg.MoveArmFeedback):
-        rospy.loginfo(f"node: {rospy.get_name()}, manipulator feedback. {feedback}")
-
+        # rospy.loginfo(f"node: {rospy.get_name()}, manipulator feedback. {feedback}")
+        pass
 
 # 图像识别任务执行器
 class Image_rec_actuator():
