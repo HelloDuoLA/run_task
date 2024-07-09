@@ -33,26 +33,28 @@ LeftArmGripContainerPre:
 # 左臂抓框时的位点
 LeftArmGripContainer:
   # x y 待定(与识别框的偏移量)
-  coords:  [-999, -999, 360, -180, 0.0, -90]
+  # coords:  [-999, -999, 360, -180, 0.0, -90]
+  coords:  [0, 0, -40, 0, 0, 0]
 
 # 左臂零食框递送时的位点
 LeftArmContainerDelivery:
 # x轴 比抓框时多50mm, y轴 与抓取框时相同, z轴 比抓取框高20mm, 
-  coords:  [-1, -1, 380, -180, 0.0, -90]
+  # coords:  [-1, -1, 380, -180, 0.0, -90]
+  coords: [0, 0, 20, 0, 0, 0]
 
 # 左臂零食框放置时的位点
 LeftArmContainerPlacement:
 # x轴递送时相同 , y轴 与转移框时相同, z比抓取框高10mm, 
-  coords:  [-1, -1, 370, -180, 0.0, -90]
+  # coords:  [-1, -1, 370, -180, 0.0, -90]
+  coords: [0, 0, -20, 0, 0, 0]
 
 # 左臂咖啡机识别位点
 LeftArmMachineTurnOnRec:
   angles: [-71.36, -7.87, -155.8, 121.34, 73.92, 31.57]
 
 # 左臂咖啡机识别位点, 关机位点, 需要修改
-# TODO:根据实际情况修改
 LeftArmMachineTurnOFFRec:
-  angles: [-71.36, -7.87, -155.8, 121.34, 73.92, 31.57]
+  angles: [-78.94, 14.88, -126.71, 117.4, 73.22, 39.54]
 
 # 左臂咖啡机开启的位点
 LeftArmMachineTurnOnPre:
@@ -100,17 +102,20 @@ RightArmGripContainerPre:
 # 右臂抓框时的位点
 RightArmGripContainer:
   # x y 待定(与识别框的偏移量)
-  coords:  [-999, -999, 360, -180, 0.0, 90]
+  # coords:  [-999, -999, 360, -180, 0.0, 90]
+  coords:  [0, 0, -40, 0, 0, 0]
 
 # 右臂零食框递送时的位点
 RightArmContainerDelivery:
 # x轴 比抓框时多50mm, y 与抓取框时相同, z比抓取框高20mm, x轴写死
-  coords: [-1, -1, 380, -180, 0, 90]
+  # coords: [-1, -1, 380, -180, 0, 90]
+  coords: [0, 0, 20, 0, 0, 0]
 
 # 右臂零食框放置时的位点
 RightArmContainerPlacement:
 # x轴递送时相同 y 与抓取框时相同,  z比抓取框高10mm
-  coords: [-1, -1, 370, -180, 0, 90]
+  # coords: [-1, -1, 370, -180, 0, 90]
+  coords: [0, 0, -20, 0, 0, 0]
 
 # 右臂识别杯子准备动作
 RightArmCupRecPre:
