@@ -218,8 +218,9 @@ class Arm_controller():
             
             # 构建返回数据
             result = msg.MoveArmResult()
-            result.arm_id    = goal.arm_id
+            result.arm_id     = goal.arm_id
             result.task_index = goal.task_index
+            rospy.loginfo(f"result : {result}")
 
             self.action_server.set_succeeded(result) #可以添加结果参数
         
@@ -244,7 +245,7 @@ class Arm_controller():
             
         # 机械臂移动 
         def move_arm(self,pose_type:PoseType,target_pose,move_method:ArmMoveMethod):
-            rospy.loginfo(f"{self.id} arm move to {target_pose} using {pose_type}")
+            rospy.loginfo(f"{self.id} arm move to {target_pose} using {pose_type} method {move_method}")
             arm_speed =  50
             if pose_type == PoseType.ANGLE:
                 result = self.control_instance.send_angles(target_pose,arm_speed)

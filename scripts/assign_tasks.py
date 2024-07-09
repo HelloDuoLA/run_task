@@ -336,6 +336,7 @@ class Manipulator_actuator():
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
             goal.grasp_speed          = manipulation_task.clamp_speed
             goal.arm_move_method      = manipulation_task.arm_move_method.value
+            goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
             self.left_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
         # 右臂
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
@@ -348,6 +349,7 @@ class Manipulator_actuator():
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
             goal.grasp_speed          = manipulation_task.clamp_speed
             goal.arm_move_method      = manipulation_task.arm_move_method.value
+            goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
             self.right_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
             
         elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
@@ -361,7 +363,7 @@ class Manipulator_actuator():
                     left_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
                     left_goal.grasp_speed          = manipulation_task.clamp_speed
                     left_goal.arm_move_method      = manipulation_task.arm_move_method.value
-                    
+                    left_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
                 elif manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.RIGHT:
                     right_goal.task_index           = task_index
                     right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
@@ -369,7 +371,7 @@ class Manipulator_actuator():
                     right_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
                     right_goal.arm_move_method      = manipulation_task.arm_move_method.value
-            
+                    right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
             self.left_arm_ac.send_goal(left_goal,self.done_callback,self.active_callback,self.feedback_callback)
             self.right_arm_ac.send_goal(right_goal,self.done_callback,self.active_callback,self.feedback_callback)
 

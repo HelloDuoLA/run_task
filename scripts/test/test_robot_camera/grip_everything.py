@@ -108,7 +108,9 @@ class Manipulator_actuator():
             goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
             goal.grasp_speed          = manipulation_task.clamp_speed
+            goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
             self.left_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
+            rospy.loginfo(f"left arm goal:{goal}")
         # 右臂
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
             # 设置action 目标
@@ -119,8 +121,9 @@ class Manipulator_actuator():
             goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
             goal.grasp_speed          = manipulation_task.clamp_speed
+            goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
             self.right_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
-            
+            rospy.loginfo(f"right arm goal:{goal}")
         elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
             left_goal              = msg.MoveArmGoal()
             right_goal             = msg.MoveArmGoal()
@@ -131,14 +134,16 @@ class Manipulator_actuator():
                     left_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
                     left_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
                     left_goal.grasp_speed          = manipulation_task.clamp_speed
-                    
+                    left_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
                 elif manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.RIGHT:
                     right_goal.task_index           = task_index
                     right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
                     right_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
                     right_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
-            
+                    right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
+            rospy.loginfo(f"left arm goal:{left_goal}")
+            rospy.loginfo(f"right arm goal:{right_goal}")
             self.left_arm_ac.send_goal(left_goal,self.done_callback,self.active_callback,self.feedback_callback)
             self.right_arm_ac.send_goal(right_goal,self.done_callback,self.active_callback,self.feedback_callback)
 
@@ -264,7 +269,7 @@ def talker():
     rate = rospy.Rate(1)
 
     while not rospy.is_shutdown():
-        rospy.loginfo("arm")
+        rospy.loginfo("grip_everything")
         # 按照设定的频率延时
         rate.sleep()
 
