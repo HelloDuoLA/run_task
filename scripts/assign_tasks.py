@@ -385,7 +385,8 @@ class Manipulator_actuator():
             current_task.update_end_status(task.Task.Task_result.FAILED)
         
         # 任务自带的回调
-        current_task.finish_cb(status, result)
+        if current_task.finish_cb is not None:
+            current_task.finish_cb(status, result)
     
         # 更新机械臂状态
         system.robot.update_arm_status(current_task.arm_id,robot.manipulation_status.arm.status.IDLE)
@@ -514,7 +515,8 @@ class Image_rec_actuator():
         # 更新任务状态
         current_task.update_end_status(task.Task.Task_result.SUCCEED)
         # 任务自带的回调
-        current_task.finish_cb(actionlib.GoalStatus.SUCCEEDED)
+        if current_task.finish_cb is not None:
+            current_task.finish_cb(actionlib.GoalStatus.SUCCEEDED)
         # 更新机械臂状态
         system.robot.update_arm_status(current_task.camera_id,robot.manipulation_status.arm.status.IDLE)
         # 给任务管理器的回调
@@ -1113,7 +1115,7 @@ def talker():
     rospy.init_node('assign_tasks')
     global system
     system = System()
-    test_order_snack()
+    # test_order_snack()
     # test_other()
     
     # 设置发布消息的频率，1Hz
