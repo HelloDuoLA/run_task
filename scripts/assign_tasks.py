@@ -553,9 +553,10 @@ class Task_manager():
         # 让任务管理器恢复正常
         if current_task.parallel == task.Task.Task_parallel.NOTALLOWED:
             self.can_run_state = True
-        self.executed_tasks.remove_task(current_task) # 在执行的任务中移除
-        self.finished_tasks.add(current_task)         # 添加到已完成的任务中
-        log.log_finish_tasks_info(current_task)       # 记录完成的任务信息
+        if current_task.if_finished():
+            self.executed_tasks.remove_task(current_task) # 在执行的任务中移除
+            self.finished_tasks.add(current_task)         # 添加到已完成的任务中
+            log.log_finish_tasks_info(current_task)       # 记录完成的任务信息
     
 
     # 定时器任务
@@ -755,6 +756,7 @@ class Order_driven_task_schedul():
             [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
             [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ)
         
+        task_left_right_arms_idle.set_subtask_count(2)  # 两个子任务
         task_left_right_arms_idle.parallel = task.Task.Task_parallel.ALL
         tasks_pick_snack.add(task_left_right_arms_idle)
         
@@ -874,6 +876,7 @@ class Order_driven_task_schedul():
                     [arm.GripMethod.DONTCANGE,arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.ONLY_Z)
         
         task_arm_dilivery_container.parallel = task.Task.Task_parallel.ALL
+        task_arm_dilivery_container.set_subtask_count(2)  # 两个子任务
         task_arm_dilivery_container.add_predecessor_task(task_left_arm_grap_container)        # 前置任务
         task_arm_dilivery_container.add_predecessor_task(task_right_arm_grap_container)       # 前置任务
         
@@ -904,12 +907,14 @@ class Order_driven_task_schedul():
         task_arm_placement_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_container,None,utilis.Device_id.LEFT_RIGHT,\
                 [system.anchor_point.left_arm_container_placement,system.anchor_point.right_arm_container_placement],\
                 [arm.GripMethod.OPEN,arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.MODIFY_Z)
+        task_arm_placement_container.set_subtask_count(2)
         tasks_pick_snack.add(task_arm_placement_container)
     
         #  将左,右臂放到空闲位置
         task_arms_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
                 [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
                 [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ)
+        task_arms_idle.set_subtask_count(2)
         task_arms_idle.parallel = task.Task.Task_parallel.ALL
         tasks_pick_snack.add(task_arms_idle)
         
@@ -1063,6 +1068,7 @@ class Order_driven_task_schedul():
         task_arms_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
                 [system.anchor_point.right_arm_idle,system.anchor_point.right_arm_idle],\
                 [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ)
+        task_arms_idle.set_subtask_count(2)
         task_arms_idle.parallel = task.Task.Task_parallel.ALL
         tasks_get_drink.add(task_arms_idle)
         
