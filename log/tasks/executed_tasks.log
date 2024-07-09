@@ -1,23 +1,47 @@
-07-09 22:29:22
+07-09 22:38:40
 
 --------------------------------------------------
 
 
-Task       : Task_navigate Navigate_to_the_snack_desk
+Task       : Task_image_rec CONTAINER
 Group_id   : 1
-Index      : 1
-Create_time: 1720535216852675437
-Start_time : 1720535345709245920
+Index      : 4
+Create_time: 1720535788932573080
+Start_time : -999
 End_time   : -999
 Finsih_cb  : None
-Status     : RUNNING
+Status     : BEREADY
 Result     : INVALID
 Return_data: None
-Parallel   : NOTALLOWED
+Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: 
-Target_3D_pose: x:0.22 y:-2.45 z:0.00 roll:0.00 pitch:-0.00 yaw:3.14 
+Predecessor_tasks: [2:Task_manipulation Rec_container] 
+Camera_id: LEFT 
+Snack_list: []
+Need_modify_tasks: 
+          [10:Task_manipulation Grasp_container]
+ 
+
+Task       : Task_image_rec CONTAINER
+Group_id   : 1
+Index      : 5
+Create_time: 1720535788932969808
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [3:Task_manipulation Rec_container] 
+Camera_id: RIGHT 
+Snack_list: []
+Need_modify_tasks: 
+          [12:Task_manipulation Grasp_container]
+ 
 --------------------------------------------------
 
 

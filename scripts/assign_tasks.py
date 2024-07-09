@@ -561,7 +561,10 @@ class Task_manager():
             self.can_run_state = True
         if current_task.if_finished():
             rospy.loginfo(f"task {current_task.task_index} is finished()")
-            self.executed_tasks.remove_task(current_task) # 在执行的任务中移除
+            try:
+                self.executed_tasks.remove_task(current_task) # 在执行的任务中移除
+            except:
+                rospy.loginfo(f"node: {rospy.get_name()}, task_manager, task : {current_task.task_index} remove task from executed_tasks failed!!!")
             self.finished_tasks.add(current_task)         # 添加到已完成的任务中
             # log.log_finish_tasks_info(current_task)       # 记录完成的任务信息
         else:
@@ -572,7 +575,7 @@ class Task_manager():
     # 定时器任务
     @staticmethod
     def timer_callback(event):
-        rospy.loginfo("Task manager timer callback")
+        # rospy.loginfo("Task manager timer callback")
         for current_task in system.task_manager.waiting_task.task_list:
             return_code = system.task_manager.task_can_run(current_task)
             rospy.loginfo(f"task {current_task.task_index} return code is {return_code}")
@@ -1134,7 +1137,7 @@ def test_other():
 
 def talker():
     # 初始化节点，命名为'talker'
-    rospy.init_node('assign_tasks')
+    # rospy.init_node('assign_tasks')
     global system
     system = System()
     # test_order_snack()
