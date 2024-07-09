@@ -213,6 +213,7 @@ catkin_install_python(PROGRAMS
   scripts/test/test_robot/arm_dance.py       # 多点位手臂运动
   scripts/test/test_robot_camera/test_camera_topic.py  # 测试摄像头节点功能
   scripts/test/test/timer_demo.py           # 定时器demo
+  scripts/test/test_robot_camera/grip_everything.py  # 夹取所有物品
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

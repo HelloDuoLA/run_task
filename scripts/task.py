@@ -17,6 +17,7 @@ import utilis
 import robot
 import order
 import arm
+import log
 
 
 # 任务类型
@@ -82,6 +83,7 @@ class Task_type():
         Rec_container      = auto()                  # 识别容器
         Lossen_container   = auto()                  # 放容器
         Grasp_cup          = auto()                  # 夹杯子
+        Grasp_cup_pre      = auto()                  # 夹杯子 准备
         Water_cup          = auto()                  # 杯子接水
         Deliever_cup       = auto()                  # 送杯子
         Lossen_cup         = auto()                  # 放杯子
@@ -91,12 +93,13 @@ class Task_type():
         Rec_machine_switch = auto()                  # 识别咖啡机开关
     
     # 初始化
-    def __init__(self,task_name:Enum) -> None:
+    def __init__(self,task_name:Task_manipulation) -> None:
         self.task_name = task_name                   # 任务名称
-        self.task_type = task_name.__class__         # 任务类型
+        self.task_type = task_name                   # 任务类型
         
     def __str__(self) -> str:
-        return f"{self.task_type.__name__} {self.task_name.name} "
+        # print(f"self.task_type : {self.task_type}")
+        return f"{self.task_type.__class__.__name__} {self.task_type.name}"
     
     # 重写等式
     def __eq__(self, value: object) -> bool:
@@ -115,6 +118,12 @@ class Task():
     
         def __str__(self) -> str:
             return self.name
+        
+        def __eq__(self, value: object) -> bool:
+            if isinstance(value,self.__class__):
+                return self.value == value.value
+            elif isinstance(value,int):
+                return self.value == value
     
     # 任务结果
     class Task_result(Enum):
@@ -124,6 +133,12 @@ class Task():
         
         def __str__(self) -> str:
             return self.name
+        
+        def __eq__(self, value: object) -> bool:
+            if isinstance(value,self.__class__):
+                return self.value == value.value
+            elif isinstance(value,int):
+                return self.value == value
     
     # 任务的可并行性
     class Task_parallel(Enum):
@@ -134,6 +149,12 @@ class Task():
         
         def __str__(self) -> str:
             return self.name
+        
+        def __eq__(self, value: object) -> bool:
+            if isinstance(value,self.__class__):
+                return self.value == value.value
+            elif isinstance(value,int):
+                return self.value == value
         
     # 初始化 
     def __init__(self,task_name,finish_cb):
@@ -199,10 +220,17 @@ class Task():
         else:
             return False
     
+    # 判断任务是否相等
+    def __eq__(self, value: object) -> bool:
+        if self.task_group_id == value.task_group_id and self.task_index == value.task_index:
+            return True
+        else:
+            return False
+    
     # 打印输出
     def __str__(self) -> str:
-        rospy.loginfo(f"{rospy.get_name()} task id : {self.task_index}")
-        rospy.loginfo(f"{rospy.get_name()} task name : {self.task_type}")
+        # rospy.loginfo(f"{rospy.get_name()} task id : {self.task_index}")
+        # rospy.loginfo(f"{rospy.get_name()} task name : {self.task_type}")
         predecessor_tasks_str = ""
         for task in self.predecessor_tasks.task_list:
             predecessor_tasks_str = predecessor_tasks_str + f"[{task.task_index}:{task.task_type}] "
@@ -223,6 +251,17 @@ class Task():
                 f"Subtask_count_finished: {self.subtask_count_finished}\r\n"
                 f"Predecessor_tasks: {predecessor_tasks_str}\r\n"
                 )
+        
+# 功能任务
+class Task_function(Task):
+    def __init__(self, task_name:Task_type.Task_function, finish_cb=None):
+        super().__init__(task_name,finish_cb)
+    
+    # 打印输出
+    def __str__(self) -> str:
+        return super().__str__() 
+
+        
 # 导航任务
 class Task_navigation(Task):
     def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(), back_meters=0,move_back_speed=0.15):
@@ -245,7 +284,7 @@ class Task_navigation(Task):
 # 图像识别任务
 class Task_image_rec(Task):
     class Rec_OBJ_type(Enum):
-        SNACK          = 0        # SNAKC有自己独立的ID
+        LOSSEN_SNACK   = 0        # 松开零食
         CONTAINER      = auto()   # 容器
         MACHINE_SWITCH = auto()   # 机器开关
         CUP            = auto()   # 杯子
@@ -293,7 +332,7 @@ class Task_manipulation(Task):
             self.target_arms_pose    = target_arms_pose
         
         # 判断输入是不是列表
-        if isinstance(target_clamps_status,robot.manipulation_status.clamp.status):
+        if isinstance(target_clamps_status,arm.GripMethod):
             self.target_clamps_status = [target_clamps_status]
         else:
             self.target_clamps_status = target_clamps_status
@@ -302,24 +341,69 @@ class Task_manipulation(Task):
         self.arm_move_method     = arm_move_method      # 移动方式
         self.click_length        = click_length         # 点击长度
     
-    def set_left_arm_snack_selected_position(self,target_arms_pose: List[arm.Arm_pose]):
-        # 判断输入是不是列表
-        if isinstance(target_arms_pose,arm.Arm_pose):
-            self.target_left_arm_pose    = [target_arms_pose]
-        else: # 是
-            self.target_left_arm_pose    = target_arms_pose
-    
-    def set_right_arm_snack_selected_position(self,target_arms_pose: List[arm.Arm_pose]):
-        # 判断输入是不是列表
-        if isinstance(target_arms_pose,arm.Arm_pose):
-            self.target_right_arm_pose    = [target_arms_pose]
-        else: # 是
-            self.target_right_arm_pose    = target_arms_pose
-    
-    
     # 设置目标位置
-    def set_target_arm_pose(self,arm_pose:arm.Arm_pose):
-        self.target_arms_pose = arm_pose
+    def set_target_arm_pose(self,arm_pose:arm.Arm_pose,device_id:utilis.Device_id):
+        if len(self.target_arms_pose) == 2:
+            if device_id == utilis.Device_id.LEFT:
+                self.target_arms_pose[0] = arm_pose
+            elif device_id == utilis.Device_id.RIGHT:
+                self.target_arms_pose[1] = arm_pose
+        else:
+            self.target_arms_pose[0] = arm_pose
+            
+    # 修改目标xyz
+    def modify_target_xyz(self,arm_pose:List[float],device_id:utilis.Device_id):
+        if len(self.target_arms_pose) == 2:
+            if device_id == utilis.Device_id.LEFT:
+                self.target_arms_pose[0].arm_pose[0] = arm_pose[0]
+                self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
+                self.target_arms_pose[0].arm_pose[2] = arm_pose[2]
+            elif device_id == utilis.Device_id.RIGHT:
+                self.target_arms_pose[1].arm_pose[0] = arm_pose[0]
+                self.target_arms_pose[1].arm_pose[1] = arm_pose[1]
+                self.target_arms_pose[1].arm_pose[2] = arm_pose[2]
+        else:
+            self.target_arms_pose[0].arm_pose[0] = arm_pose[0]
+            self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
+            self.target_arms_pose[0].arm_pose[2] = arm_pose[2]
+        
+    # 修改目标xy
+    def modify_target_xy(self,arm_pose:List[float],device_id:utilis.Device_id):
+        if len(self.target_arms_pose) == 2:
+            if device_id == utilis.Device_id.LEFT:
+                self.target_arms_pose[0].arm_pose[0] = arm_pose[0]
+                self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
+            elif device_id == utilis.Device_id.RIGHT:
+                self.target_arms_pose[1].arm_pose[0] = arm_pose[0]
+                self.target_arms_pose[1].arm_pose[1] = arm_pose[1]
+        else:
+            self.target_arms_pose[0].arm_pose[0] = arm_pose[0]
+            self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
+            
+    # 修改目标yz
+    def modify_target_yz(self,arm_pose:List[float],device_id:utilis.Device_id):
+        if len(self.target_arms_pose) == 2:
+            if device_id == utilis.Device_id.LEFT:
+                self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
+                self.target_arms_pose[0].arm_pose[2] = arm_pose[2]
+            elif device_id == utilis.Device_id.RIGHT:
+                self.target_arms_pose[1].arm_pose[1] = arm_pose[1]
+                self.target_arms_pose[1].arm_pose[2] = arm_pose[2]
+        else:
+                self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
+                self.target_arms_pose[0].arm_pose[2] = arm_pose[2]
+            
+    def modify_xyz_select_arm(self,arm_pose:List[float],device_id:utilis.Device_id):
+        self.modify_target_xyz(arm_pose,device_id)
+        self.select_arm(device_id)
+    
+    def select_arm(self,device_id:utilis.Device_id):
+        if device_id == utilis.Device_id.LEFT:
+            self.arm_id = utilis.Device_id.LEFT
+            self.target_arms_pose.pop(1)
+        elif device_id == utilis.Device_id.RIGHT:
+            self.arm_id = utilis.Device_id.RIGHT
+            self.target_arms_pose.pop(0)
         
     # 打印字符串
     def __str__(self) -> str:
@@ -327,7 +411,7 @@ class Task_manipulation(Task):
             if i == 0:
                 arms_pose_str = f"Arm_pose_{i}: {self.target_arms_pose[i]} "
             else:
-                arms_pose_str = arms_pose_str + f"Arm_pose_{i}: {self.target_arms_pose[i]} "
+                arms_pose_str = arms_pose_str+ "\n" +  23 * " " + f"Arm_pose_{i}: {self.target_arms_pose[i]} "
         
         for i in range(len(self.target_clamps_status)):
             if i == 0:
@@ -340,13 +424,15 @@ class Task_manipulation(Task):
             f"Target_arms_pose    : {{{arms_pose_str}}} \r\n" 
             f"Target_clamps_status: {clamps_status_str} \r\n" 
             f"Clamp_speed         : {self.clamp_speed} \r\n"
-            f"Clamp_first         : {self.clamp_first} \r\n"
+            f"arm_move_method     : {self.arm_move_method} \r\n"
+            f"click_length        : {self.click_length } \r\n"
         )
 
 # 任务队列
 class Task_sequence():
-    def __init__(self) -> None:
+    def __init__(self, name="") -> None:
         self.task_list : list[Task] = []
+        self.name    = name
         
     # 打印输出
     def __str__(self) -> str:
@@ -354,8 +440,6 @@ class Task_sequence():
         for task in self.task_list:
             task_str = task_str + f"\r\n\r\n{task}"
         return task_str
-        # return "OK"
-        # return
     
     # 添加任务
     def add(self,task):
@@ -365,6 +449,8 @@ class Task_sequence():
         # 增加任务列表
         elif isinstance(task,Task_sequence):
             self.task_list.extend(task.task_list)
+        
+        self._log_info()
     
     # 更新组id和任务index
     def update_group_id(self,group_id):
@@ -373,7 +459,9 @@ class Task_sequence():
     
     # 弹出第一个任务
     def pop(self):
-        return self.task_list.pop(0)
+        task = self.task_list.pop(0)
+        self._log_info()
+        return task
     
     # 是否完成, 主要用于并行任务分析的前置任务
     def has_been_done(self):
@@ -383,8 +471,19 @@ class Task_sequence():
                 return False
         return True
 
+    # 获取任务数量
     def get_task_count(self):
         return len(self.task_list)
+
+    # 删除任务
+    def remove_task(self,task:Task):
+        self.task_list.remove(task)
+        self._log_info()
+        
+    # 打印信息
+    def _log_info(self):
+        if self.name != "":
+            log.log_update_tasks_info(self,self.name)
 
 # 任务执行器中的任务管理器
 class Task_manager_in_running():
@@ -396,7 +495,10 @@ class Task_manager_in_running():
         return task.task_index
     
     def get_task(self,index=0)->Task:
-        task = self.task_dict.pop(index)
+        task = self.task_dict.get(index)
         return task
+    
+    def del_task(self,index):
+        task = self.task_dict.pop(index)
     
 

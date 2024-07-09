@@ -87,7 +87,7 @@ if __name__ == "__main__":
     # 添加参数
     parser.add_argument('image_path', type=str, help='The path to the image file.')
     parser.add_argument('--calibration_path', type=str, default='./01_right', help='The path to the camera calibration folder. Default is ./calibration')
-    parser.add_argument('--tag_size', type=float, default=20, help='The size of the tag in meters. Default is 20mm')
+    parser.add_argument('--tag_size', type=float, default=27, help='The size of the tag in meters. Default is 20mm')
     
     # 解析参数
     args = parser.parse_args()
@@ -134,20 +134,20 @@ if __name__ == "__main__":
             print("left")
             print(f"left   arm end pose {base_coords_left[:3]}")
             print(f"stag xyz : {xyz}")
-            print(f"shousuan    xyz:{base_coords_left[0] + xyz[0] + 26}  {base_coords_left[1] - xyz[1]- 78 + 200} {370}")
+            print(f"shousuan    xyz:{base_coords_left[0] + xyz[0] + 50}  {base_coords_left[1] - xyz[1]- 78 + 190} {360}")
             print("right")
             print(f"stag xyz : {xyz}")
             print(f"right  arm end pose {base_coords_right[:3]}")
-            print(f"shousuan    xyz:{base_coords_right[0] - xyz[0] - 20}  {base_coords_right[1] + xyz[1] + 78 - 10} {370}\r\n\r\n")
+            print(f"shousuan    xyz:{base_coords_right[0] - xyz[0] - 20 -40}  {base_coords_right[1] + xyz[1] + 78 - 50} {360}\r\n\r\n")
     
 # 左臂
-    # 测量 364.0008632433758  -22.241724454578787 370 
-    # 实际 390, 180, 370, -180, 0.0, -90
+    # 测量 377.1903549671729  198.06082067219978 370
+    # 实际 400, 190, 360, -180, 0.0, -90
 
 
 # 右臂
-    # 测量 400.9685837000625  -50.153911459306016 370
-    # 实际[380, -70, 385, -180, 0.0, 90]
+    # 测量 374.12324680506197  -53.320242449382704 370
+    # 实际[330.0, -90, 370, -180, 0, 90]
     
 
 # 01 通过

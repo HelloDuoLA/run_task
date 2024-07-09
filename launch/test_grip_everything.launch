@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="run_task" type="grip_everything.py" name="arm_dance" output="screen">
+        <rosparam file="$(find run_task)/config/arm_pose_anchor.yaml" command="load"/>
+    </node>
+</launch>

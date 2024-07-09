@@ -5,3 +5,9 @@
         <rosparam file="$(find run_task)/config/other_config.yaml" command="load"/>
     </node>
 </launch>
+
+<!-- source ./devel/setup.bash -->
+<!-- roslaunch run_task arm.launch  -->
+<!-- roslaunch run_task camera.launch -->
+<!-- roslaunch run_task control_cmd.launch  -->
+<!-- roslaunch run_task assgin_task.launch  -->

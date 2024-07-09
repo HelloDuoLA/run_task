@@ -39,7 +39,7 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
 
     timestamp = int(time.time())
 
-    cv2.imwrite(f'./result/{timestamp}.jpg', image)
+    cv2.imwrite(f'./STag/result/{timestamp}.jpg', image)
     
     xyz_list_with_id = []
     # 对于每个id都要进行位置检测
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     # 添加参数
     parser.add_argument('image_path', type=str, help='The path to the image file.')
     parser.add_argument('--calibration_path', type=str, default='./01_right', help='The path to the camera calibration folder. Default is ./calibration')
-    parser.add_argument('--tag_size', type=float, default=20, help='The size of the tag in meters. Default is 20mm')
+    parser.add_argument('--tag_size', type=float, default=27, help='The size of the tag in meters. Default is 20mm')
     
     # 解析参数
     args = parser.parse_args()
@@ -151,8 +151,8 @@ if __name__ == "__main__":
         print(f"left   arm end pose {base_coords_left[:3]}")
         print(f"arm_base_coords {arm_base_coords_left} ")
         print(f"shousuanooo xyz:[{base_coords_left[0] + xyz[2]}, {base_coords_left[1] - xyz[1]}, {base_coords_left[2] + xyz[0]}]")
-        print(f"shousuan    xyz:[{base_coords_left[0] + xyz[2] - 90 }, {base_coords_left[1] - xyz[1]-78}, {base_coords_left[2] + xyz[0] +40}]")
-        print(f"shousuan    xyz:{base_coords_left[0] + xyz[2] - 90 }  {base_coords_left[1] - xyz[1]-78} {base_coords_left[2] + xyz[0] +40}")
+        print(f"shousuan    xyz:[{base_coords_left[0] + xyz[2] - 90 }, {base_coords_left[1] - xyz[1]-78}, {base_coords_left[2] + xyz[0] +20}]")
+        print(f"shousuan    xyz:{base_coords_left[0] + xyz[2] - 90 }  {base_coords_left[1] - xyz[1]-78} {base_coords_left[2] + xyz[0] +20}")
         print("right")
         print(f"right  arm end pose {base_coords_right[:3]}")
         print(f"arm_base_coords {arm_base_coords_right} ")
@@ -160,9 +160,8 @@ if __name__ == "__main__":
         print(f"shousuan    xyz:[{base_coords_right[0] + xyz[2] - 90 }, {base_coords_right[1] + xyz[1] + 78}, {base_coords_right[2] - xyz[0] }]")
         print(f"shousuan    xyz:{base_coords_right[0] + xyz[2] - 90 }  {base_coords_right[1] + xyz[1] + 78} {base_coords_right[2] - xyz[0]}\r\n\r\n")
     
-    
-    
-    
+# 左臂
+# 测量 419.3141469292766  179.0925354305184 581.8427378387012
 
 
     

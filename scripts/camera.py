@@ -52,10 +52,10 @@ class STag_result_list():
     }
     
     STag_other_dict = {
-        task.Task_image_rec.Rec_OBJ_type.CONTAINER        : 9,
-        task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH   : 12,
-        task.Task_image_rec.Rec_OBJ_type.CUP              : 3,
-        task.Task_image_rec.Rec_OBJ_type.WATER_POINT      : 11,
+        9  : task.Task_image_rec.Rec_OBJ_type.CONTAINER.value ,
+        12 : task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value,
+        3  : task.Task_image_rec.Rec_OBJ_type.CUP.value,
+        11 : task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value,
     }
     
     

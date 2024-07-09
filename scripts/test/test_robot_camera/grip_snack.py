@@ -102,6 +102,21 @@ if __name__ == "__main__":
     
     ml = Mercury("/dev/left_arm")
     mr = Mercury("/dev/right_arm")
+    
+    power_result = ml.is_power_on()
+    if power_result == None or power_result == False:
+        power_result = ml.power_on()
+        while power_result == None:
+            time.sleep(0.3)
+            power_result = ml.power_on()
+    
+    power_result = mr.is_power_on()
+    if power_result == None or power_result == False:
+        power_result = mr.power_on()
+
+        while power_result == None:
+            time.sleep(0.3)
+            power_result = mr.power_on()
 
     ml.set_gripper_mode(0)
     mr.set_gripper_mode(0)

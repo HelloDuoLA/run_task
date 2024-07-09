@@ -20,7 +20,7 @@ class manipulation_status():
     def __init__(self,id:utilis.Device_id):
         self.id          = id                # 机械臂编号
         self.arm_info    = self.arm()        # 机械臂状态
-        self.clamp_info  = self.clamp()      # 夹具信息
+        # self.clamp_info  = self.clamp()      # 夹具信息
         self.camera_info = self.camera()     # 摄像头信息
         
     # 机械臂状态
@@ -31,7 +31,7 @@ class manipulation_status():
             BUSY   = auto()       # 忙碌
             
         def __init__(self,arm_pose:arm.Arm_pose=arm.Arm_pose()):
-            self.status   = self.status.IDLE    # 机械臂状态,默认空闲
+            self.arm_status   = self.status.IDLE    # 机械臂状态,默认空闲
             self.arm_pose = arm_pose            # 机械臂位置
             
         def set_status(self,status):
@@ -101,16 +101,16 @@ class Robot():
         # 状态信息订阅
         # TODO:细节还需处理, 话题名称、消息类型
         # 摄像头状态更新
-        rospy.Subscriber(utilis.Topic_name.camera_status , msg.CommonStatusDouble, self.update_camera_status, queue_size=10)
+        # rospy.Subscriber(utilis.Topic_name.camera_status , msg.CommonStatusDouble, self.update_camera_status, queue_size=10)
         # 机械臂状态更新
-        rospy.Subscriber(utilis.Topic_name.right_arm_pose, msg.ArmPoseWithID, self.update_arm_status,    queue_size=10)
-        rospy.Subscriber(utilis.Topic_name.left_arm_pose , msg.ArmPoseWithID, self.update_arm_status,    queue_size=10)
+        # rospy.Subscriber(utilis.Topic_name.right_arm_pose, msg.ArmPoseWithID, self.update_arm_status,    queue_size=10)
+        # rospy.Subscriber(utilis.Topic_name.left_arm_pose , msg.ArmPoseWithID, self.update_arm_status,    queue_size=10)
         # 爪具状态更新
-        rospy.Subscriber(utilis.Topic_name.clamp_status  , msg.CommonStatusDouble, self.update_clamp_status,  queue_size=10)
+        # rospy.Subscriber(utilis.Topic_name.clamp_status  , msg.CommonStatusDouble, self.update_clamp_status,  queue_size=10)
         # 图像模型状态更新 
-        rospy.Subscriber(utilis.Topic_name.image_model_status, msg.CommonStatus, self.update_image_model_status_status,  queue_size=10)
+        # rospy.Subscriber(utilis.Topic_name.image_model_status, msg.CommonStatus, self.update_image_model_status_status,  queue_size=10)
         # 语音模型状态更新 
-        rospy.Subscriber(utilis.Topic_name.image_model_status, msg.CommonStatus, self.update_image_model_status_status,  queue_size=10)
+        # rospy.Subscriber(utilis.Topic_name.image_model_status, msg.CommonStatus, self.update_image_model_status_status,  queue_size=10)
         # TODO:可能需要通过TF解决
         # 机器人位姿更新
         # rospy.Subscriber(utilis.Topic_name.robot_status, msg.Pose3D, self.update_robot_pose3d, queue_size=10)
@@ -170,6 +170,20 @@ class Robot():
             arm_poses.append(self.right_manipulation_status.arm_info.arm_pose.to_msg_with_id())
         return arm_poses
     
+    def get_robot_status(self):
+        return self.robot_status
+    
+    # 判断手臂是否空闲
+    def is_arm_idle(self,arm_id:utilis.Device_id):
+        if arm_id == utilis.Device_id.LEFT:
+            return self.left_manipulation_status.arm_info.arm_status == manipulation_status.arm.status.IDLE
+        elif arm_id == utilis.Device_id.RIGHT:
+            return self.right_manipulation_status.arm_info.arm_status == manipulation_status.arm.status.IDLE
+        elif arm_id == utilis.Device_id.LEFT_RIGHT:
+            return self.left_manipulation_status.arm_info.arm_status == manipulation_status.arm.status.IDLE and \
+                self.right_manipulation_status.arm_info.arm_status == manipulation_status.arm.status.IDLE
+            
+    
     # TODO:更新状态均需要通过话题订阅!!!!!
     # 更新3D位姿
     def update_robot_pose3d(self,pose:utilis.Pose3D):
@@ -178,22 +192,22 @@ class Robot():
     # 更新机械臂状态
     def update_arm_status(self,arm_id:utilis.Device_id,arm_status:manipulation_status.arm.status):
         if arm_id == utilis.Device_id.LEFT:
-            self.left_manipulation_status.arm_info.status     = arm_status
+            self.left_manipulation_status.arm_info.arm_status     = arm_status
         elif arm_id == utilis.Device_id.RIGHT:
-            self.right_manipulation_status.arm_info.status    = arm_status
+            self.right_manipulation_status.arm_info.arm_status    = arm_status
         elif arm_id == utilis.Device_id.LEFT_RIGHT:
-            self.left_manipulation_status.arm_info.status     = arm_status
-            self.right_manipulation_status.arm_info.status    = arm_status
+            self.left_manipulation_status.arm_info.arm_status     = arm_status
+            self.right_manipulation_status.arm_info.arm_status    = arm_status
         
     def update_robot_status(self,robot_status:Robot_status):
         self.robot_status = robot_status
     
-    # 更新夹具状态
-    def update_clamp_status(self,arm_id:utilis.Device_id,clamp_status:manipulation_status.clamp.status):
-        if arm_id == utilis.Device_id.LEFT:
-            self.left_manipulation_status.clamp_info.status = clamp_status
-        elif arm_id == utilis.Device_id.RIGHT:
-            self.right_manipulation_status.clamp_info.status = clamp_status
+    # # 更新夹具状态
+    # def update_clamp_status(self,arm_id:utilis.Device_id,clamp_status:manipulation_status.clamp.status):
+    #     if arm_id == utilis.Device_id.LEFT:
+    #         self.left_manipulation_status.clamp_info.status = clamp_status
+    #     elif arm_id == utilis.Device_id.RIGHT:
+    #         self.right_manipulation_status.clamp_info.status = clamp_status
     
     # 更新摄像头状态
     def update_camera_status(self,arm_id:utilis.Device_id,camera_status:manipulation_status.camera.status):
@@ -203,9 +217,9 @@ class Robot():
             self.right_manipulation_status.camera_info.status = camera_status
 
     # 更新机械臂和夹具状态
-    def update_arm_clamp_status(self,arm_id:utilis.Device_id,arm_status:manipulation_status.arm.status,arm_pose:arm.Arm_pose,clamp_status:manipulation_status.clamp.status):
-        self.update_arm_status(arm_id,arm_status,arm_pose)
-        self.update_clamp_status(arm_id,clamp_status)
+    # def update_arm_clamp_status(self,arm_id:utilis.Device_id,arm_status:manipulation_status.arm.status,arm_pose:arm.Arm_pose,clamp_status:manipulation_status.clamp.status):
+    #     self.update_arm_status(arm_id,arm_status,arm_pose)
+        # self.update_clamp_status(arm_id,clamp_status)
     
     # 更新图像识别模型状态
     def update_image_model_status_status():
