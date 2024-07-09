@@ -394,9 +394,13 @@ class Manipulator_actuator():
         # 任务自带的回调
         if current_task.finish_cb is not None:
             current_task.finish_cb(status, result)
-    
+            
         # 更新机械臂状态
         system.robot.update_arm_status(current_task.arm_id,robot.manipulation_status.arm.status.IDLE)
+        
+        # 删除任务
+        if current_task.if_finished():
+            system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
         
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
@@ -541,10 +545,10 @@ class Task_manager():
     
     def __init__(self,robot=None):
         self.robot            = robot                 # 执行任务的机器人
-        self.finished_tasks   = task.Task_sequence()  # 已经完成的任务列表
-        self.executed_tasks   = task.Task_sequence()  # 正在执行的任务列表
+        self.finished_tasks   = task.Task_sequence("finished_tasks")  # 已经完成的任务列表
+        self.executed_tasks   = task.Task_sequence("executed_tasks")  # 正在执行的任务列表
         # self.conflicting_task = task.Task_sequence()  # 冲突的任务列表(可以并行, 但因为硬件冲突暂时无法并行)
-        self.waiting_task     = task.Task_sequence()  # 等待执行的任务列表
+        self.waiting_task     = task.Task_sequence("waiting_task")  # 等待执行的任务列表
         self.can_run_state    = True                  #是否能够执行任务
         # 每0.5s执行一次任务
         timer = rospy.Timer(rospy.Duration(0.5), self.timer_callback)
@@ -556,9 +560,13 @@ class Task_manager():
         if current_task.parallel == task.Task.Task_parallel.NOTALLOWED:
             self.can_run_state = True
         if current_task.if_finished():
+            rospy.loginfo(f"task {current_task.task_index} is finished()")
             self.executed_tasks.remove_task(current_task) # 在执行的任务中移除
             self.finished_tasks.add(current_task)         # 添加到已完成的任务中
-            log.log_finish_tasks_info(current_task)       # 记录完成的任务信息
+            # log.log_finish_tasks_info(current_task)       # 记录完成的任务信息
+        else:
+            rospy.loginfo(f"task {current_task.task_index} is not finish !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            
     
 
     # 定时器任务
@@ -612,6 +620,7 @@ class Task_manager():
     def task_can_run(self,current_task:task.Task):
         # 不能执行下一个任务
         if self.can_run_state == False:
+            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because can_run_state is {can_run_state}")
             return Task_manager.Run_task_return_code.cannot_run_cannot_next
         
         # 任务不支持并行

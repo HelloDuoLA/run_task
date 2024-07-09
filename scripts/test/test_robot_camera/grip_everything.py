@@ -264,7 +264,9 @@ def talker():
     manipulator_actuator = Manipulator_actuator()
     tasks = Manipulator_tasks()
     
-    manipulator_actuator.run(tasks.task_arms_idle)
+    # manipulator_actuator.run(tasks.task_arms_idle)
+    manipulator_actuator.run(tasks.task_right_arm_to_rec_cup_pre)
+    manipulator_actuator.run(tasks.task_left_arm_to_rec_coffee_machine_turn_on)
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(1)
 

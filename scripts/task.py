@@ -17,6 +17,7 @@ import utilis
 import robot
 import order
 import arm
+import log
 
 
 # 任务类型
@@ -228,8 +229,8 @@ class Task():
     
     # 打印输出
     def __str__(self) -> str:
-        rospy.loginfo(f"{rospy.get_name()} task id : {self.task_index}")
-        rospy.loginfo(f"{rospy.get_name()} task name : {self.task_type}")
+        # rospy.loginfo(f"{rospy.get_name()} task id : {self.task_index}")
+        # rospy.loginfo(f"{rospy.get_name()} task name : {self.task_type}")
         predecessor_tasks_str = ""
         for task in self.predecessor_tasks.task_list:
             predecessor_tasks_str = predecessor_tasks_str + f"[{task.task_index}:{task.task_type}] "
@@ -429,8 +430,9 @@ class Task_manipulation(Task):
 
 # 任务队列
 class Task_sequence():
-    def __init__(self) -> None:
+    def __init__(self, name="") -> None:
         self.task_list : list[Task] = []
+        self.name    = name
         
     # 打印输出
     def __str__(self) -> str:
@@ -447,6 +449,8 @@ class Task_sequence():
         # 增加任务列表
         elif isinstance(task,Task_sequence):
             self.task_list.extend(task.task_list)
+        
+        self._log_info()
     
     # 更新组id和任务index
     def update_group_id(self,group_id):
@@ -455,7 +459,9 @@ class Task_sequence():
     
     # 弹出第一个任务
     def pop(self):
-        return self.task_list.pop(0)
+        task = self.task_list.pop(0)
+        self._log_info()
+        return task
     
     # 是否完成, 主要用于并行任务分析的前置任务
     def has_been_done(self):
@@ -472,6 +478,12 @@ class Task_sequence():
     # 删除任务
     def remove_task(self,task:Task):
         self.task_list.remove(task)
+        self._log_info()
+        
+    # 打印信息
+    def _log_info(self):
+        if self.name != "":
+            log.log_update_tasks_info(self,self.name)
 
 # 任务执行器中的任务管理器
 class Task_manager_in_running():
@@ -483,7 +495,10 @@ class Task_manager_in_running():
         return task.task_index
     
     def get_task(self,index=0)->Task:
-        task = self.task_dict.pop(index)
+        task = self.task_dict.get(index)
         return task
+    
+    def del_task(self,index):
+        task = self.task_dict.pop(index)
     
 
