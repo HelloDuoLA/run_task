@@ -51,10 +51,10 @@ class camera_detect:
                 load_data = np.load("right_EyesInHand_matrix.npy")
                 self.EyesInHand_matrix = load_data
             else:
-                self.EyesInHand_matrix = np.array([[0, 1, 0, camera_len],
-                               [-1, 0, 0, 25],
-                               [0, 0, 1, -tool_len],
-                               [0, 0, 0, 1]])
+                self.EyesInHand_matrix = np.array([ [0 , 1, 0, camera_len],
+                                                    [-1, 0, 0, 25],
+                                                    [0 , 0, 1, -tool_len],
+                                                    [0 , 0, 0, 1]])
         self.camera_open()
 
         
@@ -190,7 +190,7 @@ class camera_detect:
         return EysInHand
     
 
-
+    # ?手眼矩阵标定
     def EyeInHand_calibration(self, ml):
         # move to observe points
         if self.arm == 0:
@@ -257,7 +257,7 @@ class camera_detect:
             Euler = self.CvtRotationMatrixToEulerAngle(Rotation)  # 将旋转矩阵转为欧拉角
             target_coords = np.array([tvec[0], tvec[1], tvec[2], Euler[0], Euler[1], Euler[2]])  # 物体坐标(相机系)
         return target_coords
-
+    # !!!!!!摄像头坐标转机械臂坐标
     def stag_robot_identify(self, ml):
         marker_pos_pack = self.stag_identify()
         target_coords = np.array(ml.get_base_coords())  # 获取机械臂当前坐标

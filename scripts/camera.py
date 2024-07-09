@@ -563,7 +563,7 @@ def STag_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LE
             rospy.loginfo(f"Index: {i}, ID: {id[0]}")
             file.write(f"Index: {i}, ID: {id[0]}\n")
             imagePoints  = corners_list[i]
-            success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
+            success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs, flags=cv2.SOLVEPNP_IPPE_SQUARE)
             if success:
                 stag_result = STag_result(device_id, id[0], (imagePoints[0][0] + imagePoints[0][2])/2, [translationVector[0][0],translationVector[1][0],translationVector[2][0]])
                 stag_result_list.add(stag_result)

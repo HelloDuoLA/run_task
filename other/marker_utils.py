@@ -23,9 +23,9 @@ def solve_marker_pnp(corners: NDArray, marker_size: int, mtx: NDArray, dist: NDA
     """
     marker_points = np.array(
         [
-            [-marker_size / 2, marker_size / 2, 0],
-            [marker_size / 2, marker_size / 2, 0],
-            [marker_size / 2, -marker_size / 2, 0],
+            [-marker_size / 2,  marker_size / 2, 0],
+            [ marker_size / 2,  marker_size / 2, 0],
+            [ marker_size / 2, -marker_size / 2, 0],
             [-marker_size / 2, -marker_size / 2, 0],
         ],
         dtype=np.float32,
@@ -38,7 +38,7 @@ def solve_marker_pnp(corners: NDArray, marker_size: int, mtx: NDArray, dist: NDA
             corner,
             mtx,
             dist,
-            flags=cv2.SOLVEPNP_IPPE_SQUARE,
+            flags=cv2.SOLVEPNP_IPPE_SQUARE,  # 是其中一种算法，专门用于处理平面正方形标记。
         )
         if retval:
             rvecs.append(rvec)
