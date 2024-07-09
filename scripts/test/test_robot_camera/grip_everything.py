@@ -249,8 +249,6 @@ class Manipulator_tasks():
         
 
 
-        
-
 
 
 def talker():
@@ -259,7 +257,9 @@ def talker():
     global grip_everything
     grip_everything      = Grip_everything()
     manipulator_actuator = Manipulator_actuator()
+    tasks = Manipulator_tasks()
     
+    manipulator_actuator.run(tasks.task_arms_idle)
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(1)
 
