@@ -33,6 +33,13 @@ class ArmMoveMethod(Enum):
     XY_Z       = auto()
     XZ_Y       = auto()
     YZ_X       = auto()
+    ONLY_X     = auto()
+    ONLY_Y     = auto()
+    ONLY_Z     = auto()
+    MODIFY_X   = auto()
+    MODIFY_Y   = auto()
+    MODIFY_Z   = auto()
+    
     
     def __str__(self) -> str:
         return self.name

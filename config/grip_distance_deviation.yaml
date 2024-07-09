@@ -47,4 +47,4 @@ RightArmGripCup:
 RightArmWaterCup:
   x_bias : -195
   y_bias : 98
-  z_const: 220
+  z_const: 230
