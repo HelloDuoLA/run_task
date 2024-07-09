@@ -11,6 +11,7 @@ ml.release_all_servos()
 
 mr.focus_all_servos()
 
+# !!!!!!!!!!记得调零
 mr.release_servo(1)
 ml.release_servo(1)
 mr.focus_servo(1)
@@ -52,6 +53,26 @@ mr.set_servo_calibration(3)
 mr.set_servo_calibration(4)
 mr.set_servo_calibration(5)
 mr.set_servo_calibration(6)
+
+# 抓爪通信打开
+ml.set_gripper_mode(0)
+mr.set_gripper_mode(0)
+# 0开，1合
+ml.get_gripper_mode()
+ml.set_gripper_state(0,100)
+ml.set_gripper_state(1,100)
+
+mr.set_gripper_state(0,100)
+mr.set_gripper_state(1,100)
+
+# 抓爪调零
+
+ml.set_gripper_enabled(0)
+mr.set_gripper_enabled(0)
+
+ml.set_gripper_calibration()
+mr.set_gripper_calibration()
+
 # 左臂
 from pymycobot import Mercury
 
@@ -65,15 +86,7 @@ ml.focus_all_servos()
 ml.release_servo(6)
 ml.focus_servo(6)
 
-ml.set_gripper_mode(0)
-mr.set_gripper_mode(0)
-# 0开，1合
-ml.get_gripper_mode()
-ml.set_gripper_state(0,100)
-ml.set_gripper_state(1,100)
 
-mr.set_gripper_state(0,100)
-mr.set_gripper_state(1,100)
 
 
 

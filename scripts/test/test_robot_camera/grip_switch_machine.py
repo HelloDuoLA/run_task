@@ -35,6 +35,7 @@ def grip_switch_machine(arm:Mercury,arm_name:str,target_pose):
     wait(arm)
     print(f"{arm_name} change x : {ret}")
     
+    time.sleep(2)
     # 向上拨一下
     change_z3 = copy.deepcopy(change_x)
     change_z3[2] = change_z3[2] + 10
@@ -92,7 +93,12 @@ if __name__ == "__main__":
     # print(args.arm_id)
     
     ml = Mercury("/dev/left_arm")
-    # mr = Mercury("/dev/right_arm")
+    power_result = ml.is_power_on()
+    if power_result == None or power_result == False:
+        power_result = ml.power_on()
+        while power_result == None:
+            time.sleep(0.3)
+            power_result = ml.power_on()
 
     ml.set_gripper_mode(0)
     # mr.set_gripper_mode(0)

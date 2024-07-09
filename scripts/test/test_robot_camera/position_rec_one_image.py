@@ -84,7 +84,7 @@ if __name__ == "__main__":
     # 添加参数
     parser.add_argument('image_path', type=str, help='The path to the image file.')
     parser.add_argument('--calibration_path', type=str, default='./01_right', help='The path to the camera calibration folder. Default is ./calibration')
-    parser.add_argument('--tag_size', type=float, default=20, help='The size of the tag in meters. Default is 20mm')
+    parser.add_argument('--tag_size', type=float, default=27, help='The size of the tag in meters. Default is 20mm')
     
     # 解析参数
     args = parser.parse_args()

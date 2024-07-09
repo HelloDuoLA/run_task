@@ -83,7 +83,7 @@ if __name__ == "__main__":
     # 添加参数
     parser.add_argument('image_path', type=str, help='The path to the image file.')
     parser.add_argument('--calibration_path', type=str, default='./01_right', help='The path to the camera calibration folder. Default is ./calibration')
-    parser.add_argument('--tag_size', type=float, default=20, help='The size of the tag in meters. Default is 20mm')
+    parser.add_argument('--tag_size', type=float, default=27, help='The size of the tag in meters. Default is 20mm')
     
     # 解析参数
     args = parser.parse_args()
@@ -129,20 +129,20 @@ if __name__ == "__main__":
             print(f"id {id} cup")
             print(f"base_coord {base_coords [:3]}")
             # print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 }  {base_coords[1] + xyz[1] + 78} {base_coords[2] - xyz[0]}\r\n\r\n")
-            print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 }  {base_coords[1] + xyz[1] + 78} {210}\r\n\r\n")
+            print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 }  {base_coords[1] + xyz[1] + 78} {220}\r\n\r\n")
         elif id == 11:
             # 接水点
             print(f"id {id} water cup")
             print(f"base_coord {base_coords [:3]}")
             # print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 }  {base_coords[1] + xyz[1] + 78} {base_coords[2] - xyz[0]}\r\n\r\n")
-            print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 -85 - 10}  {base_coords[1] + xyz[1] + 78 + 20} {210}\r\n\r\n")
+            print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 -85 - 20}  {base_coords[1] + xyz[1] + 78 + 20} {220}\r\n\r\n")
     
     # 杯子 
-    # 实测 [510, -104, 221, 90, 0, 90]
-    # 计算 510.51450525190353  -84.97775211192248 201.29820463492507
+    # 实测 
+    # 计算 418.2730280432854  -229.86021421630687 220
     
     
     # 接水点
-    # 实测 [320, 40, 210, 90, 0, 90],50)    
-    # 计算 405.0875667411136  19.968234275038213 217.48827051175937
+    # 实测   
+    # 计算 278.6180988619242  73.59045177992357 220
 
