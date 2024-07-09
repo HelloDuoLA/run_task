@@ -163,8 +163,12 @@ class Arm_controller():
         
         power_on = self.control_instance.is_power_on() 
         
+        if self.id == utilis.Device_id.RIGHT:
+            self.control_instance.power_off()
+            power_on = self.control_instance.power_on()
+        
         rospy.loginfo(f"{self.arm_name} is power status {power_on}")
-        while not power_on:
+        while not power_on and power_on == None:
             self.control_instance.power_on()
             power_on = self.control_instance.is_power_on()
             

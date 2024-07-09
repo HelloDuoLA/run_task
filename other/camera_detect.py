@@ -39,7 +39,7 @@ class camera_detect:
                 self.EyesInHand_matrix = load_data
             else:
                 self.EyesInHand_matrix = np.array([ [0 , 1, 0, camera_len],
-                                                    [-1, 0, 0, -10],
+                                                    [-1, 0, 0, -10],            # 为什么有个-10
                                                     [0 , 0, 1, -tool_len],
                                                     [0 , 0, 0, 1]])
         else:
@@ -52,7 +52,7 @@ class camera_detect:
                 self.EyesInHand_matrix = load_data
             else:
                 self.EyesInHand_matrix = np.array([ [0 , 1, 0, camera_len],
-                                                    [-1, 0, 0, 25],
+                                                    [-1, 0, 0, 25],          # 为什么有个25
                                                     [0 , 0, 1, -tool_len],
                                                     [0 , 0, 0, 1]])
         self.camera_open()
