@@ -620,7 +620,7 @@ class Task_manager():
     def task_can_run(self,current_task:task.Task):
         # 不能执行下一个任务
         if self.can_run_state == False:
-            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because can_run_state is {can_run_state}")
+            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because can_run_state is {self.can_run_state}")
             return Task_manager.Run_task_return_code.cannot_run_cannot_next
         
         # 任务不支持并行

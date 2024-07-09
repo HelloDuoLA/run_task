@@ -1195,3 +1195,10 @@ order_id:1, table_id:1, snacks:['id:1,name:YIDA,count:1', 'id:5,name:CHENPIDAN,c
 --------------------------------------------------
 
 
+07-09 22:26:56
+
+--------------------------------------------------
+order_id:1, table_id:1, snacks:['id:1,name:YIDA,count:1', 'id:5,name:CHENPIDAN,count:1'], drinks:['id:1,name:COFFEE,count:1']
+--------------------------------------------------
+
+
