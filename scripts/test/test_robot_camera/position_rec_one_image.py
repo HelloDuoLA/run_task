@@ -151,8 +151,8 @@ if __name__ == "__main__":
         print(f"left   arm end pose {base_coords_left[:3]}")
         print(f"arm_base_coords {arm_base_coords_left} ")
         print(f"shousuanooo xyz:[{base_coords_left[0] + xyz[2]}, {base_coords_left[1] - xyz[1]}, {base_coords_left[2] + xyz[0]}]")
-        print(f"shousuan    xyz:[{base_coords_left[0] + xyz[2] - 90 }, {base_coords_left[1] - xyz[1]-78}, {base_coords_left[2] + xyz[0] +40}]")
-        print(f"shousuan    xyz:{base_coords_left[0] + xyz[2] - 90 }  {base_coords_left[1] - xyz[1]-78} {base_coords_left[2] + xyz[0] +40}")
+        print(f"shousuan    xyz:[{base_coords_left[0] + xyz[2] - 90 }, {base_coords_left[1] - xyz[1]-78}, {base_coords_left[2] + xyz[0] +20}]")
+        print(f"shousuan    xyz:{base_coords_left[0] + xyz[2] - 90 }  {base_coords_left[1] - xyz[1]-78} {base_coords_left[2] + xyz[0] +20}")
         print("right")
         print(f"right  arm end pose {base_coords_right[:3]}")
         print(f"arm_base_coords {arm_base_coords_right} ")
@@ -160,9 +160,8 @@ if __name__ == "__main__":
         print(f"shousuan    xyz:[{base_coords_right[0] + xyz[2] - 90 }, {base_coords_right[1] + xyz[1] + 78}, {base_coords_right[2] - xyz[0] }]")
         print(f"shousuan    xyz:{base_coords_right[0] + xyz[2] - 90 }  {base_coords_right[1] + xyz[1] + 78} {base_coords_right[2] - xyz[0]}\r\n\r\n")
     
-    
-    
-    
+# 左臂
+# 测量 419.3141469292766  179.0925354305184 581.8427378387012
 
 
     
