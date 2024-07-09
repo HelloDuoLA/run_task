@@ -82,6 +82,7 @@ class Task_type():
         Rec_container      = auto()                  # 识别容器
         Lossen_container   = auto()                  # 放容器
         Grasp_cup          = auto()                  # 夹杯子
+        Grasp_cup_pre      = auto()                  # 夹杯子 准备
         Water_cup          = auto()                  # 杯子接水
         Deliever_cup       = auto()                  # 送杯子
         Lossen_cup         = auto()                  # 放杯子
@@ -351,14 +352,45 @@ class Task_manipulation(Task):
             
     # 修改目标xyz
     def modify_target_xyz(self,arm_pose:List[float],device_id:utilis.Device_id):
-        if device_id == utilis.Device_id.LEFT:
+        if len(self.target_arms_pose) == 2:
+            if device_id == utilis.Device_id.LEFT:
+                self.target_arms_pose[0].arm_pose[0] = arm_pose[0]
+                self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
+                self.target_arms_pose[0].arm_pose[2] = arm_pose[2]
+            elif device_id == utilis.Device_id.RIGHT:
+                self.target_arms_pose[1].arm_pose[0] = arm_pose[0]
+                self.target_arms_pose[1].arm_pose[1] = arm_pose[1]
+                self.target_arms_pose[1].arm_pose[2] = arm_pose[2]
+        else:
             self.target_arms_pose[0].arm_pose[0] = arm_pose[0]
             self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
             self.target_arms_pose[0].arm_pose[2] = arm_pose[2]
-        elif device_id == utilis.Device_id.RIGHT:
-            self.target_arms_pose[1].arm_pose[0] = arm_pose[0]
-            self.target_arms_pose[1].arm_pose[1] = arm_pose[1]
-            self.target_arms_pose[1].arm_pose[2] = arm_pose[2]
+        
+    # 修改目标xy
+    def modify_target_xy(self,arm_pose:List[float],device_id:utilis.Device_id):
+        if len(self.target_arms_pose) == 2:
+            if device_id == utilis.Device_id.LEFT:
+                self.target_arms_pose[0].arm_pose[0] = arm_pose[0]
+                self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
+            elif device_id == utilis.Device_id.RIGHT:
+                self.target_arms_pose[1].arm_pose[0] = arm_pose[0]
+                self.target_arms_pose[1].arm_pose[1] = arm_pose[1]
+        else:
+            self.target_arms_pose[0].arm_pose[0] = arm_pose[0]
+            self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
+            
+    # 修改目标yz
+    def modify_target_yz(self,arm_pose:List[float],device_id:utilis.Device_id):
+        if len(self.target_arms_pose) == 2:
+            if device_id == utilis.Device_id.LEFT:
+                self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
+                self.target_arms_pose[0].arm_pose[2] = arm_pose[2]
+            elif device_id == utilis.Device_id.RIGHT:
+                self.target_arms_pose[1].arm_pose[1] = arm_pose[1]
+                self.target_arms_pose[1].arm_pose[2] = arm_pose[2]
+        else:
+                self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
+                self.target_arms_pose[0].arm_pose[2] = arm_pose[2]
             
     def modify_xyz_select_arm(self,arm_pose:List[float],device_id:utilis.Device_id):
         self.modify_target_xyz(arm_pose,device_id)

@@ -462,6 +462,8 @@ class Image_rec_actuator():
                     need_modify_task.status = task.Task.Task_status.BEREADY
                 # 抓容器, 变的是xy坐标
                 elif need_modify_task.task_type == task.Task_type.Task_manipulation.Grasp_container:
+                    # !修改高度
+                    container_xyz[2] == system.anchor_point.right_arm_container_grip_pre.arm_pose[2]
                     need_modify_task.modify_target_xyz(container_xyz,result.camera_id)
                 
                     # 修改任务状态
@@ -476,6 +478,7 @@ class Image_rec_actuator():
                     switch_xyz = obj_position.position
             # 修改值 
             for need_modify_task in current_task.need_modify_tasks.task_list:
+                # 打开或关闭咖啡机
                 if need_modify_task.task_type == task.Task_type.Task_manipulation.Turn_on_coffee_machine or \
                     need_modify_task.task_type == task.Task_type.Task_manipulation.Turn_off_coffee_machine:
                     need_modify_task.modify_target_xyz(switch_xyz,result.camera_id)
@@ -493,10 +496,15 @@ class Image_rec_actuator():
             # 修改值 
             for need_modify_task in current_task.need_modify_tasks.task_list:
                 if need_modify_task.task_type == task.Task_type.Task_manipulation.Grasp_cup:
-                    # 修改任务
+                    # 抓杯子
                     need_modify_task.modify_target_xyz(cup_xyz,result.camera_id)
                     need_modify_task.status = task.Task.Task_status.BEREADY
+                elif need_modify_task.task_type == task.Task_type.Task_manipulation.Grasp_cup_pre:
+                    # 抓杯子 准备时, 只改变yz
+                    need_modify_task.modify_target_yz(cup_xyz,result.camera_id)
+                    need_modify_task.status = task.Task.Task_status.BEREADY
                 elif need_modify_task.task_type == task.Task_type.Task_manipulation.Water_cup:
+                    # 给杯子浇水
                     need_modify_task.modify_target_xyz(water_xyz,result.camera_id)
                     need_modify_task.status = task.Task.Task_status.BEREADY
                     
@@ -952,7 +960,7 @@ class Order_driven_task_schedul():
         tasks_get_drink.add(task_right_camera_rec_cup_machine)
         
         #  右臂夹取杯子准备动作(可并行，固定)
-        task_right_arm_grasp_cup_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_cup,None,utilis.Device_id.RIGHT,\
+        task_right_arm_grasp_cup_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_cup_pre,None,utilis.Device_id.RIGHT,\
             system.anchor_point.right_arm_cup_grab,arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.XYZ)
         task_right_arm_grasp_cup_pre.parallel = task.Task.Task_parallel.ALL
         task_right_arm_grasp_cup_pre.status   = task.Task.Task_status.NOTREADY  # 需要参数
