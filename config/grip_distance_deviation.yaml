@@ -2,13 +2,13 @@
 LeftArmGripSnack:
   x_bias: -90
   y_bias: -78
-  z_bias: 40
+  z_bias: 20
 
 # 左臂抓容器
 LeftArmGripContainer:
-  x_bias : 26
+  x_bias : 50
   y_bias : 122
-  z_const: 370
+  z_const: 360
 
 # 左臂准备 开 咖啡开关
 LeftArmGripTurnOnMachineSwitch:
@@ -33,18 +33,18 @@ RightArmGripSnack:
 
 # 右臂抓容器
 RightArmGripContainer:
-  x_bias : -20
-  y_bias : +68
-  z_const: 370
+  x_bias : -60
+  y_bias : 28
+  z_const: 360
 
 # 右臂抓杯子
 RightArmGripCup:
   x_bias : -90
   y_bias : 78
-  z_const: 210
+  z_const: 220
 
 # 右臂杯子倒水
 RightArmWaterCup:
-  x_bias : -185
+  x_bias : -195
   y_bias : 98
-  z_const: 210
+  z_const: 220
