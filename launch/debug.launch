@@ -1,5 +1,5 @@
 <launch>
-    <include file="$(find run_task)/launch/assign_tasks.launch" /> 
+    <include file="$(find run_task)/launch/assign_task.launch" /> 
     <!-- 识别模块 -->
     <include file="$(find run_task)/launch/camera.launch" /> 
     <!-- 控制倒车模块 -->

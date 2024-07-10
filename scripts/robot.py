@@ -30,6 +30,9 @@ class manipulation_status():
             MOVING = auto()       # 正在移动
             BUSY   = auto()       # 忙碌
             
+            def __str__(self) -> str:
+                return self.name
+            
         def __init__(self,arm_pose:arm.Arm_pose=arm.Arm_pose()):
             self.arm_status   = self.status.IDLE    # 机械臂状态,默认空闲
             self.arm_pose = arm_pose            # 机械臂位置
@@ -85,10 +88,17 @@ class Robot():
         MOVING  = auto()      # 移动中
         WORKING = auto()      # 工作中
         
+        def __str__(self) -> str:
+            return self.name
+        
     class Common_status(Enum):
         IDLE      = 0           # 空闲
         BUSY      = auto()      # 忙碌
         DONCHANGE = auto()      # 不改变
+    
+    def __str__(self):
+        return f"Robot status: {self.robot_status}, left arm status: {self.left_manipulation_status.arm_info.arm_status}, \
+            right arm status: {self.right_manipulation_status.arm_info.arm_status}"
     
     def __init__(self,pose:utilis.Pose3D=utilis.Pose3D()) -> None:
         self.robot_status              = self.Robot_status.IDLE                         # 机器人状态

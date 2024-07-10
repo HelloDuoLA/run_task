@@ -1,4 +1,4 @@
-07-09 22:38:39
+07-10 09:51:50
 
 --------------------------------------------------
 
@@ -6,9 +6,9 @@
 Task       : Task_manipulation Move_to_IDLE
 Group_id   : 1
 Index      : 0
-Create_time: 1720535788931549549
-Start_time : 1720535789419562101
-End_time   : 1720535791552714347
+Create_time: 1720576241024126291
+Start_time : 1720576241264024734
+End_time   : 1720576241998736858
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -29,9 +29,9 @@ click_length        : 0
 Task       : Task_manipulation Move_to_IDLE
 Group_id   : 1
 Index      : 0
-Create_time: 1720535788931549549
-Start_time : 1720535789419562101
-End_time   : 1720535791552714347
+Create_time: 1720576241024126291
+Start_time : 1720576241264024734
+End_time   : 1720576241998736858
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -49,28 +49,12 @@ arm_move_method     : XYZ
 click_length        : 0 
 
 
-Task       : Task_navigate Navigate_to_the_snack_desk
-Group_id   : 1
-Index      : 1
-Create_time: 1720535788932006359
-Start_time : 1720535841023856639
-End_time   : 1720535866642597913
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : NOTALLOWED
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: 
-Target_3D_pose: x:0.22 y:-2.45 z:0.00 roll:0.00 pitch:-0.00 yaw:3.14 
-
 Task       : Task_manipulation Rec_container
 Group_id   : 1
 Index      : 2
-Create_time: 1720535788932166099
-Start_time : 1720535895710037231
-End_time   : 1720535896188740015
+Create_time: 1720576241025396108
+Start_time : 1720576256004936456
+End_time   : 1720576256457152843
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -87,12 +71,28 @@ arm_move_method     : XYZ
 click_length        : 0 
 
 
+Task       : Task_navigate Navigate_to_the_snack_desk
+Group_id   : 1
+Index      : 1
+Create_time: 1720576241025032281
+Start_time : 1720576241750404596
+End_time   : 1720576305727145671
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: 
+Target_3D_pose: x:0.22 y:-2.45 z:0.00 roll:0.00 pitch:-0.00 yaw:3.14 
+
 Task       : Task_manipulation Rec_container
 Group_id   : 1
 Index      : 3
-Create_time: 1720535788932301044
-Start_time : 1720535896062203645
-End_time   : 1720535901965100049
+Create_time: 1720576241025538444
+Start_time : 1720576256269409894
+End_time   : 1720576308194060087
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED

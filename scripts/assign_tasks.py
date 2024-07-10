@@ -621,6 +621,7 @@ class Task_manager():
     
     # 判断任务是否能够运行
     def task_can_run(self,current_task:task.Task):
+        rospy.loginfo(f"robot status: {system.robot}")
         # 不能执行下一个任务
         if self.can_run_state == False:
             rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because can_run_state is {self.can_run_state}")
