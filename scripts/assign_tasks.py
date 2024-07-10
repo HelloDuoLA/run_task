@@ -632,19 +632,19 @@ class Task_manager():
             if current_task.predecessor_tasks.has_been_done() == True:
                 # 任务是否准备好
                 if current_task.status == task.Task.Task_status.NOTREADY:
-                    rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because it is not ready")
+                    # rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because it is not ready")
                     return Task_manager.Run_task_return_code.cannot_run_cannot_next
                 elif current_task.status == task.Task.Task_status.BEREADY:
                     # 正在执行的任务是否为0
                     if self.executed_tasks.get_task_count() == 0:
                         return Task_manager.Run_task_return_code.can_run_cannot_next
                     else:
-                        rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because other task is running")
+                        # rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because other task is running")
                         return Task_manager.Run_task_return_code.cannot_run_cannot_next
                 else:
                     raise ValueError("task.Task.Task_status error!!!!!!!")
             else:
-                rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because predecessor task has not been done")
+                # rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because predecessor task has not been done")
                 return Task_manager.Run_task_return_code.cannot_run_cannot_next
         
         # 任务支持并行
@@ -653,7 +653,7 @@ class Task_manager():
             if current_task.predecessor_tasks.has_been_done() == True:
                 # 任务是否准备好
                 if current_task.status == task.Task.Task_status.NOTREADY:
-                    rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because it is not ready")
+                    # rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because it is not ready")
                     return Task_manager.Run_task_return_code.cannot_run_can_next
                 elif current_task.status == task.Task.Task_status.BEREADY:
                     # 硬件资源是否支持运行
@@ -661,35 +661,35 @@ class Task_manager():
                     if current_task.task_type.task_type.__class__ == task.Task_type.Task_navigate:
                         robot_status = system.robot.get_robot_status()
                         if robot_status == robot.Robot.Robot_status.MOVING:
-                            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because robot is moving")
+                            # rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because robot is moving")
                             return Task_manager.Run_task_return_code.cannot_run_can_next
                         elif robot_status == robot.Robot.Robot_status.IDLE:
-                            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can run. navigation task")
+                            # rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can run. navigation task")
                             return Task_manager.Run_task_return_code.can_run_can_next
                         else:
                             raise ValueError("robot.Robot.Robot_status error!!!!!!!")
                     # 手臂任务检测手臂是否闲置
                     elif current_task.task_type.task_type.__class__ == task.Task_type.Task_manipulation:
                         if system.robot.is_arm_idle(current_task.arm_id) == True:
-                            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can run. manipulation task")
+                            # rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can run. manipulation task")
                             return Task_manager.Run_task_return_code.can_run_can_next
                         else:
-                            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because arm {current_task.arm_id} is busy")
+                            # rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because arm {current_task.arm_id} is busy")
                             return Task_manager.Run_task_return_code.cannot_run_can_next
                     # 图像任务检测手臂是否闲置
                     elif current_task.task_type.task_type.__class__ == task.Task_type.Task_image_rec:
                         if system.robot.is_arm_idle(current_task.camera_id) == True:
-                            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can run. image_rec task")
+                            # rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can run. image_rec task")
                             return Task_manager.Run_task_return_code.can_run_can_next
                         else:
-                            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because arm {current_task.camera_id} is busy")
+                            # rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because arm {current_task.camera_id} is busy")
                             return Task_manager.Run_task_return_code.cannot_run_can_next
                     else:
                         raise ValueError(f"task.Task.Task_type {current_task.task_type.task_type.__class__} error!!!!!!!")
                 else:
                     raise ValueError("task.Task.Task_status error!!!!!!!")
             else:
-                rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because predecessor task has not been done")
+                # rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because predecessor task has not been done")
                 return Task_manager.Run_task_return_code.cannot_run_can_next
         else :
             raise ValueError("task_can_run function error!!!!!!!")
