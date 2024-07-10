@@ -467,7 +467,7 @@ class Image_rec_actuator():
                     snack_xyz                = result.obj_positions[i].position
                     arm_id                   = result.obj_positions[i].arm_id
                     task_grasp_snack         = current_task.need_modify_tasks.task_list[i*3].modify_xyz_select_arm(snack_xyz,arm_id)
-                    task_lossen_snack_pre    = current_task.need_modify_tasks.task_list[i*3+2].select_arm(arm_id)
+                    task_lossen_snack_pre    = current_task.need_modify_tasks.task_list[i*3+1].select_arm(arm_id)
                     task_lossen_snack        = current_task.need_modify_tasks.task_list[i*3+2].select_arm(arm_id)
                     task_grasp_snack.status  = task.Task.Task_status.BEREADY
                     task_lossen_snack_pre.status = task.Task.Task_status.BEREADY
