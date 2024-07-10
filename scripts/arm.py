@@ -199,10 +199,10 @@ class Arm_controller():
             goal_grasp_flag   = goal.grasp_flag
             
             # 先打开 and 先打开后关闭
-            if goal_grasp_flag == GripMethod.OPEN_CLOSE and goal_grasp_flag == GripMethod.OPEN_FIRST:
+            if goal_grasp_flag == GripMethod.OPEN_CLOSE or goal_grasp_flag == GripMethod.OPEN_FIRST:
                 self.open_grasp()
             # 先关闭 and 先关闭后打开
-            elif goal_grasp_flag == GripMethod.CLOSE_OPEN and goal_grasp_flag == GripMethod.CLOSE_FIRST:
+            elif goal_grasp_flag == GripMethod.CLOSE_OPEN or goal_grasp_flag == GripMethod.CLOSE_FIRST:
                 self.close_grasp()
             
             
@@ -210,10 +210,10 @@ class Arm_controller():
             self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose, goal.arm_move_method)
             
             # 后打开 and 先关闭后打开
-            if goal_grasp_flag == GripMethod.CLOSE_OPEN and goal_grasp_flag == GripMethod.OPEN:
+            if goal_grasp_flag == GripMethod.CLOSE_OPEN or goal_grasp_flag == GripMethod.OPEN:
                 self.open_grasp()
             # 后关闭 and 先打开后关闭
-            elif goal_grasp_flag == GripMethod.OPEN_CLOSE and goal_grasp_flag == GripMethod.CLOSE:
+            elif goal_grasp_flag == GripMethod.OPEN_CLOSE or goal_grasp_flag == GripMethod.CLOSE:
                 self.close_grasp()
                 
             # 最终位移
