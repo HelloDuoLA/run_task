@@ -1,4 +1,4 @@
-07-10 19:44:19
+07-10 19:49:21
 
 --------------------------------------------------
 
@@ -6,7 +6,7 @@
 Task       : Task_manipulation Grasp_cup_pre
 Group_id   : 8
 Index      : 5
-Create_time: 1720611850665008306
+Create_time: 1720612152204794168
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -28,7 +28,7 @@ click_length        : 0
 Task       : Task_manipulation Grasp_cup
 Group_id   : 8
 Index      : 6
-Create_time: 1720611850665057182
+Create_time: 1720612152204837799
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -50,7 +50,7 @@ click_length        : 0
 Task       : Task_manipulation Turn_on_coffee_machine
 Group_id   : 8
 Index      : 7
-Create_time: 1720611850665250301
+Create_time: 1720612152205097198
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -72,7 +72,7 @@ click_length        : 10
 Task       : Task_manipulation Water_cup
 Group_id   : 8
 Index      : 8
-Create_time: 1720611850665482282
+Create_time: 1720612152205258846
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -94,7 +94,7 @@ click_length        : 0
 Task       : Task_manipulation Rec_machine_switch
 Group_id   : 8
 Index      : 9
-Create_time: 1720611850665539026
+Create_time: 1720612152205311298
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -116,7 +116,7 @@ click_length        : 0
 Task       : Task_image_rec COFFEE_MACHINE_SWITCH_OFF
 Group_id   : 8
 Index      : 10
-Create_time: 1720611850665579319
+Create_time: 1720612152205350637
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -136,7 +136,7 @@ Need_modify_tasks:
 Task       : Task_manipulation Turn_off_coffee_machine
 Group_id   : 8
 Index      : 11
-Create_time: 1720611850665730953
+Create_time: 1720612152205487966
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -158,7 +158,7 @@ click_length        : -10
 Task       : Task_manipulation Move_to_IDLE
 Group_id   : 8
 Index      : 12
-Create_time: 1720611850665777683
+Create_time: 1720612152205533266
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -180,7 +180,7 @@ click_length        : 0
 Task       : Task_manipulation Deliever_cup
 Group_id   : 8
 Index      : 13
-Create_time: 1720611850665968894
+Create_time: 1720612152205597877
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None

@@ -335,12 +335,12 @@ class Recognition_node():
             left_grabbed,  left_img  = left_camera.read()
             if right_grabbed == True and left_grabbed == True:
                 timestamp = str(int(time.time()))
-                log.log_write_image(f"snack_right_{timestamp}.jpg", right_img)
-                log.log_write_image(f"snack_left_{timestamp}.jpg", left_img)
+                log.log_write_image(f"{timestamp}_snack_right.jpg", right_img)
+                log.log_write_image(f"{timestamp}_snack_left.jpg", left_img)
                 timestamp = str(int(time.time()))
                 timestamp = str(int(time.time()))
-                right_stag_result = STag_rec(right_img,mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"snack_right_{timestamp}")
-                left_stag_result  = STag_rec(left_img, mtx, distCoeffs, utilis.Device_id.LEFT, image_name=f"snack_left_{timestamp}")
+                right_stag_result = STag_rec(right_img,mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
+                left_stag_result  = STag_rec(left_img, mtx, distCoeffs, utilis.Device_id.LEFT, image_name=f"{timestamp}_snack_left")
                 
                 # 请求机械臂位置
                 arm_req = srv.CheckArmPoseRequest()
@@ -389,11 +389,11 @@ class Recognition_node():
             grabbed, img = right_camera.read()
             if grabbed:
                 timestamp = str(int(time.time()))
-                firename = f'cup_coffee_{timestamp}.jpg'
+                firename = f'{timestamp}_cup_coffee_.jpg'
                 log.log_write_image(firename, img)
                 
                 # STag 识别
-                stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"cup_coffee_{timestamp}")
+                stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"{timestamp}_cup_coffee_.jpg")
                 
                 # # 请求机械臂位置
                 arm_req = srv.CheckArmPoseRequest()
@@ -417,10 +417,10 @@ class Recognition_node():
             grabbed, img = left_camera.read()
             if grabbed:
                 timestamp = str(int(time.time()))
-                firename = f'switch_on_{timestamp}.jpg'
+                firename = f'{timestamp}_switch_on.jpg'
                 log.log_write_image(firename, img)
                 # STag识别
-                stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"switch_on_{timestamp}")
+                stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"{timestamp}_switch_on")
                 # # 请求机械臂位置
                 arm_req = srv.CheckArmPoseRequest()
                 arm_req.type_id = arm.PoseType.BASE_COORDS.value
@@ -442,10 +442,10 @@ class Recognition_node():
             grabbed, img = left_camera.read()
             if grabbed:
                 timestamp = str(int(time.time()))
-                firename = f'switch_off_{timestamp}.jpg'
+                firename = f'{timestamp}_switch_off.jpg'
                 log.log_write_image(firename, img)
                 # STag识别
-                stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"switch_off_{timestamp}")
+                stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"{timestamp}_switch_off")
                 # # 请求机械臂位置
                 arm_req = srv.CheckArmPoseRequest()
                 arm_req.type_id = arm.PoseType.BASE_COORDS.value
@@ -470,9 +470,9 @@ class Recognition_node():
                 grabbed, img = left_camera.read()
                 if grabbed:
                     timestamp = str(int(time.time()))
-                    firename = f'container_left_{timestamp}.jpg'
+                    firename = f'{timestamp}_container_left.jpg'
                     log.log_write_image(firename, img)
-                    stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"container_left_{timestamp}")
+                    stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"{timestamp}_container_left")
                     
                     # 请求机械臂位置
                     arm_req = srv.CheckArmPoseRequest()
@@ -494,9 +494,9 @@ class Recognition_node():
                 grabbed, img = right_camera.read()
                 if grabbed:
                     timestamp = str(int(time.time()))
-                    firename = f'container_right_{timestamp}.jpg'
+                    firename = f'{timestamp}_container_right.jpg'
                     log.log_write_image(firename, img)
-                    stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"container_right_{timestamp}")
+                    stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"{timestamp}_container_right")
                     
                     # 请求机械臂位置
                     arm_req = srv.CheckArmPoseRequest()
