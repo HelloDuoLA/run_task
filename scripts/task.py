@@ -157,7 +157,7 @@ class Task():
                 return self.value == value
         
     # 初始化 
-    def __init__(self,task_name,finish_cb):
+    def __init__(self,task_name,finish_cb,name=""):
         self.task_type   = Task_type(task_name)     # 任务信息 
         self.task_index  = 0                        # 任务序号 
         self.task_group_id = -999                   # 任务组ID
@@ -172,6 +172,7 @@ class Task():
         self.subtask_count = 1                      # 子任务数量,默认为1, 就是本任务
         self.subtask_count_finished = 0             # 已完成的子任务数量
         self.predecessor_tasks      = Task_sequence() # 相对前置任务
+        self.name = name                           # 任务名称
     
     # 添加前置任务
     def add_predecessor_task(self,task):
@@ -237,6 +238,7 @@ class Task():
         # return "OK"
         return (
                 f"Task       : {self.task_type}\r\n"
+                f"Name       : {self.name}\r\n"
                 f"Group_id   : {self.task_group_id}\r\n" 
                 f"Index      : {self.task_index}\r\n" 
                 f"Create_time: {self.create_time}\r\n"
@@ -254,8 +256,8 @@ class Task():
         
 # 功能任务
 class Task_function(Task):
-    def __init__(self, task_name:Task_type.Task_function, finish_cb=None):
-        super().__init__(task_name,finish_cb)
+    def __init__(self, task_name:Task_type.Task_function, finish_cb=None,name=""):
+        super().__init__(task_name,finish_cb,name)
     
     # 打印输出
     def __str__(self) -> str:
@@ -264,8 +266,8 @@ class Task_function(Task):
         
 # 导航任务
 class Task_navigation(Task):
-    def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(), back_meters=0,move_back_speed=0.15):
-        super().__init__(task_name,finish_cb)
+    def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(), back_meters=0,move_back_speed=0.15,name=""):
+        super().__init__(task_name,finish_cb,name)
         self.target_3D_pose  = target_3D_pose
         self.back_meters     = back_meters         # 旋转度数
         self.move_back_speed = move_back_speed
@@ -301,8 +303,8 @@ class Task_image_rec(Task):
             return hash(self.value)
         
     
-    def __init__(self, task_name,fn_callback, camera_id:utilis.Device_id, snack_list:order.Snack_list = order.Snack_list()):
-        super().__init__(task_name,fn_callback)
+    def __init__(self, task_name,fn_callback, camera_id:utilis.Device_id, snack_list:order.Snack_list = order.Snack_list(),name=""):
+        super().__init__(task_name,fn_callback,name)
         self.camera_id   = camera_id     # 摄像头id
         self.snack_list  = snack_list    # 零食列表
         self.need_modify_tasks = Task_sequence() # 需要修改的任务
@@ -331,8 +333,8 @@ class Task_image_rec(Task):
 class Task_manipulation(Task):
     def __init__(self, task_name, fn_callback,arm_id:utilis.Device_id, target_arms_pose: List[arm.Arm_pose] = [arm.Arm_pose()],  \
                 target_clamps_status: List[arm.GripMethod] = [arm.GripMethod.DONTCANGE,arm.GripMethod.DONTCANGE], \
-                clamp_speed = 50, arm_move_method = arm.ArmMoveMethod.XYZ, click_length = 0):
-        super().__init__(task_name,fn_callback)
+                clamp_speed = 50, arm_move_method = arm.ArmMoveMethod.XYZ, click_length = 0,name=""):
+        super().__init__(task_name,fn_callback,name)
         self.arm_id              = arm_id               # 操作对象
         
         # 判断输入是不是列表
