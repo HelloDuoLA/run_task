@@ -655,7 +655,7 @@ def talker():
     recognition_node = Recognition_node()
 
     # 设置发布消息的频率，1Hz
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(0.1)
 
     while not rospy.is_shutdown():
         rospy.loginfo("camera")

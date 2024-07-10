@@ -5,15 +5,6 @@
         <rosparam file="$(find run_task)/config/other_config.yaml" command="load"/>
     </node>
 
-    <!-- 识别模块 -->
-    <include file="$(find run_task)/launch/camera.launch" /> 
-    <!-- 控制倒车模块 -->
-    <include file="$(find run_task)/launch/control_cmd.launch" /> 
-
 </launch>
 
-<!-- source ./devel/setup.bash -->
-<!-- roslaunch run_task arm.launch  -->
-<!-- roslaunch run_task camera.launch -->
-<!-- roslaunch run_task control_cmd.launch  -->
-<!-- roslaunch run_task assgin_task.launch  -->
+

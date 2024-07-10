@@ -1137,14 +1137,14 @@ def test_other():
 
 def talker():
     # 初始化节点，命名为'talker'
-    # rospy.init_node('assign_tasks')
+    rospy.init_node('assign_tasks')
     global system
     system = System()
     # test_order_snack()
     # test_other()
     
     # 设置发布消息的频率，1Hz
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(0.1)
 
     while not rospy.is_shutdown():
         rospy.loginfo("assign_tasks")

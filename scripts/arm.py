@@ -446,7 +446,7 @@ def talker():
     
     server = rospy.Service(f"Check{arm_name}ArmPose",srv.CheckArmPose,doCheckArmPose)
     # 设置发布消息的频率，1Hz
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(0.1)
 
     
     while not rospy.is_shutdown():
