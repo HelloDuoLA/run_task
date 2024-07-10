@@ -180,9 +180,9 @@ class Arm_controller():
     def is_power_on(self):
         # 检查数组长度是否为13
         status = self.control_instance.get_robot_status()
-        if len(status) != 13:
+        if not isinstance(status, list):
             return False
-        # 使用all()函数检查数组中的所有元素是否都为0
+        # 然后检查列表中的每个元素是否都为0
         return all(x == 0 for x in status)
     
     # 机械臂 action 

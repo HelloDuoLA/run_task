@@ -53,8 +53,8 @@ class STag_result_list():
     
     STag_other_dict = {
         9  : task.Task_image_rec.Rec_OBJ_type.CONTAINER.value ,
-        12 : task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value,
-        3  : task.Task_image_rec.Rec_OBJ_type.CUP.value,
+        6 : task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value,
+        2  : task.Task_image_rec.Rec_OBJ_type.CUP.value,
         11 : task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value
     }
     
@@ -63,6 +63,12 @@ class STag_result_list():
         task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH: 6,
         task.Task_image_rec.Rec_OBJ_type.CUP: 3,
         task.Task_image_rec.Rec_OBJ_type.WATER_POINT:11
+=======
+        task.Task_image_rec.Rec_OBJ_type.CONTAINER :     9,
+        task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH: 6,
+        task.Task_image_rec.Rec_OBJ_type.CUP:            2,
+        task.Task_image_rec.Rec_OBJ_type.WATER_POINT:    11
+>>>>>>> 4dec0fbaaf970b8d43d6993133187188e0180d26
     }
     
     

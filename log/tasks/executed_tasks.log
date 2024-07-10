@@ -1,13 +1,13 @@
-07-10 17:49:31
+07-10 20:01:30
 
 --------------------------------------------------
 
 
-Task       : Task_manipulation Rec_machine_switch
+Task       : Task_manipulation Water_cup
 Group_id   : 8
-Index      : 0
-Create_time: 1720604969662995338
-Start_time : 1720604970663846492
+Index      : 8
+Create_time: 1720612870659809350
+Start_time : 1720612888676088571
 End_time   : -999
 Finsih_cb  : None
 Status     : RUNNING
@@ -16,34 +16,12 @@ Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: 
-Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-71.36, -7.87, -155.8, 121.34, 73.92, 31.57] } 
-Target_clamps_status: Clamp_status_0: CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
-
-Task       : Task_manipulation Rec_cup_machine
-Group_id   : 8
-Index      : 1
-Create_time: 1720604969662999391
-Start_time : 1720604971667184352
-End_time   : -999
-Finsih_cb  : None
-Status     : RUNNING
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: 
+Predecessor_tasks: [6:Task_manipulation Grasp_cup] 
 Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[0, 0, -90, 0, 90, 0] } 
-Target_clamps_status: Clamp_status_0: CLOSE  
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[374.1551208496094, 84.40229797363281, 230.0, 90, 0, 90] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
 Clamp_speed         : 50 
-arm_move_method     : XYZ 
+arm_move_method     : X_YZ 
 click_length        : 0 
 
 --------------------------------------------------

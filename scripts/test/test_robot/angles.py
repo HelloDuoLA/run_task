@@ -65,7 +65,7 @@
 # mr.send_angles([0,0,-90,0,90,0],50)
 
 # debug 备选
-# mr.send_angles([0,0,-115,0,90,0],10)
+# mr.send_angles([0,0,-115,0,90,0],50)
 
 
 
