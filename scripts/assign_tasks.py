@@ -1258,9 +1258,6 @@ class Order_driven_task_schedul():
         task_right_arm_grap_container.add_predecessor_task(task_right_arm_grap_container_pre)  # 准备动作
         tasks_pick_snack.add(task_right_arm_grap_container)
         
-            # 识别容器绑定 夹取容器
-        # task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container)
-        
         #  左、右臂将零食框放到指定高度
         task_arm_dilivery_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Deliever_container,None,utilis.Device_id.LEFT_RIGHT,\
                 [system.anchor_point.left_arm_container_delivery,system.anchor_point.right_arm_container_delivery],\
@@ -1273,13 +1270,12 @@ class Order_driven_task_schedul():
         
         tasks_pick_snack.add(task_arm_dilivery_container)
         
-        # 绑定左右摄像头识别容器任务
-        # task_left_camera_rec_container.add_need_modify_task(task_arm_dilivery_container)      
-        # task_right_camera_rec_container.add_need_modify_task(task_arm_dilivery_container)      
 
         # 机器人后退
         task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             back_meters=system.anchor_point.snack_deck_move_back_length)
+        task_move_back_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)
+        task_move_back_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)
         task_move_back_from_snack_desk.parallel = task.Task.Task_parallel.ALL
         tasks_pick_snack.add(task_move_back_from_snack_desk)
         
