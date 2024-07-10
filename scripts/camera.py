@@ -23,6 +23,7 @@ import run_task.srv as srv
 import task
 import order
 import arm
+import log 
 
 
 LOG_DIR = "/home/elephant/xzc_code/ros_ws/src/run_task/log"
@@ -324,8 +325,8 @@ class Recognition_node():
             left_grabbed,  left_img  = left_camera.read()
             if right_grabbed == True and left_grabbed == True:
                 timestamp = str(int(time.time()))
-                cv2.imwrite(f"snack_right_{timestamp}.jpg", right_img)
-                cv2.imwrite(f"snack_left_{timestamp}.jpg", left_img)
+                log.log_write_image(f"snack_right_{timestamp}.jpg", right_img)
+                log.log_write_image(f"snack_left_{timestamp}.jpg", left_img)
                 timestamp = str(int(time.time()))
                 timestamp = str(int(time.time()))
                 right_stag_result = STag_rec(right_img,mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"snack_right_{timestamp}")
@@ -379,7 +380,8 @@ class Recognition_node():
             if grabbed:
                 timestamp = str(int(time.time()))
                 firename = f'{LOG_DIR}/image/cup_coffee_{timestamp}.jpg'
-                cv2.imwrite(firename, img)
+                log.log_write_image(firename, img)
+                
                 # STag 识别
                 stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"cup_coffee_{timestamp}")
                 
@@ -406,7 +408,7 @@ class Recognition_node():
             if grabbed:
                 timestamp = str(int(time.time()))
                 firename = f'{LOG_DIR}/image/switch_on_{timestamp}.jpg'
-                cv2.imwrite(firename, img)
+                log.log_write_image(firename, img)
                 # STag识别
                 stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"switch_on_{timestamp}")
                 # # 请求机械臂位置
@@ -431,7 +433,7 @@ class Recognition_node():
             if grabbed:
                 timestamp = str(int(time.time()))
                 firename = f'{LOG_DIR}/image/switch_off_{timestamp}.jpg'
-                cv2.imwrite(firename, img)
+                log.log_write_image(firename, img)
                 # STag识别
                 stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"switch_off_{timestamp}")
                 # # 请求机械臂位置
@@ -459,8 +461,7 @@ class Recognition_node():
                 if grabbed:
                     timestamp = str(int(time.time()))
                     firename = f'{LOG_DIR}/image/container_left_{timestamp}.jpg'
-                    cv2.imwrite(firename, img)
-                    rospy.loginfo(f"sava image {firename}")
+                    log.log_write_image(firename, img)
                     stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"container_left_{timestamp}")
                     
                     # 请求机械臂位置
@@ -484,7 +485,7 @@ class Recognition_node():
                 if grabbed:
                     timestamp = str(int(time.time()))
                     firename = f'{LOG_DIR}/image/container_right_{timestamp}.jpg'
-                    cv2.imwrite(firename, img)
+                    log.log_write_image(firename, img)
                     stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"container_right_{timestamp}")
                     
                     # 请求机械臂位置
@@ -553,8 +554,7 @@ def STag_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LE
     if image_name == "":
         image_name = int(time.time())
 
-    cv2.imwrite(f'{LOG_DIR}/STag_result/STag_{image_name}.jpg', image)
-    
+    log.log_write_image(f'{LOG_DIR}/STag_result/STag_{image_name}.jpg', image)
     stag_result_list =  STag_result_list()
     
     # 对于每个id都要进行位置检测

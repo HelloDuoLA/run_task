@@ -5,13 +5,14 @@ import sys
 import rospkg
 import datetime
 import os
+import cv2
 rospack = rospkg.RosPack()
 package_path = rospack.get_path('run_task')
 sys.path.insert(0,package_path + "/scripts")
 
 
 LOGDIR = package_path + "/log/"
-SUBDIR = ["orders","tasks","STag_result","image","finished_tasks"]
+SUBDIR = ["orders","tasks","STag_result","images","finished_tasks"]
 
 for sub_dir in SUBDIR:
     if not os.path.exists(LOGDIR + sub_dir):
@@ -64,3 +65,6 @@ def log_modify_tasks_info(context):
 # 把新增订单写入
 def log_new_order_info(context,):
     log_tasks_info(context,"new_order_info.log","orders")
+    
+def log_write_image(image,image_name):
+    cv2.imwrite(f'{LOGDIR}/images/{image_name}', image)

@@ -27,7 +27,7 @@ import log
 import arm
 import control_cmd
 
-DEBUG_NAVIGATION = True     # 导航调试中, 则运动到桌子的任务均为非并行任务, 并且在完成之后需要输入任意字符才能下一步
+DEBUG_NAVIGATION = False     # 导航调试中, 则运动到桌子的任务均为非并行任务, 并且在完成之后需要输入任意字符才能下一步
 
 
 # 初始化
