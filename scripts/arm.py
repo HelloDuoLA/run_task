@@ -33,13 +33,14 @@ class ArmMoveMethod(Enum):
     XY_Z       = auto()
     XZ_Y       = auto()
     YZ_X       = auto()
-    ONLY_X     = auto()
-    ONLY_Y     = auto()
-    ONLY_Z     = auto()
+    # ONLY_X     = auto()
+    # ONLY_Y     = auto()
+    # ONLY_Z     = auto()
     MODIFY_X   = auto()
     MODIFY_Y   = auto()
     MODIFY_Z   = auto()
     OPLY_GRIP  = auto()
+    X_OTHER    = auto()
     
     
     def __str__(self) -> str:
@@ -415,16 +416,26 @@ class Arm_controller():
                     
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
                     self.wait()  
-                elif move_method == ArmMoveMethod.ONLY_Z:
-                    current_base_coords = self.get_base_coords()
-                    current_base_coords[2] = target_pose[2]
-                    result = self.control_instance.send_base_coords(current_base_coords,arm_speed)
-                    self.wait()
+                # elif move_method == ArmMoveMethod.ONLY_Z:
+                #     current_base_coords = self.get_base_coords()
+                #     current_base_coords[2] = target_pose[2]
+                #     result = self.control_instance.send_base_coords(current_base_coords,arm_speed)
+                #     self.wait()
                 elif move_method == ArmMoveMethod.MODIFY_Z:
                     current_base_coords = self.get_base_coords()
                     current_base_coords[2] += target_pose[2]
                     result = self.control_instance.send_base_coords(current_base_coords,arm_speed)
                     self.wait()
+                # 先移动x轴, 再然后动其他全部，包括角度旋转
+                elif move_method == ArmMoveMethod.X_OTHER:
+                    current_base_coords = self.get_base_coords()
+                    base_coords_change_x = copy.deepcopy(current_base_coords)
+                    base_coords_change_x[0] = target_pose[0]
+                    result = self.control_instance.send_base_coords(base_coords_change_yz,arm_speed)
+                    self.wait()
+                    result = self.control_instance.send_base_coords(target_pose,arm_speed)
+                    self.wait()
+                    
                 else:
                     raise ValueError("Invalid move method")
         
