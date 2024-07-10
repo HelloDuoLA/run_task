@@ -362,6 +362,7 @@ class Manipulator_actuator():
                     left_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
                     left_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
                     left_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
+                    left_goal.grasp_flag           = manipulation_task.target_clamps_status[i].value
                     left_goal.grasp_speed          = manipulation_task.clamp_speed
                     left_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     left_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
@@ -370,6 +371,7 @@ class Manipulator_actuator():
                     right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
                     right_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
                     right_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
+                    right_goal.grasp_flag           = manipulation_task.target_clamps_status[i].value
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
                     right_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
@@ -1504,8 +1506,8 @@ def test_order_snack():
     task_lossen_cup = system.order_driven_task_schedul.test_tasks_lossen_cup()
     task_lossen_cup.update_group_id(9)
     
-    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
-    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
+    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
+    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
     
     
     

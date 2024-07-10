@@ -265,9 +265,9 @@ def talker():
     tasks = Manipulator_tasks()
     
     task_left_arm_open_grip = task.Task_manipulation(task.Task_type.Task_manipulation.Move,None,utilis.Device_id.LEFT,\
-            grip_everything.left_arm_container_rec,arm.GripMethod.OPEN_FIRST, arm_move_method = arm.ArmMoveMethod.XYZ)
+            grip_everything.left_arm_snack_rec,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ)
     task_right_arm_open_grip = task.Task_manipulation(task.Task_type.Task_manipulation.Move,None,utilis.Device_id.RIGHT,\
-            grip_everything.right_arm_container_rec,arm.GripMethod.OPEN_FIRST, arm_move_method = arm.ArmMoveMethod.XYZ)
+            grip_everything.right_arm_snack_rec,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ)
     
     manipulator_actuator.run(task_left_arm_open_grip)
     manipulator_actuator.run(task_right_arm_open_grip)

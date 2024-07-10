@@ -161,16 +161,13 @@ class Arm_controller():
             self.control_instance = Mercury("/dev/right_arm")                    
             self.arm_name = "right_arm"     
         
-        power_on = self.control_instance.is_power_on() 
-        
-        # if self.id == utilis.Device_id.RIGHT:
-        self.control_instance.power_off()
-        power_on = self.control_instance.power_on()
+        power_on = self.is_power_on()
         
         rospy.loginfo(f"{self.arm_name} is power status {power_on}")
-        while not power_on or power_on == None or power_on == 0:
+        while power_on == False:
+            rospy.loginfo(f"{self.arm_name} is power status {power_on}")
             self.control_instance.power_on()
-            power_on = self.control_instance.is_power_on()
+            power_on = self.is_power_on()
             time.sleep(0.3)
             
         # 开启机械抓爪通信
@@ -179,6 +176,14 @@ class Arm_controller():
         
         self.action = self.arm_action(self.action_name,self.control_instance,id)
         self.action.start_action()
+    
+    def is_power_on(self):
+        # 检查数组长度是否为13
+        status = self.control_instance.get_robot_status()
+        if len(status) != 13:
+            return False
+        # 使用all()函数检查数组中的所有元素是否都为0
+        return all(x == 0 for x in status)
     
     # 机械臂 action 
     class arm_action():
