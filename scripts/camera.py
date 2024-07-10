@@ -144,7 +144,7 @@ class STag_result_list():
                     stag_result = copy.deepcopy(self.stag_result_list[i]) 
                     # 寻找容器STag
                     if stag_result.stag_id == self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER]:
-                        stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[0] + RightArmGripContainer.x # x = x - x + bias
+                        stag_result.base_coords[0] = arm_poses[0] - stag_result.image_coords[0] + RightArmGripContainer.x # x = x - x + bias
                         stag_result.base_coords[1] = arm_poses[1] + stag_result.image_coords[1] + RightArmGripContainer.y # y = y + y + bias
                         stag_result.base_coords[2] = RightArmGripContainer.const_z                     #固定z坐标
                         stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value

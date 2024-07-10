@@ -7,7 +7,7 @@ LeftArmGripSnack:
 # 左臂抓容器
 LeftArmGripContainer:
   x_bias : 50
-  y_bias : 122
+  y_bias : 112
   z_const: 360
 
 # 左臂准备 开 咖啡开关
