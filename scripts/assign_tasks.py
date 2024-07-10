@@ -797,13 +797,16 @@ class Order_driven_task_schedul():
         #  左摄像头食物框识别(可前后并行，固定)
         task_left_camera_rec_container = task.Task_image_rec(task.Task_type.Task_image_rec.CONTAINER, None, utilis.Device_id.LEFT)
         task_left_camera_rec_container.parallel = task.Task.Task_parallel.ALL
-        task_left_camera_rec_container.add_predecessor_task(task_left_arm_to_rec_contianer)
+        task_left_camera_rec_container.add_predecessor_task(task_left_arm_to_rec_contianer) # 前置任务
+        task_left_camera_rec_container.add_predecessor_task(task_navigation_to_snack_desk)  # 前置任务
         tasks_pick_snack.add(task_left_camera_rec_container)
         
         #  右摄像头食物框识别(可前后并行，固定)
         task_right_camera_rec_container = task.Task_image_rec(task.Task_type.Task_image_rec.CONTAINER, None, utilis.Device_id.RIGHT)
         task_right_camera_rec_container.parallel = task.Task.Task_parallel.ALL
         task_right_camera_rec_container.add_predecessor_task(task_right_arm_to_rec_contianer)  # 前置任务
+        task_right_camera_rec_container.add_predecessor_task(task_navigation_to_snack_desk)     # 前置任务
+        
         tasks_pick_snack.add(task_right_camera_rec_container)
         
         #  将左臂抬到零食识别位置(可前后并行，固定)
@@ -979,12 +982,14 @@ class Order_driven_task_schedul():
         task_left_camera_rec_coffee_machine_turn_on = task.Task_image_rec(task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON,None,utilis.Device_id.LEFT)
         task_left_camera_rec_coffee_machine_turn_on.parallel = task.Task.Task_parallel.ALL    
         task_left_camera_rec_coffee_machine_turn_on.add_predecessor_task(task_left_arm_to_rec_coffee_machine_turn_on)    # 绑定前置任务
+        task_left_camera_rec_coffee_machine_turn_on.add_predecessor_task(task_navigation_to_drink_desk)                  # 绑定前置任务
         tasks_get_drink.add(task_left_camera_rec_coffee_machine_turn_on)
         
         #  右摄像头图像识别(杯子位置、咖啡机位置)(可并行，固定)
         task_right_camera_rec_cup_machine = task.Task_image_rec(task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE,None,utilis.Device_id.RIGHT)
         task_right_camera_rec_cup_machine.parallel = task.Task.Task_parallel.ALL
         task_right_camera_rec_cup_machine.add_predecessor_task(task_right_arm_to_rec_cup)    # 绑定前置任务
+        task_right_camera_rec_cup_machine.add_predecessor_task(task_navigation_to_drink_desk)                  # 绑定前置任务
         tasks_get_drink.add(task_right_camera_rec_cup_machine)
         
         #  右臂夹取杯子准备动作(可并行，固定)
