@@ -481,7 +481,7 @@ class Image_rec_actuator():
                 elif need_modify_task.task_type == task.Task_type.Task_manipulation.Grasp_container:
                     # !修改高度
                     container_xyz[2] == system.anchor_point.right_arm_container_grip_pre.arm_pose[2]
-                    need_modify_task.modify_target_xyz(container_xyz,result.camera_id)
+                    need_modify_task.modify_target_xy(container_xyz,result.camera_id)
                 
                     # 修改任务状态
                     need_modify_task.status = task.Task.Task_status.BEREADY
@@ -557,7 +557,7 @@ class Task_manager():
         self.can_run_state    = True                  #是否能够执行任务
         # 每0.5s执行一次任务
         # TODO:调试时为3秒
-        timer = rospy.Timer(rospy.Duration(0.1), self.timer_callback)
+        timer = rospy.Timer(rospy.Duration(1), self.timer_callback)
     
     # 任务完成回调
     def tm_task_finish_callback(self, current_task:task.Task, status=None, result=None):
@@ -866,7 +866,6 @@ class Order_driven_task_schedul():
                 [copy.deepcopy(system.anchor_point.left_arm_container_grip)],\
                     [arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z)
         task_left_arm_grap_container.parallel = task.Task.Task_parallel.ALL          # 可并行
-        task_left_arm_grap_container.status   = task.Task.Task_status.NOTREADY       # 需要参数
         task_left_arm_grap_container.add_predecessor_task(task_left_arm_grap_container_pre)  # 准备动作
         tasks_pick_snack.add(task_left_arm_grap_container)
         
@@ -892,7 +891,6 @@ class Order_driven_task_schedul():
                 [copy.deepcopy(system.anchor_point.right_arm_container_grip)],\
                     [arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z)
         task_right_arm_grap_container.parallel = task.Task.Task_parallel.ALL          # 可并行  
-        task_right_arm_grap_container.status   = task.Task.Task_status.NOTREADY       # 需要参数 
         task_right_arm_grap_container.add_predecessor_task(task_right_arm_grap_container_pre)  # 准备动作
         tasks_pick_snack.add(task_right_arm_grap_container)
         
@@ -1228,7 +1226,6 @@ class Order_driven_task_schedul():
                 [copy.deepcopy(system.anchor_point.left_arm_container_grip)],\
                     [arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z)
         task_left_arm_grap_container.parallel = task.Task.Task_parallel.ALL          # 可并行
-        task_left_arm_grap_container.status   = task.Task.Task_status.NOTREADY       # 需要参数
         task_left_arm_grap_container.add_predecessor_task(task_left_arm_grap_container_pre)  # 准备动作
         tasks_pick_snack.add(task_left_arm_grap_container)
         
@@ -1241,8 +1238,8 @@ class Order_driven_task_schedul():
         task_right_arm_grap_container_pre    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
                 [copy.deepcopy(system.anchor_point.right_arm_container_grip_pre)],\
                     [arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.Z_XY)
-        task_right_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行  
         task_right_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数 
+        task_right_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行  
         tasks_pick_snack.add(task_right_arm_grap_container_pre)
         
             # 识别容器绑定 夹取容器
@@ -1254,14 +1251,13 @@ class Order_driven_task_schedul():
                 [copy.deepcopy(system.anchor_point.right_arm_container_grip)],\
                     [arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z)
         task_right_arm_grap_container.parallel = task.Task.Task_parallel.ALL          # 可并行  
-        task_right_arm_grap_container.status   = task.Task.Task_status.NOTREADY       # 需要参数 
         task_right_arm_grap_container.add_predecessor_task(task_right_arm_grap_container_pre)  # 准备动作
         tasks_pick_snack.add(task_right_arm_grap_container)
         
         #  左、右臂将零食框放到指定高度
         task_arm_dilivery_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Deliever_container,None,utilis.Device_id.LEFT_RIGHT,\
                 [system.anchor_point.left_arm_container_delivery,system.anchor_point.right_arm_container_delivery],\
-                    [arm.GripMethod.DONTCANGE,arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.ONLY_Z)
+                    [arm.GripMethod.DONTCANGE,arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z)
         
         task_arm_dilivery_container.parallel = task.Task.Task_parallel.ALL
         task_arm_dilivery_container.set_subtask_count(2)  # 两个子任务

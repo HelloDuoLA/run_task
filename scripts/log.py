@@ -65,7 +65,13 @@ def log_modify_tasks_info(context):
 # 把新增订单写入
 def log_new_order_info(context,):
     log_tasks_info(context,"new_order_info.log","orders")
-    
+
+# 保存图片
 def log_write_image(image_name,image):
     rospy.loginfo(f"file path {f'{LOGDIR}/images/{image_name}'}")
     cv2.imwrite(f'{LOGDIR}/images/{image_name}', image)
+
+# 保存 stag result 结果
+def log_stag_result(filename,context):
+    with open(f"{LOGDIR}/STag_result/{filename}", 'a') as file:
+        file.write(context)

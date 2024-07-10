@@ -38,7 +38,7 @@ class STag_result():
         self.image_xy     = image_xy
         self.image_coords = image_coords                 # 图像三维坐标系
         self.base_coords  = copy.deepcopy(image_coords)  # 机械臂基坐标系
-        self.obj_id       = -999           # 识别非零食使用
+        self.obj_id       = -999                         # 识别非零食使用
 
 # STag 识别结果列表
 class STag_result_list():
@@ -131,10 +131,14 @@ class STag_result_list():
                     stag_result = copy.deepcopy(self.stag_result_list[i]) 
                     # 寻找容器STag
                     if stag_result.stag_id == self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER]:
+
                         stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[0] + LeftArmGripContainer.x # x = x + x + bias
                         stag_result.base_coords[1] = arm_poses[1] - stag_result.image_coords[1] + LeftArmGripContainer.y # y = y - y + bias
                         stag_result.base_coords[2] = LeftArmGripContainer.const_z                     #固定z坐标
                         stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
+                        rospy.loginfo(f"arm_poses    : {arm_poses}")
+                        rospy.loginfo(f"image_coords : {stag_result.image_coords}")
+                        rospy.loginfo(f"stag_result  : {stag_result.base_coords}")
                         new_stag_result_list.append(stag_result)
                 self.stag_result_list = new_stag_result_list
             elif arm_id == utilis.Device_id.RIGHT:
@@ -410,7 +414,7 @@ class Recognition_node():
         # 识别咖啡机开关, 只有左臂
         elif request.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON :
             # 拍摄图片
-            grabbed, img = right_camera.read()
+            grabbed, img = left_camera.read()
             if grabbed:
                 timestamp = str(int(time.time()))
                 firename = f'switch_on_{timestamp}.jpg'
@@ -435,7 +439,7 @@ class Recognition_node():
         # 识别咖啡机开关, 只有左臂
         elif request.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF :
             # 拍摄图片
-            grabbed, img = right_camera.read()
+            grabbed, img = left_camera.read()
             if grabbed:
                 timestamp = str(int(time.time()))
                 firename = f'switch_off_{timestamp}.jpg'
@@ -487,7 +491,7 @@ class Recognition_node():
                     
             elif request.camera_id == utilis.Device_id.RIGHT:
                 # 拍摄图片
-                grabbed, img = left_camera.read()
+                grabbed, img = right_camera.read()
                 if grabbed:
                     timestamp = str(int(time.time()))
                     firename = f'container_right_{timestamp}.jpg'
@@ -561,21 +565,22 @@ def STag_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LE
         image_name = int(time.time())
 
     log.log_write_image(f'STag_{image_name}.jpg', image)
+    # 结果列表
     stag_result_list =  STag_result_list()
     
     # 对于每个id都要进行位置检测
-    with open(f'STag_{image_name}.txt', 'a') as file:
-        for i, id in enumerate(ids):
-            rospy.loginfo(f"Index: {i}, ID: {id[0]}")
-            file.write(f"Index: {i}, ID: {id[0]}\n")
-            imagePoints  = corners_list[i]
-            success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs, flags=cv2.SOLVEPNP_IPPE_SQUARE)
-            if success:
-                stag_result = STag_result(device_id, id[0], (imagePoints[0][0] + imagePoints[0][2])/2, [translationVector[0][0],translationVector[1][0],translationVector[2][0]])
-                stag_result_list.add(stag_result)
-                file.write(f"平移向量 x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}\n\n\n")
-            else:
-                print(f"{i} {id} Failed to solve PnP")
+    for i, id in enumerate(ids):
+        rospy.loginfo(f"Index: {i}, ID: {id[0]}")
+        log.log_stag_result(f'STag_{image_name}.txt',f"Index: {i}, ID: {id[0]}\n")
+        imagePoints  = corners_list[i]
+        # flags=cv2.SOLVEPNP_IPPE_SQUARE # 参数有毒
+        success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
+        if success:
+            stag_result = STag_result(device_id, id[0], (imagePoints[0][0] + imagePoints[0][2])/2, [translationVector[0][0],translationVector[1][0],translationVector[2][0]])
+            stag_result_list.add(stag_result)
+            log.log_stag_result(f'STag_{image_name}.txt',f"平移向量 x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}\n\n\n")
+        else:
+            print(f"{i} {id} Failed to solve PnP")
     
     return stag_result_list
 
