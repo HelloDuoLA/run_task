@@ -29,6 +29,7 @@ import control_cmd
 
 DEBUG_NAVIGATION = False     # 导航调试中, 则运动到桌子的任务均为非并行任务, 并且在完成之后需要输入任意字符才能下一步
 
+WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
 
 # 初始化
 class System():
@@ -198,11 +199,12 @@ class Navigation_actuator():
         # 订阅导航Action   
         self.move_base_ac   = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         self.control_cmd_ac = actionlib.SimpleActionClient(utilis.Topic_name.control_cmd_action, msg.ControlCmdAction)
-        rospy.loginfo("waiting for move_base")
-        # TODO:调试需要,暂时注释
-        self.move_base_ac.wait_for_server()
-        rospy.loginfo("waiting for control cmd server")
-        self.control_cmd_ac.wait_for_server()
+        if WAIT_FOR_ACTION_SERVER:
+            rospy.loginfo("waiting for move_base")
+            # TODO:调试需要,暂时注释
+            self.move_base_ac.wait_for_server()
+            rospy.loginfo("waiting for control cmd server")
+            self.control_cmd_ac.wait_for_server()
         
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
         
@@ -310,11 +312,12 @@ class Manipulator_actuator():
     def __init__(self):
         self.left_arm_ac  = actionlib.SimpleActionClient(utilis.Topic_name.left_arm_action,  msg.MoveArmAction)
         self.right_arm_ac = actionlib.SimpleActionClient(utilis.Topic_name.right_arm_action, msg.MoveArmAction)
-        rospy.loginfo("waiting for left arm action server")
-        # TODO:调试需要,暂时注释
-        self.left_arm_ac.wait_for_server()
-        rospy.loginfo("waiting for right arm action server")
-        self.right_arm_ac.wait_for_server()
+        if WAIT_FOR_ACTION_SERVER:
+            rospy.loginfo("waiting for left arm action server")
+            # TODO:调试需要,暂时注释
+            self.left_arm_ac.wait_for_server()
+            rospy.loginfo("waiting for right arm action server")
+            self.right_arm_ac.wait_for_server()
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
     
     # 运行
@@ -955,6 +958,7 @@ class Order_driven_task_schedul():
         task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             back_meters = system.anchor_point.service_deck_move_back_length)
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
+        task_move_back_from_service_desk.add_predecessor_task(task_arm_placement_container)
         tasks_pick_snack.add(task_move_back_from_service_desk)
         
         # 功能性暂停
@@ -1015,7 +1019,7 @@ class Order_driven_task_schedul():
             # 右臂绑定 夹取杯子和移动杯子
         task_right_camera_rec_cup_machine.add_need_modify_task(task_right_arm_grasp_cup_pre)
         
-        #  右臂夹取杯子(可并行，固定)
+        #  右臂夹取杯子(可并行)
         task_right_arm_grasp_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_cup,None,utilis.Device_id.RIGHT,\
             system.anchor_point.right_arm_cup_grab,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ)
         task_right_arm_grasp_cup.parallel = task.Task.Task_parallel.ALL
@@ -1096,7 +1100,7 @@ class Order_driven_task_schedul():
 
         #  将饮料臂放到指定位置后松开(不可并行)
         task_right_arm_placement_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_cup,None,utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_cup_placement,arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.XYZ)
+            system.anchor_point.right_arm_cup_placement,arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.MODIFY_Z)
         task_right_arm_placement_cup.add_predecessor_task(task_navigation_to_service_desk)  # 前置任务
         tasks_get_drink.add(task_right_arm_placement_cup)
         
@@ -1104,6 +1108,7 @@ class Order_driven_task_schedul():
         task_arms_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
                 [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
                 [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ)
+        task_arms_idle.add_predecessor_task(task_right_arm_placement_cup)
         task_arms_idle.set_subtask_count(2)
         task_arms_idle.parallel = task.Task.Task_parallel.ALL
         tasks_get_drink.add(task_arms_idle)
@@ -1112,6 +1117,7 @@ class Order_driven_task_schedul():
         task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             back_meters = system.anchor_point.service_deck_move_back_length)
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
+        task_move_back_from_service_desk.add_predecessor_task(task_right_arm_placement_cup)
         tasks_get_drink.add(task_move_back_from_service_desk)
 
         # 赋值
@@ -1303,6 +1309,7 @@ class Order_driven_task_schedul():
         task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             back_meters = system.anchor_point.service_deck_move_back_length)
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
+        task_move_back_from_service_desk.add_predecessor_task(task_arm_placement_container)
         tasks_pick_snack.add(task_move_back_from_service_desk)
         
         # 功能性暂停
@@ -1431,13 +1438,14 @@ class Order_driven_task_schedul():
         tasks_get_drink = task.Task_sequence()  
         #  将饮料臂放到指定位置后松开(不可并行)
         task_right_arm_placement_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_cup,None,utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_cup_placement,arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.XYZ)
+            system.anchor_point.right_arm_cup_placement,arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.MODIFY_Z)
         tasks_get_drink.add(task_right_arm_placement_cup)
         
         #  将左,右臂放到空闲位置(可并行)
         task_arms_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
                 [system.anchor_point.left_arm_idle, system.anchor_point.right_arm_idle],\
                 [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ)
+        task_arms_idle.add_predecessor_task(task_right_arm_placement_cup)
         task_arms_idle.set_subtask_count(2)
         task_arms_idle.parallel = task.Task.Task_parallel.ALL
         tasks_get_drink.add(task_arms_idle)
@@ -1446,6 +1454,7 @@ class Order_driven_task_schedul():
         task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             back_meters = system.anchor_point.service_deck_move_back_length)
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
+        task_move_back_from_service_desk.add_predecessor_task(task_right_arm_placement_cup)
         tasks_get_drink.add(task_move_back_from_service_desk)
         return tasks_get_drink
     
@@ -1508,8 +1517,8 @@ def test_order_snack():
     
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
-    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
-    # system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
+    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
+    system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
     
     
     
