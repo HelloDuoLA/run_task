@@ -1,4 +1,4 @@
-07-10 15:58:55
+07-10 16:19:58
 
 --------------------------------------------------
 
@@ -6,9 +6,9 @@
 Task       : Task_manipulation Rec_container
 Group_id   : 6
 Index      : 0
-Create_time: 1720598309947051763
-Start_time : 1720598310961023569
-End_time   : 1720598312365738153
+Create_time: 1720599592713507890
+Start_time : 1720599593721416234
+End_time   : 1720599595132107257
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -28,9 +28,9 @@ click_length        : 0
 Task       : Task_manipulation Rec_container
 Group_id   : 6
 Index      : 1
-Create_time: 1720598309947090864
-Start_time : 1720598311966589450
-End_time   : 1720598313382630825
+Create_time: 1720599592713602066
+Start_time : 1720599594723722934
+End_time   : 1720599597628795385
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -49,30 +49,10 @@ click_length        : 0
 
 Task       : Task_image_rec CONTAINER
 Group_id   : 6
-Index      : 2
-Create_time: 1720598309947128057
-Start_time : -999
-End_time   : 1720598313546613454
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [0:Task_manipulation Rec_container] 
-Camera_id: LEFT 
-Snack_list: []
-Need_modify_tasks: 
-          [8:Task_manipulation Grasp_container]
- 
-
-Task       : Task_image_rec CONTAINER
-Group_id   : 6
 Index      : 3
-Create_time: 1720598309947184324
+Create_time: 1720599592713774919
 Start_time : -999
-End_time   : 1720598314319091796
+End_time   : 1720599598044643163
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -86,235 +66,6 @@ Snack_list: []
 Need_modify_tasks: 
           [10:Task_manipulation Grasp_container]
  
-
-Task       : Task_manipulation Rec_snack
-Group_id   : 6
-Index      : 4
-Create_time: 1720598309947326660
-Start_time : 1720598314955261945
-End_time   : 1720598316857820749
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [2:Task_image_rec CONTAINER] 
-Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-66.27, 5.44, -148.83, 123.8, 72.58, 24.6] } 
-Target_clamps_status: Clamp_status_0: DONTCANGE  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
-
-Task       : Task_manipulation Rec_snack
-Group_id   : 6
-Index      : 5
-Create_time: 1720598309947390794
-Start_time : 1720598315960005044
-End_time   : 1720598317864630937
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [3:Task_image_rec CONTAINER] 
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[66.27, 5.44, -148.83, -123.8, 72.58, -24.6] } 
-Target_clamps_status: Clamp_status_0: DONTCANGE  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
-
-Task       : Task_image_rec SNACK
-Group_id   : 6
-Index      : 6
-Create_time: 1720598309947432279
-Start_time : -999
-End_time   : 1720598319491372585
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : NOTALLOWED
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [4:Task_manipulation Rec_snack] [5:Task_manipulation Rec_snack] 
-Camera_id: LEFT_RIGHT 
-Snack_list: ['id:1,name:YIDA,count:1', 'id:5,name:CHENPIDAN,count:1']
-Need_modify_tasks: 
- 
-
-Task       : Task_function PAUSE
-Group_id   : 6
-Index      : 7
-Create_time: 1720598309947472095
-Start_time : 1720598319967122316
-End_time   : 1720598319968036890
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : NOTALLOWED
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: 
-
-
-Task       : Task_manipulation Grasp_container
-Group_id   : 6
-Index      : 10
-Create_time: 1720598309948035955
-Start_time : 1720598321013003349
-End_time   : 1720598325077394962
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: 
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[325.22747802734375, -103.47099304199219, 400, -180, 0.0, 90] } 
-Target_clamps_status: Clamp_status_0: OPEN  
-Clamp_speed         : 50 
-arm_move_method     : Z_XY 
-click_length        : 0 
-
-
-Task       : Task_manipulation Grasp_container
-Group_id   : 6
-Index      : 8
-Create_time: 1720598309947676658
-Start_time : 1720598320956009626
-End_time   : 1720598325475572109
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: 
-Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[384.25701904296875, 187.3548126220703, 400, -180, 0.0, -90] } 
-Target_clamps_status: Clamp_status_0: OPEN  
-Clamp_speed         : 50 
-arm_move_method     : Z_XY 
-click_length        : 0 
-
-
-Task       : Task_manipulation Grasp_container
-Group_id   : 6
-Index      : 9
-Create_time: 1720598309947882413
-Start_time : 1720598325960400581
-End_time   : 1720598328010043144
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [8:Task_manipulation Grasp_container] 
-Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[0, 0, -40, 0, 0, 0] } 
-Target_clamps_status: Clamp_status_0: CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : MODIFY_Z 
-click_length        : 0 
-
-
-Task       : Task_manipulation Grasp_container
-Group_id   : 6
-Index      : 11
-Create_time: 1720598309948220491
-Start_time : 1720598326951706409
-End_time   : 1720598329001625776
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [10:Task_manipulation Grasp_container] 
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[0, 0, -40, 0, 0, 0] } 
-Target_clamps_status: Clamp_status_0: CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : MODIFY_Z 
-click_length        : 0 
-
-
-Task       : Task_manipulation Deliever_container
-Group_id   : 6
-Index      : 12
-Create_time: 1720598309948269367
-Start_time : 1720598329959342956
-End_time   : 1720598330773429870
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 2
-Subtask_count_finished: 2
-Predecessor_tasks: [9:Task_manipulation Grasp_container] [11:Task_manipulation Grasp_container] 
-Arm_id              : LEFT_RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[0, 0, 20, 0, 0, 0] 
-                       Arm_pose_1: arm RIGHT, pose type BASE_COORDS, coords:[0, 0, 20, 0, 0, 0] } 
-Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
-Clamp_speed         : 50 
-arm_move_method     : MODIFY_Z 
-click_length        : 0 
-
-
-Task       : Task_manipulation Deliever_container
-Group_id   : 6
-Index      : 12
-Create_time: 1720598309948269367
-Start_time : 1720598329959342956
-End_time   : 1720598330773429870
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 2
-Subtask_count_finished: 2
-Predecessor_tasks: [9:Task_manipulation Grasp_container] [11:Task_manipulation Grasp_container] 
-Arm_id              : LEFT_RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[0, 0, 20, 0, 0, 0] 
-                       Arm_pose_1: arm RIGHT, pose type BASE_COORDS, coords:[0, 0, 20, 0, 0, 0] } 
-Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
-Clamp_speed         : 50 
-arm_move_method     : MODIFY_Z 
-click_length        : 0 
-
-
-Task       : Task_navigate Move_backward
-Group_id   : 6
-Index      : 13
-Create_time: 1720598309948310852
-Start_time : 1720598330953109264
-End_time   : 1720598334984245777
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [11:Task_manipulation Grasp_container] [9:Task_manipulation Grasp_container] 
-back_meters: 0.6
 --------------------------------------------------
 
 

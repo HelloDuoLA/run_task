@@ -1269,12 +1269,12 @@ class Order_driven_task_schedul():
         
 
         # 机器人后退
-        task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            back_meters=system.anchor_point.snack_deck_move_back_length)
-        task_move_back_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)
-        task_move_back_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)
-        task_move_back_from_snack_desk.parallel = task.Task.Task_parallel.ALL
-        tasks_pick_snack.add(task_move_back_from_snack_desk)
+        # task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+        #     back_meters=system.anchor_point.snack_deck_move_back_length)
+        # task_move_back_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)
+        # task_move_back_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)
+        # task_move_back_from_snack_desk.parallel = task.Task.Task_parallel.ALL
+        # tasks_pick_snack.add(task_move_back_from_snack_desk)
         
         return tasks_pick_snack
     
@@ -1505,6 +1505,7 @@ def test_order_snack():
     task_lossen_cup.update_group_id(9)
     
     system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
+    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
     
     
     
