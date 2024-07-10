@@ -168,7 +168,7 @@ class Arm_controller():
             power_on = self.control_instance.power_on()
         
         rospy.loginfo(f"{self.arm_name} is power status {power_on}")
-        while not power_on and power_on == None:
+        while not power_on or power_on == None or power_on == 0:
             self.control_instance.power_on()
             power_on = self.control_instance.is_power_on()
             
@@ -193,7 +193,7 @@ class Arm_controller():
         
         # 执行
         def execute_cb(self, goal:msg.MoveArmGoal):
-            rospy.loginfo(f"node: {rospy.get_name()}, arm action server execute. goal: {goal}")
+            # rospy.loginfo(f"node: {rospy.get_name()}, arm action server execute. goal: {goal}")
             # 1. 解析目标值
             goal_arm_pose     = goal.arm_pose
             goal_grasp_flag   = goal.grasp_flag

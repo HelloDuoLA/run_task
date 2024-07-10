@@ -310,9 +310,10 @@ class Manipulator_actuator():
     def __init__(self):
         self.left_arm_ac  = actionlib.SimpleActionClient(utilis.Topic_name.left_arm_action,  msg.MoveArmAction)
         self.right_arm_ac = actionlib.SimpleActionClient(utilis.Topic_name.right_arm_action, msg.MoveArmAction)
-        rospy.loginfo("waiting for arm action server")
+        rospy.loginfo("waiting for left arm action server")
         # TODO:调试需要,暂时注释
         self.left_arm_ac.wait_for_server()
+        rospy.loginfo("waiting for right arm action server")
         self.right_arm_ac.wait_for_server()
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
     
@@ -1141,7 +1142,7 @@ def talker():
     rospy.init_node('assign_tasks')
     global system
     system = System()
-    # test_order_snack()
+    test_order_snack()
     # test_other()
     
     # 设置发布消息的频率，1Hz
@@ -1169,24 +1170,24 @@ def test_order_snack():
     order_info.order_id = 2
     order_info.table_id = utilis.Device_id.LEFT
     
-    path = '/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/log/orders'
-    ensure_directory_exists(path)
+    # path = '/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/log/orders'
+    # ensure_directory_exists(path)
     
     tasks_grasp_snack = system.order_driven_task_schedul.create_tasks_grasp_snack(order_info.snack_list,order_info.table_id)
     tasks_grasp_snack.update_group_id(2)
 
-    with open(f"{path}/grasp_snack_order.txt", 'w') as file:
-        file.write(str(tasks_grasp_snack))
+    # with open(f"{path}/grasp_snack_order.txt", 'w') as file:
+    #     file.write(str(tasks_grasp_snack))
         
     tasks_get_drink = system.order_driven_task_schedul.create_tasks_get_drink(order_info.table_id)
     tasks_get_drink.update_group_id(3)
 
-    with open(f"{path}/get_drink_order.txt", 'w') as file:
-        file.write(str(tasks_get_drink))
+    # with open(f"{path}/get_drink_order.txt", 'w') as file:
+    #     file.write(str(tasks_get_drink))
     
     tasks = system.order_driven_task_schedul.add_task(order_info)
-    with open(f"{path}/orders.txt", 'w') as file:
-        file.write(str(tasks))
+    # with open(f"{path}/orders.txt", 'w') as file:
+    #     file.write(str(tasks))
 
 
 if __name__ == '__main__':
