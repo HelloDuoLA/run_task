@@ -1,12 +1,13 @@
-07-10 21:24:32
+07-10 21:50:13
 
 --------------------------------------------------
 
 
 Task       : Task_manipulation Move_to_IDLE
+Name       : two arms move to idle
 Group_id   : 9
 Index      : 1
-Create_time: 1720617871804532289
+Create_time: 1720619412955877542
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -27,9 +28,10 @@ click_length        : 0
 
 
 Task       : Task_navigate Move_backward
+Name       : move back from service desk
 Group_id   : 9
 Index      : 2
-Create_time: 1720617871804536104
+Create_time: 1720619412955882072
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
