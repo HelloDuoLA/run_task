@@ -926,6 +926,7 @@ class Order_driven_task_schedul():
         task_arm_placement_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_container,None,utilis.Device_id.LEFT_RIGHT,\
                 [system.anchor_point.left_arm_container_placement,system.anchor_point.right_arm_container_placement],\
                 [arm.GripMethod.OPEN,arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.MODIFY_Z)
+        task_arm_placement_container.add_predecessor_task(task_move_back_from_snack_desk)  # 前置任务
         task_arm_placement_container.set_subtask_count(2)
         tasks_pick_snack.add(task_arm_placement_container)
     
@@ -1083,6 +1084,7 @@ class Order_driven_task_schedul():
         #  将饮料臂放到指定位置后松开(不可并行)
         task_right_arm_placement_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_cup,None,utilis.Device_id.RIGHT,\
             system.anchor_point.right_arm_cup_placement,arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.XYZ)
+        task_right_arm_placement_cup.add_predecessor_task(task_navigation_to_service_desk)  # 前置任务
         tasks_get_drink.add(task_right_arm_placement_cup)
         
         #  将左,右臂放到空闲位置(可并行)
