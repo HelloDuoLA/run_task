@@ -1,12 +1,75 @@
-07-10 12:23:57
+07-10 12:39:09
 
 --------------------------------------------------
 
 
+Task       : Task_manipulation Rec_snack
+Group_id   : 6
+Index      : 4
+Create_time: 1720586346711159229
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [2:Task_image_rec CONTAINER] 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-66.27, 5.44, -148.83, 123.8, 72.58, 24.6] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
+
+
+Task       : Task_manipulation Rec_snack
+Group_id   : 6
+Index      : 5
+Create_time: 1720586346711197614
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [3:Task_image_rec CONTAINER] 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[66.27, 5.44, -148.83, -123.8, 72.58, -24.6] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
+
+
+Task       : Task_image_rec SNACK
+Group_id   : 6
+Index      : 6
+Create_time: 1720586346711290597
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [4:Task_manipulation Rec_snack] [5:Task_manipulation Rec_snack] 
+Camera_id: LEFT_RIGHT 
+Snack_list: ['id:1,name:YIDA,count:1', 'id:5,name:CHENPIDAN,count:1']
+Need_modify_tasks: 
+ 
+
 Task       : Task_function PAUSE
 Group_id   : 6
 Index      : 7
-Create_time: 1720585432391149759
+Create_time: 1720586346711360931
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -22,11 +85,11 @@ Predecessor_tasks:
 Task       : Task_manipulation Grasp_container
 Group_id   : 6
 Index      : 8
-Create_time: 1720585432391334056
+Create_time: 1720586346712301969
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
-Status     : BEREADY
+Status     : NOTREADY
 Result     : INVALID
 Return_data: None
 Parallel   : ALL
@@ -34,7 +97,7 @@ Subtask_count: 1
 Subtask_count_finished: 0
 Predecessor_tasks: 
 Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[407.70452880859375, 296.2441101074219, 360.0, -180, 0.0, -90] } 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[-999, -999, 400, -180, 0.0, -90] } 
 Target_clamps_status: Clamp_status_0: OPEN  
 Clamp_speed         : 50 
 arm_move_method     : Z_XY 
@@ -44,7 +107,7 @@ click_length        : 0
 Task       : Task_manipulation Grasp_container
 Group_id   : 6
 Index      : 9
-Create_time: 1720585432391531229
+Create_time: 1720586346712492227
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -66,11 +129,11 @@ click_length        : 0
 Task       : Task_manipulation Grasp_container
 Group_id   : 6
 Index      : 10
-Create_time: 1720585432391718387
+Create_time: 1720586346712640047
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
-Status     : BEREADY
+Status     : NOTREADY
 Result     : INVALID
 Return_data: None
 Parallel   : ALL
@@ -78,7 +141,7 @@ Subtask_count: 1
 Subtask_count_finished: 0
 Predecessor_tasks: 
 Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[297.3179016113281, -146.9703826904297, 360.0, -180, 0.0, 90] } 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[-1, -1, 400, -180, 0.0, 90] } 
 Target_clamps_status: Clamp_status_0: OPEN  
 Clamp_speed         : 50 
 arm_move_method     : Z_XY 
@@ -88,7 +151,7 @@ click_length        : 0
 Task       : Task_manipulation Grasp_container
 Group_id   : 6
 Index      : 11
-Create_time: 1720585432392306327
+Create_time: 1720586346712808609
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -110,7 +173,7 @@ click_length        : 0
 Task       : Task_manipulation Deliever_container
 Group_id   : 6
 Index      : 12
-Create_time: 1720585432392370939
+Create_time: 1720586346712877273
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -133,7 +196,7 @@ click_length        : 0
 Task       : Task_navigate Move_backward
 Group_id   : 6
 Index      : 13
-Create_time: 1720585432392416477
+Create_time: 1720586346713000297
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None

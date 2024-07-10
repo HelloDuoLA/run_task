@@ -556,7 +556,8 @@ class Task_manager():
         self.waiting_task     = task.Task_sequence("waiting_task")  # 等待执行的任务列表
         self.can_run_state    = True                  #是否能够执行任务
         # 每0.5s执行一次任务
-        timer = rospy.Timer(rospy.Duration(0.5), self.timer_callback)
+        # TODO:调试时为3秒
+        timer = rospy.Timer(rospy.Duration(3), self.timer_callback)
     
     # 任务完成回调
     def tm_task_finish_callback(self, current_task:task.Task, status=None, result=None):
@@ -606,6 +607,10 @@ class Task_manager():
                 # 功能性暂停任务
                 elif current_task.task_type.task_type == task.Task_type.Task_function.PAUSE:
                     # ???
+                    system.task_manager.waiting_task.remove_task(current_task)
+                    system.task_manager.executed_tasks.add(current_task)
+                    current_task.update_start_status()
+                    current_task.update_end_status()
                     system.task_manager.tm_task_finish_callback(current_task,None,None)
                     rospy.loginfo(f"node: {rospy.get_name()}, run a PAUSE task")
                     break
@@ -913,6 +918,8 @@ class Order_driven_task_schedul():
         # 机器人后退
         task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             back_meters=system.anchor_point.snack_deck_move_back_length)
+        task_move_back_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)
+        task_move_back_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)
         task_move_back_from_snack_desk.parallel = task.Task.Task_parallel.ALL
         tasks_pick_snack.add(task_move_back_from_snack_desk)
 
