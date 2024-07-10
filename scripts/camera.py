@@ -59,10 +59,10 @@ class STag_result_list():
     }
     
     STag_other_enum_2_stag_num = {
-        task.Task_image_rec.Rec_OBJ_type.CONTAINER :9,
+        task.Task_image_rec.Rec_OBJ_type.CONTAINER :     9,
         task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH: 6,
-        task.Task_image_rec.Rec_OBJ_type.CUP: 2,
-        task.Task_image_rec.Rec_OBJ_type.WATER_POINT:11
+        task.Task_image_rec.Rec_OBJ_type.CUP:            2,
+        task.Task_image_rec.Rec_OBJ_type.WATER_POINT:    11
     }
     
     
@@ -571,14 +571,14 @@ def STag_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LE
     # 对于每个id都要进行位置检测
     for i, id in enumerate(ids):
         rospy.loginfo(f"Index: {i}, ID: {id[0]}")
-        log.log_stag_result(f'STag_{image_name}.txt',f"Index: {i}, ID: {id[0]}\n")
+        log.log_stag_result(f'{image_name}_STag.txt',f"Index: {i}, ID: {id[0]}\n")
         imagePoints  = corners_list[i]
         # flags=cv2.SOLVEPNP_IPPE_SQUARE # 参数有毒
         success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
         if success:
             stag_result = STag_result(device_id, id[0], (imagePoints[0][0] + imagePoints[0][2])/2, [translationVector[0][0],translationVector[1][0],translationVector[2][0]])
             stag_result_list.add(stag_result)
-            log.log_stag_result(f'STag_{image_name}.txt',f"平移向量 x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}\n\n\n")
+            log.log_stag_result(f'{image_name}_STag.txt',f"平移向量 x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}\n\n\n")
         else:
             print(f"{i} {id} Failed to solve PnP")
     

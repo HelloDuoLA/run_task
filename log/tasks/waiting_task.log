@@ -1,146 +1,16 @@
-07-10 19:49:21
+07-10 20:01:28
 
 --------------------------------------------------
 
 
-Task       : Task_manipulation Grasp_cup_pre
-Group_id   : 8
-Index      : 5
-Create_time: 1720612152204794168
-Start_time : -999
-End_time   : -999
-Finsih_cb  : None
-Status     : NOTREADY
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: 
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[250, -1, 220, 90, 0, 90] } 
-Target_clamps_status: Clamp_status_0: OPEN  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
-
-Task       : Task_manipulation Grasp_cup
-Group_id   : 8
-Index      : 6
-Create_time: 1720612152204837799
-Start_time : -999
-End_time   : -999
-Finsih_cb  : None
-Status     : NOTREADY
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: [5:Task_manipulation Grasp_cup_pre] 
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[-999, -999, 220, 90, 0, 90] } 
-Target_clamps_status: Clamp_status_0: CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
-
-Task       : Task_manipulation Turn_on_coffee_machine
-Group_id   : 8
-Index      : 7
-Create_time: 1720612152205097198
-Start_time : -999
-End_time   : -999
-Finsih_cb  : None
-Status     : NOTREADY
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: 
-Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[-999, -999, -999, -90, 0.0, -90] } 
-Target_clamps_status: Clamp_status_0: CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : Y_X_Z 
-click_length        : 10 
-
-
-Task       : Task_manipulation Water_cup
-Group_id   : 8
-Index      : 8
-Create_time: 1720612152205258846
-Start_time : -999
-End_time   : -999
-Finsih_cb  : None
-Status     : NOTREADY
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: [6:Task_manipulation Grasp_cup] 
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[-999, -999, -999, 90, 0, 90] } 
-Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
-Clamp_speed         : 50 
-arm_move_method     : X_YZ 
-click_length        : 0 
-
-
-Task       : Task_manipulation Rec_machine_switch
-Group_id   : 8
-Index      : 9
-Create_time: 1720612152205311298
-Start_time : -999
-End_time   : -999
-Finsih_cb  : None
-Status     : BEREADY
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: [7:Task_manipulation Turn_on_coffee_machine] 
-Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-71.36, -7.87, -155.8, 121.34, 73.92, 31.57] } 
-Target_clamps_status: Clamp_status_0: CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : X_YZ 
-click_length        : 0 
-
-
-Task       : Task_image_rec COFFEE_MACHINE_SWITCH_OFF
-Group_id   : 8
-Index      : 10
-Create_time: 1720612152205350637
-Start_time : -999
-End_time   : -999
-Finsih_cb  : None
-Status     : BEREADY
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: [9:Task_manipulation Rec_machine_switch] 
-Camera_id: LEFT 
-Snack_list: []
-Need_modify_tasks: 
-          [11:Task_manipulation Turn_off_coffee_machine]
- 
-
 Task       : Task_manipulation Turn_off_coffee_machine
 Group_id   : 8
 Index      : 11
-Create_time: 1720612152205487966
+Create_time: 1720612870660047769
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
-Status     : NOTREADY
+Status     : BEREADY
 Result     : INVALID
 Return_data: None
 Parallel   : NOTALLOWED
@@ -148,39 +18,17 @@ Subtask_count: 1
 Subtask_count_finished: 0
 Predecessor_tasks: 
 Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[-999, -999, -999, -90, 0.0, -90] } 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[513.4382934570312, 219.25889587402344, 421.32476806640625, -90, 0.0, -90] } 
 Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
 Clamp_speed         : 50 
 arm_move_method     : Z_XY 
 click_length        : -10 
 
 
-Task       : Task_manipulation Move_to_IDLE
-Group_id   : 8
-Index      : 12
-Create_time: 1720612152205533266
-Start_time : -999
-End_time   : -999
-Finsih_cb  : None
-Status     : BEREADY
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: 
-Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-48.48, 26.74, -87.21, 65.36, 46.82, 26.16] } 
-Target_clamps_status: Clamp_status_0: DONTCANGE  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
-
 Task       : Task_manipulation Deliever_cup
 Group_id   : 8
 Index      : 13
-Create_time: 1720612152205597877
+Create_time: 1720612870660137414
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
