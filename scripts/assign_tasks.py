@@ -200,7 +200,7 @@ class Navigation_actuator():
         self.control_cmd_ac = actionlib.SimpleActionClient(utilis.Topic_name.control_cmd_action, msg.ControlCmdAction)
         rospy.loginfo("waiting for move_base")
         # TODO:调试需要,暂时注释
-        self.move_base_ac.wait_for_server()
+        # self.move_base_ac.wait_for_server()
         rospy.loginfo("waiting for control cmd server")
         self.control_cmd_ac.wait_for_server()
         
