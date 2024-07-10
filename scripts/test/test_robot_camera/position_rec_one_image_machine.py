@@ -120,7 +120,7 @@ if __name__ == "__main__":
     for i in range(len(xyz_list)):
         id  = xyz_list[i][0]
         xyz = xyz_list[i][1]
-        if id == 12:
+        if id == 6:
             print(f"id {id} machie switch")
             print(f"base_coord {base_coords [:3]}")
             print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 - 50 }  {base_coords[1] - xyz[1] - 78} {base_coords[2] + xyz[0] +40 -60}\r\n\r\n")

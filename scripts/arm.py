@@ -224,7 +224,7 @@ class Arm_controller():
                 
             # 最终位移
             if goal.clicked_length != 0:
-                self.clicked_length(goal.clicked_length) 
+                self.move_click_length(goal.clicked_length) 
             
             # 构建返回数据
             result = msg.MoveArmResult()
@@ -235,7 +235,7 @@ class Arm_controller():
             self.action_server.set_succeeded(result) #可以添加结果参数
         
         # 最终z轴移动 
-        def clicked_length(self, length_mm):
+        def move_click_length(self, length_mm):
             current_base_coords = self.get_base_coords()
             current_base_coords[2] = current_base_coords[2] + length_mm
             result = self.control_instance.send_base_coords(current_base_coords,100)

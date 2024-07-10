@@ -60,7 +60,7 @@ class STag_result_list():
     
     STag_other_enum_2_stag_num = {
         task.Task_image_rec.Rec_OBJ_type.CONTAINER :9,
-        task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH: 12,
+        task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH: 6,
         task.Task_image_rec.Rec_OBJ_type.CUP: 3,
         task.Task_image_rec.Rec_OBJ_type.WATER_POINT:11
     }
