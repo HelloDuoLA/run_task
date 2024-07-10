@@ -200,9 +200,9 @@ class Navigation_actuator():
         self.control_cmd_ac = actionlib.SimpleActionClient(utilis.Topic_name.control_cmd_action, msg.ControlCmdAction)
         rospy.loginfo("waiting for move_base")
         # TODO:调试需要,暂时注释
-        # self.move_base_ac.wait_for_server()
+        self.move_base_ac.wait_for_server()
         rospy.loginfo("waiting for control cmd server")
-        # self.control_cmd_ac.wait_for_server()
+        self.control_cmd_ac.wait_for_server()
         
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
         
@@ -312,9 +312,9 @@ class Manipulator_actuator():
         self.right_arm_ac = actionlib.SimpleActionClient(utilis.Topic_name.right_arm_action, msg.MoveArmAction)
         rospy.loginfo("waiting for left arm action server")
         # TODO:调试需要,暂时注释
-        # self.left_arm_ac.wait_for_server()
+        self.left_arm_ac.wait_for_server()
         rospy.loginfo("waiting for right arm action server")
-        # self.right_arm_ac.wait_for_server()
+        self.right_arm_ac.wait_for_server()
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
     
     # 运行

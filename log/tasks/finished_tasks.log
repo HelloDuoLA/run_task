@@ -1,37 +1,14 @@
-07-10 16:59:12
+07-10 19:44:19
 
 --------------------------------------------------
 
 
-Task       : Task_manipulation Lossen_container
-Group_id   : 7
+Task       : Task_manipulation Rec_machine_switch
+Group_id   : 8
 Index      : 0
-Create_time: 1720601945026881217
-Start_time : 1720601946046861171
-End_time   : 1720601948275995492
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : NOTALLOWED
-Subtask_count: 2
-Subtask_count_finished: 2
-Predecessor_tasks: 
-Arm_id              : LEFT_RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[0, 0, -20, 0, 0, 0] 
-                       Arm_pose_1: arm RIGHT, pose type BASE_COORDS, coords:[0, 0, -20, 0, 0, 0] } 
-Target_clamps_status: Clamp_status_0: OPEN Clamp_status_1: OPEN  
-Clamp_speed         : 50 
-arm_move_method     : MODIFY_Z 
-click_length        : 0 
-
-
-Task       : Task_navigate Move_backward
-Group_id   : 7
-Index      : 2
-Create_time: 1720601945026987314
-Start_time : 1720601948040113210
-End_time   : 1720601949482566118
+Create_time: 1720611850664769649
+Start_time : 1720611851676251888
+End_time   : 1720611854121695756
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -40,45 +17,56 @@ Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 1
 Predecessor_tasks: 
-back_meters: 0.2
-
-Task       : Task_manipulation Move_to_IDLE
-Group_id   : 7
-Index      : 1
-Create_time: 1720601945026923179
-Start_time : 1720601949042496919
-End_time   : 1720601951438908576
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 2
-Subtask_count_finished: 2
-Predecessor_tasks: [0:Task_manipulation Lossen_container] 
-Arm_id              : LEFT_RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-48.48, 26.74, -87.21, 65.36, 46.82, 26.16] 
-                       Arm_pose_1: arm RIGHT, pose type ANGLE, joint:[48.48, 26.74, -87.21, -65.36, 46.82, -26.16] } 
-Target_clamps_status: Clamp_status_0: CLOSE Clamp_status_1: CLOSE  
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-71.36, -7.87, -155.8, 121.34, 73.92, 31.57] } 
+Target_clamps_status: Clamp_status_0: CLOSE  
 Clamp_speed         : 50 
 arm_move_method     : XYZ 
 click_length        : 0 
 
 
-Task       : Task_function PAUSE
-Group_id   : 7
-Index      : 3
-Create_time: 1720601945027020692
-Start_time : 1720601952032264471
-End_time   : 1720601952032315731
+Task       : Task_manipulation Rec_cup_machine
+Group_id   : 8
+Index      : 1
+Create_time: 1720611850664811372
+Start_time : 1720611852665642261
+End_time   : 1720611856548308372
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
 Return_data: None
-Parallel   : NOTALLOWED
+Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 1
 Predecessor_tasks: 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[0, 0, -115, 0, 90, 0] } 
+Target_clamps_status: Clamp_status_0: CLOSE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
+
+
+Task       : Task_manipulation Rec_cup_machine
+Group_id   : 8
+Index      : 2
+Create_time: 1720611850664850234
+Start_time : 1720611856669092178
+End_time   : 1720611859533727645
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: [1:Task_manipulation Rec_cup_machine] 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[-135.79, 22.83, -152.09, 46.44, 56.43, 4.23] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
 
 --------------------------------------------------
 
