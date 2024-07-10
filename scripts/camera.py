@@ -26,7 +26,6 @@ import arm
 import log 
 
 
-LOG_DIR = "/home/elephant/xzc_code/ros_ws/src/run_task/log"
 
 # 摄像头识别节点, 完成摄像头的识别功能
 
@@ -56,7 +55,7 @@ class STag_result_list():
         9  : task.Task_image_rec.Rec_OBJ_type.CONTAINER.value ,
         12 : task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value,
         3  : task.Task_image_rec.Rec_OBJ_type.CUP.value,
-        11 : task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value,
+        11 : task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value
     }
     
     STag_other_enum_2_stag_num = {
@@ -229,7 +228,7 @@ class Rec_result_list():
         return_list = []
         for stag_result in self.rec_result_list:
             obj_position = msg.ObjPositionWithID()
-            obj_position.arm_id        = stag_result.camera_id
+            obj_position.arm_id        = stag_result.camera_id.value
             obj_position.obj_id        = stag_result.obj_id
             obj_position.position      = stag_result.base_coords
             obj_position.position_type = arm.PoseType.BASE_COORDS.value
@@ -386,7 +385,7 @@ class Recognition_node():
             grabbed, img = right_camera.read()
             if grabbed:
                 timestamp = str(int(time.time()))
-                firename = f'{LOG_DIR}/image/cup_coffee_{timestamp}.jpg'
+                firename = f'cup_coffee_{timestamp}.jpg'
                 log.log_write_image(firename, img)
                 
                 # STag 识别
@@ -414,7 +413,7 @@ class Recognition_node():
             grabbed, img = right_camera.read()
             if grabbed:
                 timestamp = str(int(time.time()))
-                firename = f'{LOG_DIR}/image/switch_on_{timestamp}.jpg'
+                firename = f'switch_on_{timestamp}.jpg'
                 log.log_write_image(firename, img)
                 # STag识别
                 stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"switch_on_{timestamp}")
@@ -439,7 +438,7 @@ class Recognition_node():
             grabbed, img = right_camera.read()
             if grabbed:
                 timestamp = str(int(time.time()))
-                firename = f'{LOG_DIR}/image/switch_off_{timestamp}.jpg'
+                firename = f'switch_off_{timestamp}.jpg'
                 log.log_write_image(firename, img)
                 # STag识别
                 stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"switch_off_{timestamp}")
@@ -467,7 +466,7 @@ class Recognition_node():
                 grabbed, img = left_camera.read()
                 if grabbed:
                     timestamp = str(int(time.time()))
-                    firename = f'{LOG_DIR}/image/container_left_{timestamp}.jpg'
+                    firename = f'container_left_{timestamp}.jpg'
                     log.log_write_image(firename, img)
                     stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"container_left_{timestamp}")
                     
@@ -491,7 +490,7 @@ class Recognition_node():
                 grabbed, img = left_camera.read()
                 if grabbed:
                     timestamp = str(int(time.time()))
-                    firename = f'{LOG_DIR}/image/container_right_{timestamp}.jpg'
+                    firename = f'container_right_{timestamp}.jpg'
                     log.log_write_image(firename, img)
                     stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"container_right_{timestamp}")
                     
@@ -561,11 +560,11 @@ def STag_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LE
     if image_name == "":
         image_name = int(time.time())
 
-    log.log_write_image(f'{LOG_DIR}/STag_result/STag_{image_name}.jpg', image)
+    log.log_write_image(f'STag_{image_name}.jpg', image)
     stag_result_list =  STag_result_list()
     
     # 对于每个id都要进行位置检测
-    with open(f'{LOG_DIR}/STag_result/STag_{image_name}.txt', 'a') as file:
+    with open(f'STag_{image_name}.txt', 'a') as file:
         for i, id in enumerate(ids):
             rospy.loginfo(f"Index: {i}, ID: {id[0]}")
             file.write(f"Index: {i}, ID: {id[0]}\n")

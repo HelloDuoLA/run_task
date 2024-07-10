@@ -290,6 +290,16 @@ class Task_image_rec(Task):
         CUP            = auto()   # 杯子
         WATER_POINT    = auto()   # 接水点
         
+        def __eq__(self, value: object) -> bool:
+            if isinstance(value,self.__class__):
+                return self.value == value.value
+            elif isinstance(value,int):
+                return self.value == value
+        
+        # 但要确保同时定义一个 __hash__ 方法，以保持枚举成员的可哈希性
+        def __hash__(self):
+            return hash(self.value)
+        
     
     def __init__(self, task_name,fn_callback, camera_id:utilis.Device_id, snack_list:order.Snack_list = order.Snack_list()):
         super().__init__(task_name,fn_callback)

@@ -114,7 +114,7 @@ class Snack_list():
     def to_list(self):
         id_list = []
         for snack in self.snack_list:
-            id_list.append(snack.id)
+            id_list.append(snack.id.value)
         return id_list
     
     # 由消息初始化

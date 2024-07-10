@@ -443,20 +443,23 @@ class Image_rec_actuator():
     # 识别结果话题回调
     @staticmethod
     def do_image_rec_result_callback(result:msg.ImageRecResult):
+        rospy.loginfo(f"do_image_rec_result {result}")
         # 获取对应的服务对象
         current_task:task.Task_image_rec = system.image_rec_actuator.running_tasks_manager.get_task(result.task_index)
         # 根据不同任务作出不同处理
         # 识别零食
         if current_task.task_type.task_type == task.Task_type.Task_image_rec.SNACK:
             snack_count = len(result.obj_positions)
-            
-            for i in range(snack_count):
-                snack_xyz                = result.obj_positions[i].position
-                arm_id                   = result.obj_positions[i].arm_id
-                task_grasp_snack         = current_task.need_modify_tasks.task_list[i*2].modify_xyz_select_arm(snack_xyz,arm_id)
-                task_lossen_snack        = current_task.need_modify_tasks.task_list[i*2+1].select_arm(arm_id)
-                task_grasp_snack.status  = task.Task.Task_status.BEREADY
-                task_lossen_snack.status = task.Task.Task_status.BEREADY
+            try:
+                for i in range(snack_count):
+                    snack_xyz                = result.obj_positions[i].position
+                    arm_id                   = result.obj_positions[i].arm_id
+                    task_grasp_snack         = current_task.need_modify_tasks.task_list[i*2].modify_xyz_select_arm(snack_xyz,arm_id)
+                    task_lossen_snack        = current_task.need_modify_tasks.task_list[i*2+1].select_arm(arm_id)
+                    task_grasp_snack.status  = task.Task.Task_status.BEREADY
+                    task_lossen_snack.status = task.Task.Task_status.BEREADY
+            except:
+                rospy.loginfo("!!!!snack count is not equal to task count")
                 
         # 识别容器
         elif current_task.task_type.task_type == task.Task_type.Task_image_rec.CONTAINER:
@@ -556,7 +559,7 @@ class Task_manager():
         timer = rospy.Timer(rospy.Duration(0.5), self.timer_callback)
     
     # 任务完成回调
-    def tm_task_finish_callback(self, current_task:task.Task, status, result):
+    def tm_task_finish_callback(self, current_task:task.Task, status=None, result=None):
         rospy.loginfo(f"node: {rospy.get_name()}, task_manager, task : {current_task.task_index} is finish")
         # 让任务管理器恢复正常
         if current_task.parallel == task.Task.Task_parallel.NOTALLOWED:
@@ -602,6 +605,7 @@ class Task_manager():
                     system.image_rec_actuator.run(current_task)
                 # 功能性暂停任务
                 elif current_task.task_type.task_type == task.Task_type.Task_function.PAUSE:
+                    # ???
                     system.task_manager.tm_task_finish_callback(current_task,None,None)
                     rospy.loginfo(f"node: {rospy.get_name()}, run a PAUSE task")
                     break
