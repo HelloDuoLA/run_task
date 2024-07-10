@@ -67,4 +67,5 @@ def log_new_order_info(context,):
     log_tasks_info(context,"new_order_info.log","orders")
     
 def log_write_image(image_name,image):
+    rospy.loginfo(f"file path {f'{LOGDIR}/images/{image_name}'}")
     cv2.imwrite(f'{LOGDIR}/images/{image_name}', image)

@@ -78,7 +78,7 @@ class STag_result_list():
         return_list = []
         for stag_result in self.stag_result_list:
             obj_position = msg.ObjPositionWithID()
-            obj_position.arm_id        = stag_result.camera_id
+            obj_position.arm_id        = stag_result.camera_id.value
             obj_position.obj_id        = stag_result.obj_id
             obj_position.position      = stag_result.base_coords
             obj_position.position_type = arm.PoseType.BASE_COORDS.value
