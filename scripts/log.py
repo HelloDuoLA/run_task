@@ -66,5 +66,5 @@ def log_modify_tasks_info(context):
 def log_new_order_info(context,):
     log_tasks_info(context,"new_order_info.log","orders")
     
-def log_write_image(image,image_name):
+def log_write_image(image_name,image):
     cv2.imwrite(f'{LOGDIR}/images/{image_name}', image)

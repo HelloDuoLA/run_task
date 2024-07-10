@@ -421,8 +421,8 @@ class Manipulator_actuator():
 class Image_rec_actuator():
     def __init__(self):
         self.running_tasks_manager  = task.Task_manager_in_running()  # 正在执行的任务管理器       
-        self.pub = rospy.Publisher (utilis.Topic_name.image_recognition_request ,msg.ImageRecRequest ,self,queue_size=10) # 发布识别任务
-        self.sub = rospy.Subscriber(utilis.Topic_name.image_recognition_result  ,msg.ImageRecResult  ,queue_size=10)      # 订阅识别结果
+        self.pub = rospy.Publisher (utilis.Topic_name.image_recognition_request ,msg.ImageRecRequest,queue_size=10) # 发布识别任务
+        self.sub = rospy.Subscriber(utilis.Topic_name.image_recognition_result  ,msg.ImageRecResult ,Image_rec_actuator.do_image_rec_result_callback,queue_size=10)      # 订阅识别结果
 
     # 运行
     def run(self, task_image_rec_task:task.Task_image_rec):
@@ -433,6 +433,7 @@ class Image_rec_actuator():
         task_info = msg.ImageRecRequest()
         task_info.task_index = task_index                                    # 任务索引
         task_info.task_type  = task_image_rec_task.task_type.task_type.value # 任务类型
+        task_info.camera_id  = task_image_rec_task.camera_id.value           # 相机ID
         # 如果是识别零食, 则需要给出零食列表
         if task_info.task_type == task.Task_type.Task_image_rec.SNACK:
             task_info.snacks = task_image_rec_task.snack_list.to_list()      # 零食列表
@@ -1484,7 +1485,7 @@ def test_order_snack():
     tasks_get_drink = system.order_driven_task_schedul.create_tasks_get_drink(order_info.table_id)
     tasks_get_drink.update_group_id(3)
 
-    tasks = system.order_driven_task_schedul.add_task(order_info)
+    # tasks = system.order_driven_task_schedul.add_task(order_info)
 
     tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)
     tasks_get_snack.update_group_id(6)
