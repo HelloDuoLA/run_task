@@ -202,7 +202,7 @@ class Navigation_actuator():
         # TODO:调试需要,暂时注释
         # self.move_base_ac.wait_for_server()
         rospy.loginfo("waiting for control cmd server")
-        self.control_cmd_ac.wait_for_server()
+        # self.control_cmd_ac.wait_for_server()
         
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
         
@@ -312,9 +312,9 @@ class Manipulator_actuator():
         self.right_arm_ac = actionlib.SimpleActionClient(utilis.Topic_name.right_arm_action, msg.MoveArmAction)
         rospy.loginfo("waiting for left arm action server")
         # TODO:调试需要,暂时注释
-        self.left_arm_ac.wait_for_server()
+        # self.left_arm_ac.wait_for_server()
         rospy.loginfo("waiting for right arm action server")
-        self.right_arm_ac.wait_for_server()
+        # self.right_arm_ac.wait_for_server()
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
     
     # 运行
@@ -1102,7 +1102,7 @@ class Order_driven_task_schedul():
         
         #  将左,右臂放到空闲位置(可并行)
         task_arms_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
-                [system.anchor_point.right_arm_idle,system.anchor_point.right_arm_idle],\
+                [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
                 [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ)
         task_arms_idle.set_subtask_count(2)
         task_arms_idle.parallel = task.Task.Task_parallel.ALL
@@ -1348,7 +1348,7 @@ class Order_driven_task_schedul():
         
         #  右臂夹取杯子准备动作(可并行，固定)
         task_right_arm_grasp_cup_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_cup_pre,None,utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_cup_grab,arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.XYZ)
+            system.anchor_point.right_arm_cup_grab_pre,arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.XYZ)
         task_right_arm_grasp_cup_pre.parallel = task.Task.Task_parallel.ALL
         task_right_arm_grasp_cup_pre.status   = task.Task.Task_status.NOTREADY  # 需要参数
         tasks_get_drink.add(task_right_arm_grasp_cup_pre)
@@ -1436,7 +1436,7 @@ class Order_driven_task_schedul():
         
         #  将左,右臂放到空闲位置(可并行)
         task_arms_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
-                [system.anchor_point.right_arm_idle,system.anchor_point.right_arm_idle],\
+                [system.anchor_point.left_arm_idle, system.anchor_point.right_arm_idle],\
                 [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ)
         task_arms_idle.set_subtask_count(2)
         task_arms_idle.parallel = task.Task.Task_parallel.ALL
@@ -1507,7 +1507,9 @@ def test_order_snack():
     task_lossen_cup.update_group_id(9)
     
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
-    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
+    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
+    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
+    # system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
     
     
     

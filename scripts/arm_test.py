@@ -1,4 +1,4 @@
-#! /usr/bin/env /usr/bin/python3
+#cat! /usr/bin/env /usr/bin/python3
 # -*- coding: utf-8 -*-
 import rospy
 import sys

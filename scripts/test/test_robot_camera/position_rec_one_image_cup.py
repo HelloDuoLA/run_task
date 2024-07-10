@@ -135,7 +135,7 @@ if __name__ == "__main__":
             print(f"id {id} water cup")
             print(f"base_coord {base_coords [:3]}")
             # print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 }  {base_coords[1] + xyz[1] + 78} {base_coords[2] - xyz[0]}\r\n\r\n")
-            print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 -85 - 20}  {base_coords[1] + xyz[1] + 78 + 20} {220}\r\n\r\n")
+            print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 -85 - 20}  {base_coords[1] + xyz[1] + 78 + 20} {230}\r\n\r\n")
     
     # 杯子 
     # 实测 
