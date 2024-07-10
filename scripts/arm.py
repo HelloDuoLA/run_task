@@ -39,6 +39,7 @@ class ArmMoveMethod(Enum):
     MODIFY_X   = auto()
     MODIFY_Y   = auto()
     MODIFY_Z   = auto()
+    OPLY_GRIP  = auto()
     
     
     def __str__(self) -> str:
@@ -212,8 +213,10 @@ class Arm_controller():
                 self.close_grasp()
             
             
-            # 2. 给机械臂发送目标值
-            self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose, goal.arm_move_method)
+            if goal.arm_move_method != ArmMoveMethod.OPLY_GRIP:
+
+                # 2. 给机械臂发送目标值
+                self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose, goal.arm_move_method)
             
             # 后打开 and 先关闭后打开
             if goal_grasp_flag == GripMethod.CLOSE_OPEN or goal_grasp_flag == GripMethod.OPEN:

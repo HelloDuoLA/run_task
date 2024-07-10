@@ -1,28 +1,6 @@
-07-10 20:01:30
+07-10 21:08:22
 
 --------------------------------------------------
-
-
-Task       : Task_manipulation Water_cup
-Group_id   : 8
-Index      : 8
-Create_time: 1720612870659809350
-Start_time : 1720612888676088571
-End_time   : -999
-Finsih_cb  : None
-Status     : RUNNING
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: [6:Task_manipulation Grasp_cup] 
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[374.1551208496094, 84.40229797363281, 230.0, 90, 0, 90] } 
-Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
-Clamp_speed         : 50 
-arm_move_method     : X_YZ 
-click_length        : 0 
 
 --------------------------------------------------
 

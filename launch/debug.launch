@@ -11,4 +11,4 @@
 <!-- roslaunch run_task arm.launch  -->
 <!-- roslaunch run_task camera.launch -->
 <!-- roslaunch run_task control_cmd.launch  -->
-<!-- roslaunch run_task assgin_task.launch  -->
+<!-- roslaunch run_task assign_task.launch  -->
