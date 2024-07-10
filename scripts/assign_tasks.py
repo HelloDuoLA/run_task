@@ -1142,7 +1142,7 @@ class Order_driven_task_schedul():
         return task_grasp_snack_seq
     
     # 创建在零食桌前的任务
-    def test_tasks_at_snack_desk(self,snack_list:order.Snack_list):
+    def test_tasks_at_snack_desk(self,snack_list:order.Snack_list)->task.Task_sequence:
         tasks_pick_snack        = task.Task_sequence()
         #  将左臂抬到指定位置(食物框识别位置)
         task_left_arm_to_rec_contianer = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_container, None, utilis.Device_id.LEFT, \
@@ -1270,6 +1270,8 @@ class Order_driven_task_schedul():
             back_meters=system.anchor_point.snack_deck_move_back_length)
         task_move_back_from_snack_desk.parallel = task.Task.Task_parallel.ALL
         tasks_pick_snack.add(task_move_back_from_snack_desk)
+        
+        return tasks_pick_snack
     
     # 创建放置容器的任务
     def test_tasks_lossen_container(self):
@@ -1298,6 +1300,8 @@ class Order_driven_task_schedul():
         # 功能性暂停
         task_function_pause2 = task.Task_function(task.Task_type.Task_function.PAUSE,None)
         tasks_pick_snack.add(task_function_pause2)
+        
+        return tasks_pick_snack
     
     # 创建在饮料桌前的任务
     def test_tasks_at_drink_desk(self):
@@ -1409,6 +1413,8 @@ class Order_driven_task_schedul():
         #     back_meters = system.anchor_point.drink_deck_move_back_length)
         # task_move_back_from_drink_desk.parallel = task.Task.Task_parallel.ALL
         # tasks_get_drink.add(task_move_back_from_drink_desk)
+        
+        return tasks_get_drink
     
 
     
@@ -1433,6 +1439,7 @@ class Order_driven_task_schedul():
             back_meters = system.anchor_point.service_deck_move_back_length)
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
         tasks_get_drink.add(task_move_back_from_service_desk)
+        return tasks_get_drink
     
 
 def test_other():
@@ -1471,25 +1478,31 @@ def test_order_snack():
     order_info.order_id = 2
     order_info.table_id = utilis.Device_id.LEFT
     
-    # path = '/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/log/orders'
-    # ensure_directory_exists(path)
-    
     tasks_grasp_snack = system.order_driven_task_schedul.create_tasks_grasp_snack(order_info.snack_list,order_info.table_id)
     tasks_grasp_snack.update_group_id(2)
 
-    # with open(f"{path}/grasp_snack_order.txt", 'w') as file:
-    #     file.write(str(tasks_grasp_snack))
-        
     tasks_get_drink = system.order_driven_task_schedul.create_tasks_get_drink(order_info.table_id)
     tasks_get_drink.update_group_id(3)
 
-    # with open(f"{path}/get_drink_order.txt", 'w') as file:
-    #     file.write(str(tasks_get_drink))
-    
     tasks = system.order_driven_task_schedul.add_task(order_info)
-    # with open(f"{path}/orders.txt", 'w') as file:
-    #     file.write(str(tasks))
 
+    tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)
+    tasks_get_snack.update_group_id(6)
+    
+    tasks_lossen_snack = system.order_driven_task_schedul.test_tasks_lossen_container()
+    tasks_lossen_snack.update_group_id(7)
+    
+    tasks_get_drink = system.order_driven_task_schedul.test_tasks_at_drink_desk()
+    tasks_get_drink.update_group_id(8)
+    
+    task_lossen_cup = system.order_driven_task_schedul.test_tasks_lossen_cup()
+    task_lossen_cup.update_group_id(9)
+    
+    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
+    
+    
+    
+    
 
 if __name__ == '__main__':
     try:
