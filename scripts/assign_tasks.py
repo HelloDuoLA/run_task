@@ -470,7 +470,7 @@ class Image_rec_actuator():
                     task_lossen_snack_pre    = current_task.need_modify_tasks.task_list[i*3+2].select_arm(arm_id)
                     task_lossen_snack        = current_task.need_modify_tasks.task_list[i*3+2].select_arm(arm_id)
                     task_grasp_snack.status  = task.Task.Task_status.BEREADY
-                    task_lossen_snack_pre    = task.Task.Task_status.BEREADY
+                    task_lossen_snack_pre.status = task.Task.Task_status.BEREADY
                     task_lossen_snack.status = task.Task.Task_status.BEREADY
             except:
                 rospy.loginfo("!!!!snack count is not equal to task count")
