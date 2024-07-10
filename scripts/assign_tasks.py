@@ -1144,7 +1144,7 @@ def talker():
     # test_other()
     
     # 设置发布消息的频率，1Hz
-    rate = rospy.Rate(1)
+    rate = rospy.Rate(10)
 
     while not rospy.is_shutdown():
         rospy.loginfo("assign_tasks")

@@ -520,7 +520,7 @@ def YOLO_rec(snack_id_list,image) -> YOLO_result_list:
 
 
 # STag_rec识别
-def STag_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LEFT ,libraryHD=11,tag_size=20,image_name="")->STag_result_list:
+def STag_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LEFT ,libraryHD=11,tag_size=24,image_name="")->STag_result_list:
     # 假设的三维点 (例如，一个简单的正方形)
     objectPoints = np.array([
         [-tag_size/2, -tag_size/2,  0],
@@ -655,7 +655,7 @@ def talker():
     recognition_node = Recognition_node()
 
     # 设置发布消息的频率，1Hz
-    rate = rospy.Rate(1)
+    rate = rospy.Rate(10)
 
     while not rospy.is_shutdown():
         rospy.loginfo("camera")

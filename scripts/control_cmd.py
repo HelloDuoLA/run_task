@@ -80,7 +80,7 @@ def talker():
     rospy.init_node('control_cmd')
 
     # 设置发布消息的频率，1Hz
-    rate = rospy.Rate(1)
+    rate = rospy.Rate(10)
     
     ControlCmdActionServer()
 
