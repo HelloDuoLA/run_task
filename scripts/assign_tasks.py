@@ -468,12 +468,16 @@ class Image_rec_actuator():
                 for i in range(snack_count):
                     snack_xyz                = result.obj_positions[i].position
                     arm_id                   = result.obj_positions[i].arm_id
-                    task_grasp_snack         = current_task.need_modify_tasks.task_list[i*3].modify_xyz_select_arm(snack_xyz,arm_id)
-                    task_lossen_snack_pre    = current_task.need_modify_tasks.task_list[i*3+1].select_arm(arm_id)
-                    task_lossen_snack        = current_task.need_modify_tasks.task_list[i*3+2].select_arm(arm_id)
-                    task_grasp_snack.status  = task.Task.Task_status.BEREADY
+                    task_grasp_snack:task.Task_manipulation         = current_task.need_modify_tasks.task_list[i*3]
+                    task_grasp_snack.modify_xyz_select_arm(snack_xyz,arm_id)
+                    task_lossen_snack_pre:task.Task_manipulation    = current_task.need_modify_tasks.task_list[i*3+1]
+                    task_lossen_snack_pre.select_arm(arm_id)
+                    task_lossen_snack:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*3+2]
+                    task_lossen_snack.select_arm(arm_id)
+                    
+                    task_grasp_snack.status      = task.Task.Task_status.BEREADY
                     task_lossen_snack_pre.status = task.Task.Task_status.BEREADY
-                    task_lossen_snack.status = task.Task.Task_status.BEREADY
+                    task_lossen_snack.status     = task.Task.Task_status.BEREADY
             except:
                 rospy.loginfo("!!!!snack count is not equal to task count")
                 
@@ -494,9 +498,7 @@ class Image_rec_actuator():
                 if need_modify_task.task_type == task.Task_type.Task_manipulation.Lossen_snack:
                     # 改变xy
                     need_modify_task.modify_target_xy(lossen_snack_xyz,result.camera_id)
-                    # 修改任务状态
-                    # TODO: 这里beready 会不会不太好
-                    need_modify_task.status = task.Task.Task_status.BEREADY
+                    # !!!不改变任务状态
                 # 抓容器, 变的是xy坐标
                 elif need_modify_task.task_type == task.Task_type.Task_manipulation.Grasp_container:
                     # !修改高度
