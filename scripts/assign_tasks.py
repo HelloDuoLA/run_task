@@ -1488,7 +1488,7 @@ class Order_driven_task_schedul():
         
         #  左臂抬到指定位置识别咖啡机开关 关
         task_left_arm_to_rec_coffee_machine_turn_off = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_machine_switch, None, utilis.Device_id.LEFT, \
-            system.anchor_point.left_arm_machine_turn_on_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.X_YZ,\
+            system.anchor_point.left_arm_machine_turn_off_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.X_YZ,\
                 name="left arm move to rec coffee machine turn off")
         task_left_arm_to_rec_coffee_machine_turn_off.parallel = task.Task.Task_parallel.ALL
         task_left_arm_to_rec_coffee_machine_turn_off.add_predecessor_task(task_left_arm_turn_on_machine)                  # 前置任务, 打开了之后再识别关
@@ -1512,6 +1512,7 @@ class Order_driven_task_schedul():
         #  机器人后退
         task_move_back_from_drink_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             back_meters = system.anchor_point.drink_deck_move_back_length)
+        task_move_back_from_drink_desk.add_predecessor_task(task_left_arm_turn_off_machine) 
         task_move_back_from_drink_desk.parallel = task.Task.Task_parallel.ALL
         tasks_get_drink.add(task_move_back_from_drink_desk)
         
@@ -1624,7 +1625,7 @@ def test_order_snack():
     
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
-    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
+    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
     
     log.log_tasks_info(tasks_get_drink,"new_all_task.log")
