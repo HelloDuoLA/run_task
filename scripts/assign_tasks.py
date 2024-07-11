@@ -498,7 +498,7 @@ class Image_rec_actuator():
                 if need_modify_task.task_type == task.Task_type.Task_manipulation.Lossen_snack:
                     # 改变xy
                     need_modify_task.modify_target_xy(lossen_snack_xyz,result.camera_id)
-                    # 不改变任务状态
+                    # !!!不改变任务状态
                 # 抓容器, 变的是xy坐标
                 elif need_modify_task.task_type == task.Task_type.Task_manipulation.Grasp_container:
                     # !修改高度
