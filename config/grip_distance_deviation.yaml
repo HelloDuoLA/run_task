@@ -12,14 +12,14 @@ LeftArmGripContainer:
 
 # 左臂准备 开 咖啡开关
 LeftArmGripTurnOnMachineSwitch:
-  x_bias: -140
+  x_bias: -160
   y_bias: -78
   z_bias: 20               #原为20
 
 # 左臂准备 关 咖啡开关
 # TODO:待定
 LeftArmGripTurnOFFMachineSwitch:
-  x_bias: -140
+  x_bias: -160
   y_bias: -78
   z_bias: 20  
 
