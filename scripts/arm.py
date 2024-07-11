@@ -215,7 +215,6 @@ class Arm_controller():
             
             
             if goal.arm_move_method != ArmMoveMethod.OPLY_GRIP:
-
                 # 2. 给机械臂发送目标值
                 self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose, goal.arm_move_method)
             

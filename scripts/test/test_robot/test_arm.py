@@ -60,11 +60,11 @@ mr.set_gripper_mode(0)
 # 0开，1合
 ml.get_gripper_mode()
 mr.get_gripper_mode()
-ml.set_gripper_state(0,100)
-ml.set_gripper_state(1,100)
+ml.set_gripper_state(0,50)
+ml.set_gripper_state(1,50)
 
-mr.set_gripper_state(0,100)
-mr.set_gripper_state(1,100)
+mr.set_gripper_state(0,50)
+mr.set_gripper_state(1,50)
 
 # 抓爪调零
 

@@ -1481,7 +1481,7 @@ class Order_driven_task_schedul():
         task_left_arm_turn_on_machine_click = task.Task_manipulation(task.Task_type.Task_manipulation.Turn_off_coffee_machine,None,utilis.Device_id.LEFT,\
             copy.deepcopy(system.anchor_point.left_arm_machine_turn_on_click), arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
                 name="left arm turn on machine click!!!")
-        task_left_arm_turn_on_machine_pre.parallel = task.Task.Task_parallel.ALL
+        task_left_arm_turn_on_machine_click.parallel = task.Task.Task_parallel.ALL
         task_left_arm_turn_on_machine_click.status   = task.Task.Task_status.BEREADY  # 需要参数
         task_left_arm_turn_on_machine_click.add_predecessor_task(task_left_arm_turn_on_machine_pre)
         tasks_get_drink.add(task_left_arm_turn_on_machine_click)
