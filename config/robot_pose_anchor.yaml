@@ -10,8 +10,8 @@ InitialPose:
 
 # 零食台位姿
 SnackDesk:
-  position_x: 0.224
-  position_y: -2.44844
+  position_x: 0.135
+  position_y: -2.46844
   position_z: 0
   orientation_x: 0
   orientation_y: 0
@@ -20,7 +20,7 @@ SnackDesk:
   
 # 饮料台位姿
 DrinkDesk:
-  position_x: 0.423
+  position_x: 0.441
   position_y: -2.46856
   position_z: 0
   orientation_x: 0
@@ -29,19 +29,19 @@ DrinkDesk:
   orientation_w: 0.739843
 
 # 中间点位姿
-MiddlePoint:
-  position_x: 0.770596
-  position_y: -0.945269
-  position_z: 0
-  orientation_x: 0
-  orientation_y: 0
-  orientation_z: -0.65278
-  orientation_w: 0.757444
+# MiddlePoint:
+#   position_x: 0.770596
+#   position_y: -0.945269
+#   position_z: 0
+#   orientation_x: 0
+#   orientation_y: 0
+#   orientation_z: -0.65278
+#   orientation_w: 0.757444
 
 # 右服务台位姿
 RightServiceDesk:
-  position_x: 2.10
-  position_y: -0.83
+  position_x: 2.20
+  position_y: -0.80
   position_z: 0
   orientation_x: 0
   orientation_y: 0
@@ -51,8 +51,8 @@ RightServiceDesk:
 
 # 左服务台位姿
 LeftServiceDesk:
-  position_x:  2.10
-  position_y: -2.21
+  position_x:  2.24
+  position_y: -2.23
   position_z: 0
   orientation_x: 0
   orientation_y: 0
