@@ -482,8 +482,10 @@ class Image_rec_actuator():
             # 获取结果
             for obj_position in result.obj_positions:
                 if obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.CONTAINER:
+                    # 抓取容器区域
                     container_xyz = obj_position.position
                 elif obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK:
+                    # 放置零食区域
                     lossen_snack_xyz = obj_position.position
             
             # 修改值 

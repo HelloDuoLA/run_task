@@ -136,10 +136,17 @@ class STag_result_list():
                         stag_result.base_coords[1] = arm_poses[1] - stag_result.image_coords[1] + LeftArmGripContainer.y # y = y - y + bias
                         stag_result.base_coords[2] = LeftArmGripContainer.const_z                     #固定z坐标
                         stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
-                        rospy.loginfo(f"arm_poses    : {arm_poses}")
-                        rospy.loginfo(f"image_coords : {stag_result.image_coords}")
-                        rospy.loginfo(f"stag_result  : {stag_result.base_coords}")
                         new_stag_result_list.append(stag_result)
+                        
+                        # 零食放置点
+                        put_snack_point = copy.deepcopy(stag_result)
+                        put_snack_point.base_coords[0] = stag_result.base_coords[0] + LeftArmGripSnack.x
+                        put_snack_point.base_coords[1] = stag_result.base_coords[1] + LeftArmGripSnack.y
+                        put_snack_point.base_coords[2] = stag_result.base_coords[2] + LeftArmGripSnack.z
+                        put_snack_point.stag_id = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
+                        
+                        new_stag_result_list.append(put_snack_point)
+                        
                 self.stag_result_list = new_stag_result_list
             elif arm_id == utilis.Device_id.RIGHT:
                 # 右手
@@ -153,6 +160,14 @@ class STag_result_list():
                         stag_result.base_coords[2] = RightArmGripContainer.const_z                     #固定z坐标
                         stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
                         new_stag_result_list.append(stag_result)
+                        
+                        # 零食放置点
+                        put_snack_point = copy.deepcopy(stag_result)
+                        put_snack_point.base_coords[0] = stag_result.base_coords[0] + RightArmGripSnack.x
+                        put_snack_point.base_coords[1] = stag_result.base_coords[1] + RightArmGripSnack.y
+                        put_snack_point.base_coords[2] = stag_result.base_coords[2] + RightArmGripSnack.z
+                        put_snack_point.stag_id = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
+                        
                 self.stag_result_list = new_stag_result_list
         # 咖啡机和杯子
         elif rec_task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE:
@@ -631,12 +646,15 @@ def init_camera():
 def init_const():
     global LeftArmGripSnack, LeftArmGripContainer, LeftArmGripTurnOnMachineSwitch, LeftArmGripTurnOFFMachineSwitch
     global RightArmGripSnack, RightArmGripContainer, RightArmGripCup, RightArmWaterCup
+    global LeftArmLossenSnack, RightArmLossenSnack 
     # 获取项偏移
     LeftArmGripSnack                = get_deviation("LeftArmGripSnack")
+    LeftArmLossenSnack              = get_deviation("LeftArmLossenSnack")
     LeftArmGripContainer            = get_deviation("LeftArmGripContainer",True)
     LeftArmGripTurnOnMachineSwitch  = get_deviation("LeftArmGripTurnOnMachineSwitch")
     LeftArmGripTurnOFFMachineSwitch = get_deviation("LeftArmGripTurnOFFMachineSwitch")
     RightArmGripSnack               = get_deviation("RightArmGripSnack")
+    RightArmLossenSnack             = get_deviation("RightArmLossenSnack")
     RightArmGripContainer           = get_deviation("RightArmGripContainer",True)
     RightArmGripCup                 = get_deviation("RightArmGripCup",True)
     RightArmWaterCup                = get_deviation("RightArmWaterCup",True)
