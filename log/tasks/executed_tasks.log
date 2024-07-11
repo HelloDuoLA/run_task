@@ -1,7 +1,24 @@
-07-11 12:17:45
+07-11 12:38:44
 
 --------------------------------------------------
 
+
+Task       : Task_navigate Move_backward
+Name       : move back from service desk
+Group_id   : 9
+Index      : 2
+Create_time: 1720672717072156906
+Start_time : 1720672721036311149
+End_time   : -999
+Finsih_cb  : None
+Status     : RUNNING
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [0:Task_manipulation Lossen_cup] 
+back_meters: 0.2
 --------------------------------------------------
 
 

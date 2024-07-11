@@ -1642,12 +1642,12 @@ def test_order_snack():
     task_lossen_cup = system.order_driven_task_schedul.test_tasks_lossen_cup()
     task_lossen_cup.update_group_id(9)
 
-    log.log_tasks_info(tasks_get_drink,"new_all_task.log")
+    log.log_tasks_info(task_lossen_cup,"new_all_task.log")
     
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
-    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
-    # system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
+    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
+    system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
     
 
     
