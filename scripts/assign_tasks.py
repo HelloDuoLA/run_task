@@ -405,6 +405,10 @@ class Manipulator_actuator():
         # 任务自带的回调
         if current_task.finish_cb is not None:
             current_task.finish_cb(status, result)
+        
+        # 任务完成暂停时间
+        if current_task.sleep_time != 0:
+            time.sleep(current_task.sleep_time)
             
         # 更新机械臂状态
         system.robot.update_arm_status(current_task.arm_id,robot.manipulation_status.arm.status.IDLE)
@@ -1083,6 +1087,7 @@ class Order_driven_task_schedul():
         task_left_arm_turn_on_machine_click.parallel = task.Task.Task_parallel.ALL
         task_left_arm_turn_on_machine_click.status   = task.Task.Task_status.BEREADY  
         task_left_arm_turn_on_machine_click.add_predecessor_task(task_left_arm_turn_on_machine_pre)
+        task_left_arm_turn_on_machine_click.set_sleep_time(2)                          # 等待两秒
         tasks_get_drink.add(task_left_arm_turn_on_machine_click)
         
         #  右臂将杯子挪到咖啡机
@@ -1123,7 +1128,8 @@ class Order_driven_task_schedul():
             copy.deepcopy(system.anchor_point.left_arm_machine_turn_off_click), arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
                 name="left arm turn off machine click!!!")
         task_left_arm_turn_off_machine_click.status   = task.Task.Task_status.BEREADY  # 需要参数
-        task_left_arm_turn_off_machine_click.add_predecessor_task(task_left_arm_turn_off_machine_pre)
+        task_left_arm_turn_off_machine_click.add_predecessor_task(task_left_arm_turn_off_machine_pre)  # 前置任务,抓具放在了开关上面
+        task_left_arm_turn_off_machine_click.set_sleep_time(3)                                         # 等待3s
         tasks_get_drink.add(task_left_arm_turn_off_machine_click)
         
         #  机器人后退
