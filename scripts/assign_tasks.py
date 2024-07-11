@@ -1311,9 +1311,9 @@ class Order_driven_task_schedul():
 
         # 零食抓取任务
         # TODO:调试框架期间, 不夹取零食
-        snack_count = snack_list.get_all_snack_count()
-        for i in range(snack_count):
-            tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
+        # snack_count = snack_list.get_all_snack_count()
+        # for i in range(snack_count):
+        #     tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
 
         # 功能暂停任务
         task_function_pause = task.Task_function(task.Task_type.Task_function.PAUSE, None,name="function pause")

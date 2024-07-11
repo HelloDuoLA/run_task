@@ -201,7 +201,8 @@ class Arm_controller():
         
         # 执行
         def execute_cb(self, goal:msg.MoveArmGoal):
-            rospy.loginfo(f"node: {rospy.get_name()}, arm action server execute. goal: {goal}")
+            # rospy.loginfo(f"node: {rospy.get_name()}, arm action server execute. goal: {goal}")
+            rospy.loginfo(f"node: {rospy.get_name()}, arm action server execute.")
             # 1. 解析目标值
             goal_arm_pose     = goal.arm_pose
             goal_grasp_flag   = goal.grasp_flag

@@ -143,7 +143,7 @@ class STag_result_list():
                         put_snack_point.base_coords[0] = stag_result.base_coords[0] + LeftArmGripSnack.x
                         put_snack_point.base_coords[1] = stag_result.base_coords[1] + LeftArmGripSnack.y
                         put_snack_point.base_coords[2] = stag_result.base_coords[2] + LeftArmGripSnack.z
-                        put_snack_point.stag_id = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
+                        put_snack_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
                         
                         new_stag_result_list.append(put_snack_point)
                         
@@ -166,7 +166,9 @@ class STag_result_list():
                         put_snack_point.base_coords[0] = stag_result.base_coords[0] + RightArmGripSnack.x
                         put_snack_point.base_coords[1] = stag_result.base_coords[1] + RightArmGripSnack.y
                         put_snack_point.base_coords[2] = stag_result.base_coords[2] + RightArmGripSnack.z
-                        put_snack_point.stag_id = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
+                        put_snack_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
+                        
+                        new_stag_result_list.append(put_snack_point)
                         
                 self.stag_result_list = new_stag_result_list
         # 咖啡机和杯子
