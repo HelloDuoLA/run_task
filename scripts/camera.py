@@ -140,9 +140,9 @@ class STag_result_list():
                         
                         # 零食放置点
                         put_snack_point = copy.deepcopy(stag_result)
-                        put_snack_point.base_coords[0] = stag_result.base_coords[0] + LeftArmGripSnack.x
-                        put_snack_point.base_coords[1] = stag_result.base_coords[1] + LeftArmGripSnack.y
-                        put_snack_point.base_coords[2] = stag_result.base_coords[2] + LeftArmGripSnack.z
+                        put_snack_point.base_coords[0] = stag_result.base_coords[0] + LeftArmLossenSnack.x
+                        put_snack_point.base_coords[1] = stag_result.base_coords[1] + LeftArmLossenSnack.y
+                        put_snack_point.base_coords[2] = stag_result.base_coords[2] + LeftArmLossenSnack.z
                         put_snack_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
                         
                         new_stag_result_list.append(put_snack_point)
@@ -163,9 +163,9 @@ class STag_result_list():
                         
                         # 零食放置点
                         put_snack_point = copy.deepcopy(stag_result)
-                        put_snack_point.base_coords[0] = stag_result.base_coords[0] + RightArmGripSnack.x
-                        put_snack_point.base_coords[1] = stag_result.base_coords[1] + RightArmGripSnack.y
-                        put_snack_point.base_coords[2] = stag_result.base_coords[2] + RightArmGripSnack.z
+                        put_snack_point.base_coords[0] = stag_result.base_coords[0] + RightArmLossenSnack.x
+                        put_snack_point.base_coords[1] = stag_result.base_coords[1] + RightArmLossenSnack.y
+                        put_snack_point.base_coords[2] = stag_result.base_coords[2] + RightArmLossenSnack.z
                         put_snack_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
                         
                         new_stag_result_list.append(put_snack_point)
@@ -609,6 +609,9 @@ class Grip_deviation():
         self.y = y
         self.z = z
         self.const_z = const_z
+    
+    def __str__(self) -> str:
+        return f"x : {self.x} y : {self.y} z : {self.z} const_z : {self.const_z}"
 
 # 获取偏移
 def get_deviation(name,z_is_const=False):
@@ -684,6 +687,9 @@ def talker():
     init_camera_calibration()
 
     recognition_node = Recognition_node()
+    
+    # rospy.loginfo(f"RightArmLossenSnack : {RightArmLossenSnack}")
+    # rospy.loginfo(f"LeftArmLossenSnack :  {LeftArmLossenSnack}")
 
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)

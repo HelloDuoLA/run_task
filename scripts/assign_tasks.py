@@ -1313,9 +1313,9 @@ class Order_driven_task_schedul():
 
         # 零食抓取任务
         # TODO:调试框架期间, 不夹取零食
-        # snack_count = snack_list.get_all_snack_count()
-        # for i in range(snack_count):
-        #     tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
+        snack_count = snack_list.get_all_snack_count()
+        for i in range(snack_count):
+            tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
 
         # 功能暂停任务
         task_function_pause = task.Task_function(task.Task_type.Task_function.PAUSE, None,name="function pause")
@@ -1328,6 +1328,7 @@ class Order_driven_task_schedul():
                         name="left arm grap container prepare")
         task_left_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行
         task_left_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数
+        task_left_arm_grap_container_pre.add_predecessor_task(task_function_pause)
         tasks_pick_snack.add(task_left_arm_grap_container_pre)
         
             # 识别容器绑定 夹取容器准备动作
@@ -1352,6 +1353,7 @@ class Order_driven_task_schedul():
                 [copy.deepcopy(system.anchor_point.right_arm_container_grip_pre)],\
                     [arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.Z_XY,\
                         name="right arm grap container prepare")
+        task_right_arm_grap_container_pre.add_predecessor_task(task_function_pause)
         task_right_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行  
         task_right_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数 
         tasks_pick_snack.add(task_right_arm_grap_container_pre)

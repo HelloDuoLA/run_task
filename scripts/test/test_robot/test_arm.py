@@ -100,3 +100,6 @@ ml.set_servo_calibration(5)
 ml.set_servo_calibration(6)
 
 ml.send_angle(3,20, 100)
+
+
+
