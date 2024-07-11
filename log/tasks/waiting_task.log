@@ -1,4 +1,4 @@
-07-11 20:24:08
+07-11 21:21:41
 
 --------------------------------------------------
 
@@ -7,7 +7,7 @@ Task       : Task_image_rec CONTAINER
 Name       : left camera rec container
 Group_id   : 6
 Index      : 2
-Create_time: 1720700644670569181
+Create_time: 1720704099674661159
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -26,11 +26,34 @@ Need_modify_tasks:
           [14:Task_manipulation Grasp_container]
  
 
+Task       : Task_image_rec CONTAINER
+Name       : right camera rec container
+Group_id   : 6
+Index      : 3
+Create_time: 1720704099674664735
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [1:Task_manipulation Rec_container] 
+Camera_id: RIGHT 
+Snack_list: []
+Need_modify_tasks: 
+          [9:Task_manipulation Lossen_snack]
+          [12:Task_manipulation Lossen_snack]
+          [16:Task_manipulation Grasp_container]
+ 
+
 Task       : Task_manipulation Rec_snack
 Name       : left arm move to rec snack
 Group_id   : 6
 Index      : 4
-Create_time: 1720700644670642375
+Create_time: 1720704099674668312
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -53,7 +76,7 @@ Task       : Task_manipulation Rec_snack
 Name       : right arm move to rec snack
 Group_id   : 6
 Index      : 5
-Create_time: 1720700644670681953
+Create_time: 1720704099674671888
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -76,7 +99,7 @@ Task       : Task_image_rec SNACK
 Name       : two arms rec snack
 Group_id   : 6
 Index      : 6
-Create_time: 1720700644670718908
+Create_time: 1720704099674676656
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -102,7 +125,7 @@ Task       : Task_manipulation Grasp_snack
 Name       : 
 Group_id   : 6
 Index      : 7
-Create_time: 1720700644670796871
+Create_time: 1720704099674682140
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -126,7 +149,7 @@ Task       : Task_manipulation Lossen_snack
 Name       : task_placement_snack_middle
 Group_id   : 6
 Index      : 8
-Create_time: 1720700644670844078
+Create_time: 1720704099674685955
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -150,7 +173,7 @@ Task       : Task_manipulation Lossen_snack
 Name       : 
 Group_id   : 6
 Index      : 9
-Create_time: 1720700644670987844
+Create_time: 1720704099674690008
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -174,7 +197,7 @@ Task       : Task_manipulation Grasp_snack
 Name       : 
 Group_id   : 6
 Index      : 10
-Create_time: 1720700644671107292
+Create_time: 1720704099674695968
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -198,7 +221,7 @@ Task       : Task_manipulation Lossen_snack
 Name       : task_placement_snack_middle
 Group_id   : 6
 Index      : 11
-Create_time: 1720700644671199560
+Create_time: 1720704099674701213
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -222,7 +245,7 @@ Task       : Task_manipulation Lossen_snack
 Name       : 
 Group_id   : 6
 Index      : 12
-Create_time: 1720700644671244144
+Create_time: 1720704099674705982
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -246,7 +269,7 @@ Task       : Task_function PAUSE
 Name       : function pause
 Group_id   : 6
 Index      : 13
-Create_time: 1720700644671314954
+Create_time: 1720704099674710750
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -263,7 +286,7 @@ Task       : Task_manipulation Grasp_container
 Name       : left arm grap container prepare
 Group_id   : 6
 Index      : 14
-Create_time: 1720700644671503305
+Create_time: 1720704099674726724
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -286,7 +309,7 @@ Task       : Task_manipulation Grasp_container
 Name       : left arm grap container
 Group_id   : 6
 Index      : 15
-Create_time: 1720700644671818733
+Create_time: 1720704099674740791
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -309,7 +332,7 @@ Task       : Task_manipulation Grasp_container
 Name       : right arm grap container prepare
 Group_id   : 6
 Index      : 16
-Create_time: 1720700644671976089
+Create_time: 1720704099674753904
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -332,7 +355,7 @@ Task       : Task_manipulation Grasp_container
 Name       : right arm grap container
 Group_id   : 6
 Index      : 17
-Create_time: 1720700644672433376
+Create_time: 1720704099674768924
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -355,7 +378,7 @@ Task       : Task_manipulation Deliever_container
 Name       : two arms dilivery container
 Group_id   : 6
 Index      : 18
-Create_time: 1720700644672522544
+Create_time: 1720704099674774646
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
