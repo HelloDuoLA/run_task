@@ -225,10 +225,7 @@ class Arm_controller():
             # 后关闭 and 先打开后关闭
             elif goal_grasp_flag == GripMethod.OPEN_CLOSE or goal_grasp_flag == GripMethod.CLOSE:
                 self.close_grasp()
-                
-            # 最终位移
-            if goal.click_length != 0:
-                self.move_click_length(goal.click_length) 
+        
             
             # 构建返回数据
             result = msg.MoveArmResult()
@@ -238,13 +235,6 @@ class Arm_controller():
 
             self.action_server.set_succeeded(result) #可以添加结果参数
         
-        # 最终z轴移动 
-        def move_click_length(self, length_mm):
-            current_base_coords = self.get_base_coords()
-            current_base_coords[2] = current_base_coords[2] + length_mm
-            result = self.control_instance.send_base_coords(current_base_coords,100)
-            self.wait()
-            return result
         # 关闭抓爪 
         def close_grasp(self):
             result = self.control_instance.set_gripper_state(1,100)
