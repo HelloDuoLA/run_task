@@ -201,7 +201,7 @@ class Arm_controller():
         
         # 执行
         def execute_cb(self, goal:msg.MoveArmGoal):
-            # rospy.loginfo(f"node: {rospy.get_name()}, arm action server execute. goal: {goal}")
+            rospy.loginfo(f"node: {rospy.get_name()}, arm action server execute. goal: {goal}")
             # 1. 解析目标值
             goal_arm_pose     = goal.arm_pose
             goal_grasp_flag   = goal.grasp_flag
@@ -227,8 +227,8 @@ class Arm_controller():
                 self.close_grasp()
                 
             # 最终位移
-            if goal.clicked_length != 0:
-                self.move_click_length(goal.clicked_length) 
+            if goal.click_length != 0:
+                self.move_click_length(goal.click_length) 
             
             # 构建返回数据
             result = msg.MoveArmResult()
@@ -446,6 +446,7 @@ class Arm_controller():
             while(self.control_instance.is_moving()):
                 # print("arm is moving")
                 time.sleep(0.03)
+                
         #  可靠地获取当前的基座标
         def get_base_coords(self):
             current_base_coords     = self.control_instance.get_base_coords()

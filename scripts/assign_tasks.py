@@ -151,7 +151,9 @@ class System():
             self.left_arm_machine_turn_on_rec  = self._get_arm_anchor_angle("LeftArmMachineTurnOnRec")    # 左臂 开 咖啡机识别
             self.left_arm_machine_turn_off_rec = self._get_arm_anchor_angle("LeftArmMachineTurnOFFRec")   # 左臂 关 咖啡机识别
             self.left_arm_machine_turn_on_pre  = self._get_arm_anchor_coord("LeftArmMachineTurnOnPre")    # 左臂 开 咖啡机预备动作
+            self.left_arm_machine_turn_on_click= self._get_arm_anchor_coord("LeftArmMachineTurnOnClick")    # 左臂 开 咖啡机 向上拨一拨
             self.left_arm_machine_turn_off_pre = self._get_arm_anchor_coord("LeftArmMachineTurnOffPre")   # 左臂 关 咖啡机预备动作
+            self.left_arm_machine_turn_off_click= self._get_arm_anchor_coord("LeftArmMachineTurnOffClick")   # 左臂 关 咖啡机预备动作
             
             
             self.right_arm_idle                = self._get_arm_anchor_angle("RightArmIdle")               # 右臂空闲
@@ -344,7 +346,7 @@ class Manipulator_actuator():
             goal.grasp_speed          = manipulation_task.clamp_speed
             goal.arm_move_method      = manipulation_task.arm_move_method.value
             goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
-            goal.clicked_length       = manipulation_task.click_length
+            goal.click_length         = manipulation_task.click_length
             self.left_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
         # 右臂
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
@@ -358,7 +360,7 @@ class Manipulator_actuator():
             goal.grasp_speed          = manipulation_task.clamp_speed
             goal.arm_move_method      = manipulation_task.arm_move_method.value
             goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
-            goal.clicked_length       = manipulation_task.click_length
+            goal.click_length         = manipulation_task.click_length
             self.right_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
             
         elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
@@ -374,7 +376,7 @@ class Manipulator_actuator():
                     left_goal.grasp_speed          = manipulation_task.clamp_speed
                     left_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     left_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
-                    left_goal.clicked_length       = manipulation_task.click_length
+                    left_goal.click_length         = manipulation_task.click_length
                 elif manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.RIGHT:
                     right_goal.task_index           = task_index
                     right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
@@ -384,7 +386,7 @@ class Manipulator_actuator():
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
                     right_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
-                    right_goal.clicked_length       = manipulation_task.click_length
+                    right_goal.click_length       = manipulation_task.click_length
             self.left_arm_ac.send_goal(left_goal,self.done_callback,self.active_callback,self.feedback_callback)
             self.right_arm_ac.send_goal(right_goal,self.done_callback,self.active_callback,self.feedback_callback)
 
@@ -1076,7 +1078,12 @@ class Order_driven_task_schedul():
         task_left_arm_turn_on_machine.status   = task.Task.Task_status.NOTREADY  # 需要参数
         tasks_get_drink.add(task_left_arm_turn_on_machine)
             # 绑定左臂识别任务
-        task_left_camera_rec_coffee_machine_turn_on.add_need_modify_task(task_left_arm_turn_on_machine)  
+        task_left_camera_rec_coffee_machine_turn_on.add_need_modify_task(task_left_arm_turn_on_machine) 
+        
+        task_left_arm_turn_on_click =  task.Task_manipulation(task.Task_type.Task_manipulation.Turn_on_coffee_machine,None,utilis.Device_id.LEFT,\
+            copy.deepcopy(system.anchor_point.left_arm_machine_turn_off_pre),arm.GripMethod.CLOSE,\
+                arm_move_method = arm.ArmMoveMethod.Y_X_Z, click_length=10,\
+                    name="left arm turn on machine prepare")
         
         #  右臂将杯子挪到咖啡机
         task_right_arm_water_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Water_cup,None,utilis.Device_id.RIGHT,\
@@ -1625,7 +1632,7 @@ def test_order_snack():
     
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
-    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
+    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
     
     log.log_tasks_info(tasks_get_drink,"new_all_task.log")

@@ -85,8 +85,9 @@ class Manipulator_actuator():
     def __init__(self):
         self.left_arm_ac  = actionlib.SimpleActionClient(utilis.Topic_name.left_arm_action,  msg.MoveArmAction)
         self.right_arm_ac = actionlib.SimpleActionClient(utilis.Topic_name.right_arm_action, msg.MoveArmAction)
-        rospy.loginfo("waiting for arm action server")
+        rospy.loginfo("waiting for left arm action server")
         self.left_arm_ac.wait_for_server()
+        rospy.loginfo("waiting for right arm action server")
         self.right_arm_ac.wait_for_server()
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
     
@@ -108,9 +109,10 @@ class Manipulator_actuator():
             goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
             goal.grasp_speed          = manipulation_task.clamp_speed
+            goal.arm_move_method      = manipulation_task.arm_move_method.value
             goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
+            goal.click_length         = manipulation_task.click_length
             self.left_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
-            rospy.loginfo(f"left arm goal:{goal}")
         # 右臂
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
             # 设置action 目标
@@ -121,9 +123,11 @@ class Manipulator_actuator():
             goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
             goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
             goal.grasp_speed          = manipulation_task.clamp_speed
+            goal.arm_move_method      = manipulation_task.arm_move_method.value
             goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
+            goal.click_length         = manipulation_task.click_length
             self.right_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
-            rospy.loginfo(f"right arm goal:{goal}")
+            
         elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
             left_goal              = msg.MoveArmGoal()
             right_goal             = msg.MoveArmGoal()
@@ -133,17 +137,21 @@ class Manipulator_actuator():
                     left_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
                     left_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
                     left_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
+                    left_goal.grasp_flag           = manipulation_task.target_clamps_status[i].value
                     left_goal.grasp_speed          = manipulation_task.clamp_speed
+                    left_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     left_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
+                    left_goal.click_length         = manipulation_task.click_length
                 elif manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.RIGHT:
                     right_goal.task_index           = task_index
                     right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
                     right_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[i].type_id.value
                     right_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[i].arm_id.value
+                    right_goal.grasp_flag           = manipulation_task.target_clamps_status[i].value
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
+                    right_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
-            rospy.loginfo(f"left arm goal:{left_goal}")
-            rospy.loginfo(f"right arm goal:{right_goal}")
+                    right_goal.click_length         = manipulation_task.click_length
             self.left_arm_ac.send_goal(left_goal,self.done_callback,self.active_callback,self.feedback_callback)
             self.right_arm_ac.send_goal(right_goal,self.done_callback,self.active_callback,self.feedback_callback)
 
@@ -161,7 +169,10 @@ class Manipulator_actuator():
     # 反馈回调
     @staticmethod
     def feedback_callback(feedback:msg.MoveArmFeedback):
-        rospy.loginfo(f"node: {rospy.get_name()}, manipulator feedback. {feedback}")
+        # rospy.loginfo(f"node: {rospy.get_name()}, manipulator feedback. {feedback}")
+        pass
+
+
         
 
 class Manipulator_tasks():
@@ -264,13 +275,18 @@ def talker():
     manipulator_actuator = Manipulator_actuator()
     tasks = Manipulator_tasks()
     
-    task_left_arm_open_grip = task.Task_manipulation(task.Task_type.Task_manipulation.Move,None,utilis.Device_id.LEFT,\
-            grip_everything.left_arm_snack_rec,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ)
-    task_right_arm_open_grip = task.Task_manipulation(task.Task_type.Task_manipulation.Move,None,utilis.Device_id.RIGHT,\
-            grip_everything.right_arm_snack_rec,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ)
+    task_test = task.Task_manipulation(task.Task_type.Task_manipulation.Move,None,utilis.Device_id.LEFT,\
+            grip_everything.left_arm_machine_turn_off_rec,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,click_length=-30)
+    manipulator_actuator.run(task_test)
     
-    manipulator_actuator.run(task_left_arm_open_grip)
-    manipulator_actuator.run(task_right_arm_open_grip)
+    # task_left_arm_open_grip = task.Task_manipulation(task.Task_type.Task_manipulation.Move,None,utilis.Device_id.LEFT,\
+    #         grip_everything.left_arm_snack_rec,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ)
+    # task_right_arm_open_grip = task.Task_manipulation(task.Task_type.Task_manipulation.Move,None,utilis.Device_id.RIGHT,\
+    #         grip_everything.right_arm_snack_rec,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ)
+    
+    
+    # manipulator_actuator.run(task_left_arm_open_grip)
+    # manipulator_actuator.run(task_right_arm_open_grip)
     # manipulator_actuator.run(tasks.task_left_arm_to_rec_snack)
     # manipulator_actuator.run(tasks.task_right_arm_to_rec_snack)
     # manipulator_actuator.run(tasks.task_arms_idle)

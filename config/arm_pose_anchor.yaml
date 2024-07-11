@@ -64,10 +64,22 @@ LeftArmMachineTurnOnPre:
   # x y z 都不确定, 手势确定
   coords:  [-999, -999, -999, -90, 0.0, -90]
 
+# 左臂咖啡机开启时向上拨一拨
+LeftArmMachineTurnOnClick:
+  # x y z 都不确定, 手势确定
+  coords:  [0, 0, 20, 0, 0, 0]
+
+
 # 左臂咖啡机关闭的位点
 LeftArmMachineTurnOffPre:
   # x y z 都不确定, 手势确定
   coords:  [-999, -999, -999, -90, 0.0, -90]
+
+
+# 左臂咖啡机关闭时向下拨一拨
+LeftArmMachineTurnOffClick:
+  coords:  [0, 0, -20, 0, 0, 0]
+
 
 # !TODO:右臂
 # 右臂空闲放置点
