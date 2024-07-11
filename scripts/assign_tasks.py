@@ -604,7 +604,9 @@ class Task_manager():
     @staticmethod
     def timer_callback(event):
         # rospy.loginfo("Task manager timer callback")
-        for current_task in system.task_manager.waiting_task.task_list:
+        index = 0
+        while index < len(system.task_manager.waiting_task.task_list):
+            current_task = system.task_manager.waiting_task.task_list[index]
             return_code = system.task_manager.task_can_run(current_task)
             rospy.loginfo(f"task {current_task.task_index} return code is {return_code}")
             # 不能运行, 也不能下一个
@@ -612,6 +614,7 @@ class Task_manager():
                 break
             # 不能运行, 但是能下一个
             elif return_code == Task_manager.Run_task_return_code.cannot_run_can_next:
+                index += 1  # 下一个执行序号+1
                 continue
             else:
                 # 导航任务
