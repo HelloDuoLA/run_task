@@ -29,8 +29,8 @@ import control_cmd
 
 DEBUG_NAVIGATION = False     # 导航调试中, 则运动到桌子的任务均为非并行任务, 并且在完成之后需要输入任意字符才能下一步
 
-WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
-# WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
+# WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
+WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
 
 # 初始化
 class System():
@@ -492,8 +492,10 @@ class Image_rec_actuator():
             for need_modify_task in current_task.need_modify_tasks.task_list:
                 # 松开零食
                 if need_modify_task.task_type == task.Task_type.Task_manipulation.Lossen_snack:
-                    need_modify_task.modify_target_xyz(lossen_snack_xyz,result.camera_id)
+                    # 改变xy
+                    need_modify_task.modify_target_xy(lossen_snack_xyz,result.camera_id)
                     # 修改任务状态
+                    # TODO: 这里beready 会不会不太好
                     need_modify_task.status = task.Task.Task_status.BEREADY
                 # 抓容器, 变的是xy坐标
                 elif need_modify_task.task_type == task.Task_type.Task_manipulation.Grasp_container:
@@ -870,9 +872,9 @@ class Order_driven_task_schedul():
 
         # 零食抓取任务
         # TODO:调试框架期间, 不夹取零食
-        # snack_count = snack_list.get_all_snack_count()
-        # for i in range(snack_count):
-        #     tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
+        snack_count = snack_list.get_all_snack_count()
+        for i in range(snack_count):
+            tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
 
         # 功能暂停任务
         task_function_pause = task.Task_function(task.Task_type.Task_function.PAUSE, None,name="function pause")
@@ -1222,7 +1224,7 @@ class Order_driven_task_schedul():
         # 放置零食中间位置
         task_placement_snack_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_snack,None,utilis.Device_id.TBD,\
             [system.anchor_point.left_arm_snack_placement_pre,system.anchor_point.right_arm_snack_placement_pre],\
-            target_clamps_status = [arm.GripMethod.DONTCANGE, arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.X_OTHER,\
+            target_clamps_status = [arm.GripMethod.DONTCANGE, arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.X_Y_Z_OTHER,\
             name="task_placement_snack_middle")
         task_placement_snack_pre.status   = task.Task.Task_status.NOTREADY  # 需要选择是左臂还是右臂
         task_placement_snack_pre.parallel = task.Task.Task_parallel.ALL
@@ -1240,9 +1242,9 @@ class Order_driven_task_schedul():
         task_grasp_snack_seq.add(task_placement_snack)
         
         # 将抓取零食任务与图像识别任务绑定
-        snack_rec_task.add_need_modify_task(task_grasp_snack) 
-        snack_rec_task.add_need_modify_task(task_placement_snack_pre) 
-        snack_rec_task.add_need_modify_task(task_placement_snack)
+        snack_rec_task.add_need_modify_task(task_grasp_snack)               # 抓零食
+        snack_rec_task.add_need_modify_task(task_placement_snack_pre)       # 放零食中间点
+        snack_rec_task.add_need_modify_task(task_placement_snack)           # 放零食
         left_arm_container_rec_task.add_need_modify_task(task_placement_snack)
         right_arm_container_rec_task.add_need_modify_task(task_placement_snack)
         
@@ -1309,9 +1311,9 @@ class Order_driven_task_schedul():
 
         # 零食抓取任务
         # TODO:调试框架期间, 不夹取零食
-        # snack_count = snack_list.get_all_snack_count()
-        # for i in range(snack_count):
-        #     tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
+        snack_count = snack_list.get_all_snack_count()
+        for i in range(snack_count):
+            tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
 
         # 功能暂停任务
         task_function_pause = task.Task_function(task.Task_type.Task_function.PAUSE, None,name="function pause")
