@@ -801,10 +801,6 @@ class Order_driven_task_schedul():
         # 添加到任务管理器待执行队列 
         self.task_manager.waiting_task.add(new_task_sequence)
         
-        # 新增任务输出到指定文件
-        # log.log_add_tasks_info(new_task_sequence)
-        # rospy.loginfo(f"new_task_sequence {new_task_sequence}")
-        # print(context)
         return new_task_sequence
         
     # 删除任务
@@ -959,8 +955,7 @@ class Order_driven_task_schedul():
 
         # 机器人后退
         task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            system.anchor_point.snack_deck_move_back_pose,\
-                name="move back from snack desk")
+            system.anchor_point.snack_deck_move_back_pose, name="move back from snack desk")
         task_move_back_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)   # 前置任务, 左臂抓取容器
         task_move_back_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)    # 前置任务, 右臂抓取容器
         task_move_back_from_snack_desk.parallel = task.Task.Task_parallel.ALL
@@ -1010,7 +1005,6 @@ class Order_driven_task_schedul():
             system.anchor_point.right_deck_move_back_pose, name="move back from left service desk")
         else:
             raise ValueError("Invalid table_id")
-                
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL              # 可并行
         task_move_back_from_service_desk.add_predecessor_task(task_arm_placement_container)  # 前置任务, 完成放置容器
         tasks_pick_snack.add(task_move_back_from_service_desk)
@@ -1340,7 +1334,6 @@ class Order_driven_task_schedul():
         tasks_pick_snack.add(task_rec_snack)
 
         # 零食抓取任务
-        # TODO:调试框架期间, 不夹取零食
         snack_count = snack_list.get_all_snack_count()
         for i in range(snack_count):
             tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
@@ -1539,6 +1532,7 @@ class Order_driven_task_schedul():
         task_left_arm_turn_on_machine_click.parallel = task.Task.Task_parallel.ALL
         task_left_arm_turn_on_machine_click.status   = task.Task.Task_status.BEREADY  # 需要参数
         task_left_arm_turn_on_machine_click.add_predecessor_task(task_left_arm_turn_on_machine_pre)
+        task_left_arm_turn_on_machine_click.set_sleep_time(2) 
         tasks_get_drink.add(task_left_arm_turn_on_machine_click)
         
         #  右臂将杯子挪到咖啡机
@@ -1580,6 +1574,7 @@ class Order_driven_task_schedul():
                 name="left arm turn off machine click!!!")
         task_left_arm_turn_off_machine_click.status   = task.Task.Task_status.BEREADY  # 需要参数
         task_left_arm_turn_off_machine_click.add_predecessor_task(task_left_arm_turn_off_machine_pre)
+        task_left_arm_turn_off_machine_click.set_sleep_time(3)  
         tasks_get_drink.add(task_left_arm_turn_off_machine_click)
         
         
@@ -1688,7 +1683,7 @@ def test_order_snack():
     tasks_get_drink = system.order_driven_task_schedul.create_tasks_get_drink(order_info.table_id)
     tasks_get_drink.update_group_id(3)
 
-    # tasks = system.order_driven_task_schedul.add_task(order_info)
+    tasks = system.order_driven_task_schedul.add_task(order_info)
 
     tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)
     tasks_get_snack.update_group_id(6)
@@ -1707,7 +1702,7 @@ def test_order_snack():
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
-    system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
+    # system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
     
 
     
