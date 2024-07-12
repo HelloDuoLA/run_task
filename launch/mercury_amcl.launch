@@ -4,7 +4,7 @@
     <!-- 不可以使用PointCloud，只能使用LaserScan -->
     <arg name="scan_topic" default="scan"/>
     <arg name="map_topic"  default="/map"/>
-
+    <!-- !不使用odom的嘛？ -->
     <node pkg="amcl" type="amcl" name="amcl" output="screen" clear_params="true">
       <param name="use_map_topic" value="$(arg use_map_topic)"/>
       <!-- 使用rtabmap分布的Map，连接TF树 -->

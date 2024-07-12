@@ -5,7 +5,7 @@
   <!-- 用于robot_state_publisher节点-->
   <node pkg="tf" type="static_transform_publisher" name="base_to_link" args="0 0 0 0 0 0 base_footprint base_link 100" />
   
-  <!--坐标变换，需要实测 -->
+  <!--!坐标变换，需要实测 -->
   <!-- car_mode and tf  brushless_senior_diff-->
   <group if="$(eval car_mode == 'brushless_senior_diff')">
       <node pkg="tf" type="static_transform_publisher" name="base_to_laser"  args="0.093   0.00   0.174 3.14 0 0  base_footprint laser 100" />

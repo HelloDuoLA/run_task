@@ -20,6 +20,7 @@
   <arg name="repeat"  default="false"/>
   <!--是否使用cartographer建图算法 此处默认不使用-->
   <arg name="is_cartographer"  default="false"/>
+  <!-- !是否使用odom_combined -->
   <arg name="odom_frame_id"  default="odom"/>
   
   <!-- turn on base_serial 开启底层单片机的控制节点  -->
