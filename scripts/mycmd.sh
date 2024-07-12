@@ -14,3 +14,5 @@ rosrun rqt_reconfigure rqt_reconfigure
 source ./devel/setup.bash 
 roslaunch run_task mercury_mapping.launch 
 roslaunch run_task mercury_navigation.launch 
+
+git clone git@gitee.com:erzongxie/run_task.git --depth 1

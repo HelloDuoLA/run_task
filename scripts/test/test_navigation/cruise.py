@@ -24,7 +24,7 @@ def talker():
     rospy.init_node('template')
 
     init_pose    = constant_config_to_robot_anchor_pose_orientation("InitialPose")
-    middle_point = constant_config_to_robot_anchor_pose_orientation("MiddlePoint")
+    # middle_point = constant_config_to_robot_anchor_pose_orientation("MiddlePoint")
     SnackDesk    = constant_config_to_robot_anchor_pose_orientation("SnackDesk")
     DrinkDesk    = constant_config_to_robot_anchor_pose_orientation("DrinkDesk")
     RightServiceDesk = constant_config_to_robot_anchor_pose_orientation("RightServiceDesk")
@@ -40,8 +40,8 @@ def talker():
     task_LeftServiceDesk   = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_left_service_desk, None, LeftServiceDesk)
     task_left_service_back = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.2)
     
-    task_middle_point1     = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_middle_point,   None, middle_point)
-    task_middle_point2     = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_middle_point,   None, middle_point)
+    # task_middle_point1     = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_middle_point,   None, middle_point)
+    # task_middle_point2     = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_middle_point,   None, middle_point)
     
     rospy.loginfo(f"init_pose        : {init_pose}")
     rospy.loginfo(f"SnackDesk        : {SnackDesk}")
@@ -52,17 +52,15 @@ def talker():
     # task_list = [task_SnackDesk ,task_RightServiceDesk, task_DrinkDesk ,task_LeftServiceDesk,task_init_pose]
     # task_list = [task_move_back1]
     task_list = []
-    # task_list.append(task_middle_point1)
     # task_list.append(task_SnackDesk)
     # task_list.append(task_snack_desk_back)
     # task_list.append(task_RightServiceDesk)
     # task_list.append(task_right_service_back)
-    # task_list.append(task_middle_point2)
     task_list.append(task_DrinkDesk)
-    task_list.append(task_drink_desk_back)
-    task_list.append(task_LeftServiceDesk)
-    task_list.append(task_left_service_back)
-    task_list.append(task_init_pose)
+    # task_list.append(task_drink_desk_back)
+    # task_list.append(task_LeftServiceDesk)
+    # task_list.append(task_left_service_back)
+    # task_list.append(task_init_pose)
     
     
     navigation_actuator = Navigation_actuator()
