@@ -16,12 +16,12 @@ import task
 import run_task.msg as msg
 import control_cmd
 
-can_run_task = True
 # 让小车在5点之间进行巡航
 
 def talker():
     # 初始化节点，命名为'talker'
     rospy.init_node('template')
+
 
     init_pose        = constant_config_to_robot_anchor_pose_orientation("InitialPose")
     SnackDesk        = constant_config_to_robot_anchor_pose_orientation("SnackDesk")
@@ -34,9 +34,6 @@ def talker():
     left_deck_move_back_pose  =  _get_control_cmd_xy("LeftDeckMoveBack")
     right_deck_move_back_pose =  _get_control_cmd_xy("RightDeckMoveBack")
             
-    
-    
-    
     task_init_pose         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point, None, init_pose)
     task_SnackDesk         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_snack_desk, None, SnackDesk)
     task_snack_desk_back   = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,snack_deck_move_back_pose)
@@ -54,44 +51,98 @@ def talker():
     rospy.loginfo(f"RightServiceDesk : {RightServiceDesk}")
     rospy.loginfo(f"LeftServiceDesk  : {LeftServiceDesk}")
 
-    # task_list = [task_SnackDesk ,task_RightServiceDesk, task_DrinkDesk ,task_LeftServiceDesk,task_init_pose]
-    # task_list = [task_move_back1]
-    task_list = []
+    five_point_task_list = []
     
-    task_list.append(task_SnackDesk)
-    # task_list.append(task_snack_desk_back)
-    # task_list.append(task_RightServiceDesk)
-    # task_list.append(task_right_service_back)
-    # task_list.append(task_DrinkDesk)
-    # task_list.append(task_drink_desk_back)
-    # task_list.append(task_LeftServiceDesk)
-    # task_list.append(task_left_service_back)
-    # task_list.append(task_init_pose)
-    
+    # # 跑五点
+    # if path_num == 0:
+    five_point_task_list.append(task_SnackDesk)
+    five_point_task_list.append(task_snack_desk_back)
+    five_point_task_list.append(task_RightServiceDesk)
+    five_point_task_list.append(task_right_service_back)
+    five_point_task_list.append(task_DrinkDesk)
+    five_point_task_list.append(task_drink_desk_back)
+    five_point_task_list.append(task_LeftServiceDesk)
+    five_point_task_list.append(task_left_service_back)
+    five_point_task_list.append(task_init_pose)
+
     
     navigation_actuator = Navigation_actuator()
     
-    # test()  # 单独前往某一节点
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(1)
     task_index = 0
-    global can_run_task
+    global running
+    
+    # 各个状态位
+    running = False # 是否正在执行任务
+    running_five_point = False # 是否正在执行五点任务
+    
     while not rospy.is_shutdown():
-        if can_run_task  and  task_index < len(task_list):
-            can_run_task = False
-            navigation_actuator.run(task_list[task_index])
-            task_index += 1
-
-        rospy.loginfo("crui")
-        # 按照设定的频率延时
+        rospy.loginfo("cruise running")
+        if running == False and running_five_point == False:
+            rospy.loginfo("输入数字选择目的点")
+            rospy.loginfo("0 : 五点寻航")
+            rospy.loginfo("1 : 前往零食桌")
+            rospy.loginfo("10: 零食桌后退")
+            rospy.loginfo("2 : 前往饮料桌")
+            rospy.loginfo("20: 饮料桌后退")
+            rospy.loginfo("3 : 前往左服务桌")
+            rospy.loginfo("30: 左服务桌后退")
+            rospy.loginfo("4 : 前往右服务桌")
+            rospy.loginfo("40: 右服务桌后退")
+            # 获取用户输入
+            user_input = input("请输入您的指令: ")
+            
+            if user_input == "0":
+                task_index = 0
+                running    = True
+                running_five_point = True
+            elif user_input == "1":
+                navigation_actuator.run(task_SnackDesk)
+                running    = True
+            elif user_input == "10":
+                navigation_actuator.run(task_snack_desk_back)
+                running    = True
+            elif user_input == "2":
+                navigation_actuator.run(task_DrinkDesk)
+                running    = True
+            elif user_input == "20":
+                navigation_actuator.run(task_drink_desk_back)
+                running    = True
+            elif user_input == "3":
+                navigation_actuator.run(task_LeftServiceDesk)
+                running    = True
+            elif user_input == "30":
+                navigation_actuator.run(task_left_service_back)
+                running    = True
+            elif user_input == "4":
+                navigation_actuator.run(task_RightServiceDesk)
+                running    = True
+            elif user_input == "40":
+                navigation_actuator.run(task_right_service_back)
+                running    = True
+        
+            # 打印用户输入
+            rospy.loginfo("您输入的指令是: %s", user_input)
+        else:
+            rospy.loginfo("任务正在执行中")
+            if running_five_point == True:
+                if running == False  and  task_index < len(five_point_task_list):
+                    running = True
+                    navigation_actuator.run(five_point_task_list[task_index])
+                    task_index += 1
+                elif running == False  and task_index == len(five_point_task_list):
+                    running_five_point = False
+                    rospy.loginfo("五点任务执行完毕")
+            
         rate.sleep()
     
 
 def _get_control_cmd_xy(name):
     target_pose = utilis.Pose3D()
     target_pose.x  = rospy.get_param(f'~{name}/x')
-    target_pose.y = rospy.get_param(f'~{name}/y')
+    target_pose.y  = rospy.get_param(f'~{name}/y')
     return target_pose
                
 def constant_config_to_robot_anchor_pose_orientation(anchor_point_name):
@@ -113,16 +164,14 @@ class Navigation_actuator():
         self.move_base_ac   = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         self.control_cmd_ac = actionlib.SimpleActionClient(utilis.Topic_name.control_cmd_action, msg.ControlCmdAction)
         rospy.loginfo("waiting for move_base")
-        self.move_base_ac.wait_for_server()
+        # self.move_base_ac.wait_for_server()
         rospy.loginfo("waiting for control cmd server")
-        self.control_cmd_ac.wait_for_server()
+        # self.control_cmd_ac.wait_for_server()
         
         
     # 运行
     def run(self, navigation_task:task.Task_navigation):
         navigation_task.update_start_status() # 刷新开始时间
-
-        
         # 后退任务
         if navigation_task.task_type == task.Task_type.Task_navigate.Move_backward:
             goal = msg.ControlCmdGoal()
@@ -145,11 +194,13 @@ class Navigation_actuator():
             goal.target_pose.pose.orientation.z = orientation[2]
             goal.target_pose.pose.orientation.w = orientation[3]
             self.move_base_ac.send_goal(goal,self.navigation_task_done_callback,self.navigation_task_active_callback,self.navigation_task_feedback_callback)
-       # 完成回调
+    
+    # 完成回调
     @staticmethod
     def navigation_task_done_callback(status, result):
         rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
-          
+        running = False
+        
     # 激活回调
     @staticmethod
     def navigation_task_active_callback():
@@ -166,7 +217,7 @@ class Navigation_actuator():
     @staticmethod
     def control_cmd_task_done_callback(status, result:msg.ControlCmdResult):
         rospy.loginfo(f"node: {rospy.get_name()}, control cmd task done. status:{status} result:{result}")
-        
+        running = False
     
     # 激活回调
     @staticmethod
