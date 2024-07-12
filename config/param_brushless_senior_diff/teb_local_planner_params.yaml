@@ -56,7 +56,7 @@ TebLocalPlannerROS:
   dynamic_obstacle_inflation_dist: 0.6
 
   #目标点误差允许值
-  xy_goal_tolerance: 0.2  #机器人到达目标点时附近时的弧度偏差允许量，在该偏差内认为已经到达目标点，单位为：m
+  xy_goal_tolerance: 0.02  #机器人到达目标点时附近时的弧度偏差允许量，在该偏差内认为已经到达目标点，单位为：m
   yaw_goal_tolerance: 0.1 #机器人到达目标点时附近时的弧度偏差允许量，在该偏差内认为已经到达目标点单位为：rad
   free_goal_vel: False    #允许机器人以最大速度驶向目的地
 

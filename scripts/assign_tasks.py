@@ -592,7 +592,7 @@ class Task_manager():
         self.can_run_state    = True                  #是否能够执行任务
         # 每0.5s执行一次任务
         # TODO:调试时为3秒
-        timer = rospy.Timer(rospy.Duration(1), self.timer_callback)
+        timer = rospy.Timer(rospy.Duration(0.1), self.timer_callback)
     
     # 任务完成回调
     def tm_task_finish_callback(self, current_task:task.Task, status=None, result=None):
@@ -835,7 +835,7 @@ class Order_driven_task_schedul():
             system.anchor_point.left_arm_container_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="left arm move to rec container")
         task_left_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL             # 可并行
-        task_left_arm_to_rec_contianer.add_predecessor_task(task_left_right_arms_idle)    # 前置任务, 两臂移动到空闲位
+        task_left_arm_to_rec_contianer.add_predecessor_task(task_navigation_to_snack_desk)    # 前置任务, 机器人移动到位
         tasks_pick_snack.add(task_left_arm_to_rec_contianer)
         
         #  将右臂抬到指定位置(食物框识别位置)
@@ -843,7 +843,7 @@ class Order_driven_task_schedul():
             system.anchor_point.right_arm_container_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="right arm move to rec container")
         task_right_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL           # 可并行
-        task_right_arm_to_rec_contianer.add_predecessor_task(task_left_right_arms_idle)  # 前置任务, 两臂移动到空闲位
+        task_right_arm_to_rec_contianer.add_predecessor_task(task_navigation_to_snack_desk)  # 前置任务, 机器人移动到位
         tasks_pick_snack.add(task_right_arm_to_rec_contianer)
         
         #  左摄像头食物框识别(可前后并行，固定)
@@ -1258,7 +1258,7 @@ class Order_driven_task_schedul():
         # 放置零食
         task_placement_snack = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_snack,None,utilis.Device_id.TBD,\
             [system.anchor_point.left_arm_snack_placement,system.anchor_point.right_arm_snack_placement],\
-            target_clamps_status = arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.X_YZ)
+            target_clamps_status = arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.X_Y_Z)
         
         task_placement_snack.parallel = task.Task.Task_parallel.ALL
         task_placement_snack.status = task.Task.Task_status.NOTREADY              # 需要参数

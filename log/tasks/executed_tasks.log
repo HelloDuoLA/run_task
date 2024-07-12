@@ -1,7 +1,33 @@
-07-12 17:12:31
+07-12 20:07:44
 
 --------------------------------------------------
 
+
+Task       : Task_image_rec SNACK
+Name       : two arms rec snack
+Group_id   : 2
+Index      : 8
+Create_time: 1720786022873990297
+Start_time : -999
+End_time   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [6:Task_manipulation Rec_snack] [7:Task_manipulation Rec_snack] 
+Camera_id: LEFT_RIGHT 
+Snack_list: ['id:1,name:YIDA,count:1', 'id:5,name:CHENPIDAN,count:1']
+Need_modify_tasks: 
+          [9:Task_manipulation Grasp_snack]
+          [10:Task_manipulation Lossen_snack]
+          [11:Task_manipulation Lossen_snack]
+          [12:Task_manipulation Grasp_snack]
+          [13:Task_manipulation Lossen_snack]
+          [14:Task_manipulation Lossen_snack]
+ 
 --------------------------------------------------
 
 

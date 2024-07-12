@@ -168,9 +168,11 @@ class Arm_controller():
         rospy.loginfo(f"{self.arm_name} is power status {power_on}")
         while power_on == False:
             rospy.loginfo(f"{self.arm_name} is power status {power_on}")
+            self.control_instance.power_off()
+            time.sleep(0.3)
             self.control_instance.power_on()
             power_on = self.is_power_on()
-            time.sleep(0.3)
+            
             
         # 开启机械抓爪通信
         self.control_instance.set_gripper_mode(0)
