@@ -1,6 +1,7 @@
 <launch>
     <node pkg="run_task" type="cruise.py" name="cruise" output="screen">
         <rosparam file="$(find run_task)/config/robot_pose_anchor.yaml" command="load"/>
+        <rosparam file="$(find run_task)/config/other_config.yaml" command="load"/>
     </node>
     <node pkg="run_task" type="control_cmd.py" name="control_cmd" output="screen">
     </node>

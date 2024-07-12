@@ -48,11 +48,17 @@ class ControlCmdActionServer:
     def cb(self,goal:msg.ControlCmdGoal):
         rospy.loginfo(f"{rospy.get_name()} get move back goal {goal}")
         if goal.operation == Control_cmd.MOVEBACK:
+            length_x = goal.x            # 运动距离x, 单位为mm, 向前为正, 向后为负
+            length_y = goal.y            # 运动距离y, 单位为mm, 向左为正, 向右为负
+            second   = goal.second       # 运动秒数
+            
+                        
             move_cmd = Twist()
-            move_cmd.linear.x = -goal.speed # 设置线速度，负值表示后退
-            move_cmd.angular.z = 0 # 保持直线行驶
+            x_speed = length_x / second
+            move_cmd.linear.x = x_speed  # 设置线速度，负值表示后退
+            move_cmd.angular.z = 0     #  保持直线行驶
             # 计算后退的时间
-            duration = goal.meters / goal.speed
+            duration = second
             rate = rospy.Rate(10) # 10hz
             start_time = time.time()
             while time.time() - start_time < duration:

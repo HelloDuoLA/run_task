@@ -271,11 +271,11 @@ class Task_function(Task):
         
 # 导航任务
 class Task_navigation(Task):
-    def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(), back_meters=0,move_back_speed=0.15,name=""):
+    def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(),move_back_speed=0.15,name=""):
         super().__init__(task_name,finish_cb,name)
         self.target_3D_pose  = target_3D_pose
-        self.back_meters     = back_meters         # 旋转度数
-        self.move_back_speed = move_back_speed
+        # self.back_meters     = back_meters         # 旋转度数
+        self.move_back_second  = 4                  # 后退时间
     
     # 设置目的点
     def set_target(self,target_3D_pose:utilis.Pose3D):
@@ -286,7 +286,7 @@ class Task_navigation(Task):
         if self.back_meters == 0:
             return super().__str__() + f"Target_3D_pose: {self.target_3D_pose} "
         else:
-            return super().__str__() +  f"back_meters: {self.back_meters}"
+            return super().__str__() +  f"back_meters: x {self.target_3D_pose.x}, y {self.target_3D_pose.y}"
 
 # 图像识别任务
 class Task_image_rec(Task):

@@ -1,4 +1,21 @@
 # 后退距离 [m]
-SnackDeckMoveBackLength: 0.6
-DrinkDeckMoveBackLength: 0.6
-ServiceDeckMoveBackLength:  0.2
+# SnackDeckMoveBackLength: 0.6
+# DrinkDeckMoveBackLength: 0.6
+# ServiceDeckMoveBackLength:  0.2
+
+# 后退距离 [mm]
+SnackDeckMoveBack:
+  x: -60
+  y: 0
+
+DrinkDeckMoveBack:
+  x: -60
+  y: +20
+
+LeftDeckMoveBack:
+  x: -20
+  y: -20
+
+RightDeckMoveBack:
+  x: -20
+  y: 20

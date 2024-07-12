@@ -23,25 +23,30 @@ def talker():
     # 初始化节点，命名为'talker'
     rospy.init_node('template')
 
-    init_pose    = constant_config_to_robot_anchor_pose_orientation("InitialPose")
-    # middle_point = constant_config_to_robot_anchor_pose_orientation("MiddlePoint")
-    SnackDesk    = constant_config_to_robot_anchor_pose_orientation("SnackDesk")
-    DrinkDesk    = constant_config_to_robot_anchor_pose_orientation("DrinkDesk")
+    init_pose        = constant_config_to_robot_anchor_pose_orientation("InitialPose")
+    SnackDesk        = constant_config_to_robot_anchor_pose_orientation("SnackDesk")
+    DrinkDesk        = constant_config_to_robot_anchor_pose_orientation("DrinkDesk")
     RightServiceDesk = constant_config_to_robot_anchor_pose_orientation("RightServiceDesk")
     LeftServiceDesk  = constant_config_to_robot_anchor_pose_orientation("LeftServiceDesk")
     
+    snack_deck_move_back_pose =  _get_control_cmd_xy("SnackDeckMoveBack")
+    drink_deck_move_back_pose =  _get_control_cmd_xy("DrinkDeckMoveBack")
+    left_deck_move_back_pose  =  _get_control_cmd_xy("LeftDeckMoveBack")
+    right_deck_move_back_pose =  _get_control_cmd_xy("RightDeckMoveBack")
+            
+    
+    
+    
     task_init_pose         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point, None, init_pose)
     task_SnackDesk         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_snack_desk, None, SnackDesk)
-    task_snack_desk_back   = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.6)
+    task_snack_desk_back   = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,snack_deck_move_back_pose)
     task_DrinkDesk         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_drink_desk, None, DrinkDesk)
-    task_drink_desk_back   = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.6)
+    task_drink_desk_back   = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,drink_deck_move_back_pose)
     task_RightServiceDesk  = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_right_service_desk, None, RightServiceDesk)
-    task_right_service_back= task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.2)
+    task_right_service_back= task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,right_deck_move_back_pose)
     task_LeftServiceDesk   = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_left_service_desk, None, LeftServiceDesk)
-    task_left_service_back = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,back_meters=0.2)
+    task_left_service_back = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,left_deck_move_back_pose)
     
-    # task_middle_point1     = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_middle_point,   None, middle_point)
-    # task_middle_point2     = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_middle_point,   None, middle_point)
     
     rospy.loginfo(f"init_pose        : {init_pose}")
     rospy.loginfo(f"SnackDesk        : {SnackDesk}")
@@ -80,7 +85,14 @@ def talker():
         rospy.loginfo("crui")
         # 按照设定的频率延时
         rate.sleep()
-        
+    
+
+def _get_control_cmd_xy(name):
+    target_pose = utilis.Pose3D()
+    target_pose.x  = rospy.get_param(f'~{name}/x')
+    target_pose.y = rospy.get_param(f'~{name}/y')
+    return target_pose
+               
 def constant_config_to_robot_anchor_pose_orientation(anchor_point_name):
     x   = rospy.get_param(f'~{anchor_point_name}/position_x')
     y   = rospy.get_param(f'~{anchor_point_name}/position_y')
@@ -99,30 +111,27 @@ class Navigation_actuator():
         # 订阅导航Action   
         self.move_base_ac   = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         self.control_cmd_ac = actionlib.SimpleActionClient(utilis.Topic_name.control_cmd_action, msg.ControlCmdAction)
-        rospy.loginfo("waiting for move_base, control cmd server")
-        # TODO:调试需要,暂时注释
+        rospy.loginfo("waiting for move_base")
         self.move_base_ac.wait_for_server()
+        rospy.loginfo("waiting for control cmd server")
         self.control_cmd_ac.wait_for_server()
-        rospy.loginfo("move_base, control cmd server start")
         
-        self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
         
     # 运行
     def run(self, navigation_task:task.Task_navigation):
-        task_index = self.running_tasks_manager.add_task(navigation_task)
         navigation_task.update_start_status() # 刷新开始时间
+
         
         # 后退任务
         if navigation_task.task_type == task.Task_type.Task_navigate.Move_backward:
             goal = msg.ControlCmdGoal()
-            goal.task_index = task_index
             goal.operation  = control_cmd.Control_cmd.MOVEBACK.value
-            goal.speed      = navigation_task.move_back_speed
-            goal.meters     = navigation_task.back_meters
+            goal.second     = navigation_task.move_back_second         # 后退秒数
+            goal.x          = navigation_task.target_3D_pose.x         # 后退距离x
+            goal.y          = navigation_task.target_3D_pose.y         # 后退距离y
             self.control_cmd_ac.send_goal(goal,self.control_cmd_task_done_callback,self.control_cmd_active_callback,self.control_cmd_feedback_callback)
         # 导航任务
         else:
-            self.move_base_task_index = task_index
             goal = MoveBaseGoal()
             goal.target_pose.header.frame_id = "map"
             goal.target_pose.header.stamp    = rospy.Time.now()
@@ -135,17 +144,11 @@ class Navigation_actuator():
             goal.target_pose.pose.orientation.z = orientation[2]
             goal.target_pose.pose.orientation.w = orientation[3]
             self.move_base_ac.send_goal(goal,self.navigation_task_done_callback,self.navigation_task_active_callback,self.navigation_task_feedback_callback)
-    # 完成回调
+       # 完成回调
     @staticmethod
     def navigation_task_done_callback(status, result):
         rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
-        if status == actionlib.GoalStatus.SUCCEEDED:
-            rospy.loginfo(f"node: {rospy.get_name()}, navigation succeed. status : {status}")
-        else:
-            rospy.loginfo(f"node: {rospy.get_name()}, navigation failed. status : {status}")
-        global can_run_task 
-        can_run_task = True
-    
+          
     # 激活回调
     @staticmethod
     def navigation_task_active_callback():
@@ -161,13 +164,8 @@ class Navigation_actuator():
     # 直接控制完成回调
     @staticmethod
     def control_cmd_task_done_callback(status, result:msg.ControlCmdResult):
-        rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
-        global can_run_task 
-        can_run_task = True
-        if status == actionlib.GoalStatus.SUCCEEDED:
-            rospy.loginfo(f"node: {rospy.get_name()}, navigation succeed. status : {status}")
-        else:
-            rospy.loginfo(f"node: {rospy.get_name()}, navigation failed. status : {status}")
+        rospy.loginfo(f"node: {rospy.get_name()}, control cmd task done. status:{status} result:{result}")
+        
     
     # 激活回调
     @staticmethod
@@ -177,51 +175,9 @@ class Navigation_actuator():
     # 反馈回调
     @staticmethod
     def control_cmd_feedback_callback(feedback:MoveBaseFeedback):
-        rospy.loginfo(f"node: {rospy.get_name()}, control cmd feedback. feedback = {feedback}")
-        
+        # rospy.loginfo(f"node: {rospy.get_name()}, control cmd feedback. feedback = {feedback}")
+        pass     
 
-def test():
-    ac = actionlib.SimpleActionClient('move_base', MoveBaseAction)
-    ac.wait_for_server()
-    anchor_point_name = "InitialPose"
-    # anchor_point_name = "DrinkDesk"
-    # anchor_point_name = "SnackDesk"
-    # anchor_point_name = "RightServiceDesk"
-    # anchor_point_name = "LeftServiceDesk"
-    x   = rospy.get_param(f'~{anchor_point_name}/position_x')
-    y   = rospy.get_param(f'~{anchor_point_name}/position_y')
-    z   = rospy.get_param(f'~{anchor_point_name}/position_z')
-    o_x = rospy.get_param(f'~{anchor_point_name}/orientation_x')
-    o_y = rospy.get_param(f'~{anchor_point_name}/orientation_y')
-    o_z = rospy.get_param(f'~{anchor_point_name}/orientation_z')
-    o_w = rospy.get_param(f'~{anchor_point_name}/orientation_w')
-    
-    goal = MoveBaseGoal()
-    goal.target_pose.header.frame_id = "map"
-    goal.target_pose.header.stamp    = rospy.Time.now()
-    goal.target_pose.pose.position.x = x
-    goal.target_pose.pose.position.y = y
-    goal.target_pose.pose.position.z = z
-    # orientation = quaternion_from_euler(0, 0, self.task.target_3D_pose.yaw)
-    goal.target_pose.pose.orientation.x = o_x
-    goal.target_pose.pose.orientation.y = o_y
-    goal.target_pose.pose.orientation.z = o_z
-    goal.target_pose.pose.orientation.w = o_w
-    rospy.loginfo(f"navigation to position {goal.target_pose.pose.position}  orientation {goal.target_pose.pose.orientation}")
-    ac.send_goal(goal,navigation_task_done_callback,navigation_task_active_callback,navigation_task_feedback_callback)
-    
-def navigation_task_done_callback(status, result):
-    rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
-    
-# 激活回调
-def navigation_task_active_callback():
-    rospy.loginfo(f"node: {rospy.get_name()}, navigation active")
-
-# 反馈回调
-def navigation_task_feedback_callback(feedback:MoveBaseFeedback):
-    pose = feedback.base_position.pose
-    pose3D = utilis.Pose3D.instantiate_by_geometry_msg(pose)
-    rospy.loginfo(f"node: {rospy.get_name()}, navigation feedback. pose:x = {pose3D.x} y = {pose3D.y} yaw = {pose3D.yaw}")
 
 if __name__ == '__main__':
     try:

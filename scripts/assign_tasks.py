@@ -105,11 +105,23 @@ class System():
             
         # 后退距离
         def _initialize_other_config(self):
-            self.snack_deck_move_back_length = rospy.get_param(f'~SnackDeckMoveBackLength')
-            self.drink_deck_move_back_length = rospy.get_param(f'~DrinkDeckMoveBackLength')
+            # self.snack_deck_move_back_length = rospy.get_param(f'~SnackDeckMoveBackLength')
+            # self.drink_deck_move_back_length = rospy.get_param(f'~DrinkDeckMoveBackLength')
             # self.left_deck_move_back_length  = rospy.get_param(f'~LeftDeckMoveBackLength')
             # self.right_deck_move_back_length = rospy.get_param(f'~RightDeckMoveBackLength')
-            self.service_deck_move_back_length = rospy.get_param(f'~ServiceDeckMoveBackLength')
+            # self.service_deck_move_back_length = rospy.get_param(f'~ServiceDeckMoveBackLength')
+            
+            
+            self.snack_deck_move_back_pose =  _get_control_cmd_xy("SnackDeckMoveBack")
+            self.drink_deck_move_back_pose =  _get_control_cmd_xy("DrinkDeckMoveBack")
+            self.left_deck_move_back_pose  =  _get_control_cmd_xy("LeftDeckMoveBack")
+            self.right_deck_move_back_pose =  _get_control_cmd_xy("RightDeckMoveBack")
+            
+            def _get_control_cmd_xy(name):
+                target_pose = utilis.Pose3D()
+                target_pose.x  = rospy.get_param(f'~{name}/x')
+                target_pose.y = rospy.get_param(f'~{name}/y')
+                return target_pose
         
         # 初始化机器人位点常量配置
         def _initialize_robot_anchor_point(self):
@@ -224,8 +236,9 @@ class Navigation_actuator():
             goal = msg.ControlCmdGoal()
             goal.task_index = task_index
             goal.operation  = control_cmd.Control_cmd.MOVEBACK.value
-            goal.speed      = navigation_task.move_back_speed
-            goal.meters     = navigation_task.back_meters
+            goal.second     = navigation_task.move_back_second         # 后退秒数
+            goal.x          = navigation_task.target_3D_pose.x         # 后退距离x
+            goal.y          = navigation_task.target_3D_pose.y         # 后退距离y
             self.control_cmd_ac.send_goal(goal,self.control_cmd_task_done_callback,self.control_cmd_active_callback,self.control_cmd_feedback_callback)
         # 导航任务
         else:
@@ -946,7 +959,7 @@ class Order_driven_task_schedul():
 
         # 机器人后退
         task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            back_meters=system.anchor_point.snack_deck_move_back_length,\
+            system.anchor_point.snack_deck_move_back_pose,\
                 name="move back from snack desk")
         task_move_back_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)   # 前置任务, 左臂抓取容器
         task_move_back_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)    # 前置任务, 右臂抓取容器
@@ -989,8 +1002,15 @@ class Order_driven_task_schedul():
         tasks_pick_snack.add(task_arms_idle)
         
         # 机器人后退
-        task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            back_meters = system.anchor_point.service_deck_move_back_length,name="move back from service desk")
+        if table_id == utilis.Device_id.LEFT.value:
+            task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            system.anchor_point.left_deck_move_back_pose, name="move back from left service desk")
+        elif table_id == utilis.Device_id.RIGHT.value:
+            task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            system.anchor_point.right_deck_move_back_pose, name="move back from left service desk")
+        else:
+            raise ValueError("Invalid table_id")
+                
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL              # 可并行
         task_move_back_from_service_desk.add_predecessor_task(task_arm_placement_container)  # 前置任务, 完成放置容器
         tasks_pick_snack.add(task_move_back_from_service_desk)
@@ -1135,8 +1155,7 @@ class Order_driven_task_schedul():
         
         #  机器人后退
         task_move_back_from_drink_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            back_meters = system.anchor_point.drink_deck_move_back_length,\
-                name="move back from drink desk")
+            system.anchor_point.drink_deck_move_back_pose, name="move back from drink desk")
         task_move_back_from_drink_desk.parallel = task.Task.Task_parallel.ALL                          # 可并行
         task_move_back_from_drink_desk.add_predecessor_task(task_left_arm_turn_off_machine_pre)        # 前置任务,左臂已经关闭咖啡机了
         tasks_get_drink.add(task_move_back_from_drink_desk)
@@ -1182,8 +1201,15 @@ class Order_driven_task_schedul():
         tasks_get_drink.add(task_right_arm_placement_cup)
         
         #  机器人后退
-        task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            back_meters = system.anchor_point.service_deck_move_back_length,name="move back from service desk")
+        if table_id == utilis.Device_id.LEFT.value:
+            task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            system.anchor_point.left_deck_move_back_pose, name="move back from left service desk")
+        elif table_id == utilis.Device_id.RIGHT.value:
+            task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            system.anchor_point.right_deck_move_back_pose, name="move back from left service desk")
+        else:
+            raise ValueError("Invalid table_id")
+        
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL                    # 可并行
         task_move_back_from_service_desk.add_predecessor_task(task_right_arm_placement_cup)        # 前置任务, 右臂放好了杯子
         tasks_get_drink.add(task_move_back_from_service_desk)
@@ -1382,18 +1408,17 @@ class Order_driven_task_schedul():
         
 
         # 机器人后退
-        # task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-        #     back_meters=system.anchor_point.snack_deck_move_back_length,\
-        #         name="move back from snack desk")
-        # task_move_back_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)
-        # task_move_back_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)
-        # task_move_back_from_snack_desk.parallel = task.Task.Task_parallel.ALL
-        # tasks_pick_snack.add(task_move_back_from_snack_desk)
+        task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            system.anchor_point.snack_deck_move_back_pose, name="move back from snack desk")
+        task_move_back_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)
+        task_move_back_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)
+        task_move_back_from_snack_desk.parallel = task.Task.Task_parallel.ALL
+        tasks_pick_snack.add(task_move_back_from_snack_desk)
         
         return tasks_pick_snack
     
     # 创建放置容器的任务
-    def test_tasks_lossen_container(self):
+    def test_tasks_lossen_container(self,table_id : utilis.Device_id):
         tasks_pick_snack        = task.Task_sequence()
         #  将左、右臂放到指定位置后，松开
         task_arm_placement_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_container,None,utilis.Device_id.LEFT_RIGHT,\
@@ -1415,8 +1440,14 @@ class Order_driven_task_schedul():
         tasks_pick_snack.add(task_arms_idle)
         
         # 机器人后退
-        task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            back_meters = system.anchor_point.service_deck_move_back_length,name="move back from service desk")
+        if table_id == utilis.Device_id.LEFT.value:
+            task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            system.anchor_point.left_deck_move_back_pose, name="move back from left service desk")
+        elif table_id == utilis.Device_id.RIGHT.value:
+            task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            system.anchor_point.right_deck_move_back_pose, name="move back from left service desk")
+        else:
+            raise ValueError("Invalid table_id")
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
         task_move_back_from_service_desk.add_predecessor_task(task_arm_placement_container)
         tasks_pick_snack.add(task_move_back_from_service_desk)
@@ -1554,7 +1585,7 @@ class Order_driven_task_schedul():
         
         #  机器人后退
         task_move_back_from_drink_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            back_meters = system.anchor_point.drink_deck_move_back_length)
+            system.anchor_point.drink_deck_move_back_pose,name="move back from drink desk")
         task_move_back_from_drink_desk.add_predecessor_task(task_left_arm_turn_off_machine_click) 
         task_move_back_from_drink_desk.parallel = task.Task.Task_parallel.ALL
         tasks_get_drink.add(task_move_back_from_drink_desk)
@@ -1580,7 +1611,7 @@ class Order_driven_task_schedul():
 
     
     # 创建放置饮料的任务
-    def test_tasks_lossen_cup(self):
+    def test_tasks_lossen_cup(self,table_id):
         tasks_get_drink = task.Task_sequence()  
         #  将饮料臂放到指定位置后松开(不可并行)
         task_right_arm_placement_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_cup,None,utilis.Device_id.RIGHT,\
@@ -1590,8 +1621,14 @@ class Order_driven_task_schedul():
         tasks_get_drink.add(task_right_arm_placement_cup)
         
         #  机器人后退(可并行)
-        task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            back_meters = system.anchor_point.service_deck_move_back_length,name="move back from service desk")
+        if table_id == utilis.Device_id.LEFT.value:
+            task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            system.anchor_point.left_deck_move_back_pose, name="move back from left service desk")
+        elif table_id == utilis.Device_id.RIGHT.value:
+            task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            system.anchor_point.right_deck_move_back_pose, name="move back from left service desk")
+        else:
+            raise ValueError("Invalid table_id")
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
         task_move_back_from_service_desk.add_predecessor_task(task_right_arm_placement_cup)
         tasks_get_drink.add(task_move_back_from_service_desk)
@@ -1656,13 +1693,13 @@ def test_order_snack():
     tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)
     tasks_get_snack.update_group_id(6)
     
-    tasks_lossen_snack = system.order_driven_task_schedul.test_tasks_lossen_container()
+    tasks_lossen_snack = system.order_driven_task_schedul.test_tasks_lossen_container(order_info.table_id)
     tasks_lossen_snack.update_group_id(7)
     
     tasks_get_drink = system.order_driven_task_schedul.test_tasks_at_drink_desk()
     tasks_get_drink.update_group_id(8)
     
-    task_lossen_cup = system.order_driven_task_schedul.test_tasks_lossen_cup()
+    task_lossen_cup = system.order_driven_task_schedul.test_tasks_lossen_cup(order_info.table_id)
     task_lossen_cup.update_group_id(9)
 
     log.log_tasks_info(tasks_get_snack,"new_all_task.log")
