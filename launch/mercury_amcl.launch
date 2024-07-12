@@ -1,11 +1,10 @@
 <launch>
-
     <!-- 使用map的topic而不是map文件-->
     <arg name="use_map_topic" default="false"/>
     <!-- 不可以使用PointCloud，只能使用LaserScan -->
     <arg name="scan_topic" default="scan"/>
     <arg name="map_topic"  default="/map"/>
-
+    <!-- !不使用odom的嘛？ -->
     <node pkg="amcl" type="amcl" name="amcl" output="screen" clear_params="true">
       <param name="use_map_topic" value="$(arg use_map_topic)"/>
       <!-- 使用rtabmap分布的Map，连接TF树 -->
@@ -18,7 +17,7 @@
       <param name="odom_alpha5" value="0.1"/>
       <param name="gui_publish_rate" value="10.0"/>
       <param name="laser_max_beams" value="60"/>
-      <param name="laser_max_range" value="12.0"/>
+      <param name="laser_max_range" value="5.0"/>
       <param name="min_particles" value="500"/>
       <param name="max_particles" value="2000"/>
       <param name="kld_err" value="0.05"/>
@@ -37,8 +36,8 @@
       <param name="laser_model_type" value="likelihood_field"/>
       <!-- <param name="laser_model_type" value="beam"/> -->
       <param name="laser_likelihood_max_dist" value="2.0"/>
-      <param name="update_min_d" value="0.25"/>
-      <param name="update_min_a" value="0.2"/>
+      <param name="update_min_d" value="0.1"/>
+      <param name="update_min_a" value="0.1"/>
       <param name="odom_frame_id" value="odom"/>
       <param name="resample_interval" value="1"/>
       <!-- Increase tolerance because the computer can get quite busy -->

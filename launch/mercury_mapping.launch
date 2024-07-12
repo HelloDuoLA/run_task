@@ -4,7 +4,8 @@
   
   <!-- 是否在建图时开启导航 默认不开启 仅在rrt自主建图时同时进行-->
   <arg name="navigation" default="false"/>
-  <arg name="odom_frame_id"  default="odom"/>
+  <!-- !是否使用odom_combined -->
+  <arg name="odom_frame_id"  default="odom"/>  
 
   <!-- turn on lidar开启雷达  -->
   <include file="$(find turn_on_mercury_robot)/launch/mercury_lidar.launch" />

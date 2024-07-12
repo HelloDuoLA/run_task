@@ -4,7 +4,7 @@
 DWAPlannerROS:
   #机器人参数设置
   max_vel_x: 0.3          #x方向最大线速度绝对值，单位：m/s
-  min_vel_x: -0.1            #x方向最小线速度绝对值，负数代表可后退，单位：m/s
+  min_vel_x: -0.1         #x方向最小线速度绝对值，负数代表可后退，单位：m/s
   max_vel_y: 0.0          #y方向最大线速度绝对值，单位：m/s。非全向移动机器人为0    
   min_vel_y: 0.0          #y方向最小线速度绝对值，单位：m/s。非全向移动机器人为0   
   max_vel_trans: 0.3      #机器人最大移动速度的绝对值，单位为：m/s
@@ -45,6 +45,7 @@ DWAPlannerROS:
   publish_traj_pc : true     #将规划的轨迹在rviz上进行可视化
   publish_cost_grid_pc: true #将代价值进行可视化显示
   global_frame_id: odom      #全局参考坐标系 !!!!!从map改为odom
+  # ! 要不要换成combined_odom
 
   #是否将走过的路径从路径规划中清除
   prune_plan: true
