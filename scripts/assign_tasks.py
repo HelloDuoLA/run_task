@@ -808,14 +808,15 @@ class Order_driven_task_schedul():
             [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="two arms move to idle prepare for pick snack")
         
-        task_left_right_arms_idle.set_subtask_count(2)  # 两个子任务
-        task_left_right_arms_idle.parallel = task.Task.Task_parallel.ALL
+        task_left_right_arms_idle.set_subtask_count(2)                    # 两个子任务
+        task_left_right_arms_idle.parallel = task.Task.Task_parallel.ALL  # 可并行
         tasks_pick_snack.add(task_left_right_arms_idle)
         
         #  前往零食桌
-        task_navigation_to_snack_desk  = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_snack_desk, None, system.anchor_point.map_snack_desk,\
-            name="navigation to snack desk")
+        task_navigation_to_snack_desk  = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_snack_desk, None, \
+            system.anchor_point.map_snack_desk, name="navigation to snack desk")
         
+        # 如果不是调试模式, 则可以并行
         if not DEBUG_NAVIGATION:
             task_navigation_to_snack_desk.parallel = task.Task.Task_parallel.ALL
         tasks_pick_snack.add(task_navigation_to_snack_desk)
@@ -824,30 +825,32 @@ class Order_driven_task_schedul():
         task_left_arm_to_rec_contianer = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_container, None, utilis.Device_id.LEFT, \
             system.anchor_point.left_arm_container_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="left arm move to rec container")
-        task_left_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL
+        task_left_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL             # 可并行
+        task_left_arm_to_rec_contianer.add_predecessor_task(task_left_right_arms_idle)    # 前置任务, 两臂移动到空闲位
         tasks_pick_snack.add(task_left_arm_to_rec_contianer)
         
         #  将右臂抬到指定位置(食物框识别位置)
         task_right_arm_to_rec_contianer = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_container, None, utilis.Device_id.RIGHT,\
             system.anchor_point.right_arm_container_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="right arm move to rec container")
-        task_right_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL
+        task_right_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL           # 可并行
+        task_right_arm_to_rec_contianer.add_predecessor_task(task_left_right_arms_idle)  # 前置任务, 两臂移动到空闲位
         tasks_pick_snack.add(task_right_arm_to_rec_contianer)
         
         #  左摄像头食物框识别(可前后并行，固定)
         task_left_camera_rec_container = task.Task_image_rec(task.Task_type.Task_image_rec.CONTAINER, None, utilis.Device_id.LEFT,\
             name="left camera rec container")
-        task_left_camera_rec_container.parallel = task.Task.Task_parallel.ALL
-        task_left_camera_rec_container.add_predecessor_task(task_left_arm_to_rec_contianer) # 前置任务
-        task_left_camera_rec_container.add_predecessor_task(task_navigation_to_snack_desk)  # 前置任务
+        task_left_camera_rec_container.parallel = task.Task.Task_parallel.ALL               # 可并行
+        task_left_camera_rec_container.add_predecessor_task(task_left_arm_to_rec_contianer) # 前置任务, 左臂移动到食物框识别位置
+        task_left_camera_rec_container.add_predecessor_task(task_navigation_to_snack_desk)  # 前置任务, 导航到零食桌
         tasks_pick_snack.add(task_left_camera_rec_container)
         
         #  右摄像头食物框识别(可前后并行，固定)
         task_right_camera_rec_container = task.Task_image_rec(task.Task_type.Task_image_rec.CONTAINER, None, utilis.Device_id.RIGHT,\
             name="right camera rec container")
-        task_right_camera_rec_container.parallel = task.Task.Task_parallel.ALL
-        task_right_camera_rec_container.add_predecessor_task(task_right_arm_to_rec_contianer)  # 前置任务
-        task_right_camera_rec_container.add_predecessor_task(task_navigation_to_snack_desk)     # 前置任务
+        task_right_camera_rec_container.parallel = task.Task.Task_parallel.ALL                  # 可并行
+        task_right_camera_rec_container.add_predecessor_task(task_right_arm_to_rec_contianer)   # 前置任务, 右臂移动到食物框识别位置
+        task_right_camera_rec_container.add_predecessor_task(task_navigation_to_snack_desk)     # 前置任务, 导航到零食桌
         
         tasks_pick_snack.add(task_right_camera_rec_container)
         
@@ -855,33 +858,32 @@ class Order_driven_task_schedul():
         task_left_arm_to_rec_snack = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_snack, None, utilis.Device_id.LEFT, \
             system.anchor_point.left_arm_snack_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="left arm move to rec snack")
-        task_left_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL
-        task_left_arm_to_rec_snack.add_predecessor_task(task_left_camera_rec_container)       # 前置任务
+        task_left_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL                     # 可并行
+        task_left_arm_to_rec_snack.add_predecessor_task(task_left_camera_rec_container)       # 前置任务, 左摄像头食物框识别
         tasks_pick_snack.add(task_left_arm_to_rec_snack)
         
         #  将右臂抬到零食识别位置(可前后并行，固定)
         task_right_arm_to_rec_snack = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_snack, None, utilis.Device_id.RIGHT, \
             system.anchor_point.right_arm_snack_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="right arm move to rec snack")
-        task_right_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL
-        task_right_arm_to_rec_snack.add_predecessor_task(task_right_camera_rec_container)     # 前置任务
+        task_right_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL                    # 可并行
+        task_right_arm_to_rec_snack.add_predecessor_task(task_right_camera_rec_container)     # 前置任务, 右摄像头食物框识别
         tasks_pick_snack.add(task_right_arm_to_rec_snack)
         
         #  左、右摄像头零食识别(不可并行，动态)
         task_rec_snack = task.Task_image_rec(task.Task_type.Task_image_rec.SNACK, None, utilis.Device_id.LEFT_RIGHT,\
             name="two arms rec snack")
         task_rec_snack.set_snack_list(snack_list)
-        task_rec_snack.add_predecessor_task(task_left_arm_to_rec_snack)                        # 前置任务
-        task_rec_snack.add_predecessor_task(task_right_arm_to_rec_snack)                       # 前置任务
+        task_rec_snack.add_predecessor_task(task_left_arm_to_rec_snack)                        # 前置任务, 左臂移动到零食识别位置
+        task_rec_snack.add_predecessor_task(task_right_arm_to_rec_snack)                       # 前置任务, 右臂移动到零食识别位置
         tasks_pick_snack.add(task_rec_snack)
 
         # 零食抓取任务
-        # TODO:调试框架期间, 不夹取零食
         snack_count = snack_list.get_all_snack_count()
         for i in range(snack_count):
             tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
 
-        # 功能暂停任务
+        # 功能暂停任务(等待全部零食抓取完毕)
         task_function_pause = task.Task_function(task.Task_type.Task_function.PAUSE, None,name="function pause")
         tasks_pick_snack.add(task_function_pause)
         
@@ -893,23 +895,16 @@ class Order_driven_task_schedul():
         task_left_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行
         task_left_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数
         tasks_pick_snack.add(task_left_arm_grap_container_pre)
-        
-            # 识别容器绑定 夹取容器准备动作
-        task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_pre)
+        task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_pre)  # 识别容器绑定 夹取容器准备动作
         
         # 左臂夹取零食框
         task_left_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
                 [copy.deepcopy(system.anchor_point.left_arm_container_grip)],\
                     [arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
                         name="left arm grap container")
-        task_left_arm_grap_container.parallel = task.Task.Task_parallel.ALL          # 可并行
-        task_left_arm_grap_container.add_predecessor_task(task_left_arm_grap_container_pre)  # 准备动作
+        task_left_arm_grap_container.parallel = task.Task.Task_parallel.ALL                  # 可并行
+        task_left_arm_grap_container.add_predecessor_task(task_left_arm_grap_container_pre)  # 前置任务, 完成准备动作
         tasks_pick_snack.add(task_left_arm_grap_container)
-        
-    
-            # 识别容器绑定 夹取容器
-        # task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container)
-        
         
         # 右臂夹取零食框, 准备动作
         task_right_arm_grap_container_pre    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
@@ -919,9 +914,7 @@ class Order_driven_task_schedul():
         task_right_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行  
         task_right_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数 
         tasks_pick_snack.add(task_right_arm_grap_container_pre)
-        
-            # 识别容器绑定 夹取容器
-        task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container_pre)
+        task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container_pre) # 识别容器绑定 夹取容器
         
         
         # 右臂夹取零食框
@@ -929,12 +922,10 @@ class Order_driven_task_schedul():
                 [copy.deepcopy(system.anchor_point.right_arm_container_grip)],\
                     [arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
                         name="right arm grap container")
-        task_right_arm_grap_container.parallel = task.Task.Task_parallel.ALL          # 可并行  
-        task_right_arm_grap_container.add_predecessor_task(task_right_arm_grap_container_pre)  # 准备动作
+        task_right_arm_grap_container.parallel = task.Task.Task_parallel.ALL                   # 可并行  
+        task_right_arm_grap_container.add_predecessor_task(task_right_arm_grap_container_pre)  # 前置任务, 完成准备动作
         tasks_pick_snack.add(task_right_arm_grap_container)
         
-            # 识别容器绑定 夹取容器
-        # task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container)
         
         #  左、右臂将零食框放到指定高度
         task_arm_dilivery_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Deliever_container,None,utilis.Device_id.LEFT_RIGHT,\
@@ -944,43 +935,42 @@ class Order_driven_task_schedul():
         
         task_arm_dilivery_container.parallel = task.Task.Task_parallel.ALL
         task_arm_dilivery_container.set_subtask_count(2)  # 两个子任务
-        task_arm_dilivery_container.add_predecessor_task(task_left_arm_grap_container)        # 前置任务
-        task_arm_dilivery_container.add_predecessor_task(task_right_arm_grap_container)       # 前置任务
-        
+        task_arm_dilivery_container.add_predecessor_task(task_left_arm_grap_container)        # 前置任务, 左臂抓取容器
+        task_arm_dilivery_container.add_predecessor_task(task_right_arm_grap_container)       # 前置任务, 右臂抓取容器
         tasks_pick_snack.add(task_arm_dilivery_container)
-        
-        # 绑定左右摄像头识别容器任务
-        # task_left_camera_rec_container.add_need_modify_task(task_arm_dilivery_container)      
-        # task_right_camera_rec_container.add_need_modify_task(task_arm_dilivery_container)      
+
 
         # 机器人后退
         task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             back_meters=system.anchor_point.snack_deck_move_back_length,\
                 name="move back from snack desk")
-        task_move_back_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)
-        task_move_back_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)
+        task_move_back_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)   # 前置任务, 左臂抓取容器
+        task_move_back_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)    # 前置任务, 右臂抓取容器
         task_move_back_from_snack_desk.parallel = task.Task.Task_parallel.ALL
         tasks_pick_snack.add(task_move_back_from_snack_desk)
 
         #  导航前往n号桌
         if table_id == utilis.Device_id.LEFT.value:
-            task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_left_service_desk,None,system.anchor_point.map_left_service_desk,\
-                name = "navigation to left service desk")
+            task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_left_service_desk,None,\
+                system.anchor_point.map_left_service_desk, name = "navigation to left service desk")
         elif table_id == utilis.Device_id.RIGHT.value:
-            task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_right_service_desk,None,system.anchor_point.map_right_service_desk,\
-                name="navigation to right service desk")
+            task_navigation_to_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_right_service_desk,None,\
+                system.anchor_point.map_right_service_desk, name="navigation to right service desk")
         else:
             raise ValueError("Invalid table_id")
+        
+        # 不调试则可以并行
         if not DEBUG_NAVIGATION:
-            task_navigation_to_service_desk.parallel = task.Task.Task_parallel.ALL
+            task_navigation_to_service_desk.parallel = task.Task.Task_parallel.ALL           # 可并行
+        task_navigation_to_service_desk.add_predecessor_task(task_move_back_from_snack_desk) # 前置任务, 机器人后退完成
         tasks_pick_snack.add(task_navigation_to_service_desk)
         
-        #  将左、右臂放到指定位置后，松开
+        #  将左、右臂放到指定位置后，松开(不可并行)
         task_arm_placement_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_container,None,utilis.Device_id.LEFT_RIGHT,\
                 [system.anchor_point.left_arm_container_placement,system.anchor_point.right_arm_container_placement],\
                 [arm.GripMethod.OPEN,arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
                     name="two arms placement container")
-        task_arm_placement_container.add_predecessor_task(task_move_back_from_snack_desk)  # 前置任务
+        task_arm_placement_container.add_predecessor_task(task_navigation_to_service_desk)  # 前置任务, 到服务桌前了
         task_arm_placement_container.set_subtask_count(2)
         tasks_pick_snack.add(task_arm_placement_container)
     
@@ -989,19 +979,19 @@ class Order_driven_task_schedul():
                 [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
                 [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ,
                 name="two arms move to idle")
-        task_arms_idle.add_predecessor_task(task_arm_placement_container)
-        task_arms_idle.set_subtask_count(2)
-        task_arms_idle.parallel = task.Task.Task_parallel.ALL
+        task_arms_idle.set_subtask_count(2)                                # 两个子任务
+        task_arms_idle.parallel = task.Task.Task_parallel.ALL              # 可并行
+        task_arms_idle.add_predecessor_task(task_arm_placement_container)  # 前置任务, 完成放置容器
         tasks_pick_snack.add(task_arms_idle)
         
         # 机器人后退
         task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             back_meters = system.anchor_point.service_deck_move_back_length,name="move back from service desk")
-        task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
-        task_move_back_from_service_desk.add_predecessor_task(task_arm_placement_container)
+        task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL              # 可并行
+        task_move_back_from_service_desk.add_predecessor_task(task_arm_placement_container)  # 前置任务, 完成放置容器
         tasks_pick_snack.add(task_move_back_from_service_desk)
         
-        # 功能性暂停
+        # 功能性暂停(等待前面的动作全部完成)
         task_function_pause2 = task.Task_function(task.Task_type.Task_function.PAUSE,None,name="function pause")
         tasks_pick_snack.add(task_function_pause2)
         
@@ -1010,72 +1000,71 @@ class Order_driven_task_schedul():
     # 拿饮料
     def create_tasks_get_drink(self, table_id:utilis.Device_id):
         tasks_get_drink = task.Task_sequence()  
-        
         # 导航前往饮料桌
-        task_navigation_to_drink_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_drink_desk,None,system.anchor_point.map_drink_desk,\
-            name="navigation to drink desk")
+        task_navigation_to_drink_desk = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_drink_desk,None,\
+            system.anchor_point.map_drink_desk, name="navigation to drink desk")
+        
+        # 非调试模式, 可并行
         if not DEBUG_NAVIGATION:
-            task_navigation_to_drink_desk.parallel = task.Task.Task_parallel.ALL
+            task_navigation_to_drink_desk.parallel = task.Task.Task_parallel.ALL # 可并行
         tasks_get_drink.add(task_navigation_to_drink_desk)
         
         #  左臂抬到指定位置识别咖啡机开关 开
         task_left_arm_to_rec_coffee_machine_turn_on = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_machine_switch, None, utilis.Device_id.LEFT, \
             system.anchor_point.left_arm_machine_turn_on_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="left arm move to rec coffee machine turn on")
-        task_left_arm_to_rec_coffee_machine_turn_on.parallel = task.Task.Task_parallel.ALL
-        tasks_get_drink.add(task_left_arm_to_rec_coffee_machine_turn_on)
+        task_left_arm_to_rec_coffee_machine_turn_on.parallel = task.Task.Task_parallel.ALL         # 可并行
+        tasks_get_drink.add(task_left_arm_to_rec_coffee_machine_turn_on)                           
         
-        #  右臂抬到指定位置  进行准备 ，识别杯子和机器
+        #  右臂抬到指定位置  进行准备 ，识别杯子和机器(中间点)
         task_right_arm_to_rec_cup_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_cup_machine, None, utilis.Device_id.RIGHT,\
             system.anchor_point.right_arm_cup_rec_pre, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="right arm move to rec cup machine prepare")
-        task_right_arm_to_rec_cup_pre.parallel = task.Task.Task_parallel.ALL
+        task_right_arm_to_rec_cup_pre.parallel = task.Task.Task_parallel.ALL                       # 可并行
         tasks_get_drink.add(task_right_arm_to_rec_cup_pre)
         
         #  右臂抬到指定位置识别杯子和机器
         task_right_arm_to_rec_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_cup_machine, None, utilis.Device_id.RIGHT,\
             system.anchor_point.right_arm_cup_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="right arm move to rec cup machine")
-        task_right_arm_to_rec_cup.parallel = task.Task.Task_parallel.ALL
-        task_right_arm_to_rec_cup.add_predecessor_task(task_right_arm_to_rec_cup_pre)
+        task_right_arm_to_rec_cup.parallel = task.Task.Task_parallel.ALL                           # 可并行
+        task_right_arm_to_rec_cup.add_predecessor_task(task_right_arm_to_rec_cup_pre)              # 前置任务, 右臂到达了中间点
         tasks_get_drink.add(task_right_arm_to_rec_cup)
         
         #  左臂图像识别(咖啡机开关位置, 开的时候)
         task_left_camera_rec_coffee_machine_turn_on = task.Task_image_rec(task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON,None,utilis.Device_id.LEFT,\
             name="left camera rec coffee machine turn on")
-        task_left_camera_rec_coffee_machine_turn_on.parallel = task.Task.Task_parallel.ALL    
-        task_left_camera_rec_coffee_machine_turn_on.add_predecessor_task(task_left_arm_to_rec_coffee_machine_turn_on)    # 绑定前置任务, 左臂到位
-        task_left_camera_rec_coffee_machine_turn_on.add_predecessor_task(task_navigation_to_drink_desk)                  # 绑定前置任务, 导航到饮料桌
+        task_left_camera_rec_coffee_machine_turn_on.parallel = task.Task.Task_parallel.ALL                               # 可并行 
+        task_left_camera_rec_coffee_machine_turn_on.add_predecessor_task(task_left_arm_to_rec_coffee_machine_turn_on)    # 前置任务, 左臂到位
+        task_left_camera_rec_coffee_machine_turn_on.add_predecessor_task(task_navigation_to_drink_desk)                  # 前置任务, 导航到饮料桌
         tasks_get_drink.add(task_left_camera_rec_coffee_machine_turn_on)
         
         #  右摄像头图像识别(杯子位置、咖啡机位置)(可并行，固定)
         task_right_camera_rec_cup_machine = task.Task_image_rec(task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE,None,utilis.Device_id.RIGHT,\
             name="right camera rec cup machine")
-        task_right_camera_rec_cup_machine.parallel = task.Task.Task_parallel.ALL
-        task_right_camera_rec_cup_machine.add_predecessor_task(task_right_arm_to_rec_cup)                      # 绑定前置任务,右臂到位,
-        task_right_camera_rec_cup_machine.add_predecessor_task(task_navigation_to_drink_desk)                  # 绑定前置任务, 导航到饮料桌
+        task_right_camera_rec_cup_machine.parallel = task.Task.Task_parallel.ALL                               # 可并行
+        task_right_camera_rec_cup_machine.add_predecessor_task(task_right_arm_to_rec_cup)                      # 前置任务, 右臂到位,
+        task_right_camera_rec_cup_machine.add_predecessor_task(task_navigation_to_drink_desk)                  # 前置任务, 导航到饮料桌
         tasks_get_drink.add(task_right_camera_rec_cup_machine)
         
-        #  右臂夹取杯子准备动作(可并行，固定)
+        #  右臂夹取杯子准备动作(中间点)
         task_right_arm_grasp_cup_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_cup_pre,None,utilis.Device_id.RIGHT,\
             system.anchor_point.right_arm_cup_grab_pre,arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="right arm grasp cup prepare")
-        task_right_arm_grasp_cup_pre.parallel = task.Task.Task_parallel.ALL
+        task_right_arm_grasp_cup_pre.parallel = task.Task.Task_parallel.ALL     # 可并行
         task_right_arm_grasp_cup_pre.status   = task.Task.Task_status.NOTREADY  # 需要参数
         tasks_get_drink.add(task_right_arm_grasp_cup_pre)
-            # 右臂绑定 夹取杯子和移动杯子
-        task_right_camera_rec_cup_machine.add_need_modify_task(task_right_arm_grasp_cup_pre)
+        task_right_camera_rec_cup_machine.add_need_modify_task(task_right_arm_grasp_cup_pre)  # 右臂绑定 夹取杯子和移动杯子
         
-        #  右臂夹取杯子(可并行)
+        #  右臂夹取杯子
         task_right_arm_grasp_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_cup,None,utilis.Device_id.RIGHT,\
             system.anchor_point.right_arm_cup_grab,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="right arm grasp cup")
-        task_right_arm_grasp_cup.parallel = task.Task.Task_parallel.ALL
-        task_right_arm_grasp_cup.status   = task.Task.Task_status.NOTREADY  # 需要参数
-        task_right_arm_grasp_cup.add_predecessor_task(task_right_arm_grasp_cup_pre)          # 前置任务
+        task_right_arm_grasp_cup.parallel = task.Task.Task_parallel.ALL                      # 可并行
+        task_right_arm_grasp_cup.status   = task.Task.Task_status.NOTREADY                   # 需要参数
+        task_right_arm_grasp_cup.add_predecessor_task(task_right_arm_grasp_cup_pre)          # 前置任务, 到达中间点
         tasks_get_drink.add(task_right_arm_grasp_cup)
-            # 右臂绑定 夹取杯子和移动杯子
-        task_right_camera_rec_cup_machine.add_need_modify_task(task_right_arm_grasp_cup)
+        task_right_camera_rec_cup_machine.add_need_modify_task(task_right_arm_grasp_cup)     # 右臂绑定 夹取杯子和移动杯子
 
 
         # 左臂放置到按钮下方, 进行准备
@@ -1083,44 +1072,43 @@ class Order_driven_task_schedul():
             copy.deepcopy(system.anchor_point.left_arm_machine_turn_off_pre),arm.GripMethod.CLOSE,\
                 arm_move_method = arm.ArmMoveMethod.Y_X_Z,\
                     name="left arm turn on machine prepare")
-        task_left_arm_turn_on_machine_pre.parallel = task.Task.Task_parallel.ALL
-        task_left_arm_turn_on_machine_pre.status   = task.Task.Task_status.NOTREADY  # 需要参数
+        task_left_arm_turn_on_machine_pre.parallel = task.Task.Task_parallel.ALL            # 可并行
+        task_left_arm_turn_on_machine_pre.status   = task.Task.Task_status.NOTREADY         # 需要参数
         tasks_get_drink.add(task_left_arm_turn_on_machine_pre)
-            # 绑定左臂识别任务
-        task_left_camera_rec_coffee_machine_turn_on.add_need_modify_task(task_left_arm_turn_on_machine_pre) 
+        task_left_camera_rec_coffee_machine_turn_on.add_need_modify_task(task_left_arm_turn_on_machine_pre)  # 绑定左臂识别任务
         
         # 左臂开启咖啡机, 向上拨一拨
         task_left_arm_turn_on_machine_click = task.Task_manipulation(task.Task_type.Task_manipulation.Turn_off_coffee_machine,None,utilis.Device_id.LEFT,\
             copy.deepcopy(system.anchor_point.left_arm_machine_turn_on_click), arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
                 name="left arm turn on machine click!!!")
-        task_left_arm_turn_on_machine_click.parallel = task.Task.Task_parallel.ALL
-        task_left_arm_turn_on_machine_click.status   = task.Task.Task_status.BEREADY  
-        task_left_arm_turn_on_machine_click.add_predecessor_task(task_left_arm_turn_on_machine_pre)
-        task_left_arm_turn_on_machine_click.set_sleep_time(2)                          # 等待两秒
+        task_left_arm_turn_on_machine_click.parallel = task.Task.Task_parallel.ALL                   # 可并行
+        task_left_arm_turn_on_machine_click.status   = task.Task.Task_status.BEREADY                 
+        task_left_arm_turn_on_machine_click.add_predecessor_task(task_left_arm_turn_on_machine_pre)  # 前置任务, 左臂到达开关下方
+        task_left_arm_turn_on_machine_click.set_sleep_time(2)                                        # 等待两秒
         tasks_get_drink.add(task_left_arm_turn_on_machine_click)
         
         #  右臂将杯子挪到咖啡机
         task_right_arm_water_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Water_cup,None,utilis.Device_id.RIGHT,\
             copy.deepcopy(system.anchor_point.right_arm_cup_water), arm_move_method = arm.ArmMoveMethod.X_YZ,\
                 name="right arm water cup")
-        task_right_arm_water_cup.parallel = task.Task.Task_parallel.ALL
+        task_right_arm_water_cup.parallel = task.Task.Task_parallel.ALL                  # 可并行
         task_right_arm_water_cup.status   = task.Task.Task_status.NOTREADY
-        task_right_arm_water_cup.add_predecessor_task(task_right_arm_grasp_cup)          # 要先抓到杯子  
+        task_right_arm_water_cup.add_predecessor_task(task_right_arm_grasp_cup)          # 前置任务, 要先抓到杯子  
         tasks_get_drink.add(task_right_arm_water_cup)
-        task_right_camera_rec_cup_machine.add_need_modify_task(task_right_arm_water_cup) #绑定头部识别任务
+        task_right_camera_rec_cup_machine.add_need_modify_task(task_right_arm_water_cup) # 绑定头部识别任务
         
         #  左臂抬到指定位置识别咖啡机开关 关
-        task_left_arm_to_rec_coffee_machine_turn_off = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_machine_switch, None, utilis.Device_id.LEFT, \
-            system.anchor_point.left_arm_machine_turn_on_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.X_YZ,\
+        task_left_arm_to_rec_coffee_machine_turn_off = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_machine_switch, None, \
+            utilis.Device_id.LEFT, system.anchor_point.left_arm_machine_turn_on_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.X_YZ,\
                 name="left arm move to rec coffee machine turn off")
-        task_left_arm_to_rec_coffee_machine_turn_off.parallel = task.Task.Task_parallel.ALL
-        task_left_arm_to_rec_coffee_machine_turn_off.add_predecessor_task(task_left_arm_turn_on_machine_pre)                  # 前置任务, 打开了之后再识别关
+        task_left_arm_to_rec_coffee_machine_turn_off.parallel = task.Task.Task_parallel.ALL                       # 可并行
+        task_left_arm_to_rec_coffee_machine_turn_off.add_predecessor_task(task_left_arm_turn_on_machine_pre)      # 前置任务, 打开了之后再识别关
         tasks_get_drink.add(task_left_arm_to_rec_coffee_machine_turn_off)
 
         #  左臂图像识别(咖啡机开关位置, 关的时候)
-        task_left_camera_rec_coffee_machine_turn_off = task.Task_image_rec(task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF,None,utilis.Device_id.LEFT,\
-            name="left camera rec coffee machine turn off")
-        task_left_camera_rec_coffee_machine_turn_off.parallel = task.Task.Task_parallel.ALL    
+        task_left_camera_rec_coffee_machine_turn_off = task.Task_image_rec(task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF,None,
+            utilis.Device_id.LEFT, name="left camera rec coffee machine turn off")
+        task_left_camera_rec_coffee_machine_turn_off.parallel = task.Task.Task_parallel.ALL                                # 可并行
         task_left_camera_rec_coffee_machine_turn_off.add_predecessor_task(task_left_arm_to_rec_coffee_machine_turn_off)    # 绑定前置任务, 手臂到位
         tasks_get_drink.add(task_left_camera_rec_coffee_machine_turn_off)
         
@@ -1128,7 +1116,7 @@ class Order_driven_task_schedul():
         task_left_arm_turn_off_machine_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Turn_off_coffee_machine,None,utilis.Device_id.LEFT,\
             copy.deepcopy(system.anchor_point.left_arm_machine_turn_off_pre), arm_move_method = arm.ArmMoveMethod.Z_XY,\
                 name="left arm turn off machine")
-        task_left_arm_turn_off_machine_pre.status   = task.Task.Task_status.NOTREADY  # 需要参数
+        task_left_arm_turn_off_machine_pre.status   = task.Task.Task_status.NOTREADY                          # 需要参数
         tasks_get_drink.add(task_left_arm_turn_off_machine_pre)
         task_left_camera_rec_coffee_machine_turn_off.add_need_modify_task(task_left_arm_turn_off_machine_pre) # 绑定左臂识别任务绑定左臂识别任务
         
@@ -1136,7 +1124,7 @@ class Order_driven_task_schedul():
         task_left_arm_turn_off_machine_click = task.Task_manipulation(task.Task_type.Task_manipulation.Turn_off_coffee_machine,None,utilis.Device_id.LEFT,\
             copy.deepcopy(system.anchor_point.left_arm_machine_turn_off_click), arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
                 name="left arm turn off machine click!!!")
-        task_left_arm_turn_off_machine_click.status   = task.Task.Task_status.BEREADY  # 需要参数
+        task_left_arm_turn_off_machine_click.status   = task.Task.Task_status.BEREADY                 
         task_left_arm_turn_off_machine_click.add_predecessor_task(task_left_arm_turn_off_machine_pre)  # 前置任务,抓具放在了开关上面
         task_left_arm_turn_off_machine_click.set_sleep_time(3)                                         # 等待3s
         tasks_get_drink.add(task_left_arm_turn_off_machine_click)
@@ -1145,23 +1133,23 @@ class Order_driven_task_schedul():
         task_move_back_from_drink_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             back_meters = system.anchor_point.drink_deck_move_back_length,\
                 name="move back from drink desk")
-        task_move_back_from_drink_desk.parallel = task.Task.Task_parallel.ALL
-        task_move_back_from_drink_desk.add_predecessor_task(task_left_arm_turn_off_machine_pre)  # 前置任务,左臂已经关闭咖啡机了
+        task_move_back_from_drink_desk.parallel = task.Task.Task_parallel.ALL                          # 可并行
+        task_move_back_from_drink_desk.add_predecessor_task(task_left_arm_turn_off_machine_pre)        # 前置任务,左臂已经关闭咖啡机了
         tasks_get_drink.add(task_move_back_from_drink_desk)
         
         #  左臂抬到休闲位
         task_left_arm_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT,\
             system.anchor_point.left_arm_idle,arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="left arm move to idle")
-        task_left_arm_idle.add_predecessor_task(task_move_back_from_drink_desk)            # 前置任务, 机器人退后了
-        task_left_arm_idle.parallel = task.Task.Task_parallel.ALL
+        task_left_arm_idle.add_predecessor_task(task_move_back_from_drink_desk)                         # 前置任务, 机器人退后了
+        task_left_arm_idle.parallel = task.Task.Task_parallel.ALL                                       # 可并行
         tasks_get_drink.add(task_left_arm_idle)
         
         #  将右臂(拿水)抬到指定位置
         task_right_arm_water_delivery = task.Task_manipulation(task.Task_type.Task_manipulation.Deliever_cup,None,utilis.Device_id.RIGHT,\
             system.anchor_point.right_arm_cup_delivery,arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="right arm water delivery")
-        task_right_arm_water_delivery.parallel = task.Task.Task_parallel.ALL
+        task_right_arm_water_delivery.parallel = task.Task.Task_parallel.ALL                # 可并行
         task_right_arm_water_delivery.add_predecessor_task(task_move_back_from_drink_desk)  # 前置任务, 机器人退后了
         tasks_get_drink.add(task_right_arm_water_delivery)
         
@@ -1176,8 +1164,10 @@ class Order_driven_task_schedul():
         else:
             raise ValueError("Invalid table_id")
         
+        # 非调试模式, 可并行
         if not DEBUG_NAVIGATION:
-            task_navigation_to_service_desk.parallel = task.Task.Task_parallel.ALL
+            task_navigation_to_service_desk.parallel = task.Task.Task_parallel.ALL                   # 可并行
+        task_navigation_to_service_desk.add_predecessor_task(task_move_back_from_drink_desk)         # 前置任务, 机器人退后了
         tasks_get_drink.add(task_navigation_to_service_desk)
 
         #  将饮料臂放到指定位置后松开(不可并行)
@@ -1187,11 +1177,11 @@ class Order_driven_task_schedul():
         task_right_arm_placement_cup.add_predecessor_task(task_navigation_to_service_desk)  # 前置任务, 到达指定位置
         tasks_get_drink.add(task_right_arm_placement_cup)
         
-        #  机器人后退(可并行)
+        #  机器人后退
         task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             back_meters = system.anchor_point.service_deck_move_back_length,name="move back from service desk")
-        task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
-        task_move_back_from_service_desk.add_predecessor_task(task_right_arm_placement_cup)
+        task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL                    # 可并行
+        task_move_back_from_service_desk.add_predecessor_task(task_right_arm_placement_cup)        # 前置任务, 右臂放好了杯子
         tasks_get_drink.add(task_move_back_from_service_desk)
         
         #  将左,右臂放到空闲位置(可并行)
@@ -1200,9 +1190,13 @@ class Order_driven_task_schedul():
                 [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ,\
                     name="two arms move to idle")
         task_arms_idle.add_predecessor_task(task_move_back_from_service_desk)                     # 前置任务,离开桌子,才进行后续操作
-        task_arms_idle.set_subtask_count(2)
-        task_arms_idle.parallel = task.Task.Task_parallel.ALL
+        task_arms_idle.set_subtask_count(2)                                                       # 两个子任务
+        task_arms_idle.parallel = task.Task.Task_parallel.ALL                                     # 可并行
         tasks_get_drink.add(task_arms_idle)
+        
+        # 功能性暂停(等待前面的动作全部完成)
+        task_function_pause = task.Task_function(task.Task_type.Task_function.PAUSE,None,name="function pause")
+        tasks_get_drink.add(task_function_pause)
         
         # 赋值
         return tasks_get_drink
@@ -1219,6 +1213,7 @@ class Order_driven_task_schedul():
         
         # 抓取零食
         # 抓取坐标待定
+        # TODO: 如果是一个手臂抓取两次零食, 则放置零食到抓取零食需要修改抓取方式
         task_grasp_snack = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_snack,None,utilis.Device_id.TBD,\
             [system.anchor_point.left_arm_snack_grip,system.anchor_point.right_arm_snack_grip],\
             target_clamps_status = arm.GripMethod.OPEN_CLOSE, arm_move_method = arm.ArmMoveMethod.YZ_X)
