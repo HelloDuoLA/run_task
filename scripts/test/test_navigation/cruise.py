@@ -57,11 +57,12 @@ def talker():
     # task_list = [task_SnackDesk ,task_RightServiceDesk, task_DrinkDesk ,task_LeftServiceDesk,task_init_pose]
     # task_list = [task_move_back1]
     task_list = []
-    # task_list.append(task_SnackDesk)
+    
+    task_list.append(task_SnackDesk)
     # task_list.append(task_snack_desk_back)
     # task_list.append(task_RightServiceDesk)
     # task_list.append(task_right_service_back)
-    task_list.append(task_DrinkDesk)
+    # task_list.append(task_DrinkDesk)
     # task_list.append(task_drink_desk_back)
     # task_list.append(task_LeftServiceDesk)
     # task_list.append(task_left_service_back)
