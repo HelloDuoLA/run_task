@@ -906,10 +906,6 @@ class Order_driven_task_schedul():
         task_left_arm_grap_container.add_predecessor_task(task_left_arm_grap_container_pre)  # 准备动作
         tasks_pick_snack.add(task_left_arm_grap_container)
         
-    
-            # 识别容器绑定 夹取容器
-        # task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container)
-        
         
         # 右臂夹取零食框, 准备动作
         task_right_arm_grap_container_pre    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
@@ -933,8 +929,6 @@ class Order_driven_task_schedul():
         task_right_arm_grap_container.add_predecessor_task(task_right_arm_grap_container_pre)  # 准备动作
         tasks_pick_snack.add(task_right_arm_grap_container)
         
-            # 识别容器绑定 夹取容器
-        # task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container)
         
         #  左、右臂将零食框放到指定高度
         task_arm_dilivery_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Deliever_container,None,utilis.Device_id.LEFT_RIGHT,\
@@ -948,10 +942,7 @@ class Order_driven_task_schedul():
         task_arm_dilivery_container.add_predecessor_task(task_right_arm_grap_container)       # 前置任务
         
         tasks_pick_snack.add(task_arm_dilivery_container)
-        
-        # 绑定左右摄像头识别容器任务
-        # task_left_camera_rec_container.add_need_modify_task(task_arm_dilivery_container)      
-        # task_right_camera_rec_container.add_need_modify_task(task_arm_dilivery_container)      
+  
 
         # 机器人后退
         task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
@@ -1331,7 +1322,6 @@ class Order_driven_task_schedul():
                         name="left arm grap container prepare")
         task_left_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行
         task_left_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数
-        task_left_arm_grap_container_pre.add_predecessor_task(task_function_pause)
         tasks_pick_snack.add(task_left_arm_grap_container_pre)
         
             # 识别容器绑定 夹取容器准备动作
@@ -1346,17 +1336,12 @@ class Order_driven_task_schedul():
         task_left_arm_grap_container.add_predecessor_task(task_left_arm_grap_container_pre)  # 准备动作
         tasks_pick_snack.add(task_left_arm_grap_container)
         
-    
-            # 识别容器绑定 夹取容器
-        # task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container)
-        
         
         # 右臂夹取零食框, 准备动作
         task_right_arm_grap_container_pre    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
                 [copy.deepcopy(system.anchor_point.right_arm_container_grip_pre)],\
                     [arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.Z_XY,\
                         name="right arm grap container prepare")
-        task_right_arm_grap_container_pre.add_predecessor_task(task_function_pause)
         task_right_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行  
         task_right_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数 
         tasks_pick_snack.add(task_right_arm_grap_container_pre)
