@@ -283,7 +283,7 @@ class Task_navigation(Task):
         
     # 打印输出
     def __str__(self) -> str:
-        if self.back_meters == 0:
+        if self.name != Task_type.Task_navigate.Move_backward:
             return super().__str__() + f"Target_3D_pose: {self.target_3D_pose} "
         else:
             return super().__str__() +  f"back_meters: x {self.target_3D_pose.x}, y {self.target_3D_pose.y}"

@@ -54,7 +54,7 @@ class ControlCmdActionServer:
             
                         
             move_cmd = Twist()
-            x_speed = length_x / second
+            x_speed = length_x / 100  / second
             move_cmd.linear.x = x_speed  # 设置线速度，负值表示后退
             move_cmd.angular.z = 0     #  保持直线行驶
             # 计算后退的时间

@@ -20,13 +20,13 @@ SnackDesk:
   
 # 饮料台位姿
 DrinkDesk:
-  position_x: 0.573174
-  position_y: -2.3666
+  position_x: 0.523174
+  position_y: -2.4666
   position_z: 0
   orientation_x: 0
   orientation_y: 0
-  orientation_z: -0.67278
-  orientation_w: 0.739843
+  orientation_z: -0.684871
+  orientation_w: 0.7028665
 
 # 中间点位姿
 # MiddlePoint:

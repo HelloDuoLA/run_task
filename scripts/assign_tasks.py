@@ -112,16 +112,16 @@ class System():
             # self.service_deck_move_back_length = rospy.get_param(f'~ServiceDeckMoveBackLength')
             
             
-            self.snack_deck_move_back_pose =  _get_control_cmd_xy("SnackDeckMoveBack")
-            self.drink_deck_move_back_pose =  _get_control_cmd_xy("DrinkDeckMoveBack")
-            self.left_deck_move_back_pose  =  _get_control_cmd_xy("LeftDeckMoveBack")
-            self.right_deck_move_back_pose =  _get_control_cmd_xy("RightDeckMoveBack")
+            self.snack_deck_move_back_pose =  self._get_control_cmd_xy("SnackDeckMoveBack")
+            self.drink_deck_move_back_pose =  self._get_control_cmd_xy("DrinkDeckMoveBack")
+            self.left_deck_move_back_pose  =  self._get_control_cmd_xy("LeftDeckMoveBack")
+            self.right_deck_move_back_pose =  self._get_control_cmd_xy("RightDeckMoveBack")
             
-            def _get_control_cmd_xy(name):
-                target_pose = utilis.Pose3D()
-                target_pose.x  = rospy.get_param(f'~{name}/x')
-                target_pose.y = rospy.get_param(f'~{name}/y')
-                return target_pose
+        def _get_control_cmd_xy(self,name):
+            target_pose = utilis.Pose3D()
+            target_pose.x  = rospy.get_param(f'~{name}/x')
+            target_pose.y = rospy.get_param(f'~{name}/y')
+            return target_pose
         
         # 初始化机器人位点常量配置
         def _initialize_robot_anchor_point(self):
@@ -1704,10 +1704,10 @@ def test_order_snack():
 
     log.log_tasks_info(tasks_get_snack,"new_all_task.log")
     
-    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
+    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
-    # system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
+    system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
     
 
     
