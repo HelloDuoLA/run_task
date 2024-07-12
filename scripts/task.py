@@ -274,12 +274,15 @@ class Task_navigation(Task):
     def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(),move_back_speed=0.15,name=""):
         super().__init__(task_name,finish_cb,name)
         self.target_3D_pose  = target_3D_pose
-        # self.back_meters     = back_meters         # 旋转度数
         self.move_back_second  = 4                  # 后退时间
     
     # 设置目的点
     def set_target(self,target_3D_pose:utilis.Pose3D):
         self.target_3D_pose = target_3D_pose
+    
+    # 设置后退时间 
+    def set_move_back_second(self,second):
+        self.move_back_second = second
         
     # 打印输出
     def __str__(self) -> str:
@@ -459,7 +462,12 @@ class Task_sequence():
         return task_str
     
     # 添加任务
-    def add(self,task):
+    def add(self,task,del_last_naviagte_to_init_point=False):
+        # 删除最后一个导航到初始点的任务
+        if del_last_naviagte_to_init_point == True:
+            if len(self.task_list) > 0:
+                if self.task_list[-1].task_type == Task_type.Task_navigate.Navigate_to_the_init_point:
+                    self.task_list.pop()
         # 单任务
         if isinstance(task,Task):
             self.task_list.append(task)
@@ -475,10 +483,10 @@ class Task_sequence():
             task.set_task_group_id_and_index(group_id,index)
     
     # 弹出第一个任务
-    def pop(self):
-        task = self.task_list.pop(0)
-        self._log_info()
-        return task
+    # def pop(self):
+    #     task = self.task_list.pop(0)
+    #     self._log_info()
+    #     return task
     
     # 是否完成, 主要用于并行任务分析的前置任务
     def has_been_done(self):
@@ -501,6 +509,11 @@ class Task_sequence():
     def _log_info(self):
         if self.name != "":
             log.log_update_tasks_info(self,self.name)
+    
+    # 在最后一个任务后面添加返回起始点的任务
+    def add_navigate_to_init_point(self):
+        task = Task_navigation(Task_type.Task_navigate.Navigate_to_the_init_point,None)
+        self.add(task)
 
 # 任务执行器中的任务管理器
 class Task_manager_in_running():

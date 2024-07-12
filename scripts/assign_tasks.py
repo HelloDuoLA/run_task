@@ -786,7 +786,6 @@ class Order_driven_task_schedul():
     # 新增任务
     def add_task(self,order:order.Order): 
         new_task_sequence = task.Task_sequence()
-        
         # 有零食请求
         if order.has_snack_request:
             new_task_sequence.add(self.create_tasks_grasp_snack(order.snack_list,order.table_id))
@@ -798,8 +797,11 @@ class Order_driven_task_schedul():
         # 更新组ID
         new_task_sequence.update_group_id(order.order_id)
         
-        # 添加到任务管理器待执行队列 
-        self.task_manager.waiting_task.add(new_task_sequence)
+        # 添加返回起始点的任务
+        new_task_sequence.add_navigate_to_init_point()
+        
+        # 添加到任务管理器待执行队列, 并删除最后的返回起始点 
+        self.task_manager.waiting_task.add(new_task_sequence,True)
         
         return new_task_sequence
         
@@ -948,11 +950,7 @@ class Order_driven_task_schedul():
         task_arm_dilivery_container.add_predecessor_task(task_left_arm_grap_container)        # 前置任务, 左臂抓取容器
         task_arm_dilivery_container.add_predecessor_task(task_right_arm_grap_container)       # 前置任务, 右臂抓取容器
         tasks_pick_snack.add(task_arm_dilivery_container)
-        
-        # 绑定左右摄像头识别容器任务
-        # task_left_camera_rec_container.add_need_modify_task(task_arm_dilivery_container)      
-        # task_right_camera_rec_container.add_need_modify_task(task_arm_dilivery_container)      
-
+          
         # 机器人后退
         task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             system.anchor_point.snack_deck_move_back_pose, name="move back from snack desk")
@@ -1007,6 +1005,7 @@ class Order_driven_task_schedul():
             raise ValueError("Invalid table_id")
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL              # 可并行
         task_move_back_from_service_desk.add_predecessor_task(task_arm_placement_container)  # 前置任务, 完成放置容器
+        task_move_back_from_service_desk.set_move_back_second(2)                             # 2s内完成后退
         tasks_pick_snack.add(task_move_back_from_service_desk)
         
         # 功能性暂停(等待前面的动作全部完成)
@@ -1206,6 +1205,7 @@ class Order_driven_task_schedul():
         
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL                    # 可并行
         task_move_back_from_service_desk.add_predecessor_task(task_right_arm_placement_cup)        # 前置任务, 右臂放好了杯子
+        task_move_back_from_service_desk.set_move_back_second(2)                                   # 后退2s
         tasks_get_drink.add(task_move_back_from_service_desk)
         
         #  将左,右臂放到空闲位置(可并行)
@@ -1443,6 +1443,7 @@ class Order_driven_task_schedul():
             raise ValueError("Invalid table_id")
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
         task_move_back_from_service_desk.add_predecessor_task(task_arm_placement_container)
+        task_move_back_from_service_desk.set_move_back_second(2)                             # 2s内完成后退
         tasks_pick_snack.add(task_move_back_from_service_desk)
         
         # 功能性暂停
@@ -1626,6 +1627,7 @@ class Order_driven_task_schedul():
             raise ValueError("Invalid table_id")
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
         task_move_back_from_service_desk.add_predecessor_task(task_right_arm_placement_cup)
+        task_move_back_from_service_desk.set_move_back_second(2)                              # 2s内完成后退
         tasks_get_drink.add(task_move_back_from_service_desk)
         
         #  将左,右臂放到空闲位置(可并行)
