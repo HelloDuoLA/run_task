@@ -10,6 +10,7 @@ Panels:
         - /TF1/Frames1
         - /TF1/Tree1
         - /Path2
+        - /PoseWithCovariance1
       Splitter Ratio: 0.5
     Tree Height: 437
   - Class: rviz/Selection
@@ -103,112 +104,18 @@ Visualization Manager:
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
-      Enabled: true
+      Enabled: false
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_footprint:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link1_L:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link1_R:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link2_L:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link2_R:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link3_L:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link3_R:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link4_L:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link4_R:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link5_L:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link5_R:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link6_L:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link6_R:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link7_L:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link7_R:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link_body:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link_eye:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link_head:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
       Update Interval: 0
-      Value: true
+      Value: false
       Visual Enabled: true
     - Class: rviz/TF
       Enabled: true
@@ -216,7 +123,7 @@ Visualization Manager:
       Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
         base_footprint:
           Value: true
         base_link:
@@ -228,39 +135,39 @@ Visualization Manager:
         laser:
           Value: true
         link1_L:
-          Value: true
+          Value: false
         link1_R:
-          Value: true
+          Value: false
         link2_L:
-          Value: true
+          Value: false
         link2_R:
-          Value: true
+          Value: false
         link3_L:
-          Value: true
+          Value: false
         link3_R:
-          Value: true
+          Value: false
         link4_L:
-          Value: true
+          Value: false
         link4_R:
-          Value: true
+          Value: false
         link5_L:
-          Value: true
+          Value: false
         link5_R:
-          Value: true
+          Value: false
         link6_L:
-          Value: true
+          Value: false
         link6_R:
-          Value: true
+          Value: false
         link7_L:
-          Value: true
+          Value: false
         link7_R:
-          Value: true
+          Value: false
         link_body:
-          Value: true
+          Value: false
         link_eye:
-          Value: true
+          Value: false
         link_head:
-          Value: true
+          Value: false
         map:
           Value: true
         odom:
@@ -418,6 +325,54 @@ Visualization Manager:
       Topic: /move_base/DWAPlannerROS/local_plan
       Unreliable: false
       Value: true
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz/PoseWithCovariance
+      Color: 252; 233; 79
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: false
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: PoseWithCovariance
+      Queue Size: 10
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Arrow
+      Topic: /amcl_pose
+      Unreliable: false
+      Value: false
+    - Alpha: 1
+      Arrow Length: 0.30000001192092896
+      Axes Length: 0.30000001192092896
+      Axes Radius: 0.009999999776482582
+      Class: rviz/PoseArray
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.07000000029802322
+      Head Radius: 0.029999999329447746
+      Name: PoseArray
+      Queue Size: 10
+      Shaft Length: 0.23000000417232513
+      Shaft Radius: 0.009999999776482582
+      Shape: Arrow (Flat)
+      Topic: /particlecloud
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -446,7 +401,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 7.182079792022705
+      Distance: 4.7544426918029785
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -454,9 +409,9 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 1.6871713399887085
-        Y: 0.24618008732795715
-        Z: -0.2554264962673187
+        X: 1.013307809829712
+        Y: -0.20529159903526306
+        Z: -0.21509984135627747
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
