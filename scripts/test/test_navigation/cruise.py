@@ -91,6 +91,8 @@ def talker():
             rospy.loginfo("30: 左服务桌后退")
             rospy.loginfo("4 : 前往右服务桌")
             rospy.loginfo("40: 右服务桌后退")
+            rospy.loginfo("5 : 前往初始点")
+            
             # 获取用户输入
             user_input = input("请输入您的指令: ")
             
@@ -121,6 +123,9 @@ def talker():
                 running    = True
             elif user_input == "40":
                 navigation_actuator.run(task_right_service_back)
+                running    = True
+            elif user_input == "5":
+                navigation_actuator.run(task_init_pose)
                 running    = True
         
             # 打印用户输入

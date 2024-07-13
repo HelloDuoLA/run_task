@@ -9,7 +9,7 @@ global_costmap:
   #global_frame和robot_base_frame间的TF坐标停止发布多久后，控制机器人停止，单位：s
   transform_tolerance: 1
   #代价地图刷新频率，单位：Hz
-  update_frequency: 1.5
+  update_frequency: 1
   #代价地图的可视化话题发布频率，单位：Hz
   publish_frequency: 1.0
 
@@ -29,9 +29,9 @@ global_costmap:
     #是否开启膨胀层
     enabled: true 
     #代价地图数值随与障碍物距离下降的比值，越大会导致路径规划越靠近障碍物
-    cost_scaling_factor: 1.0
+    cost_scaling_factor: 0.2
     #机器人膨胀半径，影响路径规划，单位：m
-    inflation_radius: 0.3
+    inflation_radius: 0.20
   
   #为代价地图设置地图层，这里设置了三层，分别作为静态层、障碍层和膨胀层
   plugins:
