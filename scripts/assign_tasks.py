@@ -797,7 +797,7 @@ class Order_driven_task_schedul():
         new_task_sequence.update_group_id(order.order_id)
         
         # 添加返回起始点的任务
-        new_task_sequence.add_navigate_to_init_point()
+        new_task_sequence.add(self.create_task_navigate_to_init_point())
         
         # 添加到任务管理器待执行队列, 并删除最后的返回起始点 
         self.task_manager.waiting_task.add(new_task_sequence,True)
@@ -878,6 +878,7 @@ class Order_driven_task_schedul():
                 name="left arm move to rec snack")
         task_left_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL                     # 可并行
         task_left_arm_to_rec_snack.add_predecessor_task(task_left_camera_rec_container)       # 前置任务, 左摄像头食物框识别
+        task_left_arm_to_rec_snack.set_sleep_time(2)                                          # 防止画面糊掉
         tasks_pick_snack.add(task_left_arm_to_rec_snack)
         
         #  将右臂抬到零食识别位置(可前后并行，固定)
@@ -886,6 +887,7 @@ class Order_driven_task_schedul():
                 name="right arm move to rec snack")
         task_right_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL                    # 可并行
         task_right_arm_to_rec_snack.add_predecessor_task(task_right_camera_rec_container)     # 前置任务, 右摄像头食物框识别
+        task_right_arm_to_rec_snack.set_sleep_time(2)                                         # 防止画面糊掉
         tasks_pick_snack.add(task_right_arm_to_rec_snack)
         
         #  左、右摄像头零食识别(不可并行，动态)
@@ -1054,7 +1056,7 @@ class Order_driven_task_schedul():
         task_navigation_move_foward_to_drink_desk.add_predecessor_task(task_navigation_to_drink_desk)         # 前置任务, 导航到服务桌前20cm
         task_navigation_move_foward_to_drink_desk.parallel = task.Task.Task_parallel.ALL                       # 可并行
         task_navigation_move_foward_to_drink_desk.set_move_back_second(2)                                      # 移动前进2s
-            
+        tasks_get_drink.add(task_navigation_move_foward_to_drink_desk)
         
         # 非调试模式, 可并行
         if not DEBUG_NAVIGATION:

@@ -8,11 +8,11 @@ DrinkDeckMoveBack:
   y: +20
 
 LeftDeckMoveBack:
-  x: -20
+  x: -30
   y: -20
 
 RightDeckMoveBack:
-  x: -20
+  x: -30
   y: 20
 
 # 前进距离 [mm]
@@ -25,9 +25,9 @@ DrinkDeckMoveforward:
   y: 0
 
 LeftDeckMoveforward:
-  x: 20
+  x: 30
   y: 0
 
 RightDeckMoveforward:
-  x: 20
+  x: 30
   y: 0

@@ -15,8 +15,8 @@ SnackDesk:
   position_z: 0
   orientation_x: 0
   orientation_y: 0
-  orientation_z: 1
-  orientation_w: 0
+  orientation_z: 0.998
+  orientation_w: -0.045
   
 # 饮料台位姿
 DrinkDesk:

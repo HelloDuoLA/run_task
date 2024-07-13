@@ -513,9 +513,9 @@ class Task_sequence():
             log.log_update_tasks_info(self,self.name)
     
     # 在最后一个任务后面添加返回起始点的任务
-    def add_navigate_to_init_point(self):
-        task = Task_navigation(Task_type.Task_navigate.Navigate_to_the_init_point,None)
-        self.add(task)
+    # def add_navigate_to_init_point(self):
+    #     task = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point,None,system.anchor_point.map_initial_pose)
+    #     self.add(task)
 
 # 任务执行器中的任务管理器
 class Task_manager_in_running():
