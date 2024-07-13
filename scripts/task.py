@@ -174,12 +174,18 @@ class Task():
         self.subtask_count = 1                      # 子任务数量,默认为1, 就是本任务
         self.subtask_count_finished = 0             # 已完成的子任务数量
         self.predecessor_tasks      = Task_sequence() # 相对前置任务
-        self.name = name                           # 任务名称
-        self.sleep_time = 0                         # 休眠时间
+        self.name = name                            # 任务名称
+        self.sleep_time_after_task = 0              # 任务完成休眠时间
+        self.sleep_time_before_task = 0             # 开始任务前休眠时间
+
     
-    # 设置休眠时间
-    def set_sleep_time(self,sleep_time_second):
-        self.sleep_time = sleep_time_second
+    # 设置任务完成休眠时间
+    def set_sleep_time_after_task(self,sleep_time_after_task_second):
+        self.sleep_time_after_task = sleep_time_after_task_second
+        
+    # 设置开始任务前休眠时间
+    def set_sleep_time_before_task(self,sleep_time_before_task):
+        self.sleep_time_before_task = sleep_time_before_task
     
     # 添加前置任务
     def add_predecessor_task(self,task):

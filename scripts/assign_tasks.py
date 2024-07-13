@@ -229,6 +229,10 @@ class Navigation_actuator():
         navigation_task.update_start_status() # 刷新开始时间
         system.robot.robot_status = robot.Robot.Robot_status.MOVING  # 机器人状态更新
         
+        if navigation_task.sleep_time_before_task != 0:
+            time.sleep(navigation_task.sleep_time_before_task)
+            rospy.loginfo(f"task {task_index} sleep for {navigation_task.sleep_time_before_task} second")
+        
         # 后退任务
         if navigation_task.task_type == task.Task_type.Task_navigate.Move_backward or \
             navigation_task.task_type == task.Task_type.Task_navigate.Move_forward:
@@ -274,9 +278,14 @@ class Navigation_actuator():
         
         if DEBUG_NAVIGATION:
             input("The navigation point has been reached, whether to continue running ")
-        # 机器人状态更新
-        system.robot.robot_status = robot.Robot.Robot_status.IDLE  
-        
+
+        # 任务完成暂停时间
+        if current_task.sleep_time_after_task != 0:
+            time.sleep(current_task.sleep_time_after_task)
+            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time_after_task} second")
+        else:
+            rospy.loginfo(f"task {result.task_index} not sleep")
+            
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
     
@@ -297,7 +306,6 @@ class Navigation_actuator():
     def control_cmd_task_done_callback(status, result:msg.ControlCmdResult):
         rospy.loginfo(f"node: {rospy.get_name()}, control cmd task done. status:{status} result:{result}")
         current_task = system.navigation_actuator.running_tasks_manager.get_task(result.task_index)
-        system.robot.robot_status = robot.Robot.Robot_status.IDLE  # 机器人状态更新
         
         if status == actionlib.GoalStatus.SUCCEEDED:
             rospy.loginfo(f"node: {rospy.get_name()}, control cmd succeed. status : {status}")
@@ -309,6 +317,13 @@ class Navigation_actuator():
         # 任务自带的回调
         if current_task.finish_cb is not None:
             current_task.finish_cb(status, result)
+            
+        # 任务完成暂停时间
+        if current_task.sleep_time_after_task != 0:
+            time.sleep(current_task.sleep_time_after_task)
+            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time_after_task} second")
+        else:
+            rospy.loginfo(f"task {result.task_index} not sleep")
         
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
@@ -343,8 +358,14 @@ class Manipulator_actuator():
         task_index = self.running_tasks_manager.add_task(manipulation_task)
         system.robot.update_arm_status(manipulation_task.arm_id,robot.manipulation_status.arm.status.BUSY)
         rospy.loginfo(f"manipulation task {manipulation_task.task_index} is running ")
+        
         # 任务开始
         manipulation_task.update_start_status()
+        
+        # 任务前休眠时间
+        if manipulation_task.sleep_time_before_task != 0:
+            time.sleep(manipulation_task.sleep_time_before_task)
+            rospy.loginfo(f"task {task_index} sleep for {manipulation_task.sleep_time_before_task} second")
 
         # 左臂
         if manipulation_task.arm_id == utilis.Device_id.LEFT:
@@ -423,15 +444,12 @@ class Manipulator_actuator():
             current_task.finish_cb(status, result)
         
         # 任务完成暂停时间
-        if current_task.sleep_time != 0:
-            time.sleep(current_task.sleep_time)
-            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time} second")
+        if current_task.sleep_time_after_task != 0:
+            time.sleep(current_task.sleep_time_after_task)
+            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time_after_task} second")
         else:
             rospy.loginfo(f"task {result.task_index} not sleep")
             
-        # 更新机械臂状态
-        system.robot.update_arm_status(current_task.arm_id,robot.manipulation_status.arm.status.IDLE)
-        
         # 删除任务
         if current_task.if_finished():
             system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
@@ -465,15 +483,12 @@ class Manipulator_actuator():
             current_task.finish_cb(status, result)
         
         # 任务完成暂停时间
-        if current_task.sleep_time != 0:
-            time.sleep(current_task.sleep_time)
-            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time} second")
+        if current_task.sleep_time_after_task != 0:
+            time.sleep(current_task.sleep_time_after_task)
+            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time_after_task} second")
         else:
             rospy.loginfo(f"task {result.task_index} not sleep")
             
-        # 更新机械臂状态
-        system.robot.update_arm_status(current_task.arm_id,robot.manipulation_status.arm.status.IDLE)
-        
         # 删除任务
         if current_task.if_finished():
             system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
@@ -507,6 +522,12 @@ class Image_rec_actuator():
         task_index = self.running_tasks_manager.add_task(task_image_rec_task)
         # 更新机械臂状态
         system.robot.update_arm_status(task_image_rec_task.camera_id,robot.manipulation_status.arm.status.BUSY)
+        
+        # 任务前休眠时间
+        if task_image_rec_task.sleep_time_before_task != 0:
+            time.sleep(task_image_rec_task.sleep_time_before_task)
+            rospy.loginfo(f"task {task_index} sleep for {task_image_rec_task.sleep_time_before_task} second")
+            
         # 发布任务
         task_info = msg.ImageRecRequest()
         task_info.task_index = task_index                                    # 任务索引
@@ -619,8 +640,14 @@ class Image_rec_actuator():
         # 任务自带的回调
         if current_task.finish_cb is not None:
             current_task.finish_cb(actionlib.GoalStatus.SUCCEEDED)
-        # 更新机械臂状态
-        system.robot.update_arm_status(current_task.camera_id,robot.manipulation_status.arm.status.IDLE)
+            
+        # 任务完成暂停时间
+        if current_task.sleep_time_after_task != 0:
+            time.sleep(current_task.sleep_time_after_task)
+            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time_after_task} second")
+        else:
+            rospy.loginfo(f"task {result.task_index} not sleep")
+            
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, actionlib.GoalStatus.SUCCEEDED)
     
@@ -662,6 +689,16 @@ class Task_manager():
         else:
             rospy.loginfo(f"task {current_task.task_index} is not finish !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             
+        # 更新硬件状态
+        if current_task.task_type.task_type.__class__ == task.Task_type.Task_navigate:
+            system.robot.robot_status = robot.Robot.Robot_status.IDLE  # 机器人状态更新
+        # 机械臂任务
+        elif current_task.task_type.task_type.__class__ == task.Task_type.Task_manipulation:
+            system.robot.update_arm_status(current_task.arm_id,robot.manipulation_status.arm.status.IDLE)
+        # 图像识别任务
+        elif current_task.task_type.task_type.__class__ == task.Task_type.Task_image_rec:
+            system.robot.update_arm_status(current_task.camera_id,robot.manipulation_status.arm.status.IDLE)
+            
     
 
     # 定时器任务
@@ -683,15 +720,12 @@ class Task_manager():
             else:
                 # 导航任务
                 if current_task.task_type.task_type.__class__ == task.Task_type.Task_navigate:
-                    # rospy.loginfo("navigation task!!561")
                     system.navigation_actuator.run(current_task)
                 # 机械臂任务
                 elif current_task.task_type.task_type.__class__ == task.Task_type.Task_manipulation:
-                    # rospy.loginfo("manipulation task!!565")
                     system.manipulator_actuator.run(current_task)
                 # 图像识别任务
                 elif current_task.task_type.task_type.__class__ == task.Task_type.Task_image_rec:
-                    # rospy.loginfo("image rec task!!565")
                     system.image_rec_actuator.run(current_task)
                 # 功能性暂停任务
                 elif current_task.task_type.task_type == task.Task_type.Task_function.PAUSE:
@@ -930,7 +964,7 @@ class Order_driven_task_schedul():
                 name="left arm move to rec snack")
         task_left_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL                     # 可并行
         task_left_arm_to_rec_snack.add_predecessor_task(task_left_camera_rec_container)       # 前置任务, 左摄像头食物框识别
-        task_left_arm_to_rec_snack.set_sleep_time(2)                                          # 防止画面糊掉
+        task_left_arm_to_rec_snack.set_sleep_time_after_task(2)                                          # 防止画面糊掉
         tasks_pick_snack.add(task_left_arm_to_rec_snack)
         
         #  将右臂抬到零食识别位置(可前后并行，固定)
@@ -939,7 +973,7 @@ class Order_driven_task_schedul():
                 name="right arm move to rec snack")
         task_right_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL                    # 可并行
         task_right_arm_to_rec_snack.add_predecessor_task(task_right_camera_rec_container)     # 前置任务, 右摄像头食物框识别
-        task_right_arm_to_rec_snack.set_sleep_time(2)                                         # 防止画面糊掉
+        task_right_arm_to_rec_snack.set_sleep_time_after_task(2)                                         # 防止画面糊掉
         tasks_pick_snack.add(task_right_arm_to_rec_snack)
         
         #  左、右摄像头零食识别(不可并行，动态)
@@ -1190,7 +1224,7 @@ class Order_driven_task_schedul():
         task_left_arm_turn_on_machine_click.parallel = task.Task.Task_parallel.ALL                   # 可并行
         task_left_arm_turn_on_machine_click.status   = task.Task.Task_status.BEREADY                 
         task_left_arm_turn_on_machine_click.add_predecessor_task(task_left_arm_turn_on_machine_pre)  # 前置任务, 左臂到达开关下方
-        task_left_arm_turn_on_machine_click.set_sleep_time(2)                                        # 等待两秒
+        task_left_arm_turn_on_machine_click.set_sleep_time_after_task(2)                                        # 等待两秒
         tasks_get_drink.add(task_left_arm_turn_on_machine_click)
         
         #  右臂将杯子挪到咖啡机
@@ -1232,7 +1266,7 @@ class Order_driven_task_schedul():
                 name="left arm turn off machine click!!!")
         task_left_arm_turn_off_machine_click.status   = task.Task.Task_status.BEREADY                 
         task_left_arm_turn_off_machine_click.add_predecessor_task(task_left_arm_turn_off_machine_pre)  # 前置任务,抓具放在了开关上面
-        task_left_arm_turn_off_machine_click.set_sleep_time(3)                                         # 等待3s
+        task_left_arm_turn_off_machine_click.set_sleep_time_after_task(3)                                         # 等待3s
         tasks_get_drink.add(task_left_arm_turn_off_machine_click)
         
         #  机器人后退
@@ -1640,7 +1674,7 @@ class Order_driven_task_schedul():
         task_left_arm_turn_on_machine_click.parallel = task.Task.Task_parallel.ALL
         task_left_arm_turn_on_machine_click.status   = task.Task.Task_status.BEREADY  # 需要参数
         task_left_arm_turn_on_machine_click.add_predecessor_task(task_left_arm_turn_on_machine_pre)
-        task_left_arm_turn_on_machine_click.set_sleep_time(2) 
+        task_left_arm_turn_on_machine_click.set_sleep_time_after_task(2) 
         tasks_get_drink.add(task_left_arm_turn_on_machine_click)
         
         #  右臂将杯子挪到咖啡机
@@ -1682,7 +1716,7 @@ class Order_driven_task_schedul():
                 name="left arm turn off machine click!!!")
         task_left_arm_turn_off_machine_click.status   = task.Task.Task_status.BEREADY  # 需要参数
         task_left_arm_turn_off_machine_click.add_predecessor_task(task_left_arm_turn_off_machine_pre)
-        task_left_arm_turn_off_machine_click.set_sleep_time(3)  
+        task_left_arm_turn_off_machine_click.set_sleep_time_after_task(3)  
         tasks_get_drink.add(task_left_arm_turn_off_machine_click)
         
         
