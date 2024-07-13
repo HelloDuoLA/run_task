@@ -31,7 +31,7 @@ global_costmap:
     #代价地图数值随与障碍物距离下降的比值，越大会导致路径规划越靠近障碍物
     cost_scaling_factor: 0.2
     #机器人膨胀半径，影响路径规划，单位：m
-    inflation_radius: 0.20
+    inflation_radius: 0.3
   
   #为代价地图设置地图层，这里设置了三层，分别作为静态层、障碍层和膨胀层
   plugins:
