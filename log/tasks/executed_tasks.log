@@ -1,53 +1,53 @@
-07-13 19:58:46
+07-13 21:09:28
 
 --------------------------------------------------
 
 
-Task       : Task_image_rec CONTAINER
-Name       : right camera rec container
+Task       : Task_manipulation Grasp_container
+Name       : right arm grap container prepare
 Group_id   : 2
-Index      : 6
-Create_time: 1720871897942361116
-Start_time : -999
+Index      : 19
+Create_time: 1720876099469710111
+Start_time : 1720876165291955709
 End_time   : -999
 Finsih_cb  : None
-Status     : BEREADY
+Status     : RUNNING
 Result     : INVALID
 Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: [4:Task_manipulation Rec_container] [1:Task_navigate Navigate_to_the_snack_desk] 
-Camera_id: RIGHT 
-Snack_list: []
-Need_modify_tasks: 
-          [12:Task_manipulation Lossen_snack]
-          [15:Task_manipulation Lossen_snack]
-          [19:Task_manipulation Grasp_container]
- 
+Predecessor_tasks: 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[372.98681640625, -109.68793487548828, 430, -180, 0.0, 90] } 
+Target_clamps_status: Clamp_status_0: OPEN  
+Clamp_speed         : 50 
+arm_move_method     : Z_XY 
+click_length        : 0 
 
-Task       : Task_image_rec CONTAINER
-Name       : left camera rec container
+
+Task       : Task_manipulation Grasp_container
+Name       : left arm grap container
 Group_id   : 2
-Index      : 5
-Create_time: 1720871897942300558
-Start_time : -999
+Index      : 18
+Create_time: 1720876099469563245
+Start_time : 1720876168819856166
 End_time   : -999
 Finsih_cb  : None
-Status     : BEREADY
+Status     : RUNNING
 Result     : INVALID
 Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: [3:Task_manipulation Rec_container] [1:Task_navigate Navigate_to_the_snack_desk] 
-Camera_id: LEFT 
-Snack_list: []
-Need_modify_tasks: 
-          [12:Task_manipulation Lossen_snack]
-          [15:Task_manipulation Lossen_snack]
-          [17:Task_manipulation Grasp_container]
- 
+Predecessor_tasks: [17:Task_manipulation Grasp_container] 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[0, 0, -60, 0, 0, 0] } 
+Target_clamps_status: Clamp_status_0: CLOSE  
+Clamp_speed         : 50 
+arm_move_method     : MODIFY_Z 
+click_length        : 0 
+
 --------------------------------------------------
 
 

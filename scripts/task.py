@@ -166,7 +166,7 @@ class Task():
         self.create_time = rospy.Time.now()         # 创建时间
         self.start_time  = -999                     # 开始时间
         self.end_time    = -999                     # 结束时间
-        self.finish_cb   = finish_cb                # 完成之后的回调函数
+        self.finish_cb   = None                # 完成之后的回调函数
         self.status      = self.Task_status.BEREADY # 任务状态 
         self.task_result = self.Task_result.INVALID # 0: 失败 1: 成功
         self.return_data = None                     # 返回数据

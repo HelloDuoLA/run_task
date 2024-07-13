@@ -634,8 +634,10 @@ def init_camera():
     
     left_camera_id  = 4
     right_camera_id = 6
-    left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_V4L2)
-    right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_V4L2)
+    # left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_V4L2)
+    # right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_V4L2)    
+    left_camera     = cv2.VideoCapture(left_camera_id)
+    right_camera    = cv2.VideoCapture(right_camera_id)
     
     
     frame_width     = rospy.get_param(f'~frame_width',  1280)

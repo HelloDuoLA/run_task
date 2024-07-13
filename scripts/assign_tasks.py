@@ -29,8 +29,8 @@ import control_cmd
 
 DEBUG_NAVIGATION = False     # 导航调试中, 则运动到桌子的任务均为非并行任务, 并且在完成之后需要输入任意字符才能下一步
 
-WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
-# WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
+# WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
+WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
 
 # 初始化
 class System():
@@ -415,12 +415,15 @@ class Manipulator_actuator():
             current_task.update_end_status(task.Task.Task_result.FAILED)
         
         # 任务自带的回调
-        if current_task.finish_cb is not None:
+        if current_task.finish_cb != None:
             current_task.finish_cb(status, result)
         
         # 任务完成暂停时间
         if current_task.sleep_time != 0:
             time.sleep(current_task.sleep_time)
+            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time} second")
+        else:
+            rospy.loginfo(f"task {result.task_index} not sleep")
             
         # 更新机械臂状态
         system.robot.update_arm_status(current_task.arm_id,robot.manipulation_status.arm.status.IDLE)
@@ -428,6 +431,8 @@ class Manipulator_actuator():
         # 删除任务
         if current_task.if_finished():
             system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
+        else :
+            rospy.loginfo(f"task {result.task_index} is not finished, keep in running list")
         
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
@@ -591,7 +596,7 @@ class Task_manager():
         self.can_run_state    = True                  #是否能够执行任务
         # 每0.5s执行一次任务
         # TODO:调试时为3秒
-        timer = rospy.Timer(rospy.Duration(0.1), self.timer_callback)
+        timer = rospy.Timer(rospy.Duration(0.3), self.timer_callback)
     
     # 任务完成回调
     def tm_task_finish_callback(self, current_task:task.Task, status=None, result=None):
