@@ -164,9 +164,9 @@ class Navigation_actuator():
         self.move_base_ac   = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         self.control_cmd_ac = actionlib.SimpleActionClient(utilis.Topic_name.control_cmd_action, msg.ControlCmdAction)
         rospy.loginfo("waiting for move_base")
-        # self.move_base_ac.wait_for_server()
+        self.move_base_ac.wait_for_server()
         rospy.loginfo("waiting for control cmd server")
-        # self.control_cmd_ac.wait_for_server()
+        self.control_cmd_ac.wait_for_server()
         
         
     # 运行
@@ -199,6 +199,7 @@ class Navigation_actuator():
     @staticmethod
     def navigation_task_done_callback(status, result):
         rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
+        global running
         running = False
         
     # 激活回调
@@ -217,6 +218,7 @@ class Navigation_actuator():
     @staticmethod
     def control_cmd_task_done_callback(status, result:msg.ControlCmdResult):
         rospy.loginfo(f"node: {rospy.get_name()}, control cmd task done. status:{status} result:{result}")
+        global running
         running = False
     
     # 激活回调
