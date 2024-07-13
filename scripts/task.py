@@ -42,6 +42,8 @@ class Task_type():
         Navigate_to_one_service_desk       = auto()  # 导航到其中一个服务台
         Rotation_in_place                  = auto()  # 原地旋转
         Move_backward                      = auto()  # 后退
+        Move_forward                       = auto()  # 前进
+        
         
         def __eq__(self, value: object) -> bool:
             try:
