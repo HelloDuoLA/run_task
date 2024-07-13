@@ -358,7 +358,7 @@ class Manipulator_actuator():
             goal.grasp_speed          = manipulation_task.clamp_speed
             goal.arm_move_method      = manipulation_task.arm_move_method.value
             goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
-            self.left_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
+            self.left_arm_ac.send_goal(goal,self.left_done_callback,self.active_callback,self.feedback_callback)
         # 右臂
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
             # 设置action 目标
@@ -371,7 +371,7 @@ class Manipulator_actuator():
             goal.grasp_speed          = manipulation_task.clamp_speed
             goal.arm_move_method      = manipulation_task.arm_move_method.value
             goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
-            self.right_arm_ac.send_goal(goal,self.done_callback,self.active_callback,self.feedback_callback)
+            self.right_arm_ac.send_goal(goal,self.right_done_callback,self.active_callback,self.feedback_callback)
             
         elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
             left_goal              = msg.MoveArmGoal()
@@ -395,25 +395,29 @@ class Manipulator_actuator():
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
                     right_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
-            self.left_arm_ac.send_goal(left_goal,self.done_callback,self.active_callback,self.feedback_callback)
-            self.right_arm_ac.send_goal(right_goal,self.done_callback,self.active_callback,self.feedback_callback)
+            self.left_arm_ac.send_goal(left_goal,self.left_done_callback,self.active_callback,self.feedback_callback)
+            self.right_arm_ac.send_goal(right_goal,self.right_done_callback,self.active_callback,self.feedback_callback)
 
 
     # 完成回调
     @staticmethod
-    def done_callback(status, result:msg.MoveArmResult):
+    def left_done_callback(status, result:msg.MoveArmResult):
         rospy.loginfo(f"node: {rospy.get_name()}, manipulator done. status:{status} result:{result}")
         current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
 
+        try:
         # 任务成功
-        if status == actionlib.GoalStatus.SUCCEEDED:
-            rospy.loginfo(f"node: {rospy.get_name()}, manipulator succeed. status : {status}")
-            current_task.update_end_status(task.Task.Task_result.SUCCEED)
-        # 任务失败
-        else:
+            if status == actionlib.GoalStatus.SUCCEEDED:
+                rospy.loginfo(f"node: {rospy.get_name()}, manipulator succeed. status : {status}")
+                current_task.update_end_status(task.Task.Task_result.SUCCEED)
+            # 任务失败
+            else:
+                rospy.loginfo(f"node: {rospy.get_name()}, manipulator failed. status : {status}")
+                current_task.update_end_status(task.Task.Task_result.FAILED)
+        except Exception as e:
+            rospy.logerr(f"Exception in done_cb: {e}")
             rospy.loginfo(f"node: {rospy.get_name()}, manipulator failed. status : {status}")
             current_task.update_end_status(task.Task.Task_result.FAILED)
-        
         # 任务自带的回调
         if current_task.finish_cb != None:
             current_task.finish_cb(status, result)
@@ -436,6 +440,49 @@ class Manipulator_actuator():
         
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
+        
+        # 完成回调
+    @staticmethod
+    def right_done_callback(status, result:msg.MoveArmResult):
+        rospy.loginfo(f"node: {rospy.get_name()}, manipulator done. status:{status} result:{result}")
+        current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
+
+        try:
+        # 任务成功
+            if status == actionlib.GoalStatus.SUCCEEDED:
+                rospy.loginfo(f"node: {rospy.get_name()}, manipulator succeed. status : {status}")
+                current_task.update_end_status(task.Task.Task_result.SUCCEED)
+            # 任务失败
+            else:
+                rospy.loginfo(f"node: {rospy.get_name()}, manipulator failed. status : {status}")
+                current_task.update_end_status(task.Task.Task_result.FAILED)
+        except Exception as e:
+            rospy.logerr(f"Exception in done_cb: {e}")
+            rospy.loginfo(f"node: {rospy.get_name()}, manipulator failed. status : {status}")
+            current_task.update_end_status(task.Task.Task_result.FAILED)
+        # 任务自带的回调
+        if current_task.finish_cb != None:
+            current_task.finish_cb(status, result)
+        
+        # 任务完成暂停时间
+        if current_task.sleep_time != 0:
+            time.sleep(current_task.sleep_time)
+            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time} second")
+        else:
+            rospy.loginfo(f"task {result.task_index} not sleep")
+            
+        # 更新机械臂状态
+        system.robot.update_arm_status(current_task.arm_id,robot.manipulation_status.arm.status.IDLE)
+        
+        # 删除任务
+        if current_task.if_finished():
+            system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
+        else :
+            rospy.loginfo(f"task {result.task_index} is not finished, keep in running list")
+        
+        # 给任务管理器的回调
+        system.task_manager.tm_task_finish_callback(current_task, status, result)
+        
     
     # 激活回调
     @staticmethod
@@ -1095,7 +1142,7 @@ class Order_driven_task_schedul():
             name="left camera rec coffee machine turn on")
         task_left_camera_rec_coffee_machine_turn_on.parallel = task.Task.Task_parallel.ALL                               # 可并行 
         task_left_camera_rec_coffee_machine_turn_on.add_predecessor_task(task_left_arm_to_rec_coffee_machine_turn_on)    # 前置任务, 左臂到位
-        task_left_camera_rec_coffee_machine_turn_on.add_predecessor_task(task_navigation_to_drink_desk)                  # 前置任务, 导航到饮料桌
+        task_left_camera_rec_coffee_machine_turn_on.add_predecessor_task(task_navigation_move_foward_to_drink_desk)                  # 前置任务, 导航到饮料桌
         tasks_get_drink.add(task_left_camera_rec_coffee_machine_turn_on)
         
         #  右摄像头图像识别(杯子位置、咖啡机位置)(可并行，固定)

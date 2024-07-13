@@ -34,7 +34,8 @@ LeftArmGripTurnOFFMachineSwitch:
 
 # 右臂抓零食
 RightArmGripSnack:
-  x_bias: -90
+  # x_bias: -90
+  x_bias: -100
   y_bias: 78
   z_bias: 0
 

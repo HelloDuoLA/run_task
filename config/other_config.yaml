@@ -17,7 +17,7 @@ RightDeckMoveBack:
 
 # 前进距离 [mm]
 SnackDeckMoveforward:
-  x: 20
+  x: 25
   y: 0
 
 DrinkDeckMoveforward:

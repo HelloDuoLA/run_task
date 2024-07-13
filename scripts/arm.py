@@ -234,9 +234,10 @@ class Arm_controller():
             result.arm_id     = goal.arm_id
             result.task_index = goal.task_index
             rospy.loginfo(f"result : {result}")
-
-            self.action_server.set_succeeded(result) #可以添加结果参数
-        
+            try:
+                self.action_server.set_succeeded(result) #可以添加结果参数
+            except Exception as e:
+                print(f"Exception in done_cb: {e}")
         # 关闭抓爪 
         def close_grasp(self):
             result = self.control_instance.set_gripper_state(1,100)
