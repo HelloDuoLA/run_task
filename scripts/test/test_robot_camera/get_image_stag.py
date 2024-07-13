@@ -3,7 +3,7 @@ import time
 
 # 初始化两个摄像头
 camera_ids = [4, 6]
-cameras = {cid: cv2.VideoCapture(cid) for cid in camera_ids}
+cameras = {cid: cv2.VideoCapture(cid, cv2.CAP_V4L2) for cid in camera_ids}
 
 # 设置摄像头参数
 for camera in cameras.values():
