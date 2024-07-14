@@ -16,6 +16,12 @@ import task
 import run_task.msg as msg
 import control_cmd
 
+import tf2_ros
+import geometry_msgs.msg
+import tf2_geometry_msgs
+import tf_conversions  # 用于四元数和欧拉角的转换
+
+
 # 让小车在5点之间进行巡航
 
 def talker():
@@ -173,7 +179,8 @@ def _get_control_cmd_xy(name):
     target_pose.x  = rospy.get_param(f'~{name}/x')
     target_pose.y  = rospy.get_param(f'~{name}/y')
     return target_pose
-               
+
+
 def constant_config_to_robot_anchor_pose_orientation(anchor_point_name):
     x   = rospy.get_param(f'~{anchor_point_name}/position_x')
     y   = rospy.get_param(f'~{anchor_point_name}/position_y')
@@ -231,6 +238,8 @@ class Navigation_actuator():
         rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
         global running
         running = False
+        x,y,yaw = get_transform_xy_yaw("map", "base_footprint")
+        rospy.loginfo(f"node: {rospy.get_name()}, base_footprint to map :x = {x} y = {y} yaw = {yaw}")
         
     # 激活回调
     @staticmethod
@@ -250,6 +259,8 @@ class Navigation_actuator():
         rospy.loginfo(f"node: {rospy.get_name()}, control cmd task done. status:{status} result:{result}")
         global running
         running = False
+        x,y,yaw = get_transform_xy_yaw("map", "base_footprint")
+        rospy.loginfo(f"node: {rospy.get_name()}, base_footprint to map :x = {x} y = {y} yaw = {yaw}")
     
     # 激活回调
     @staticmethod
@@ -261,6 +272,33 @@ class Navigation_actuator():
     def control_cmd_feedback_callback(feedback:MoveBaseFeedback):
         # rospy.loginfo(f"node: {rospy.get_name()}, control cmd feedback. feedback = {feedback}")
         pass     
+
+def get_transform_xy_yaw(target_frame, source_frame):
+    rospy.init_node('transform_listener', anonymous=True)
+
+    tf_buffer = tf2_ros.Buffer()
+    listener = tf2_ros.TransformListener(tf_buffer)
+
+    try:
+        # 等待变换关系变得可用
+        trans = tf_buffer.lookup_transform(target_frame, source_frame, rospy.Time(0), rospy.Duration(4.0))
+        # 提取xy位置
+        x = trans.transform.translation.x
+        y = trans.transform.translation.y
+        # 提取四元数
+        quaternion = (
+            trans.transform.rotation.x,
+            trans.transform.rotation.y,
+            trans.transform.rotation.z,
+            trans.transform.rotation.w
+        )
+        # 四元数转欧拉角，提取yaw
+        euler = tf_conversions.transformations.euler_from_quaternion(quaternion)
+        yaw = euler[2]  # Z轴旋转为yaw
+        return x, y, yaw
+    except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
+        rospy.logerr(e)
+        return None, None, None
 
 
 if __name__ == '__main__':
