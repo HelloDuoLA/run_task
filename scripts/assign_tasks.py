@@ -1917,14 +1917,19 @@ def test_order_snack():
 
     snack  = order.Snack(order.Snack.Snack_id.YIDA,1)
     snack2 = order.Snack(order.Snack.Snack_id.CHENPIDAN,1)
-    # drink  = order.Drink(order.Drink.Drink_id.COFFEE,1)
+    drink  = order.Drink(order.Drink.Drink_id.COFFEE,1)
 
     order_info.add_snack(snack)
     order_info.add_snack(snack2)
     order_info.order_id = 2
     order_info.table_id = utilis.Device_id.LEFT
+    
+    order_info2.add_drink(drink)
+    order_info2.order_id = 3
+    order_info2.table_id = utilis.Device_id.RIGHT
 
     tasks = system.order_driven_task_schedul.add_task(order_info)
+    tasks2 = system.order_driven_task_schedul.add_task(order_info2)
 
     # tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)
     # tasks_get_snack.update_group_id(6)
