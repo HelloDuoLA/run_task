@@ -154,12 +154,14 @@ class Arm_controller():
         self.id = id 
         if(self.id == utilis.Device_id.LEFT):
             self.action_name      = utilis.Topic_name.left_arm_action            # action名称
-            self.pub_pose_topic   = utilis.Topic_name.left_arm_pose              # 发布机械臂状态
+            self.request_name     = utilis.Topic_name.left_arm_topic             # 左臂移动请求话题名称
+            self.result_name      = utilis.Topic_name.left_arm_result            # 左臂移动结果话题名称
             self.control_instance = Mercury("/dev/left_arm") 
             self.arm_name = "left_arm"             
         elif(self.id == utilis.Device_id.RIGHT):
             self.action_name      = utilis.Topic_name.right_arm_action           # action名称
-            self.pub_pose_topic   = utilis.Topic_name.right_arm_pose             # 发布机械臂状态
+            self.request_name     = utilis.Topic_name.right_arm_topic            # 右臂移动请求话题名称
+            self.result_name      = utilis.Topic_name.right_arm_result           # 右臂移动结果话题名称
             self.control_instance = Mercury("/dev/right_arm")                    
             self.arm_name = "right_arm"     
         
@@ -178,8 +180,10 @@ class Arm_controller():
         self.control_instance.set_gripper_mode(0)
 
         
-        self.action = self.arm_action(self.action_name,self.control_instance,id)
-        self.action.start_action()
+        # self.action = self.arm_action(self.action_name,self.control_instance,id)
+        # self.action.start_action()
+        self.arm_topics = self.arm_topic(self.request_name,self.result_name,self.control_instance,id)
+        
     
     def is_power_on(self):
         # 检查数组长度是否为13
@@ -190,21 +194,27 @@ class Arm_controller():
         return all(x == 0 for x in status)
     
     # 机械臂 action 
-    class arm_action():
-        def __init__(self,action_name,control_instance, id) -> None:
+    # class arm_action():
+    class arm_topic():
+        # def __init__(self,action_name,control_instance, id) -> None:
+        def __init__(self,request_name,result_name,control_instance, id) -> None:
             self.id               = id
-            self.action_server    = actionlib.SimpleActionServer(action_name, msg.MoveArmAction, self.execute_cb, False)
+            # self.action_server    = actionlib.SimpleActionServer(action_name, msg.MoveArmAction, self.execute_cb, False)
             self.control_instance = control_instance
-            rospy.loginfo(f"node: {rospy.get_name()}, init {action_name} arm action server")
+            # rospy.loginfo(f"node: {rospy.get_name()}, init {action_name} arm action server")
+            self.pub = rospy.Publisher(result_name, msg.ArmMoveResult,queue_size=10)         # 发布移动结果
+            self.sub = rospy.Subscriber(request_name,msg.ArmMoveRequest,callback_args=self,queue_size=10)        # 订阅移动请求 
         
         # 启动action
         def start_action(self):    
             self.action_server.start()
         
         # 执行
-        def execute_cb(self, goal:msg.MoveArmGoal):
+        @staticmethod
+        # def execute_cb(self, goal:msg.MoveArmGoal):
+        def execute_cb(goal:msg.ArmMoveRequest,self):
             # rospy.loginfo(f"node: {rospy.get_name()}, arm action server execute. goal: {goal}")
-            rospy.loginfo(f"node: {rospy.get_name()}, arm action server execute.task id {goal.task_index}")
+            rospy.loginfo(f"node: {rospy.get_name()}, {self.id} arm execute.task id {goal.task_index}")
             # 1. 解析目标值
             goal_arm_pose     = goal.arm_pose
             goal_grasp_flag   = goal.grasp_flag
@@ -230,14 +240,18 @@ class Arm_controller():
         
             
             # 构建返回数据
-            result = msg.MoveArmResult()
+            # result = msg.MoveArmResult()
+            result = msg.ArmMoveResult()
             result.arm_id     = goal.arm_id
             result.task_index = goal.task_index
             rospy.loginfo(f"result : {result}")
             try:
-                self.action_server.set_succeeded(result) #可以添加结果参数
+                # self.action_server.set_succeeded(result) #可以添加结果参数
+                self.pub.publish(result)
             except Exception as e:
                 print(f"Exception in done_cb: {e}")
+                
+        
         # 关闭抓爪 
         def close_grasp(self):
             result = self.control_instance.set_gripper_state(1,100)

@@ -29,8 +29,8 @@ import control_cmd
 
 DEBUG_NAVIGATION = False     # 导航调试中, 则运动到桌子的任务均为非并行任务, 并且在完成之后需要输入任意字符才能下一步
 
-# WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
-WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
+WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
+# WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
 
 # 初始化
 class System():
@@ -344,12 +344,19 @@ class Manipulator_actuator():
     def __init__(self):
         self.left_arm_ac  = actionlib.SimpleActionClient(utilis.Topic_name.left_arm_action,  msg.MoveArmAction)
         self.right_arm_ac = actionlib.SimpleActionClient(utilis.Topic_name.right_arm_action, msg.MoveArmAction)
-        if WAIT_FOR_ACTION_SERVER:
-            rospy.loginfo("waiting for left arm action server")
-            # TODO:调试需要,暂时注释
-            self.left_arm_ac.wait_for_server()
-            rospy.loginfo("waiting for right arm action server")
-            self.right_arm_ac.wait_for_server()
+        
+        self.left_arm_pub = rospy.Publisher(utilis.Topic_name.left_arm_topic,msg.ArmMoveRequest,queue_size=10)
+        self.right_arm_pub = rospy.Publisher(utilis.Topic_name.right_arm_topic,msg.ArmMoveRequest,queue_size=10)
+        
+        self.left_arm_sub  = rospy.Subscriber(utilis.Topic_name.left_arm_result,msg.ArmMoveResult ,self.do_left_arm_move_result, queue_size=10)
+        self.right_arm_sub = rospy.Subscriber(utilis.Topic_name.right_arm_result,msg.ArmMoveResult,self.do_right_arm_move_result,queue_size=10)
+        
+        # if WAIT_FOR_ACTION_SERVER:
+        #     rospy.loginfo("waiting for left arm action server")
+        #     # TODO:调试需要,暂时注释
+        #     self.left_arm_ac.wait_for_server()
+        #     rospy.loginfo("waiting for right arm action server")
+        #     self.right_arm_ac.wait_for_server()
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
     
     # 运行
@@ -370,7 +377,7 @@ class Manipulator_actuator():
         # 左臂
         if manipulation_task.arm_id == utilis.Device_id.LEFT:
             # 设置action 目标
-            goal                      = msg.MoveArmGoal()
+            goal                      = msg.ArmMoveRequest()
             goal.task_index           = task_index
             goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0].arm_pose
             goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
@@ -379,11 +386,11 @@ class Manipulator_actuator():
             goal.grasp_speed          = manipulation_task.clamp_speed
             goal.arm_move_method      = manipulation_task.arm_move_method.value
             goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
-            self.left_arm_ac.send_goal(goal,self.left_done_callback,self.left_active_callback,self.left_feedback_callback)
+            self.left_arm_pub.publish(goal)
         # 右臂
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
             # 设置action 目标
-            goal                      = msg.MoveArmGoal()
+            goal                      = msg.ArmMoveRequest()
             goal.task_index           = task_index
             goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0].arm_pose
             goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
@@ -392,11 +399,11 @@ class Manipulator_actuator():
             goal.grasp_speed          = manipulation_task.clamp_speed
             goal.arm_move_method      = manipulation_task.arm_move_method.value
             goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
-            self.right_arm_ac.send_goal(goal,self.right_done_callback,self.right_active_callback,self.right_feedback_callback)
+            self.right_arm_pub.publish(goal)
             
         elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
-            left_goal              = msg.MoveArmGoal()
-            right_goal             = msg.MoveArmGoal()
+            left_goal              = msg.ArmMoveRequest()
+            right_goal             = msg.ArmMoveRequest()
             for i in range(2):
                 if manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.LEFT:
                     left_goal.task_index           = task_index
@@ -416,10 +423,82 @@ class Manipulator_actuator():
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
                     right_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
-            self.left_arm_ac.send_goal(left_goal,self.left_done_callback,self.left_active_callback,self.left_feedback_callback)
-            self.right_arm_ac.send_goal(right_goal,self.right_done_callback,self.right_active_callback,self.right_feedback_callback)
+            # self.left_arm_ac.send_goal(left_goal,self.left_done_callback,self.left_active_callback,self.left_feedback_callback)
+            # self.right_arm_ac.send_goal(right_goal,self.right_done_callback,self.right_active_callback,self.right_feedback_callback)
+            self.left_arm_pub.publish(left_goal)
+            self.right_arm_pub.publish(right_goal)
 
 
+    # 左臂接受结果信息
+    @staticmethod
+    def do_left_arm_move_result(result:msg.ArmMoveResult):
+        rospy.loginfo(f"left arm move get result : task index {result.task_index}")
+
+        current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
+        try:
+            current_task.update_end_status(task.Task.Task_result.FAILED)
+        except Exception as e:
+            rospy.logerr(f"Exception in done_cb: {e}")
+            current_task.update_end_status(task.Task.Task_result.FAILED)
+        # 任务自带的回调
+        if current_task.finish_cb != None:
+            current_task.finish_cb(None, result)
+        
+        # 任务完成暂停时间
+        if current_task.sleep_time_after_task != 0:
+            time.sleep(current_task.sleep_time_after_task)
+            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second before task")
+        else:
+            rospy.loginfo(f"task {current_task.task_index} not sleep")
+            
+        # 删除任务
+        try:
+            if current_task.if_finished():
+                rospy.loginfo(f"del task {result.task_index} in running_tasks_manager OK")
+                system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
+            else :
+                rospy.loginfo(f"task {result.task_index} is not finished, keep in running list")
+        except:
+            rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task {result.task_index} in running_tasks_manager error")
+        
+        # 给任务管理器的回调
+        system.task_manager.tm_task_finish_callback(current_task, None, result)
+    
+    @staticmethod
+    # 右臂接受结果信息
+    def do_right_arm_move_result(result:msg.ArmMoveResult):
+        rospy.loginfo(f"right arm move get result : task index {result.task_index}")
+
+        current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
+        try:
+            current_task.update_end_status(task.Task.Task_result.FAILED)
+        except Exception as e:
+            rospy.logerr(f"Exception in done_cb: {e}")
+            current_task.update_end_status(task.Task.Task_result.FAILED)
+        # 任务自带的回调
+        if current_task.finish_cb != None:
+            current_task.finish_cb(None, result)
+        
+        # 任务完成暂停时间
+        if current_task.sleep_time_after_task != 0:
+            time.sleep(current_task.sleep_time_after_task)
+            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second before task")
+        else:
+            rospy.loginfo(f"task {current_task.task_index} not sleep")
+            
+        # 删除任务
+        try:
+            if current_task.if_finished():
+                rospy.loginfo(f"del task {result.task_index} in running_tasks_manager OK")
+                system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
+            else :
+                rospy.loginfo(f"task {result.task_index} is not finished, keep in running list")
+        except:
+            rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task {result.task_index} in running_tasks_manager error")
+        
+        # 给任务管理器的回调
+        system.task_manager.tm_task_finish_callback(current_task, None, result)
+    
     # 完成回调
     @staticmethod
     def left_done_callback(status, result:msg.MoveArmResult):

@@ -132,7 +132,11 @@ class Topic_name():
     right_camera_raw_image    = "/right_camera_raw_image"# 右摄像头原始图像
     head_camera_raw_image     = "/head_camera_raw_image" # 头摄像头原始图像
     bottom_camera_raw_image   = "/bottom_camera_raw_image"# 底部摄像头原始图像
-    check_arm_pose            = "/check_arm_pose"        # 检查机械臂状态
+    check_arm_pose            = "/check_arm_pose"        #  检查机械臂状态
     CheckLeftArmPose          = "/CheckLeftArmPose"
     CheckRightArmPose         = "/CheckRightArmPose"
     control_cmd_action        = "/control_cmd_action"
+    left_arm_topic            = "/left_arm_move_topic"       # 左臂topic
+    right_arm_topic           = "/right_arm_move_topic"      # 右臂topic
+    left_arm_result           = "/left_arm_move_result"       # 左臂topic
+    right_arm_result          = "/right_arm_move_result"      # 右臂topic
