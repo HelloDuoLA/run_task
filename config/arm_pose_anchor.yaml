@@ -9,7 +9,7 @@ LeftArmContainerRec:
 
 # 左臂零食识别位点
 LeftArmSnackRec:
-  angles: [-75.15, -11.51, -148.11, 121.08, 77.82, 42.79]
+  angles: [-80.1, -17.86, -145.64, 119.68, 79.12, 52.44]
 
 # 左臂抓零食位点
 LeftArmGripSnack:

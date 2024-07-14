@@ -974,11 +974,11 @@ class Order_driven_task_schedul():
     def add_task(self,order:order.Order): 
         new_task_sequence = task.Task_sequence()
         # 有零食请求
-        if order.has_snack_request:
+        if order.has_snack_request():
             new_task_sequence.add(self.create_tasks_grasp_snack(order.snack_list,order.table_id))
 
         # 有饮料请求
-        if order.has_drink_request:
+        if order.has_drink_request():
             new_task_sequence.add(self.create_tasks_get_drink(order.table_id))
 
         # 更新组ID
@@ -1913,37 +1913,32 @@ def ensure_directory_exists(path):
 
 def test_order_snack():
     order_info = order.Order()
+    order_info2 = order.Order()
 
     snack  = order.Snack(order.Snack.Snack_id.YIDA,1)
     snack2 = order.Snack(order.Snack.Snack_id.CHENPIDAN,1)
-    drink  = order.Drink(order.Drink.Drink_id.COFFEE,1)
+    # drink  = order.Drink(order.Drink.Drink_id.COFFEE,1)
 
     order_info.add_snack(snack)
     order_info.add_snack(snack2)
     order_info.order_id = 2
     order_info.table_id = utilis.Device_id.LEFT
-    
-    tasks_grasp_snack = system.order_driven_task_schedul.create_tasks_grasp_snack(order_info.snack_list,order_info.table_id)
-    tasks_grasp_snack.update_group_id(2)
-
-    tasks_get_drink = system.order_driven_task_schedul.create_tasks_get_drink(order_info.table_id)
-    tasks_get_drink.update_group_id(3)
 
     tasks = system.order_driven_task_schedul.add_task(order_info)
 
-    tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)
-    tasks_get_snack.update_group_id(6)
+    # tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)
+    # tasks_get_snack.update_group_id(6)
     
-    tasks_lossen_snack = system.order_driven_task_schedul.test_tasks_lossen_container(order_info.table_id)
-    tasks_lossen_snack.update_group_id(7)
+    # tasks_lossen_snack = system.order_driven_task_schedul.test_tasks_lossen_container(order_info.table_id)
+    # tasks_lossen_snack.update_group_id(7)
     
-    tasks_get_drink = system.order_driven_task_schedul.test_tasks_at_drink_desk()
-    tasks_get_drink.update_group_id(8)
+    # tasks_get_drink = system.order_driven_task_schedul.test_tasks_at_drink_desk()
+    # tasks_get_drink.update_group_id(8)
     
-    task_lossen_cup = system.order_driven_task_schedul.test_tasks_lossen_cup(order_info.table_id)
-    task_lossen_cup.update_group_id(9)
+    # task_lossen_cup = system.order_driven_task_schedul.test_tasks_lossen_cup(order_info.table_id)
+    # task_lossen_cup.update_group_id(9)
 
-    log.log_tasks_info(tasks_get_snack,"new_all_task.log")
+    # log.log_tasks_info(tasks_get_snack,"new_all_task.log")
     
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)

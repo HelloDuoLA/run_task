@@ -43,12 +43,12 @@ RightArmGripSnack:
 # 相对于抓容器的位置
 RightArmLossenSnack:
   x_bias: 40
-  y_bias: 50
+  y_bias: 40
   z_bias: 20  # 380
 
 # 右臂抓容器
 RightArmGripContainer:
-  x_bias : -60
+  x_bias : -55
   y_bias : 28
   z_const: 360
 

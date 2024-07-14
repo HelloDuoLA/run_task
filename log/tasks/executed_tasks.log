@@ -1,13 +1,13 @@
-07-14 19:58:14
+07-14 20:44:31
 
 --------------------------------------------------
 
 
-Task       : Task_image_rec COFFEE_MACHINE_SWITCH_ON
-Name       : left camera rec coffee machine turn on
+Task       : Task_image_rec CONTAINER
+Name       : right camera rec container
 Group_id   : 2
-Index      : 34
-Create_time: 1720958137681813001
+Index      : 6
+Create_time: 1720961042590469360
 Start_time : -999
 End_time   : -999
 Finsih_cb  : None
@@ -17,39 +17,41 @@ Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: [31:Task_manipulation Rec_machine_switch] [29:Task_navigate Move_forward] 
-Sleep_time_before_task : 0.1
-Sleep_time_after_task  : 0
-Camera_id: LEFT 
-Snack_list: []
-Need_modify_tasks: 
-          [38:Task_manipulation Turn_on_coffee_machine]
- 
-
-Task       : Task_image_rec CUP_COFFEE_MACHINE
-Name       : right camera rec cup machine
-Group_id   : 2
-Index      : 35
-Create_time: 1720958137681894302
-Start_time : -999
-End_time   : -999
-Finsih_cb  : None
-Status     : BEREADY
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: [33:Task_manipulation Rec_cup_machine] [29:Task_navigate Move_forward] 
+Predecessor_tasks: [4:Task_manipulation Rec_container] [1:Task_navigate Navigate_to_the_snack_desk] 
 Sleep_time_before_task : 0.1
 Sleep_time_after_task  : 0
 Camera_id: RIGHT 
 Snack_list: []
 Need_modify_tasks: 
-          [36:Task_manipulation Grasp_cup_pre]
-          [37:Task_manipulation Grasp_cup]
-          [40:Task_manipulation Water_cup]
+          [12:Task_manipulation Lossen_snack]
+          [15:Task_manipulation Lossen_snack]
+          [19:Task_manipulation Grasp_container]
  
+
+Task       : Task_manipulation Rec_snack
+Name       : left arm move to rec snack
+Group_id   : 2
+Index      : 7
+Create_time: 1720961042590545415
+Start_time : 1720961071382157087
+End_time   : -999
+Finsih_cb  : None
+Status     : RUNNING
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [5:Task_image_rec CONTAINER] 
+Sleep_time_before_task : 0.1
+Sleep_time_after_task  : 2
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-80.1, -17.86, -145.64, 119.68, 79.12, 52.44] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
+
 --------------------------------------------------
 
 
