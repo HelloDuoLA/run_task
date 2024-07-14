@@ -422,18 +422,23 @@ class Task_manipulation(Task):
         else:
                 self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
                 self.target_arms_pose[0].arm_pose[2] = arm_pose[2]
-            
+    
+    # 修改xyz并选择机械臂
     def modify_xyz_select_arm(self,arm_pose:List[float],device_id:utilis.Device_id):
         self.modify_target_xyz(arm_pose,device_id)
         self.select_arm(device_id)
     
-    def select_arm(self,device_id:utilis.Device_id):
+    # 选择机械臂
+    def select_arm(self,device_id:utilis.Device_id,arm_move_method = None):
         if device_id == utilis.Device_id.LEFT:
             self.arm_id = utilis.Device_id.LEFT
             self.target_arms_pose.pop(1)
         elif device_id == utilis.Device_id.RIGHT:
             self.arm_id = utilis.Device_id.RIGHT
             self.target_arms_pose.pop(0)
+            
+        if arm_move_method != None:
+            self.arm_move_method = arm_move_method
         
     # 打印字符串
     def __str__(self) -> str:

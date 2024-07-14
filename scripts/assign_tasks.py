@@ -586,7 +586,6 @@ class Manipulator_actuator():
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
         
-    
     # 激活回调
     @staticmethod
     def left_active_callback():
@@ -603,7 +602,7 @@ class Manipulator_actuator():
         # rospy.loginfo(f"node: {rospy.get_name()}, manipulator feedback. {feedback}")
         pass
     
-     # 反馈回调
+    # 反馈回调
     @staticmethod
     def right_feedback_callback(feedback:msg.MoveArmFeedback):
         # rospy.loginfo(f"node: {rospy.get_name()}, manipulator feedback. {feedback}")
@@ -655,7 +654,11 @@ class Image_rec_actuator():
                     task_grasp_snack:task.Task_manipulation         = current_task.need_modify_tasks.task_list[i*3]
                     task_grasp_snack.modify_xyz_select_arm(snack_xyz,arm_id)
                     task_lossen_snack_pre:task.Task_manipulation    = current_task.need_modify_tasks.task_list[i*3+1]
-                    task_lossen_snack_pre.select_arm(arm_id)
+                    # 左臂松零食使用 Z_X_Y_OTHER
+                    if arm_id == utilis.Device_id.LEFT:
+                        task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y_OTHER)
+                    else:
+                        task_lossen_snack_pre.select_arm(arm_id)
                     task_lossen_snack:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*3+2]
                     task_lossen_snack.select_arm(arm_id)
                     
