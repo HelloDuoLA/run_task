@@ -176,7 +176,7 @@ class Task():
         self.predecessor_tasks      = Task_sequence() # 相对前置任务
         self.name = name                            # 任务名称
         self.sleep_time_after_task = 0              # 任务完成休眠时间
-        self.sleep_time_before_task = 0             # 开始任务前休眠时间
+        self.sleep_time_before_task = 0.1           # 开始任务前休眠时间
 
     
     # 设置任务完成休眠时间

@@ -379,7 +379,7 @@ class Manipulator_actuator():
             goal.grasp_speed          = manipulation_task.clamp_speed
             goal.arm_move_method      = manipulation_task.arm_move_method.value
             goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
-            self.left_arm_ac.send_goal(goal,self.left_done_callback,self.active_callback,self.feedback_callback)
+            self.left_arm_ac.send_goal(goal,self.left_done_callback,self.left_active_callback,self.left_feedback_callback)
         # 右臂
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
             # 设置action 目标
@@ -392,7 +392,7 @@ class Manipulator_actuator():
             goal.grasp_speed          = manipulation_task.clamp_speed
             goal.arm_move_method      = manipulation_task.arm_move_method.value
             goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
-            self.right_arm_ac.send_goal(goal,self.right_done_callback,self.active_callback,self.feedback_callback)
+            self.right_arm_ac.send_goal(goal,self.right_done_callback,self.right_active_callback,self.right_feedback_callback)
             
         elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
             left_goal              = msg.MoveArmGoal()
@@ -416,8 +416,8 @@ class Manipulator_actuator():
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
                     right_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
-            self.left_arm_ac.send_goal(left_goal,self.left_done_callback,self.active_callback,self.feedback_callback)
-            self.right_arm_ac.send_goal(right_goal,self.right_done_callback,self.active_callback,self.feedback_callback)
+            self.left_arm_ac.send_goal(left_goal,self.left_done_callback,self.left_active_callback,self.left_feedback_callback)
+            self.right_arm_ac.send_goal(right_goal,self.right_done_callback,self.right_active_callback,self.right_feedback_callback)
 
 
     # 完成回调
@@ -510,12 +510,23 @@ class Manipulator_actuator():
     
     # 激活回调
     @staticmethod
-    def active_callback():
+    def left_active_callback():
+        rospy.loginfo(f"node: {rospy.get_name()}, manipulator active")
+        
+    # 激活回调
+    @staticmethod
+    def right_active_callback():
         rospy.loginfo(f"node: {rospy.get_name()}, manipulator active")
     
     # 反馈回调
     @staticmethod
-    def feedback_callback(feedback:msg.MoveArmFeedback):
+    def left_feedback_callback(feedback:msg.MoveArmFeedback):
+        # rospy.loginfo(f"node: {rospy.get_name()}, manipulator feedback. {feedback}")
+        pass
+    
+     # 反馈回调
+    @staticmethod
+    def right_feedback_callback(feedback:msg.MoveArmFeedback):
         # rospy.loginfo(f"node: {rospy.get_name()}, manipulator feedback. {feedback}")
         pass
 
@@ -1219,7 +1230,7 @@ class Order_driven_task_schedul():
         # 左臂放置到按钮下方, 进行准备
         task_left_arm_turn_on_machine_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Turn_on_coffee_machine,None,utilis.Device_id.LEFT,\
             copy.deepcopy(system.anchor_point.left_arm_machine_turn_off_pre),arm.GripMethod.CLOSE,\
-                arm_move_method = arm.ArmMoveMethod.Y_X_Z,\
+                arm_move_method = arm.ArmMoveMethod.Z_XY,\
                     name="left arm turn on machine prepare")
         task_left_arm_turn_on_machine_pre.parallel = task.Task.Task_parallel.ALL            # 可并行
         task_left_arm_turn_on_machine_pre.status   = task.Task.Task_status.NOTREADY         # 需要参数
@@ -1248,7 +1259,7 @@ class Order_driven_task_schedul():
         
         #  左臂抬到指定位置识别咖啡机开关 关
         task_left_arm_to_rec_coffee_machine_turn_off = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_machine_switch, None, \
-            utilis.Device_id.LEFT, system.anchor_point.left_arm_machine_turn_on_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.X_YZ,\
+            utilis.Device_id.LEFT, system.anchor_point.left_arm_machine_turn_off_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.X_YZ,\
                 name="left arm move to rec coffee machine turn off")
         task_left_arm_to_rec_coffee_machine_turn_off.parallel = task.Task.Task_parallel.ALL                       # 可并行
         task_left_arm_to_rec_coffee_machine_turn_off.add_predecessor_task(task_left_arm_turn_on_machine_pre)      # 前置任务, 打开了之后再识别关
