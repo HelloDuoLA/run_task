@@ -1,7 +1,7 @@
 # 左臂
 # 左臂空闲放置点
 LeftArmIdle:
-  angles: [-67.97, 75.42, -23.24, 69.48, 23.58, 37.78]
+  angles: [-71.31, 63.55, -34.37, 67.69, 20.23, 36.37]
 
 # 左臂食物框识别位点
 LeftArmContainerRec:
@@ -81,7 +81,7 @@ LeftArmMachineTurnOffClick:
 # !TODO:右臂
 # 右臂空闲放置点
 RightArmIdle:
-  angles: [67.97, 75.42, -23.24, -69.48, 23.58, -37.78]
+  angles: [71.31, 63.55, -34.38, -67.73, 20.23, -36.42]
 
 # 右臂食物框识别位点
 RightArmContainerRec:
