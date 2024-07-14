@@ -28,21 +28,29 @@ def talker():
     DrinkDesk        = constant_config_to_robot_anchor_pose_orientation("DrinkDesk")
     RightServiceDesk = constant_config_to_robot_anchor_pose_orientation("RightServiceDesk")
     LeftServiceDesk  = constant_config_to_robot_anchor_pose_orientation("LeftServiceDesk")
+    snack_deck_move_forward_pose =  _get_control_cmd_xy("SnackDeckMoveforward")
+    drink_deck_move_forward_pose =  _get_control_cmd_xy("DrinkDeckMoveforward")
+    left_deck_move_forward_pose  =  _get_control_cmd_xy("LeftDeckMoveforward")
+    right_deck_move_forward_pose =  _get_control_cmd_xy("RightDeckMoveforward")
     
     snack_deck_move_back_pose =  _get_control_cmd_xy("SnackDeckMoveBack")
     drink_deck_move_back_pose =  _get_control_cmd_xy("DrinkDeckMoveBack")
     left_deck_move_back_pose  =  _get_control_cmd_xy("LeftDeckMoveBack")
     right_deck_move_back_pose =  _get_control_cmd_xy("RightDeckMoveBack")
             
-    task_init_pose         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point, None, init_pose)
-    task_SnackDesk         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_snack_desk, None, SnackDesk)
-    task_snack_desk_back   = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,snack_deck_move_back_pose)
-    task_DrinkDesk         = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_drink_desk, None, DrinkDesk)
-    task_drink_desk_back   = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,drink_deck_move_back_pose)
-    task_RightServiceDesk  = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_right_service_desk, None, RightServiceDesk)
-    task_right_service_back= task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,right_deck_move_back_pose)
-    task_LeftServiceDesk   = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_left_service_desk, None, LeftServiceDesk)
-    task_left_service_back = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,left_deck_move_back_pose)
+    task_init_pose            = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point, None, init_pose)
+    task_SnackDesk            = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_snack_desk, None, SnackDesk)
+    task_snack_desk_back      = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,snack_deck_move_back_pose)
+    task_snack_desk_forward   = task.Task_navigation(task.Task_type.Task_navigate.Move_forward,None,snack_deck_move_forward_pose)
+    task_DrinkDesk            = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_drink_desk, None, DrinkDesk)
+    task_drink_desk_back      = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,drink_deck_move_back_pose)
+    task_drink_desk_forward   = task.Task_navigation(task.Task_type.Task_navigate.Move_forward,None,drink_deck_move_forward_pose)
+    task_RightServiceDesk     = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_right_service_desk, None, RightServiceDesk)
+    task_right_service_back   = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,right_deck_move_back_pose)
+    task_right_service_forward= task.Task_navigation(task.Task_type.Task_navigate.Move_forward,None,right_deck_move_forward_pose)
+    task_LeftServiceDesk      = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_left_service_desk, None, LeftServiceDesk)
+    task_left_service_back    = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,left_deck_move_back_pose)
+    task_left_service_forward = task.Task_navigation(task.Task_type.Task_navigate.Move_forward,None,left_deck_move_forward_pose)
     
     
     rospy.loginfo(f"init_pose        : {init_pose}")
@@ -85,12 +93,16 @@ def talker():
             rospy.loginfo("0 : 五点寻航")
             rospy.loginfo("1 : 前往零食桌")
             rospy.loginfo("10: 零食桌后退")
+            rospy.loginfo("11: 零食桌前进")
             rospy.loginfo("2 : 前往饮料桌")
             rospy.loginfo("20: 饮料桌后退")
+            rospy.loginfo("21: 饮料桌前进")
             rospy.loginfo("3 : 前往左服务桌")
             rospy.loginfo("30: 左服务桌后退")
+            rospy.loginfo("31: 左服务桌前进")
             rospy.loginfo("4 : 前往右服务桌")
             rospy.loginfo("40: 右服务桌后退")
+            rospy.loginfo("41: 右服务桌前进")
             rospy.loginfo("5 : 前往初始点")
             
             # 获取用户输入
@@ -98,36 +110,48 @@ def talker():
             
             if user_input == "0":
                 task_index = 0
-                running    = True
+                
                 running_five_point = True
             elif user_input == "1":
                 navigation_actuator.run(task_SnackDesk)
-                running    = True
+                
             elif user_input == "10":
                 navigation_actuator.run(task_snack_desk_back)
-                running    = True
+            
+            elif user_input == "11":
+                navigation_actuator.run(task_snack_desk_forward)
+                
             elif user_input == "2":
                 navigation_actuator.run(task_DrinkDesk)
-                running    = True
+                
             elif user_input == "20":
                 navigation_actuator.run(task_drink_desk_back)
-                running    = True
+            
+            elif user_input == "21":
+                navigation_actuator.run(task_drink_desk_forward)
+                
             elif user_input == "3":
                 navigation_actuator.run(task_LeftServiceDesk)
-                running    = True
+                
             elif user_input == "30":
                 navigation_actuator.run(task_left_service_back)
-                running    = True
+            
+            elif user_input == "31":
+                navigation_actuator.run(task_left_service_forward)
+                
             elif user_input == "4":
                 navigation_actuator.run(task_RightServiceDesk)
-                running    = True
+                
             elif user_input == "40":
                 navigation_actuator.run(task_right_service_back)
-                running    = True
+            
+            elif user_input == "41":
+                navigation_actuator.run(task_right_service_forward)
+                
             elif user_input == "5":
                 navigation_actuator.run(task_init_pose)
-                running    = True
-        
+                
+            running    = True
             # 打印用户输入
             rospy.loginfo("您输入的指令是: %s", user_input)
         else:
@@ -178,7 +202,8 @@ class Navigation_actuator():
     def run(self, navigation_task:task.Task_navigation):
         navigation_task.update_start_status() # 刷新开始时间
         # 后退任务
-        if navigation_task.task_type == task.Task_type.Task_navigate.Move_backward:
+        if navigation_task.task_type == task.Task_type.Task_navigate.Move_backward or \
+            navigation_task.task_type == task.Task_type.Task_navigate.Move_forward:
             goal = msg.ControlCmdGoal()
             goal.operation  = control_cmd.Control_cmd.MOVEBACK.value
             goal.second     = navigation_task.move_back_second         # 后退秒数

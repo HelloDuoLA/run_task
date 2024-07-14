@@ -1162,7 +1162,7 @@ class Order_driven_task_schedul():
         task_navigation_move_foward_to_drink_desk.add_predecessor_task(task_navigation_to_drink_desk)          # 前置任务, 导航到服务桌前20cm
         task_navigation_move_foward_to_drink_desk.parallel = task.Task.Task_parallel.ALL                       # 可并行
         task_navigation_move_foward_to_drink_desk.set_move_back_second(2)                                      # 移动前进2s
-        task_navigation_move_foward_to_drink_desk.set_sleep_time_after_task(2)                                 # 暂停2s,给人挪机器人的时间
+        task_navigation_move_foward_to_drink_desk.set_sleep_time_after_task(2)             # 为什么不起作用呢                       # 暂停2s,给人挪机器人的时间
         tasks_get_drink.add(task_navigation_move_foward_to_drink_desk)
         
         # 非调试模式, 可并行
