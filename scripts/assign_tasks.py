@@ -231,7 +231,7 @@ class Navigation_actuator():
         
         if navigation_task.sleep_time_before_task != 0:
             time.sleep(navigation_task.sleep_time_before_task)
-            rospy.loginfo(f"task {task_index} sleep for {navigation_task.sleep_time_before_task} second")
+            rospy.loginfo(f"task {task_index} sleep for {navigation_task.sleep_time_before_task} second before task")
         
         # 后退任务
         if navigation_task.task_type == task.Task_type.Task_navigate.Move_backward or \
@@ -282,9 +282,9 @@ class Navigation_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second")
+            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
         else:
-            rospy.loginfo(f"task {current_task.task_index} not sleep")
+            rospy.loginfo(f"task {current_task.task_index} not sleep after task ")
             
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
@@ -321,9 +321,9 @@ class Navigation_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second")
+            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
         else:
-            rospy.loginfo(f"task {current_task.task_index} not sleep")
+            rospy.loginfo(f"task {current_task.task_index} not sleep after task")
         
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
@@ -365,7 +365,7 @@ class Manipulator_actuator():
         # 任务前休眠时间
         if manipulation_task.sleep_time_before_task != 0:
             time.sleep(manipulation_task.sleep_time_before_task)
-            rospy.loginfo(f"task {task_index} sleep for {manipulation_task.sleep_time_before_task} second")
+            rospy.loginfo(f"task {task_index} sleep for {manipulation_task.sleep_time_before_task} second before task")
 
         # 左臂
         if manipulation_task.arm_id == utilis.Device_id.LEFT:
@@ -446,7 +446,7 @@ class Manipulator_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second")
+            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second before task")
         else:
             rospy.loginfo(f"task {current_task.task_index} not sleep")
             
@@ -489,9 +489,9 @@ class Manipulator_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time_after_task} second")
+            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time_after_task} second after task")
         else:
-            rospy.loginfo(f"task {result.task_index} not sleep")
+            rospy.loginfo(f"task {result.task_index} not sleep after task")
             
         # 删除任务
         # 删除任务
@@ -664,9 +664,9 @@ class Image_rec_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time_after_task} second")
+            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time_after_task} second after task")
         else:
-            rospy.loginfo(f"task {result.task_index} not sleep")
+            rospy.loginfo(f"task {result.task_index} not sleep after task")
             
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, actionlib.GoalStatus.SUCCEEDED)
@@ -1159,9 +1159,10 @@ class Order_driven_task_schedul():
         # 向前移动到饮料桌子
         task_navigation_move_foward_to_drink_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_forward, None,\
             system.anchor_point.drink_deck_move_forward_pose, name="navigation move forward to drink desk")
-        task_navigation_move_foward_to_drink_desk.add_predecessor_task(task_navigation_to_drink_desk)         # 前置任务, 导航到服务桌前20cm
+        task_navigation_move_foward_to_drink_desk.add_predecessor_task(task_navigation_to_drink_desk)          # 前置任务, 导航到服务桌前20cm
         task_navigation_move_foward_to_drink_desk.parallel = task.Task.Task_parallel.ALL                       # 可并行
         task_navigation_move_foward_to_drink_desk.set_move_back_second(2)                                      # 移动前进2s
+        task_navigation_move_foward_to_drink_desk.set_sleep_time_after_task(2)                                 # 暂停2s,给人挪机器人的时间
         tasks_get_drink.add(task_navigation_move_foward_to_drink_desk)
         
         # 非调试模式, 可并行

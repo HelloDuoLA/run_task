@@ -1,30 +1,7 @@
-07-14 10:43:02
+07-14 12:40:50
 
 --------------------------------------------------
 
-
-Task       : Task_image_rec CUP_COFFEE_MACHINE
-Name       : right camera rec cup machine
-Group_id   : 2
-Index      : 35
-Create_time: 1720924822837855577
-Start_time : -999
-End_time   : -999
-Finsih_cb  : None
-Status     : BEREADY
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: [33:Task_manipulation Rec_cup_machine] [29:Task_navigate Move_forward] 
-Camera_id: RIGHT 
-Snack_list: []
-Need_modify_tasks: 
-          [36:Task_manipulation Grasp_cup_pre]
-          [37:Task_manipulation Grasp_cup]
-          [40:Task_manipulation Water_cup]
- 
 --------------------------------------------------
 
 

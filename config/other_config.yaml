@@ -21,7 +21,7 @@ SnackDeckMoveforward:
   y: 0
 
 DrinkDeckMoveforward:
-  x: 20
+  x: 15
   y: 0
 
 LeftDeckMoveforward:
