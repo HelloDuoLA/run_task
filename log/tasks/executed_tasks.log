@@ -1,38 +1,14 @@
-07-14 14:21:39
+07-14 14:46:57
 
 --------------------------------------------------
 
 
-Task       : Task_manipulation Move_to_IDLE
-Name       : two arms move to idle prepare for pick snack
+Task       : Task_manipulation Deliever_cup
+Name       : right arm water delivery
 Group_id   : 2
-Index      : 0
-Create_time: 1720938099371168375
-Start_time : 1720938099671437740
-End_time   : -999
-Finsih_cb  : None
-Status     : RUNNING
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 2
-Subtask_count_finished: 0
-Predecessor_tasks: 
-Sleep_time_before_task : 0.1Sleep_time_after_task  : 0Arm_id              : LEFT_RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-67.97, 75.42, -23.24, 69.48, 23.58, 37.78] 
-                       Arm_pose_1: arm RIGHT, pose type ANGLE, joint:[67.97, 75.42, -23.24, -69.48, 23.58, -37.78] } 
-Target_clamps_status: Clamp_status_0: CLOSE Clamp_status_1: CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
-
-Task       : Task_navigate Navigate_to_the_snack_desk
-Name       : navigation to snack desk
-Group_id   : 2
-Index      : 1
-Create_time: 1720938099371171951
-Start_time : 1720938099775638103
+Index      : 47
+Create_time: 1720939407533098936
+Start_time : 1720939584344349145
 End_time   : -999
 Finsih_cb  : None
 Status     : RUNNING
@@ -41,8 +17,14 @@ Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: 
-Sleep_time_before_task : 0.1Sleep_time_after_task  : 0Target_3D_pose: x:0.48 y:-2.40 z:0.00 roll:0.00 pitch:-0.00 yaw:-3.05 
+Predecessor_tasks: [45:Task_navigate Move_backward] 
+Sleep_time_before_task : 0.1Sleep_time_after_task  : 0Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[300, 0, 240, 90, 0, 90] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
+
 --------------------------------------------------
 
 

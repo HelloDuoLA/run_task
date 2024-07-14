@@ -203,7 +203,7 @@ class Arm_controller():
             self.control_instance = control_instance
             # rospy.loginfo(f"node: {rospy.get_name()}, init {action_name} arm action server")
             self.pub = rospy.Publisher(result_name, msg.ArmMoveResult,queue_size=10)         # 发布移动结果
-            self.sub = rospy.Subscriber(request_name,msg.ArmMoveRequest,callback_args=self,queue_size=10)        # 订阅移动请求 
+            self.sub = rospy.Subscriber(request_name,msg.ArmMoveRequest,self.execute_cb,callback_args=self,queue_size=10)        # 订阅移动请求 
         
         # 启动action
         def start_action(self):    

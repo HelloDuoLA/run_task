@@ -21,6 +21,7 @@ import geometry_msgs.msg
 import tf2_geometry_msgs
 import tf_conversions  # 用于四元数和欧拉角的转换
 
+current_task = None
 
 # 让小车在5点之间进行巡航
 
@@ -92,6 +93,9 @@ def talker():
     running = False # 是否正在执行任务
     running_five_point = False # 是否正在执行五点任务
     
+    # 全局变量
+    global current_task 
+    
     while not rospy.is_shutdown():
         rospy.loginfo("cruise running")
         if running == False and running_five_point == False:
@@ -119,42 +123,55 @@ def talker():
                 
                 running_five_point = True
             elif user_input == "1":
+                current_task = task_SnackDesk
                 navigation_actuator.run(task_SnackDesk)
                 
             elif user_input == "10":
+                current_task = task_snack_desk_back
                 navigation_actuator.run(task_snack_desk_back)
             
             elif user_input == "11":
+                current_task = task_snack_desk_forward
                 navigation_actuator.run(task_snack_desk_forward)
                 
             elif user_input == "2":
+                current_task = task_DrinkDesk
                 navigation_actuator.run(task_DrinkDesk)
                 
             elif user_input == "20":
+                current_task = task_drink_desk_back
                 navigation_actuator.run(task_drink_desk_back)
             
             elif user_input == "21":
+                current_task = task_drink_desk_forward
                 navigation_actuator.run(task_drink_desk_forward)
                 
             elif user_input == "3":
+                current_task = task_LeftServiceDesk
                 navigation_actuator.run(task_LeftServiceDesk)
                 
             elif user_input == "30":
+                current_task = task_left_service_back
                 navigation_actuator.run(task_left_service_back)
             
             elif user_input == "31":
+                current_task = task_left_service_forward
                 navigation_actuator.run(task_left_service_forward)
                 
             elif user_input == "4":
+                current_task = task_RightServiceDesk
                 navigation_actuator.run(task_RightServiceDesk)
                 
             elif user_input == "40":
+                current_task = task_right_service_back
                 navigation_actuator.run(task_right_service_back)
             
             elif user_input == "41":
+                current_task = task_right_service_forward
                 navigation_actuator.run(task_right_service_forward)
                 
             elif user_input == "5":
+                current_task = task_init_pose
                 navigation_actuator.run(task_init_pose)
                 
             running    = True
@@ -236,10 +253,12 @@ class Navigation_actuator():
     @staticmethod
     def navigation_task_done_callback(status, result):
         rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
-        global running
+        global running,current_task
         running = False
         x,y,yaw = get_transform_xy_yaw("map", "base_footprint")
         rospy.loginfo(f"node: {rospy.get_name()}, base_footprint to map :x = {x} y = {y} yaw = {yaw}")
+        rospy.loginfo(f"node: {rospy.get_name()}, target error :x = {x - current_task.target_3D_pose.x}\
+            y = {y - current_task.target_3D_pose.y} yaw = {yaw - current_task.target_3D_pose.yaw} ")
         
     # 激活回调
     @staticmethod
@@ -251,7 +270,7 @@ class Navigation_actuator():
     def navigation_task_feedback_callback(feedback:MoveBaseFeedback):
         pose = feedback.base_position.pose
         pose3D = utilis.Pose3D.instantiate_by_geometry_msg(pose)
-        rospy.loginfo(f"node: {rospy.get_name()}, navigation feedback. pose:x = {pose3D.x} y = {pose3D.y} yaw = {pose3D.yaw}")
+        # rospy.loginfo(f"node: {rospy.get_name()},1 navigation feedback. pose:x = {pose3D.x} y = {pose3D.y} yaw = {pose3D.yaw}")
 
     # 直接控制完成回调
     @staticmethod
@@ -274,7 +293,7 @@ class Navigation_actuator():
         pass     
 
 def get_transform_xy_yaw(target_frame, source_frame):
-    rospy.init_node('transform_listener', anonymous=True)
+    # rospy.init_node('transform_listener', anonymous=True)
 
     tf_buffer = tf2_ros.Buffer()
     listener = tf2_ros.TransformListener(tf_buffer)
