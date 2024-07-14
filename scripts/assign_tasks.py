@@ -656,7 +656,7 @@ class Image_rec_actuator():
                     task_lossen_snack_pre:task.Task_manipulation    = current_task.need_modify_tasks.task_list[i*3+1]
                     # 左臂松零食使用 Z_X_Y_OTHER
                     if arm_id == utilis.Device_id.LEFT:
-                        task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y_OTHER)
+                        task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.X_Z_Y_OTHER)
                     else:
                         task_lossen_snack_pre.select_arm(arm_id)
                     task_lossen_snack:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*3+2]
@@ -1434,7 +1434,7 @@ class Order_driven_task_schedul():
         task_right_arm_placement_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_cup,None,utilis.Device_id.RIGHT,\
             system.anchor_point.right_arm_cup_placement,arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
             name="right arm placement cup")
-        task_right_arm_placement_cup.add_predecessor_task(task_navigation_to_service_desk)  # 前置任务, 到达指定位置
+        task_right_arm_placement_cup.add_predecessor_task(task_navigation_move_foward_to_service_desk)  # 前置任务, 到达指定位置
         tasks_get_drink.add(task_right_arm_placement_cup)
         
         #  机器人后退

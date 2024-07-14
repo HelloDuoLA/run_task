@@ -41,7 +41,7 @@ class ArmMoveMethod(Enum):
     MODIFY_Z   = auto()
     OPLY_GRIP  = auto()
     X_Y_Z_OTHER= auto()
-    Z_X_Y_OTHER= auto()
+    X_Z_Y_OTHER= auto()
     
     
     def __str__(self) -> str:
@@ -456,16 +456,17 @@ class Arm_controller():
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
                     self.wait()
                 # 先移动Z轴, 再然后动其他全部，包括角度旋转
-                elif move_method == ArmMoveMethod.Z_X_Y_OTHER:
+                elif move_method == ArmMoveMethod.X_Z_Y_OTHER:
                     current_base_coords = self.get_base_coords()
-                    base_coords_change_z = copy.deepcopy(current_base_coords)
-                    base_coords_change_z[2] = target_pose[2]
-                    result = self.control_instance.send_base_coords(base_coords_change_z,arm_speed)
-                    self.wait()
                     
-                    base_coords_change_x = copy.deepcopy(base_coords_change_z)
+                    base_coords_change_x = copy.deepcopy(current_base_coords)
                     base_coords_change_x[0] = target_pose[0]
                     result = self.control_instance.send_base_coords(base_coords_change_x,arm_speed)
+                    self.wait()
+                    
+                    base_coords_change_z = copy.deepcopy(base_coords_change_x)
+                    base_coords_change_z[2] = target_pose[2]
+                    result = self.control_instance.send_base_coords(base_coords_change_z,arm_speed)
                     self.wait()
                     
                     base_coords_change_y = copy.deepcopy(base_coords_change_z)

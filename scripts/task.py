@@ -265,8 +265,8 @@ class Task():
                 f"Subtask_count: {self.subtask_count}\r\n"
                 f"Subtask_count_finished: {self.subtask_count_finished}\r\n"
                 f"Predecessor_tasks: {predecessor_tasks_str}\r\n"
-                f"Sleep_time_before_task : { self.sleep_time_before_task }"
-                f"Sleep_time_after_task  : { self.sleep_time_after_task  }"
+                f"Sleep_time_before_task : { self.sleep_time_before_task }\r\n"
+                f"Sleep_time_after_task  : { self.sleep_time_after_task  }\r\n"
                 )
         
 # 功能任务
