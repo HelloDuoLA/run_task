@@ -282,9 +282,9 @@ class Navigation_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time_after_task} second")
+            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second")
         else:
-            rospy.loginfo(f"task {result.task_index} not sleep")
+            rospy.loginfo(f"task {current_task.task_index} not sleep")
             
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
@@ -321,9 +321,9 @@ class Navigation_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time_after_task} second")
+            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second")
         else:
-            rospy.loginfo(f"task {result.task_index} not sleep")
+            rospy.loginfo(f"task {current_task.task_index} not sleep")
         
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
@@ -446,15 +446,19 @@ class Manipulator_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time_after_task} second")
+            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second")
         else:
-            rospy.loginfo(f"task {result.task_index} not sleep")
+            rospy.loginfo(f"task {current_task.task_index} not sleep")
             
         # 删除任务
-        if current_task.if_finished():
-            system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
-        else :
-            rospy.loginfo(f"task {result.task_index} is not finished, keep in running list")
+        try:
+            if current_task.if_finished():
+                rospy.loginfo(f"del task {result.task_index} in running_tasks_manager OK")
+                system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
+            else :
+                rospy.loginfo(f"task {result.task_index} is not finished, keep in running list")
+        except:
+            rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task {result.task_index} in running_tasks_manager error")
         
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
@@ -490,10 +494,15 @@ class Manipulator_actuator():
             rospy.loginfo(f"task {result.task_index} not sleep")
             
         # 删除任务
-        if current_task.if_finished():
-            system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
-        else :
-            rospy.loginfo(f"task {result.task_index} is not finished, keep in running list")
+        # 删除任务
+        try:
+            if current_task.if_finished():
+                rospy.loginfo(f"del task {result.task_index} in running_tasks_manager OK")
+                system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
+            else :
+                rospy.loginfo(f"task {result.task_index} is not finished, keep in running list")
+        except:
+            rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task {result.task_index} in running_tasks_manager error")
         
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
@@ -709,7 +718,7 @@ class Task_manager():
         while index < len(system.task_manager.waiting_task.task_list):
             current_task = system.task_manager.waiting_task.task_list[index]
             return_code = system.task_manager.task_can_run(current_task)
-            rospy.loginfo(f"task {current_task.task_index} return code is {return_code}")
+            # rospy.loginfo(f"task {current_task.task_index} return code is {return_code}")
             # 不能运行, 也不能下一个
             if return_code == Task_manager.Run_task_return_code.cannot_run_cannot_next:
                 break
@@ -755,7 +764,7 @@ class Task_manager():
     
     # 判断任务是否能够运行
     def task_can_run(self,current_task:task.Task):
-        rospy.loginfo(f"robot status: {system.robot}")
+        # rospy.loginfo(f"robot status: {system.robot}")
         # 不能执行下一个任务
         if self.can_run_state == False:
             rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because can_run_state is {self.can_run_state}")
@@ -1184,7 +1193,7 @@ class Order_driven_task_schedul():
             name="right camera rec cup machine")
         task_right_camera_rec_cup_machine.parallel = task.Task.Task_parallel.ALL                               # 可并行
         task_right_camera_rec_cup_machine.add_predecessor_task(task_right_arm_to_rec_cup)                      # 前置任务, 右臂到位,
-        task_right_camera_rec_cup_machine.add_predecessor_task(task_navigation_to_drink_desk)                  # 前置任务, 导航到饮料桌
+        task_right_camera_rec_cup_machine.add_predecessor_task(task_navigation_move_foward_to_drink_desk)      # 前置任务, 导航到饮料桌
         tasks_get_drink.add(task_right_camera_rec_cup_machine)
         
         #  右臂夹取杯子准备动作(中间点)
