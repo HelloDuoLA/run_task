@@ -205,7 +205,7 @@ class Task():
     
     # 更新开始状态
     def update_start_status(self):
-        self.start_time = rospy.Time.now()
+        self.start_time = rospy.Time.now().to_sec()
         self.status = self.Task_status.RUNNING
     
     # 更新结束状态
@@ -214,12 +214,12 @@ class Task():
         
         # 如果完成, 更新状态与时间
         if self.if_finished():
-            self.end_time = rospy.Time.now()
+            self.end_time = rospy.Time.now().to_sec()
             self.status = self.Task_status.FINISHED
             # 如果子任务有失败,则任务失败
             if self.task_result != self.Task_result.FAILED:
                 self.task_result = result
-            self.duration = (self.end_time - self.start_time).to_sec()
+            self.duration = self.end_time - self.start_time
 
         return self.subtask_count - self.subtask_count_finished
     

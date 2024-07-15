@@ -230,7 +230,8 @@ class Navigation_actuator():
         task_index = self.running_tasks_manager.add_task(navigation_task)
         navigation_task.update_start_status() # 刷新开始时间
         system.robot.robot_status = robot.Robot.Robot_status.MOVING  # 机器人状态更新
-        
+
+        # 任务开始暂停时间
         if navigation_task.sleep_time_before_task != 0:
             time.sleep(navigation_task.sleep_time_before_task)
             rospy.loginfo(f"task {task_index} sleep for {navigation_task.sleep_time_before_task} second before task")
@@ -243,7 +244,7 @@ class Navigation_actuator():
             goal.operation  = control_cmd.Control_cmd.MOVEBACK.value
             goal.second     = navigation_task.move_back_second         # 后退秒数
             goal.x          = navigation_task.target_3D_pose.x         # 后退距离x
-            goal.yaw        = navigation_task.target_3D_pose.yaw       # 后退距离y
+            goal.yaw        = navigation_task.target_3D_pose.yaw       # 后退距离yaw
             self.control_cmd_ac.send_goal(goal,self.control_cmd_task_done_callback,self.control_cmd_active_callback,self.control_cmd_feedback_callback)
         # 导航任务
         else:
@@ -267,6 +268,14 @@ class Navigation_actuator():
         rospy.loginfo(f"node: {rospy.get_name()}, navigation done. status:{status} result:{result}")
         current_task = system.navigation_actuator.running_tasks_manager.get_task(system.navigation_actuator.move_base_task_index)
         
+        # 任务完成暂停时间
+        if current_task.sleep_time_after_task != 0:
+            time.sleep(current_task.sleep_time_after_task)
+            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
+        else:
+            rospy.loginfo(f"task {current_task.task_index} not sleep after task ")
+        
+        # 设置完成状态
         if status == actionlib.GoalStatus.SUCCEEDED:
             rospy.loginfo(f"node: {rospy.get_name()}, navigation succeed. status : {status}")
             current_task.update_end_status(task.Task.Task_result.SUCCEED)
@@ -280,13 +289,6 @@ class Navigation_actuator():
         
         if DEBUG_NAVIGATION:
             input("The navigation point has been reached, whether to continue running ")
-
-        # 任务完成暂停时间
-        if current_task.sleep_time_after_task != 0:
-            time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
-        else:
-            rospy.loginfo(f"task {current_task.task_index} not sleep after task ")
             
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
@@ -316,9 +318,9 @@ class Navigation_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
+            rospy.loginfo(f"task index {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
         else:
-            rospy.loginfo(f"task {current_task.task_index} not sleep after task")
+            rospy.loginfo(f"task index {current_task.task_index} not sleep after task")
         
         if status == actionlib.GoalStatus.SUCCEEDED:
             rospy.loginfo(f"node: {rospy.get_name()}, control cmd succeed. status : {status}")
@@ -338,27 +340,19 @@ class Navigation_actuator():
     # 反馈回调
     @staticmethod
     def control_cmd_feedback_callback(feedback:MoveBaseFeedback):
-        # rospy.loginfo(f"node: {rospy.get_name()}, control cmd feedback. feedback = {feedback}")
         pass 
     
 # 机械臂执行器 
 class Manipulator_actuator():
     def __init__(self):
-        self.left_arm_ac  = actionlib.SimpleActionClient(utilis.Topic_name.left_arm_action,  msg.MoveArmAction)
-        self.right_arm_ac = actionlib.SimpleActionClient(utilis.Topic_name.right_arm_action, msg.MoveArmAction)
-        
+        # 手臂任务发布 
         self.left_arm_pub = rospy.Publisher(utilis.Topic_name.left_arm_topic,msg.ArmMoveRequest,queue_size=10)
         self.right_arm_pub = rospy.Publisher(utilis.Topic_name.right_arm_topic,msg.ArmMoveRequest,queue_size=10)
         
+        # 手臂结果接受
         self.left_arm_sub  = rospy.Subscriber(utilis.Topic_name.left_arm_result,msg.ArmMoveResult ,self.do_left_arm_move_result, queue_size=10)
         self.right_arm_sub = rospy.Subscriber(utilis.Topic_name.right_arm_result,msg.ArmMoveResult,self.do_right_arm_move_result,queue_size=10)
         
-        # if WAIT_FOR_ACTION_SERVER:
-        #     rospy.loginfo("waiting for left arm action server")
-        #     # TODO:调试需要,暂时注释
-        #     self.left_arm_ac.wait_for_server()
-        #     rospy.loginfo("waiting for right arm action server")
-        #     self.right_arm_ac.wait_for_server()
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
     
     # 运行
@@ -366,7 +360,7 @@ class Manipulator_actuator():
         # 加在运行序列中
         task_index = self.running_tasks_manager.add_task(manipulation_task)
         system.robot.update_arm_status(manipulation_task.arm_id,robot.manipulation_status.arm.status.BUSY)
-        rospy.loginfo(f"manipulation task {manipulation_task.task_index} is running ")
+        rospy.loginfo(f"manipulation task index {manipulation_task.task_index} is running ")
         
         # 任务开始
         manipulation_task.update_start_status()
@@ -374,7 +368,7 @@ class Manipulator_actuator():
         # 任务前休眠时间
         if manipulation_task.sleep_time_before_task != 0:
             time.sleep(manipulation_task.sleep_time_before_task)
-            rospy.loginfo(f"task {task_index} sleep for {manipulation_task.sleep_time_before_task} second before task")
+            rospy.loginfo(f"task index {task_index} sleep for {manipulation_task.sleep_time_before_task} second before task")
 
         # 左臂
         if manipulation_task.arm_id == utilis.Device_id.LEFT:
@@ -425,8 +419,6 @@ class Manipulator_actuator():
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
                     right_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
-            # self.left_arm_ac.send_goal(left_goal,self.left_done_callback,self.left_active_callback,self.left_feedback_callback)
-            # self.right_arm_ac.send_goal(right_goal,self.right_done_callback,self.right_active_callback,self.right_feedback_callback)
             self.left_arm_pub.publish(left_goal)
             self.right_arm_pub.publish(right_goal)
 
@@ -441,30 +433,30 @@ class Manipulator_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
+            rospy.loginfo(f"task index {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
         else:
-            rospy.loginfo(f"task {current_task.task_index} not sleep")
+            rospy.loginfo(f"task index {current_task.task_index} not sleep")
             
         try:
             current_task.update_end_status(task.Task.Task_result.FAILED)
         except Exception as e:
             rospy.logerr(f"Exception in done_cb: {e}")
             current_task.update_end_status(task.Task.Task_result.FAILED)
+            
         # 任务自带的回调
         if current_task.finish_cb != None:
             current_task.finish_cb(None, result)
         
-
-            
         # 删除任务
+        # 有可能同一个任务被删除两次
         try:
             if current_task.if_finished():
-                rospy.loginfo(f"del task {result.task_index} in running_tasks_manager OK")
+                rospy.loginfo(f"del task index {result.task_index} in running_tasks_manager OK")
                 system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
             else :
-                rospy.loginfo(f"task {result.task_index} is not finished, keep in running list")
+                rospy.loginfo(f"task index{result.task_index} is not finished, keep in running list")
         except:
-            rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task {result.task_index} in running_tasks_manager error")
+            rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task index {result.task_index} in running_tasks_manager error")
         
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, None, result)
@@ -478,9 +470,9 @@ class Manipulator_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
+            rospy.loginfo(f"task index {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
         else:
-            rospy.loginfo(f"task {current_task.task_index} not sleep")
+            rospy.loginfo(f"task index {current_task.task_index} not sleep")
             
         try:
             current_task.update_end_status(task.Task.Task_result.FAILED)
@@ -490,133 +482,21 @@ class Manipulator_actuator():
         # 任务自带的回调
         if current_task.finish_cb != None:
             current_task.finish_cb(None, result)
-        
 
             
         # 删除任务
         try:
             if current_task.if_finished():
-                rospy.loginfo(f"del task {result.task_index} in running_tasks_manager OK")
+                rospy.loginfo(f"del task index {result.task_index} in running_tasks_manager OK")
                 system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
             else :
-                rospy.loginfo(f"task {result.task_index} is not finished, keep in running list")
+                rospy.loginfo(f"task index {result.task_index} is not finished, keep in running list")
         except:
-            rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task {result.task_index} in running_tasks_manager error")
+            rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task index {result.task_index} in running_tasks_manager error")
         
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, None, result)
     
-    # 完成回调
-    @staticmethod
-    def left_done_callback(status, result:msg.MoveArmResult):
-        rospy.loginfo(f"node: {rospy.get_name()}, manipulator done. status:{status} result:{result}")
-        current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
-        # 任务完成暂停时间
-        if current_task.sleep_time_after_task != 0:
-            time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
-        else:
-            rospy.loginfo(f"task {current_task.task_index} not sleep")
-            
-        try:
-        # 任务成功
-            if status == actionlib.GoalStatus.SUCCEEDED:
-                rospy.loginfo(f"node: {rospy.get_name()}, manipulator succeed. status : {status}")
-                current_task.update_end_status(task.Task.Task_result.SUCCEED)
-            # 任务失败
-            else:
-                rospy.loginfo(f"node: {rospy.get_name()}, manipulator failed. status : {status}")
-                current_task.update_end_status(task.Task.Task_result.FAILED)
-        except Exception as e:
-            rospy.logerr(f"Exception in done_cb: {e}")
-            rospy.loginfo(f"node: {rospy.get_name()}, manipulator failed. status : {status}")
-            current_task.update_end_status(task.Task.Task_result.FAILED)
-        # 任务自带的回调
-        if current_task.finish_cb != None:
-            current_task.finish_cb(status, result)
-        
-
-            
-        # 删除任务
-        try:
-            if current_task.if_finished():
-                rospy.loginfo(f"del task {result.task_index} in running_tasks_manager OK")
-                system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
-            else :
-                rospy.loginfo(f"task {result.task_index} is not finished, keep in running list")
-        except:
-            rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task {result.task_index} in running_tasks_manager error")
-        
-        # 给任务管理器的回调
-        system.task_manager.tm_task_finish_callback(current_task, status, result)
-        
-        # 完成回调
-    @staticmethod
-    def right_done_callback(status, result:msg.MoveArmResult):
-        rospy.loginfo(f"node: {rospy.get_name()}, manipulator done. status:{status} result:{result}")
-        current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
-
-        # 任务完成暂停时间
-        if current_task.sleep_time_after_task != 0:
-            time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time_after_task} second after task")
-        else:
-            rospy.loginfo(f"task {result.task_index} not sleep after task")
-            
-        try:
-        # 任务成功
-            if status == actionlib.GoalStatus.SUCCEEDED:
-                rospy.loginfo(f"node: {rospy.get_name()}, manipulator succeed. status : {status}")
-                current_task.update_end_status(task.Task.Task_result.SUCCEED)
-            # 任务失败
-            else:
-                rospy.loginfo(f"node: {rospy.get_name()}, manipulator failed. status : {status}")
-                current_task.update_end_status(task.Task.Task_result.FAILED)
-        except Exception as e:
-            rospy.logerr(f"Exception in done_cb: {e}")
-            rospy.loginfo(f"node: {rospy.get_name()}, manipulator failed. status : {status}")
-            current_task.update_end_status(task.Task.Task_result.FAILED)
-        # 任务自带的回调
-        if current_task.finish_cb != None:
-            current_task.finish_cb(status, result)
-        
-
-            
-        # 删除任务
-        # 删除任务
-        try:
-            if current_task.if_finished():
-                rospy.loginfo(f"del task {result.task_index} in running_tasks_manager OK")
-                system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
-            else :
-                rospy.loginfo(f"task {result.task_index} is not finished, keep in running list")
-        except:
-            rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task {result.task_index} in running_tasks_manager error")
-        
-        # 给任务管理器的回调
-        system.task_manager.tm_task_finish_callback(current_task, status, result)
-        
-    # 激活回调
-    @staticmethod
-    def left_active_callback():
-        rospy.loginfo(f"node: {rospy.get_name()}, manipulator active")
-        
-    # 激活回调
-    @staticmethod
-    def right_active_callback():
-        rospy.loginfo(f"node: {rospy.get_name()}, manipulator active")
-    
-    # 反馈回调
-    @staticmethod
-    def left_feedback_callback(feedback:msg.MoveArmFeedback):
-        # rospy.loginfo(f"node: {rospy.get_name()}, manipulator feedback. {feedback}")
-        pass
-    
-    # 反馈回调
-    @staticmethod
-    def right_feedback_callback(feedback:msg.MoveArmFeedback):
-        # rospy.loginfo(f"node: {rospy.get_name()}, manipulator feedback. {feedback}")
-        pass
 
 # 图像识别任务执行器
 class Image_rec_actuator():
@@ -636,7 +516,7 @@ class Image_rec_actuator():
         # 任务前休眠时间
         if task_image_rec_task.sleep_time_before_task != 0:
             time.sleep(task_image_rec_task.sleep_time_before_task)
-            rospy.loginfo(f"task {task_index} sleep for {task_image_rec_task.sleep_time_before_task} second before task")
+            rospy.loginfo(f"task index {task_index} sleep for {task_image_rec_task.sleep_time_before_task} second before task")
             
         # 发布任务
         task_info = msg.ImageRecRequest()
@@ -752,19 +632,16 @@ class Image_rec_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {result.task_index} sleep for {current_task.sleep_time_after_task} second after task")
+            rospy.loginfo(f"task index {result.task_index} sleep for {current_task.sleep_time_after_task} second after task")
         else:
-            rospy.loginfo(f"task {result.task_index} not sleep after task")
+            rospy.loginfo(f"task  index {result.task_index} not sleep after task")
             
-        
         # 更新任务状态
         current_task.update_end_status(task.Task.Task_result.SUCCEED)
         # 任务自带的回调
         if current_task.finish_cb is not None:
             current_task.finish_cb(actionlib.GoalStatus.SUCCEEDED)
-            
 
-            
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, actionlib.GoalStatus.SUCCEEDED)
     
@@ -785,7 +662,7 @@ class Task_manager():
         # self.conflicting_task = task.Task_sequence()  # 冲突的任务列表(可以并行, 但因为硬件冲突暂时无法并行)
         self.waiting_task     = task.Task_sequence("waiting_task")  # 等待执行的任务列表
         self.can_run_state    = True                  #是否能够执行任务
-        # 每0.5s执行一次任务
+        # 每0.1s执行一次任务
         # TODO:调试时为3秒
         # timer = rospy.Timer(rospy.Duration(0.3), self.timer_callback)
         timer = rospy.Timer(rospy.Duration(0.1), self.timer_callback)
@@ -797,15 +674,14 @@ class Task_manager():
         if current_task.parallel == task.Task.Task_parallel.NOTALLOWED:
             self.can_run_state = True
         if current_task.if_finished():
-            rospy.loginfo(f"task {current_task.task_index} is finished()")
+            rospy.loginfo(f"task index {current_task.task_index} is finished()")
             try:
                 self.executed_tasks.remove_task(current_task) # 在执行的任务中移除
             except:
-                rospy.loginfo(f"node: {rospy.get_name()}, task_manager, task : {current_task.task_index} remove task from executed_tasks failed!!!")
+                rospy.loginfo(f"node: {rospy.get_name()}, task_manager, task index : {current_task.task_index} remove task from executed_tasks failed!!!")
             self.finished_tasks.add(current_task)         # 添加到已完成的任务中
-            # log.log_finish_tasks_info(current_task)       # 记录完成的任务信息
         else:
-            rospy.loginfo(f"task {current_task.task_index} is not finish !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            rospy.loginfo(f"task  index {current_task.task_index} is not finish !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             
         # 更新硬件状态
         if current_task.task_type.task_type.__class__ == task.Task_type.Task_navigate:
@@ -817,7 +693,6 @@ class Task_manager():
         elif current_task.task_type.task_type.__class__ == task.Task_type.Task_image_rec:
             system.robot.update_arm_status(current_task.camera_id,robot.manipulation_status.arm.status.IDLE)
             
-    
 
     # 定时器任务
     @staticmethod
@@ -876,7 +751,7 @@ class Task_manager():
         # rospy.loginfo(f"robot status: {system.robot}")
         # 不能执行下一个任务
         if self.can_run_state == False:
-            rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can not run, because can_run_state is {self.can_run_state}")
+            rospy.loginfo(f"node: {rospy.get_name()}, task index {current_task.task_index} can not run, because can_run_state is {self.can_run_state}")
             return Task_manager.Run_task_return_code.cannot_run_cannot_next
         
         # 任务不支持并行
@@ -1539,370 +1414,19 @@ class Order_driven_task_schedul():
     # !!!
     # 创建在零食桌前的任务
     def test_tasks_at_snack_desk(self,snack_list:order.Snack_list)->task.Task_sequence:
-        tasks_pick_snack        = task.Task_sequence()
-        #  将左臂抬到指定位置(食物框识别位置)
-        task_left_arm_to_rec_contianer = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_container, None, utilis.Device_id.LEFT, \
-            system.anchor_point.left_arm_container_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
-                name="left arm move to rec container")
-        task_left_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL
-        tasks_pick_snack.add(task_left_arm_to_rec_contianer)
-        
-        #  将右臂抬到指定位置(食物框识别位置)
-        task_right_arm_to_rec_contianer = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_container, None, utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_container_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
-                name="right arm move to rec container")
-        task_right_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL
-        tasks_pick_snack.add(task_right_arm_to_rec_contianer)
-        
-        #  左摄像头食物框识别(可前后并行，固定)
-        task_left_camera_rec_container = task.Task_image_rec(task.Task_type.Task_image_rec.CONTAINER, None, utilis.Device_id.LEFT,\
-            name="left camera rec container")
-        task_left_camera_rec_container.parallel = task.Task.Task_parallel.ALL
-        task_left_camera_rec_container.add_predecessor_task(task_left_arm_to_rec_contianer) # 前置任务
-        # task_left_camera_rec_container.add_predecessor_task(task_navigation_to_snack_desk)  # 前置任务
-        tasks_pick_snack.add(task_left_camera_rec_container)
-        
-        #  右摄像头食物框识别(可前后并行，固定)
-        task_right_camera_rec_container = task.Task_image_rec(task.Task_type.Task_image_rec.CONTAINER, None, utilis.Device_id.RIGHT,\
-            name="right camera rec container")
-        task_right_camera_rec_container.parallel = task.Task.Task_parallel.ALL
-        task_right_camera_rec_container.add_predecessor_task(task_right_arm_to_rec_contianer)  # 前置任务
-        # task_right_camera_rec_container.add_predecessor_task(task_navigation_to_snack_desk)     # 前置任务
-        
-        tasks_pick_snack.add(task_right_camera_rec_container)
-        
-        #  将左臂抬到零食识别位置(可前后并行，固定)
-        task_left_arm_to_rec_snack = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_snack, None, utilis.Device_id.LEFT, \
-            system.anchor_point.left_arm_snack_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
-                name="left arm move to rec snack")
-        task_left_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL
-        task_left_arm_to_rec_snack.add_predecessor_task(task_left_camera_rec_container)       # 前置任务
-        tasks_pick_snack.add(task_left_arm_to_rec_snack)
-        
-        #  将右臂抬到零食识别位置(可前后并行，固定)
-        task_right_arm_to_rec_snack = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_snack, None, utilis.Device_id.RIGHT, \
-            system.anchor_point.right_arm_snack_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
-                name="right arm move to rec snack")
-        task_right_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL
-        task_right_arm_to_rec_snack.add_predecessor_task(task_right_camera_rec_container)     # 前置任务
-        tasks_pick_snack.add(task_right_arm_to_rec_snack)
-        
-        #  左、右摄像头零食识别(不可并行，动态)
-        task_rec_snack = task.Task_image_rec(task.Task_type.Task_image_rec.SNACK, None, utilis.Device_id.LEFT_RIGHT,\
-            name="two arms rec snack")
-        task_rec_snack.set_snack_list(snack_list)
-        task_rec_snack.add_predecessor_task(task_left_arm_to_rec_snack)                        # 前置任务
-        task_rec_snack.add_predecessor_task(task_right_arm_to_rec_snack)                       # 前置任务
-        tasks_pick_snack.add(task_rec_snack)
-
-        # 零食抓取任务
-        snack_count = snack_list.get_all_snack_count()
-        for i in range(snack_count):
-            tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
-
-        # 功能暂停任务
-        task_function_pause = task.Task_function(task.Task_type.Task_function.PAUSE, None,name="function pause")
-        tasks_pick_snack.add(task_function_pause)
-        
-        # 左臂夹取零食框, 准备动作
-        task_left_arm_grap_container_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
-                [copy.deepcopy(system.anchor_point.left_arm_container_grip_pre)],\
-                    [arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.Z_XY,\
-                        name="left arm grap container prepare")
-        task_left_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行
-        task_left_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数
-        tasks_pick_snack.add(task_left_arm_grap_container_pre)
-        
-            # 识别容器绑定 夹取容器准备动作
-        task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_pre)
-        
-        # 左臂夹取零食框
-        task_left_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
-                [copy.deepcopy(system.anchor_point.left_arm_container_grip)],\
-                    [arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
-                        name="left arm grap container")
-        task_left_arm_grap_container.parallel = task.Task.Task_parallel.ALL          # 可并行
-        task_left_arm_grap_container.add_predecessor_task(task_left_arm_grap_container_pre)  # 准备动作
-        tasks_pick_snack.add(task_left_arm_grap_container)
-        
-        
-        # 右臂夹取零食框, 准备动作
-        task_right_arm_grap_container_pre    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
-                [copy.deepcopy(system.anchor_point.right_arm_container_grip_pre)],\
-                    [arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.Z_XY,\
-                        name="right arm grap container prepare")
-        task_right_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行  
-        task_right_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数 
-        tasks_pick_snack.add(task_right_arm_grap_container_pre)
-        
-            # 识别容器绑定 夹取容器
-        task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container_pre)
-        
-        
-        # 右臂夹取零食框
-        task_right_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
-                [copy.deepcopy(system.anchor_point.right_arm_container_grip)],\
-                    [arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
-                        name="right arm grap container")
-        task_right_arm_grap_container.parallel = task.Task.Task_parallel.ALL          # 可并行  
-        task_right_arm_grap_container.add_predecessor_task(task_right_arm_grap_container_pre)  # 准备动作
-        tasks_pick_snack.add(task_right_arm_grap_container)
-        
-        #  左、右臂将零食框放到指定高度
-        task_arm_dilivery_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Deliever_container,None,utilis.Device_id.LEFT_RIGHT,\
-                [system.anchor_point.left_arm_container_delivery,system.anchor_point.right_arm_container_delivery],\
-                    [arm.GripMethod.DONTCANGE,arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
-                        name="two arms dilivery container")
-        
-        task_arm_dilivery_container.parallel = task.Task.Task_parallel.ALL
-        task_arm_dilivery_container.set_subtask_count(2)  # 两个子任务
-        task_arm_dilivery_container.add_predecessor_task(task_left_arm_grap_container)        # 前置任务
-        task_arm_dilivery_container.add_predecessor_task(task_right_arm_grap_container)       # 前置任务
-        
-        tasks_pick_snack.add(task_arm_dilivery_container)
-        
-
-        # 机器人后退
-        task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            system.anchor_point.snack_deck_move_back_pose, name="move back from snack desk")
-        task_move_back_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)
-        task_move_back_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)
-        task_move_back_from_snack_desk.parallel = task.Task.Task_parallel.ALL
-        tasks_pick_snack.add(task_move_back_from_snack_desk)
-        
-        return tasks_pick_snack
+        pass
     
     # 创建放置容器的任务
     def test_tasks_lossen_container(self,table_id : utilis.Device_id):
-        tasks_pick_snack        = task.Task_sequence()
-        #  将左、右臂放到指定位置后，松开
-        task_arm_placement_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_container,None,utilis.Device_id.LEFT_RIGHT,\
-                [system.anchor_point.left_arm_container_placement,system.anchor_point.right_arm_container_placement],\
-                [arm.GripMethod.OPEN,arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
-                    name="two arms placement container")
-        # task_arm_placement_container.add_predecessor_task(task_move_back_from_snack_desk)  # 前置任务
-        task_arm_placement_container.set_subtask_count(2)
-        tasks_pick_snack.add(task_arm_placement_container)
-    
-        #  将左,右臂放到空闲位置
-        task_arms_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
-                [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
-                [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ,
-                name="two arms move to idle")
-        task_arms_idle.add_predecessor_task(task_arm_placement_container)
-        task_arms_idle.set_subtask_count(2)
-        task_arms_idle.parallel = task.Task.Task_parallel.ALL
-        tasks_pick_snack.add(task_arms_idle)
-        
-        # 机器人后退
-        if table_id == utilis.Device_id.LEFT.value:
-            task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            system.anchor_point.left_deck_move_back_pose, name="move back from left service desk")
-        elif table_id == utilis.Device_id.RIGHT.value:
-            task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            system.anchor_point.right_deck_move_back_pose, name="move back from left service desk")
-        else:
-            raise ValueError("Invalid table_id")
-        task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
-        task_move_back_from_service_desk.add_predecessor_task(task_arm_placement_container)
-        task_move_back_from_service_desk.set_move_back_second(2)                             # 2s内完成后退
-        tasks_pick_snack.add(task_move_back_from_service_desk)
-        
-        # 功能性暂停
-        task_function_pause2 = task.Task_function(task.Task_type.Task_function.PAUSE,None,name="function pause")
-        tasks_pick_snack.add(task_function_pause2)
-        
-        return tasks_pick_snack
+        pass
     
     # 创建在饮料桌前的任务
     def test_tasks_at_drink_desk(self):
-        tasks_get_drink = task.Task_sequence()  
-        
-        #  左臂抬到指定位置识别咖啡机开关 开
-        task_left_arm_to_rec_coffee_machine_turn_on = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_machine_switch, None, utilis.Device_id.LEFT, \
-            system.anchor_point.left_arm_machine_turn_on_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
-                name="left arm move to rec coffee machine turn on")
-        task_left_arm_to_rec_coffee_machine_turn_on.parallel = task.Task.Task_parallel.ALL
-        tasks_get_drink.add(task_left_arm_to_rec_coffee_machine_turn_on)
-        
-        #  右臂抬到指定位置  进行准备 ，识别杯子和机器
-        task_right_arm_to_rec_cup_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_cup_machine, None, utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_cup_rec_pre, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
-                name="right arm move to rec cup machine prepare")
-        task_right_arm_to_rec_cup_pre.parallel = task.Task.Task_parallel.ALL
-        tasks_get_drink.add(task_right_arm_to_rec_cup_pre)
-        
-        #  右臂抬到指定位置识别杯子和机器
-        task_right_arm_to_rec_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_cup_machine, None, utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_cup_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
-                name="right arm move to rec cup machine")
-        task_right_arm_to_rec_cup.parallel = task.Task.Task_parallel.ALL
-        task_right_arm_to_rec_cup.add_predecessor_task(task_right_arm_to_rec_cup_pre)
-        tasks_get_drink.add(task_right_arm_to_rec_cup)
-        
-        #  左臂图像识别(咖啡机开关位置, 开的时候)
-        task_left_camera_rec_coffee_machine_turn_on = task.Task_image_rec(task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON,None,utilis.Device_id.LEFT,\
-            name="left camera rec coffee machine turn on")
-        task_left_camera_rec_coffee_machine_turn_on.parallel = task.Task.Task_parallel.ALL    
-        task_left_camera_rec_coffee_machine_turn_on.add_predecessor_task(task_left_arm_to_rec_coffee_machine_turn_on)    # 绑定前置任务, 左臂到位
-        # task_left_camera_rec_coffee_machine_turn_on.add_predecessor_task(task_navigation_to_drink_desk)                  # 绑定前置任务, 导航到饮料桌
-        tasks_get_drink.add(task_left_camera_rec_coffee_machine_turn_on)
-        
-        #  右摄像头图像识别(杯子位置、咖啡机位置)(可并行，固定)
-        task_right_camera_rec_cup_machine = task.Task_image_rec(task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE,None,utilis.Device_id.RIGHT,\
-            name="right camera rec cup machine")
-        task_right_camera_rec_cup_machine.parallel = task.Task.Task_parallel.ALL
-        task_right_camera_rec_cup_machine.add_predecessor_task(task_right_arm_to_rec_cup)                      # 绑定前置任务,右臂到位,
-        # task_right_camera_rec_cup_machine.add_predecessor_task(task_navigation_to_drink_desk)                  # 绑定前置任务, 导航到饮料桌
-        tasks_get_drink.add(task_right_camera_rec_cup_machine)
-        
-        #  右臂夹取杯子准备动作(可并行，固定)
-        task_right_arm_grasp_cup_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_cup_pre,None,utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_cup_grab_pre,arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.XYZ,\
-                name="right arm grasp cup prepare")
-        task_right_arm_grasp_cup_pre.parallel = task.Task.Task_parallel.ALL
-        task_right_arm_grasp_cup_pre.status   = task.Task.Task_status.NOTREADY  # 需要参数
-        tasks_get_drink.add(task_right_arm_grasp_cup_pre)
-            # 右臂绑定 夹取杯子和移动杯子
-        task_right_camera_rec_cup_machine.add_need_modify_task(task_right_arm_grasp_cup_pre)
-        
-        #  右臂夹取杯子(可并行)
-        task_right_arm_grasp_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_cup,None,utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_cup_grab,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
-                name="right arm grasp cup")
-        task_right_arm_grasp_cup.parallel = task.Task.Task_parallel.ALL
-        task_right_arm_grasp_cup.status   = task.Task.Task_status.NOTREADY  # 需要参数
-        task_right_arm_grasp_cup.add_predecessor_task(task_right_arm_grasp_cup_pre)          # 前置任务
-        tasks_get_drink.add(task_right_arm_grasp_cup)
-            # 右臂绑定 夹取杯子和移动杯子
-        task_right_camera_rec_cup_machine.add_need_modify_task(task_right_arm_grasp_cup)
-
-        # 左臂放置到按钮下方, 进行准备
-        task_left_arm_turn_on_machine_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Turn_on_coffee_machine,None,utilis.Device_id.LEFT,\
-            copy.deepcopy(system.anchor_point.left_arm_machine_turn_on_pre),arm.GripMethod.CLOSE,\
-                arm_move_method = arm.ArmMoveMethod.Y_X_Z,\
-                    name="left arm turn on machine prepare")
-        task_left_arm_turn_on_machine_pre.parallel = task.Task.Task_parallel.ALL
-        task_left_arm_turn_on_machine_pre.status   = task.Task.Task_status.NOTREADY  # 需要参数
-        tasks_get_drink.add(task_left_arm_turn_on_machine_pre)
-            # 绑定左臂识别任务
-        task_left_camera_rec_coffee_machine_turn_on.add_need_modify_task(task_left_arm_turn_on_machine_pre)   
-        
-        # 左臂开启咖啡机, 向上拨一拨
-        task_left_arm_turn_on_machine_click = task.Task_manipulation(task.Task_type.Task_manipulation.Turn_off_coffee_machine,None,utilis.Device_id.LEFT,\
-            copy.deepcopy(system.anchor_point.left_arm_machine_turn_on_click), arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
-                name="left arm turn on machine click!!!")
-        task_left_arm_turn_on_machine_click.parallel = task.Task.Task_parallel.ALL
-        task_left_arm_turn_on_machine_click.status   = task.Task.Task_status.BEREADY  # 需要参数
-        task_left_arm_turn_on_machine_click.add_predecessor_task(task_left_arm_turn_on_machine_pre)
-        task_left_arm_turn_on_machine_click.set_sleep_time_after_task(2) 
-        tasks_get_drink.add(task_left_arm_turn_on_machine_click)
-        
-        #  右臂将杯子挪到咖啡机
-        task_right_arm_water_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Water_cup,None,utilis.Device_id.RIGHT,\
-            copy.deepcopy(system.anchor_point.right_arm_cup_water), arm_move_method = arm.ArmMoveMethod.X_YZ,\
-                name="right arm water cup")
-        task_right_arm_water_cup.parallel = task.Task.Task_parallel.ALL
-        task_right_arm_water_cup.status   = task.Task.Task_status.NOTREADY
-        task_right_arm_water_cup.add_predecessor_task(task_right_arm_grasp_cup)          # 要先抓到杯子  
-        tasks_get_drink.add(task_right_arm_water_cup)
-        task_right_camera_rec_cup_machine.add_need_modify_task(task_right_arm_water_cup) #绑定头部识别任务
-        
-        #  左臂抬到指定位置 识别 咖啡机开关 关
-        task_left_arm_to_rec_coffee_machine_turn_off = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_machine_switch, None, utilis.Device_id.LEFT, \
-            system.anchor_point.left_arm_machine_turn_off_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.X_YZ,\
-                name="left arm move to rec coffee machine turn off")
-        task_left_arm_to_rec_coffee_machine_turn_off.parallel = task.Task.Task_parallel.ALL
-        task_left_arm_to_rec_coffee_machine_turn_off.add_predecessor_task(task_left_arm_turn_on_machine_pre)                  # 前置任务, 打开了之后再识别关
-        tasks_get_drink.add(task_left_arm_to_rec_coffee_machine_turn_off)
-
-        #  左臂图像识别(咖啡机开关位置, 关的时候)
-        task_left_camera_rec_coffee_machine_turn_off = task.Task_image_rec(task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF,None,utilis.Device_id.LEFT,\
-            name="left camera rec coffee machine turn off")
-        task_left_camera_rec_coffee_machine_turn_off.parallel = task.Task.Task_parallel.ALL    
-        task_left_camera_rec_coffee_machine_turn_off.add_predecessor_task(task_left_arm_to_rec_coffee_machine_turn_off)    # 绑定前置任务, 手臂到位
-        tasks_get_drink.add(task_left_camera_rec_coffee_machine_turn_off)
-        
-        # 左臂关闭咖啡机(!!!!!!!!!!!!!不可并行)
-        task_left_arm_turn_off_machine_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Turn_off_coffee_machine,None,utilis.Device_id.LEFT,\
-            copy.deepcopy(system.anchor_point.left_arm_machine_turn_off_pre), arm_move_method = arm.ArmMoveMethod.Z_XY,\
-                name="left arm turn off machine")
-        task_left_arm_turn_off_machine_pre.status   = task.Task.Task_status.NOTREADY  # 需要参数
-        tasks_get_drink.add(task_left_arm_turn_off_machine_pre)
-        task_left_camera_rec_coffee_machine_turn_off.add_need_modify_task(task_left_arm_turn_off_machine_pre) # 绑定左臂识别任务
-        
-        # 左臂关闭咖啡机(!!!!!!!!!!!!!不可并行), 向下拨一拨
-        task_left_arm_turn_off_machine_click = task.Task_manipulation(task.Task_type.Task_manipulation.Turn_off_coffee_machine,None,utilis.Device_id.LEFT,\
-            copy.deepcopy(system.anchor_point.left_arm_machine_turn_off_click), arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
-                name="left arm turn off machine click!!!")
-        task_left_arm_turn_off_machine_click.status   = task.Task.Task_status.BEREADY  # 需要参数
-        task_left_arm_turn_off_machine_click.add_predecessor_task(task_left_arm_turn_off_machine_pre)
-        task_left_arm_turn_off_machine_click.set_sleep_time_after_task(3)  
-        tasks_get_drink.add(task_left_arm_turn_off_machine_click)
-        
-        
-        #  机器人后退
-        task_move_back_from_drink_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            system.anchor_point.drink_deck_move_back_pose,name="move back from drink desk")
-        task_move_back_from_drink_desk.add_predecessor_task(task_left_arm_turn_off_machine_click) 
-        task_move_back_from_drink_desk.parallel = task.Task.Task_parallel.ALL
-        tasks_get_drink.add(task_move_back_from_drink_desk)
-        
-        #  左臂抬到休闲位
-        task_left_arm_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT,\
-            system.anchor_point.left_arm_idle,arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
-                name="left arm move to idle")
-        task_left_arm_idle.add_predecessor_task(task_move_back_from_drink_desk)            # 前置任务, 机器人后退
-        task_left_arm_idle.parallel = task.Task.Task_parallel.ALL
-        tasks_get_drink.add(task_left_arm_idle)
-        
-        #  将右臂(拿水)抬到指定位置
-        task_right_arm_water_delivery = task.Task_manipulation(task.Task_type.Task_manipulation.Deliever_cup,None,utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_cup_delivery,arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
-                name="right arm water delivery")
-        task_right_arm_water_delivery.parallel = task.Task.Task_parallel.ALL
-        task_right_arm_water_delivery.add_predecessor_task(task_move_back_from_drink_desk)  # 前置任务, 机器人后退
-        tasks_get_drink.add(task_right_arm_water_delivery)
-        
-        return tasks_get_drink
-    
-
+        pass
     
     # 创建放置饮料的任务
     def test_tasks_lossen_cup(self,table_id):
-        tasks_get_drink = task.Task_sequence()  
-        #  将饮料臂放到指定位置后松开(不可并行)
-        task_right_arm_placement_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_cup,None,utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_cup_placement,arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
-            name="right arm placement cup")
-        # task_right_arm_placement_cup.add_predecessor_task(task_navigation_to_service_desk)  # 前置任务
-        tasks_get_drink.add(task_right_arm_placement_cup)
-        
-        #  机器人后退(可并行)
-        if table_id == utilis.Device_id.LEFT.value:
-            task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            system.anchor_point.left_deck_move_back_pose, name="move back from left service desk")
-        elif table_id == utilis.Device_id.RIGHT.value:
-            task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            system.anchor_point.right_deck_move_back_pose, name="move back from left service desk")
-        else:
-            raise ValueError("Invalid table_id")
-        task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL
-        task_move_back_from_service_desk.add_predecessor_task(task_right_arm_placement_cup)
-        task_move_back_from_service_desk.set_move_back_second(2)                              # 2s内完成后退
-        tasks_get_drink.add(task_move_back_from_service_desk)
-        
-        #  将左,右臂放到空闲位置(可并行)
-        task_arms_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
-                [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
-                [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ,\
-                    name="two arms move to idle")
-        task_arms_idle.add_predecessor_task(task_move_back_from_service_desk)                     # 前置任务,离开桌子,才进行后续操作
-        task_arms_idle.set_subtask_count(2)
-        task_arms_idle.parallel = task.Task.Task_parallel.ALL
-        tasks_get_drink.add(task_arms_idle)
-        
-        return tasks_get_drink
+        pass
     
 
 def test_other():
@@ -1969,12 +1493,6 @@ def test_order_snack():
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
     
-
-    
-    
-    
-    
-
 if __name__ == '__main__':
     try:
         talker()
