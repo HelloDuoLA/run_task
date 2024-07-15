@@ -29,8 +29,8 @@ import control_cmd
 
 DEBUG_NAVIGATION = False     # 导航调试中, 则运动到桌子的任务均为非并行任务, 并且在完成之后需要输入任意字符才能下一步
 
-# WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
-WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
+WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
+# WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
 
 # 初始化
 class System():
@@ -39,6 +39,8 @@ class System():
     def __init__(self):
         System.instance = self
         self.anchor_point = self.Anchor_point()  # 固定参数读取
+        
+        # TODO: 增加默认值
         
         rospy.loginfo(f"node: {rospy.get_name()}, system init")
         # 执行器初始化
