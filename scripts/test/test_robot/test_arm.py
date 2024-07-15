@@ -54,7 +54,7 @@ mr.set_servo_calibration(4)
 mr.set_servo_calibration(5)
 mr.set_servo_calibration(6)
 
-# 抓爪通信打开
+# !抓爪通信打开
 ml.set_gripper_mode(0)
 mr.set_gripper_mode(0)
 # 0开，1合
