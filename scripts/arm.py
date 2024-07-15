@@ -271,138 +271,138 @@ class Arm_controller():
             arm_speed =  100
             if pose_type == PoseType.ANGLE:
                 result = self.control_instance.send_angles(target_pose,arm_speed)
-                self.wait()
+                self.wait(result)
                 return result 
             elif pose_type == PoseType.BASE_COORDS:
                 if move_method == ArmMoveMethod.XYZ:
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()
+                    self.wait(result)
                 elif move_method == ArmMoveMethod.X_YZ:
                     current_base_coords = self.get_base_coords()
                     base_coords_change_x = copy.deepcopy(current_base_coords)
                     base_coords_change_x[0] = target_pose[0]
                     result = self.control_instance.send_base_coords(base_coords_change_x,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                 elif move_method == ArmMoveMethod.X_Y_Z:
                     current_base_coords = self.get_base_coords()
                     base_coords_change_x = copy.deepcopy(current_base_coords)
                     base_coords_change_x[0] = target_pose[0]
                     result = self.control_instance.send_base_coords(base_coords_change_x,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     base_coords_change_y = copy.deepcopy(base_coords_change_x)
                     base_coords_change_y[1] = target_pose[1]
                     result = self.control_instance.send_base_coords(base_coords_change_y,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                 elif move_method == ArmMoveMethod.X_Z_Y:
                     current_base_coords = self.get_base_coords()
                     base_coords_change_x = copy.deepcopy(current_base_coords)
                     base_coords_change_x[0] = target_pose[0]
                     result = self.control_instance.send_base_coords(base_coords_change_x,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     base_coords_change_z = copy.deepcopy(base_coords_change_x)
                     base_coords_change_z[2] = target_pose[2]
                     result = self.control_instance.send_base_coords(base_coords_change_z,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                 elif move_method == ArmMoveMethod.Y_XZ:
                     current_base_coords = self.get_base_coords()
                     base_coords_change_y = copy.deepcopy(current_base_coords)
                     base_coords_change_y[1] = target_pose[1]
                     result = self.control_instance.send_base_coords(base_coords_change_y,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                 elif move_method == ArmMoveMethod.Y_X_Z:
                     current_base_coords = self.get_base_coords()
                     base_coords_change_y = copy.deepcopy(current_base_coords)
                     base_coords_change_y[1] = target_pose[1]
                     result = self.control_instance.send_base_coords(base_coords_change_y,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     base_coords_change_x = copy.deepcopy(base_coords_change_y)
                     base_coords_change_x[0] = target_pose[0]
                     result = self.control_instance.send_base_coords(base_coords_change_x,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                 elif move_method == ArmMoveMethod.Y_Z_X:
                     current_base_coords = self.get_base_coords()
                     base_coords_change_y = copy.deepcopy(current_base_coords)
                     base_coords_change_y[1] = target_pose[1]
                     result = self.control_instance.send_base_coords(base_coords_change_y,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     base_coords_change_z = copy.deepcopy(base_coords_change_y)
                     base_coords_change_z[2] = target_pose[2]
                     result = self.control_instance.send_base_coords(base_coords_change_z,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()
+                    self.wait(result)
                 elif move_method == ArmMoveMethod.Z_XY:
                     current_base_coords = self.get_base_coords()
                     base_coords_change_z = copy.deepcopy(current_base_coords)
                     base_coords_change_z[2] = target_pose[2]
                     result = self.control_instance.send_base_coords(base_coords_change_z,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()
+                    self.wait(result)
                 elif move_method == ArmMoveMethod.Z_X_Y:
                     current_base_coords = self.get_base_coords()
                     base_coords_change_z = copy.deepcopy(current_base_coords)
                     base_coords_change_z[2] = target_pose[2]
                     result = self.control_instance.send_base_coords(base_coords_change_z,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     base_coords_change_x = copy.deepcopy(base_coords_change_z)
                     base_coords_change_x[0] = target_pose[0]
                     result = self.control_instance.send_base_coords(base_coords_change_z,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()
+                    self.wait(result)
                 elif move_method == ArmMoveMethod.Z_Y_X:
                     current_base_coords = self.get_base_coords()
                     base_coords_change_z = copy.deepcopy(current_base_coords)
                     base_coords_change_z[2] = target_pose[2]
                     result = self.control_instance.send_base_coords(base_coords_change_z,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     base_coords_change_y = copy.deepcopy(base_coords_change_z)
                     base_coords_change_y[1] = target_pose[1]
                     result = self.control_instance.send_base_coords(base_coords_change_z,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()
+                    self.wait(result)
                 elif move_method == ArmMoveMethod.XY_Z:
                     current_base_coords = self.get_base_coords()
                     base_coords_change_xy = copy.deepcopy(current_base_coords)
                     base_coords_change_xy[0] = target_pose[0]
                     base_coords_change_xy[1] = target_pose[1]
                     result = self.control_instance.send_base_coords(base_coords_change_xy,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                 elif move_method == ArmMoveMethod.XZ_Y:
                     current_base_coords = self.get_base_coords()
@@ -410,51 +410,51 @@ class Arm_controller():
                     base_coords_change_xz[0] = target_pose[0]
                     base_coords_change_xz[2] = target_pose[2]
                     result = self.control_instance.send_base_coords(base_coords_change_xz,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()
+                    self.wait(result)
                 elif move_method == ArmMoveMethod.YZ_X:
                     current_base_coords = self.get_base_coords()
                     base_coords_change_yz = copy.deepcopy(current_base_coords)
                     base_coords_change_yz[1] = target_pose[1]
                     base_coords_change_yz[2] = target_pose[2]
                     result = self.control_instance.send_base_coords(base_coords_change_yz,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()  
+                    self.wait(result)  
                 # elif move_method == ArmMoveMethod.ONLY_Z:
                 #     current_base_coords = self.get_base_coords()
                 #     current_base_coords[2] = target_pose[2]
                 #     result = self.control_instance.send_base_coords(current_base_coords,arm_speed)
-                #     self.wait()
+                #     self.wait(result)
                 elif move_method == ArmMoveMethod.MODIFY_Z:
                     current_base_coords = self.get_base_coords()
                     current_base_coords[2] += target_pose[2]
                     result = self.control_instance.send_base_coords(current_base_coords,arm_speed)
-                    self.wait()
+                    self.wait(result)
                 # 先移动x轴, 再然后动Y,Z,其他全部，包括角度旋转
                 elif move_method == ArmMoveMethod.X_Y_Z_OTHER:
                     current_base_coords = self.get_base_coords()
                     base_coords_change_x = copy.deepcopy(current_base_coords)
                     base_coords_change_x[0] = target_pose[0]
                     result = self.control_instance.send_base_coords(base_coords_change_x,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     base_coords_change_y = copy.deepcopy(base_coords_change_x)
                     base_coords_change_y[1] = target_pose[1]
                     result = self.control_instance.send_base_coords(base_coords_change_y,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     base_coords_change_z = copy.deepcopy(base_coords_change_y)
                     base_coords_change_z[2] = target_pose[2]
                     result = self.control_instance.send_base_coords(base_coords_change_z,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     # change other
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()
+                    self.wait(result)
                 # 先移动Z轴, 再然后动其他全部，包括角度旋转
                 elif move_method == ArmMoveMethod.X_Z_Y_OTHER:
                     current_base_coords = self.get_base_coords()
@@ -462,32 +462,36 @@ class Arm_controller():
                     base_coords_change_x = copy.deepcopy(current_base_coords)
                     base_coords_change_x[0] = target_pose[0]
                     result = self.control_instance.send_base_coords(base_coords_change_x,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     base_coords_change_z = copy.deepcopy(base_coords_change_x)
                     base_coords_change_z[2] = target_pose[2]
                     result = self.control_instance.send_base_coords(base_coords_change_z,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     base_coords_change_y = copy.deepcopy(base_coords_change_z)
                     base_coords_change_y[1] = target_pose[1]
                     result = self.control_instance.send_base_coords(base_coords_change_y,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                     # change other
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
-                    self.wait()
+                    self.wait(result)
                     
                 else:
                     raise ValueError("Invalid move method")
         
                 return result 
         # 等待机械臂运动结束
-        def wait(self):
-            time.sleep(0.3)
-            while(self.control_instance.is_moving()):
-                # print("arm is moving")
-                time.sleep(0.03)
+        def wait(self,result=1):
+            if result == None:
+                time.sleep(0.3)
+                while(self.control_instance.is_moving()):
+                    # print("arm is moving")
+                    time.sleep(0.03)
+            elif result != 1:
+                rospy.loginfo(f"arm move failed {result}!!!!!!!!!!!!")
+                return False
                 
         #  可靠地获取当前的基座标
         def get_base_coords(self):
