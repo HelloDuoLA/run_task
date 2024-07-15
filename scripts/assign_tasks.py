@@ -546,7 +546,7 @@ class Image_rec_actuator():
                     task_grasp_snack:task.Task_manipulation         = current_task.need_modify_tasks.task_list[i*3]
                     task_grasp_snack.modify_xyz_select_arm(snack_xyz,arm_id)
                     task_lossen_snack_pre:task.Task_manipulation    = current_task.need_modify_tasks.task_list[i*3+1]
-                    # 左臂松零食使用 Z_X_Y_OTHER
+                    # 左臂松零食使用 X_Z_Y_OTHER
                     if arm_id == utilis.Device_id.LEFT:
                         task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.X_Z_Y_OTHER)
                     else:
@@ -580,10 +580,7 @@ class Image_rec_actuator():
                     # !!!不改变任务状态
                 # 抓容器, 变的是xy坐标
                 elif need_modify_task.task_type == task.Task_type.Task_manipulation.Grasp_container:
-                    # !修改高度
-                    container_xyz[2] == system.anchor_point.right_arm_container_grip_pre.arm_pose[2]
                     need_modify_task.modify_target_xy(container_xyz,result.camera_id)
-                
                     # 修改任务状态
                     need_modify_task.status = task.Task.Task_status.BEREADY
 

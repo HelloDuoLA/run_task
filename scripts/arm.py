@@ -232,8 +232,7 @@ class Arm_controller():
                 self.pub.publish(result)
             except Exception as e:
                 print(f"Exception in done_cb: {e}")
-                
-        
+            
         # 关闭抓爪 
         def close_grasp(self):
             result = self.control_instance.set_gripper_state(1,50)
