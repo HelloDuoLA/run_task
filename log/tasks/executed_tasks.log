@@ -1,4 +1,4 @@
-07-15 19:51:05
+07-15 20:01:26
 
 --------------------------------------------------
 
@@ -7,8 +7,8 @@ Task       : Task_image_rec COFFEE_MACHINE_SWITCH_ON
 Name       : left camera rec coffee machine turn on
 Group_id   : 3
 Index      : 5
-Create_time: 1721044133632648468
-Start_time : 1721044263198937892
+Create_time: 1721044773743189811
+Start_time : 1721044884372309446
 End_time   : -999
 Duration   : -999
 Finsih_cb  : None
@@ -31,8 +31,8 @@ Task       : Task_image_rec CUP_COFFEE_MACHINE
 Name       : right camera rec cup machine
 Group_id   : 3
 Index      : 6
-Create_time: 1721044133632690191
-Start_time : 1721044263232458829
+Create_time: 1721044773743231058
+Start_time : 1721044884398721218
 End_time   : -999
 Duration   : -999
 Finsih_cb  : None

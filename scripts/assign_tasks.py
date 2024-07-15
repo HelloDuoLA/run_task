@@ -774,7 +774,8 @@ class Task_manager():
         self.can_run_state    = True                  #是否能够执行任务
         # 每0.5s执行一次任务
         # TODO:调试时为3秒
-        timer = rospy.Timer(rospy.Duration(0.3), self.timer_callback)
+        # timer = rospy.Timer(rospy.Duration(0.3), self.timer_callback)
+        timer = rospy.Timer(rospy.Duration(0.1), self.timer_callback)
     
     # 任务完成回调
     def tm_task_finish_callback(self, current_task:task.Task, status=None, result=None):
