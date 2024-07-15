@@ -35,15 +35,15 @@ def talker():
     DrinkDesk        = constant_config_to_robot_anchor_pose_orientation("DrinkDesk")
     RightServiceDesk = constant_config_to_robot_anchor_pose_orientation("RightServiceDesk")
     LeftServiceDesk  = constant_config_to_robot_anchor_pose_orientation("LeftServiceDesk")
-    snack_deck_move_forward_pose =  _get_control_cmd_xy("SnackDeckMoveforward")
-    drink_deck_move_forward_pose =  _get_control_cmd_xy("DrinkDeckMoveforward")
-    left_deck_move_forward_pose  =  _get_control_cmd_xy("LeftDeckMoveforward")
-    right_deck_move_forward_pose =  _get_control_cmd_xy("RightDeckMoveforward")
+    snack_deck_move_forward_pose =  _get_control_cmd_x_yaw("SnackDeckMoveforward")
+    drink_deck_move_forward_pose =  _get_control_cmd_x_yaw("DrinkDeckMoveforward")
+    left_deck_move_forward_pose  =  _get_control_cmd_x_yaw("LeftDeckMoveforward")
+    right_deck_move_forward_pose =  _get_control_cmd_x_yaw("RightDeckMoveforward")
     
-    snack_deck_move_back_pose =  _get_control_cmd_xy("SnackDeckMoveBack")
-    drink_deck_move_back_pose =  _get_control_cmd_xy("DrinkDeckMoveBack")
-    left_deck_move_back_pose  =  _get_control_cmd_xy("LeftDeckMoveBack")
-    right_deck_move_back_pose =  _get_control_cmd_xy("RightDeckMoveBack")
+    snack_deck_move_back_pose =  _get_control_cmd_x_yaw("SnackDeckMoveBack")
+    drink_deck_move_back_pose =  _get_control_cmd_x_yaw("DrinkDeckMoveBack")
+    left_deck_move_back_pose  =  _get_control_cmd_x_yaw("LeftDeckMoveBack")
+    right_deck_move_back_pose =  _get_control_cmd_x_yaw("RightDeckMoveBack")
             
     task_init_pose            = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point, None, init_pose)
     task_SnackDesk            = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_snack_desk, None, SnackDesk)
@@ -193,10 +193,10 @@ def talker():
         rate.sleep()
     
 
-def _get_control_cmd_xy(name):
+def _get_control_cmd_x_yaw(name):
     target_pose = utilis.Pose3D()
-    target_pose.x  = rospy.get_param(f'~{name}/x')
-    target_pose.y  = rospy.get_param(f'~{name}/y')
+    target_pose.x    = rospy.get_param(f'~{name}/x')
+    target_pose.yaw  = rospy.get_param(f'~{name}/yaw')
     return target_pose
 
 
@@ -233,8 +233,8 @@ class Navigation_actuator():
             goal = msg.ControlCmdGoal()
             goal.operation  = control_cmd.Control_cmd.MOVEBACK.value
             goal.second     = navigation_task.move_back_second         # 后退秒数
-            goal.x          = navigation_task.target_3D_pose.x         # 后退距离x
-            goal.y          = navigation_task.target_3D_pose.y         # 后退距离y
+            goal.x          = navigation_task.target_3D_pose.x         # 后退距离
+            goal.yaw        = navigation_task.target_3D_pose.yaw       # 后退角度
             self.control_cmd_ac.send_goal(goal,self.control_cmd_task_done_callback,self.control_cmd_active_callback,self.control_cmd_feedback_callback)
         # 导航任务
         else:

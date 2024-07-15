@@ -50,7 +50,7 @@ class ControlCmdActionServer:
         rospy.loginfo(f"{rospy.get_name()} get move back goal {goal}")
         if goal.operation == Control_cmd.MOVEBACK:
             length_x = goal.x            # 运动距离x, 单位为mm, 向前为正, 向后为负
-            yaw = goal.y            # 运动距离y, 单位为mm, 向左为正, 向右为负
+            yaw      = goal.yaw          # 运动角度yaw, 单位为度, 向左为正, 向右为负
             second   = goal.second       # 运动秒数
             
                         

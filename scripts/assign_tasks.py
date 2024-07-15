@@ -105,20 +105,20 @@ class System():
             
         # 后退距离
         def _initialize_other_config(self):
-            self.snack_deck_move_forward_pose =  self._get_control_cmd_xy("SnackDeckMoveforward")
-            self.drink_deck_move_forward_pose =  self._get_control_cmd_xy("DrinkDeckMoveforward")
-            self.left_deck_move_forward_pose  =  self._get_control_cmd_xy("LeftDeckMoveforward")
-            self.right_deck_move_forward_pose =  self._get_control_cmd_xy("RightDeckMoveforward")
+            self.snack_deck_move_forward_pose =  self._get_control_cmd_x_yaw("SnackDeckMoveforward")
+            self.drink_deck_move_forward_pose =  self._get_control_cmd_x_yaw("DrinkDeckMoveforward")
+            self.left_deck_move_forward_pose  =  self._get_control_cmd_x_yaw("LeftDeckMoveforward")
+            self.right_deck_move_forward_pose =  self._get_control_cmd_x_yaw("RightDeckMoveforward")
             
-            self.snack_deck_move_back_pose =  self._get_control_cmd_xy("SnackDeckMoveBack")
-            self.drink_deck_move_back_pose =  self._get_control_cmd_xy("DrinkDeckMoveBack")
-            self.left_deck_move_back_pose  =  self._get_control_cmd_xy("LeftDeckMoveBack")
-            self.right_deck_move_back_pose =  self._get_control_cmd_xy("RightDeckMoveBack")
+            self.snack_deck_move_back_pose =  self._get_control_cmd_x_yaw("SnackDeckMoveBack")
+            self.drink_deck_move_back_pose =  self._get_control_cmd_x_yaw("DrinkDeckMoveBack")
+            self.left_deck_move_back_pose  =  self._get_control_cmd_x_yaw("LeftDeckMoveBack")
+            self.right_deck_move_back_pose =  self._get_control_cmd_x_yaw("RightDeckMoveBack")
             
-        def _get_control_cmd_xy(self,name):
+        def _get_control_cmd_x_yaw(self,name):
             target_pose = utilis.Pose3D()
-            target_pose.x  = rospy.get_param(f'~{name}/x')
-            target_pose.y = rospy.get_param(f'~{name}/y')
+            target_pose.x   = rospy.get_param(f'~{name}/x')
+            target_pose.yaw = rospy.get_param(f'~{name}/yaw')
             return target_pose
         
         # 初始化机器人位点常量配置
@@ -241,7 +241,7 @@ class Navigation_actuator():
             goal.operation  = control_cmd.Control_cmd.MOVEBACK.value
             goal.second     = navigation_task.move_back_second         # 后退秒数
             goal.x          = navigation_task.target_3D_pose.x         # 后退距离x
-            goal.y          = navigation_task.target_3D_pose.y         # 后退距离y
+            goal.yaw        = navigation_task.target_3D_pose.yaw       # 后退距离y
             self.control_cmd_ac.send_goal(goal,self.control_cmd_task_done_callback,self.control_cmd_active_callback,self.control_cmd_feedback_callback)
         # 导航任务
         else:

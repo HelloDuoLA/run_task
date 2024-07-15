@@ -268,7 +268,7 @@ class Arm_controller():
         # 机械臂移动 
         def move_arm(self,pose_type:PoseType,target_pose,move_method:ArmMoveMethod):
             rospy.loginfo(f"{self.id} arm move to {target_pose} using {pose_type} method {move_method}")
-            arm_speed =  80
+            arm_speed =  100
             if pose_type == PoseType.ANGLE:
                 result = self.control_instance.send_angles(target_pose,arm_speed)
                 self.wait()
