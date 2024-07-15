@@ -69,6 +69,8 @@ add_message_files(
   CommonStatusDouble.msg
   OrderInfo.msg
   MultiarmPose.msg
+  ArmMoveRequest.msg
+  ArmMoveResult.msg
 )
 
 ## Generate services in the 'srv' folder

@@ -4,6 +4,5 @@ devel/
 .catkin_tools/
 log/images
 log/STag_result
-
-log/tasks
 scripts/__pycache__
+

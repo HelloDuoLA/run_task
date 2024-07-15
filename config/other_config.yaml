@@ -1,33 +1,33 @@
 # 后退距离 [mm]
 SnackDeckMoveBack:
-  x: -60
-  y: 0
+  x  : -20
+  yaw: -20
 
 DrinkDeckMoveBack:
-  x: -60
-  y: +20
+  x  : -60
+  yaw: -90
 
 LeftDeckMoveBack:
-  x: -30
-  y: -20
+  x  : -50
+  yaw: 80
 
 RightDeckMoveBack:
-  x: -30
-  y: 20
+  x  : -60
+  yaw: -80
 
 # 前进距离 [mm]
 SnackDeckMoveforward:
-  x: 25
-  y: 0
+  x  : 25
+  yaw: 0
 
 DrinkDeckMoveforward:
-  x: 20
-  y: 0
+  x  : 20
+  yaw: 0
 
 LeftDeckMoveforward:
-  x: 30
-  y: 0
+  x  : 30
+  yaw: 0
 
 RightDeckMoveforward:
-  x: 30
-  y: 0
+  x  : 30
+  yaw: 0

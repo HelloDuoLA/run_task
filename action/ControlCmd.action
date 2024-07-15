@@ -4,7 +4,7 @@ uint8   operation
 float32 second  # 多少秒内移动完毕
 # float32 meters
 float32 x
-float32 y
+float32 yaw
 ---
 # 2.最终返回数据
 uint16 task_index 

@@ -8,6 +8,7 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from enum import Enum,auto # 任务字典
 import actionlib
 from typing import List
+from datetime import timedelta
 
 # 自定义模块
 rospack = rospkg.RosPack()
@@ -166,7 +167,8 @@ class Task():
         self.create_time = rospy.Time.now()         # 创建时间
         self.start_time  = -999                     # 开始时间
         self.end_time    = -999                     # 结束时间
-        self.finish_cb   = None                # 完成之后的回调函数
+        self.duration    = -999                     # 持续时间
+        self.finish_cb   = None                     # 完成之后的回调函数
         self.status      = self.Task_status.BEREADY # 任务状态 
         self.task_result = self.Task_result.INVALID # 0: 失败 1: 成功
         self.return_data = None                     # 返回数据
@@ -175,8 +177,10 @@ class Task():
         self.subtask_count_finished = 0             # 已完成的子任务数量
         self.predecessor_tasks      = Task_sequence() # 相对前置任务
         self.name = name                            # 任务名称
-        self.sleep_time_after_task = 0              # 任务完成休眠时间
-        self.sleep_time_before_task = 0             # 开始任务前休眠时间
+        self.sleep_time_after_task  = 0             # 任务完成休眠时间
+        # self.sleep_time_before_task = 0.1           # 开始任务前休眠时间
+        self.sleep_time_before_task = 0           # 开始任务前休眠时间
+    
 
     
     # 设置任务完成休眠时间
@@ -215,6 +219,7 @@ class Task():
             # 如果子任务有失败,则任务失败
             if self.task_result != self.Task_result.FAILED:
                 self.task_result = result
+            self.duration = (self.end_time - self.start_time).to_sec()
 
         return self.subtask_count - self.subtask_count_finished
     
@@ -257,6 +262,7 @@ class Task():
                 f"Create_time: {self.create_time}\r\n"
                 f"Start_time : {self.start_time}\r\n"
                 f"End_time   : {self.end_time}\r\n"
+                f"Duration   : {self.duration}\r\n"
                 f"Finsih_cb  : {self.finish_cb}\r\n"
                 f"Status     : {self.status}\r\n"   
                 f"Result     : {self.task_result}\r\n" 
@@ -265,6 +271,8 @@ class Task():
                 f"Subtask_count: {self.subtask_count}\r\n"
                 f"Subtask_count_finished: {self.subtask_count_finished}\r\n"
                 f"Predecessor_tasks: {predecessor_tasks_str}\r\n"
+                f"Sleep_time_before_task : { self.sleep_time_before_task }\r\n"
+                f"Sleep_time_after_task  : { self.sleep_time_after_task  }\r\n"
                 )
         
 # 功能任务
@@ -420,18 +428,23 @@ class Task_manipulation(Task):
         else:
                 self.target_arms_pose[0].arm_pose[1] = arm_pose[1]
                 self.target_arms_pose[0].arm_pose[2] = arm_pose[2]
-            
+    
+    # 修改xyz并选择机械臂
     def modify_xyz_select_arm(self,arm_pose:List[float],device_id:utilis.Device_id):
         self.modify_target_xyz(arm_pose,device_id)
         self.select_arm(device_id)
     
-    def select_arm(self,device_id:utilis.Device_id):
+    # 选择机械臂
+    def select_arm(self,device_id:utilis.Device_id,arm_move_method = None):
         if device_id == utilis.Device_id.LEFT:
             self.arm_id = utilis.Device_id.LEFT
             self.target_arms_pose.pop(1)
         elif device_id == utilis.Device_id.RIGHT:
             self.arm_id = utilis.Device_id.RIGHT
             self.target_arms_pose.pop(0)
+            
+        if arm_move_method != None:
+            self.arm_move_method = arm_move_method
         
     # 打印字符串
     def __str__(self) -> str:
