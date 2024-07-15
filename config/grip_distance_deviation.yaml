@@ -61,6 +61,7 @@ RightArmGripCup:
 
 # 右臂杯子倒水
 RightArmWaterCup:
-  x_bias : -195
+  # x_bias : -195
+  x_bias : -205
   y_bias : 98
   z_const: 230

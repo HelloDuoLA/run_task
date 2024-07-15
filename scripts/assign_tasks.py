@@ -1918,7 +1918,7 @@ def test_order_snack():
     order_info2 = order.Order()
 
     snack  = order.Snack(order.Snack.Snack_id.YIDA,1)
-    snack2 = order.Snack(order.Snack.Snack_id.CHENPIDAN,1)
+    snack2 = order.Snack(order.Snack.Snack_id.RUSUANJUN ,1)
     drink  = order.Drink(order.Drink.Drink_id.COFFEE,1)
 
     order_info.add_snack(snack)
@@ -1930,7 +1930,7 @@ def test_order_snack():
     order_info2.order_id = 3
     order_info2.table_id = utilis.Device_id.RIGHT
 
-    tasks = system.order_driven_task_schedul.add_task(order_info)
+    # tasks = system.order_driven_task_schedul.add_task(order_info)
     tasks2 = system.order_driven_task_schedul.add_task(order_info2)
     # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
 
