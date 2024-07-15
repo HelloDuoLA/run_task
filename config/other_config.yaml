@@ -1,19 +1,19 @@
 # 后退距离 [mm]
 SnackDeckMoveBack:
-  x: -60
-  y: 0
+  x: -20
+  y: -20
 
 DrinkDeckMoveBack:
   x: -60
-  y: +20
+  y: -90
 
 LeftDeckMoveBack:
-  x: -30
-  y: -20
+  x: -50
+  y: 80
 
 RightDeckMoveBack:
-  x: -30
-  y: 20
+  x: -60
+  y: -80
 
 # 前进距离 [mm]
 SnackDeckMoveforward:

@@ -18,6 +18,7 @@ import utilis
 import robot
 import order
 import log
+import math
 
 
 # 控制指令
@@ -49,14 +50,15 @@ class ControlCmdActionServer:
         rospy.loginfo(f"{rospy.get_name()} get move back goal {goal}")
         if goal.operation == Control_cmd.MOVEBACK:
             length_x = goal.x            # 运动距离x, 单位为mm, 向前为正, 向后为负
-            length_y = goal.y            # 运动距离y, 单位为mm, 向左为正, 向右为负
+            yaw = goal.y            # 运动距离y, 单位为mm, 向左为正, 向右为负
             second   = goal.second       # 运动秒数
             
                         
             move_cmd = Twist()
             x_speed = length_x / 100  / second
+            yaw_speed = math.radians(yaw) / second
             move_cmd.linear.x = x_speed  # 设置线速度，负值表示后退
-            move_cmd.angular.z = 0     #  保持直线行驶
+            move_cmd.angular.z = yaw_speed     #  航向角
             # 计算后退的时间
             duration = second
             rate = rospy.Rate(10) # 10hz
@@ -67,6 +69,7 @@ class ControlCmdActionServer:
 
             # 停止小车
             move_cmd.linear.x = 0
+            move_cmd.angular.z = 0
             self.pub.publish(move_cmd)
             
             # 发送返回值
