@@ -117,19 +117,17 @@ class Device_id(Enum):
 
 
 # 订阅的话题名称
-# TODO:待整理
 class Topic_name():
     image_recognition_request = "/image_rec_request"     # 图像识别请求
     image_recognition_result  = "/image_rec_result"      # 图像识别结果
     make_order                = "/make_order"            # 下单
-    check_arm_pose            = "/check_arm_pose"        #  检查机械臂状态
     CheckLeftArmPose          = "/CheckLeftArmPose"
     CheckRightArmPose         = "/CheckRightArmPose"
-    control_cmd_action        = "/control_cmd_action"
-    left_arm_topic            = "/left_arm_move_topic"       # 左臂topic
-    right_arm_topic           = "/right_arm_move_topic"      # 右臂topic
-    left_arm_result           = "/left_arm_move_result"       # 左臂topic
-    right_arm_result          = "/right_arm_move_result"      # 右臂topic
+    control_cmd_action        = "/control_cmd_action"         # 惯性速度控制action
+    left_arm_topic            = "/left_arm_move_topic"        # 左臂移动请求topic
+    right_arm_topic           = "/right_arm_move_topic"       # 右臂移动请求topic
+    left_arm_result           = "/left_arm_move_result"       # 左臂移动结果topic
+    right_arm_result          = "/right_arm_move_result"      # 右臂移动结果topic
 
 # 获取当前时间
 def get_current_time():
