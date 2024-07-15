@@ -29,8 +29,8 @@ import control_cmd
 
 DEBUG_NAVIGATION = False     # 导航调试中, 则运动到桌子的任务均为非并行任务, 并且在完成之后需要输入任意字符才能下一步
 
-WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
-# WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
+# WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
+WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
 
 # 初始化
 class System():
@@ -1930,6 +1930,7 @@ def test_order_snack():
 
     tasks = system.order_driven_task_schedul.add_task(order_info)
     tasks2 = system.order_driven_task_schedul.add_task(order_info2)
+    # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
 
     # tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)
     # tasks_get_snack.update_group_id(6)

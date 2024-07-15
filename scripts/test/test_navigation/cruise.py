@@ -173,6 +173,8 @@ def talker():
             elif user_input == "5":
                 current_task = task_init_pose
                 navigation_actuator.run(task_init_pose)
+            else:
+                continue
                 
             running    = True
             # 打印用户输入
