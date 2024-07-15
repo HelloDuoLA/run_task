@@ -195,7 +195,6 @@ catkin_install_python(PROGRAMS
   scripts/assign_tasks.py
   scripts/asr.py
   scripts/arm.py
-  scripts/arm_test.py
   scripts/camera.py
   scripts/robot.py
   scripts/log.py
