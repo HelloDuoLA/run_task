@@ -115,6 +115,8 @@ class STag_result_list():
                     stag_result.base_coords[0] = arm_poses[0]  +  stag_result.image_coords[2] + LeftArmGripSnack.x    # x = x + z + bias
                     stag_result.base_coords[1] = arm_poses[1]  -  stag_result.image_coords[1] + LeftArmGripSnack.y    # y = y - y + bias
                     stag_result.base_coords[2] = arm_poses[2]  +  stag_result.image_coords[0] + LeftArmGripSnack.z    # z = z + x + bias
+                    # 记录经验值
+                    log.log_empirical_value_left_arm_grip_snack(stag_result.base_coords)
             # 右臂
             elif arm_id == utilis.Device_id.RIGHT:
                 for i in range(len(self.stag_result_list)):
@@ -122,6 +124,8 @@ class STag_result_list():
                     stag_result.base_coords[0] = arm_poses[0]  +  stag_result.image_coords[2] + RightArmGripSnack.x   # x = x + z + bias
                     stag_result.base_coords[1] = arm_poses[1]  +  stag_result.image_coords[1] + RightArmGripSnack.y   # y = y + y + bias
                     stag_result.base_coords[2] = arm_poses[2]  -  stag_result.image_coords[0] + RightArmGripSnack.z   # z = z - x + bias
+                    # 记录经验值
+                    log.log_empirical_value_right_arm_grip_snack(stag_result.base_coords)
         # 容器
         elif rec_task_type == task.Task_type.Task_image_rec.CONTAINER:
             if arm_id == utilis.Device_id.LEFT:
@@ -137,6 +141,8 @@ class STag_result_list():
                         stag_result.base_coords[2] = LeftArmGripContainer.const_z                     #固定z坐标
                         stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
                         new_stag_result_list.append(stag_result)
+                        # 记录经验值
+                        log.log_empirical_value_left_arm_grip_container(stag_result.base_coords)
                         
                         # 零食放置点
                         put_snack_point = copy.deepcopy(stag_result)
@@ -146,6 +152,8 @@ class STag_result_list():
                         put_snack_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
                         
                         new_stag_result_list.append(put_snack_point)
+                        # 记录经验值
+                        log.log_empirical_value_left_arm_lossen_snack(put_snack_point.base_coords)
                 
                 # TODO:加入经验值
                 if len(new_stag_result_list) == 0:
@@ -164,6 +172,8 @@ class STag_result_list():
                         stag_result.base_coords[2] = RightArmGripContainer.const_z                     #固定z坐标
                         stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
                         new_stag_result_list.append(stag_result)
+                        # 记录经验值
+                        log.log_empirical_value_right_arm_grip_container(stag_result.base_coords)
                         
                         # 零食放置点
                         put_snack_point = copy.deepcopy(stag_result)
@@ -173,6 +183,8 @@ class STag_result_list():
                         put_snack_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
                         
                         new_stag_result_list.append(put_snack_point)
+                        # 记录经验值
+                        log.log_empirical_value_right_arm_lossen_snack(put_snack_point.base_coords)
                 
                 # TODO:加入经验值
                 if len(new_stag_result_list) == 0:
@@ -194,6 +206,8 @@ class STag_result_list():
                     stag_result.base_coords[2] = RightArmGripCup.const_z                              #固定z坐标
                     stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CUP.value
                     new_stag_result_list.append(stag_result)
+                    # 记录经验值
+                    log.log_empirical_value_right_arm_grip_cup(stag_result.base_coords)
                 elif stag_result.stag_id == self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.WATER_POINT]:
                     # 接水点
                     stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[2] + RightArmWaterCup.x  # x = x + z + bias
@@ -201,6 +215,8 @@ class STag_result_list():
                     stag_result.base_coords[2] = RightArmWaterCup.const_z                             #固定z坐标
                     stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value
                     new_stag_result_list.append(stag_result)
+                    # 记录经验值
+                    log.log_empirical_value_right_arm_water_cup(stag_result.base_coords)
             
             # TODO:加入经验值
             if len(new_stag_result_list) != 2:
@@ -220,6 +236,8 @@ class STag_result_list():
                     stag_result.base_coords[2] = arm_poses[2] + stag_result.image_coords[0] + LeftArmGripTurnOnMachineSwitch.z  # z = z + x + bias
                     stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value
                     new_stag_result_list.append(stag_result)
+                    # 记录经验值
+                    log.log_empirical_value_left_arm_turn_on_machine(stag_result.base_coords)
             
             # TODO:加入经验值
             if len(new_stag_result_list) == 0:
@@ -238,6 +256,8 @@ class STag_result_list():
                     stag_result.base_coords[2] = arm_poses[2] + stag_result.image_coords[0] + LeftArmGripTurnOFFMachineSwitch.z # z = z + x + bias
                     stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value
                     new_stag_result_list.append(stag_result)
+                    # 记录经验值
+                    log.log_empirical_value_left_arm_turn_off_machine(stag_result.base_coords)
             
             # TODO:加入经验值
             if len(new_stag_result_list) == 0:

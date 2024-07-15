@@ -12,7 +12,7 @@ sys.path.insert(0,package_path + "/scripts")
 
 
 LOGDIR = package_path + "/log/"
-SUBDIR = ["orders","tasks","STag_result","images","finished_tasks"]
+SUBDIR = ["orders","tasks","STag_result","images","finished_tasks","empirical_value"]
 
 for sub_dir in SUBDIR:
     if not os.path.exists(LOGDIR + sub_dir):
@@ -75,3 +75,58 @@ def log_write_image(image_name,image):
 def log_stag_result(filename,context):
     with open(f"{LOGDIR}/STag_result/{filename}", 'a') as file:
         file.write(context)
+
+# 保存姿势经验值
+def log_pose_empirical_value(context,pose_name):
+    with open(f"{LOGDIR}/empirical_value/{pose_name}.log", 'a') as file:
+        file.write(context)
+        
+# 保存左臂抓零食经验值
+def log_empirical_value_left_arm_grip_snack(context):
+    pose_name = "left_arm_grip_snack"
+    log_pose_empirical_value(context,pose_name)
+
+# 保存右臂抓零食经验值
+def log_empirical_value_right_arm_grip_snack(context):
+    pose_name = "right_arm_grip_snack"
+    log_pose_empirical_value(context,pose_name)
+    
+# 保存左臂放零食经验值
+def log_empirical_value_left_arm_lossen_snack(context):
+    pose_name = "left_arm_lossen_snack"
+    log_pose_empirical_value(context,pose_name)
+
+# 保存右臂放零食经验值
+def log_empirical_value_right_arm_lossen_snack(context):
+    pose_name = "right_arm_lossen_snack"
+    log_pose_empirical_value(context,pose_name)
+    
+# 保存左臂抓容器经验值
+def log_empirical_value_left_arm_grip_container(context):
+    pose_name = "left_arm_grip_container"
+    log_pose_empirical_value(context,pose_name)
+
+# 保存右臂抓容器经验值
+def log_empirical_value_right_arm_grip_container(context):
+    pose_name = "right_arm_grip_container"
+    log_pose_empirical_value(context,pose_name)
+    
+# 保存左臂打开咖啡机经验值
+def log_empirical_value_left_arm_turn_on_machine(context):
+    pose_name = "left_arm_turn_on_machine"
+    log_pose_empirical_value(context,pose_name)
+    
+# 保存左臂关闭咖啡机经验值
+def log_empirical_value_left_arm_turn_off_machine(context):
+    pose_name = "left_arm_turn_off_machine"
+    log_pose_empirical_value(context,pose_name)
+
+# 保存右臂抓杯子经验值
+def log_empirical_value_right_arm_grip_cup(context):
+    pose_name = "right_arm_grip_cup"
+    log_pose_empirical_value(context,pose_name)
+    
+# 保存右臂加水经验值
+def log_empirical_value_right_arm_water_cup(context):
+    pose_name = "right_arm_water_cup"
+    log_pose_empirical_value(context,pose_name)
