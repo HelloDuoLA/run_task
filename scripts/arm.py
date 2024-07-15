@@ -255,14 +255,14 @@ class Arm_controller():
         
         # 关闭抓爪 
         def close_grasp(self):
-            result = self.control_instance.set_gripper_state(1,100)
-            time.sleep(1)
+            result = self.control_instance.set_gripper_state(1,50)
+            time.sleep(1.5)
             return result
         
         # 打开抓爪 
         def open_grasp(self):
-            result = self.control_instance.set_gripper_state(0,100)
-            time.sleep(1)
+            result = self.control_instance.set_gripper_state(0,50)
+            time.sleep(1.5)
             return result
             
         # 机械臂移动 

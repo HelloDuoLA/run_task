@@ -13,7 +13,7 @@ LeftArmLossenSnack:
 
 # 左臂抓容器
 LeftArmGripContainer:
-  x_bias : 50
+  x_bias : 40
   y_bias : 112
   z_const: 360
 
@@ -37,7 +37,7 @@ RightArmGripSnack:
   # x_bias: -90
   x_bias: -100
   y_bias: 78
-  z_bias: 0
+  z_bias: 10
 
 # 右臂松零食
 # 相对于抓容器的位置

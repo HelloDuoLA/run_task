@@ -54,8 +54,8 @@
       <remap from="scan" to="$(arg scan_topic)"/>
 
       <!-- 自己添加的修改参数 -->
-      <param name="odom_alpha1" value="0.8"/>     <!-- 旋转引起的旋转误差 -->
-      <param name="odom_alpha2" value="0.2"/>     <!-- 平移引起的旋转误差 -->
+      <param name="odom_alpha1" value="0.6"/>     <!-- 旋转引起的旋转误差 -->
+      <param name="odom_alpha2" value="0.4"/>     <!-- 平移引起的旋转误差 -->
       <param name="odom_alpha3" value="0.4"/>     <!-- 平移引起的平移误差 -->
       <param name="odom_alphaa" value="0.4"/>     <!-- 旋转引起的平移误差 -->
 

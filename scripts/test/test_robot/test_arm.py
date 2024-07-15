@@ -10,6 +10,7 @@ mr.release_all_servos()
 ml.release_all_servos()
 
 mr.focus_all_servos()
+ml.focus_all_servos()
 
 # !!!!!!!!!!记得调零
 mr.release_servo(1)
