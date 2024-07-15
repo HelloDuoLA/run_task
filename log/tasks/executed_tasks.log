@@ -1,27 +1,7 @@
-07-15 20:11:31
+07-15 21:50:09
 
 --------------------------------------------------
 
-
-Task       : Task_navigate Navigate_to_the_drink_desk
-Name       : navigation to drink desk
-Group_id   : 3
-Index      : 1
-Create_time: 1721045485419779300
-Start_time : 1721045485525815486
-End_time   : -999
-Duration   : -999
-Finsih_cb  : None
-Status     : RUNNING
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Target_3D_pose: x:0.55 y:-2.25 z:0.00 roll:0.00 pitch:0.00 yaw:-1.54 
 --------------------------------------------------
 
 
