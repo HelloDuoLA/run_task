@@ -669,9 +669,7 @@ def init_const():
 def init_camera_calibration():
     global mtx,distCoeffs
     # 内参矩阵
-    # mtx =  [[1.06924343e+03, 0.00000000e+00, 6.87783503e+02],
-    #         [0.00000000e+00, 1.06903179e+03, 4.49891603e+02],
-    #         [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]
+
     mtx = np.array([[1.06924343e+03, 0.00000000e+00, 6.87783503e+02],
                     [0.00000000e+00, 1.06903179e+03, 4.49891603e+02],
                     [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]], dtype=np.float32)
@@ -690,9 +688,6 @@ def talker():
 
     recognition_node = Recognition_node()
     
-    # rospy.loginfo(f"RightArmLossenSnack : {RightArmLossenSnack}")
-    # rospy.loginfo(f"LeftArmLossenSnack :  {LeftArmLossenSnack}")
-
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)
 

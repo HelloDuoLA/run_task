@@ -117,23 +117,11 @@ class Device_id(Enum):
 
 
 # 订阅的话题名称
+# TODO:待整理
 class Topic_name():
     image_recognition_request = "/image_rec_request"     # 图像识别请求
     image_recognition_result  = "/image_rec_result"      # 图像识别结果
-    camera_status             = "/camera_status"         # 摄像头状态
-    left_arm_pose             = "/left_arm_pose"         # 左机械臂状态
-    right_arm_pose            = "/right_arm_pose"        # 右机械臂状态
-    clamp_status              = "/clamp_status"          # 夹爪状态
-    image_model_status        = "/image_model_status"    # 图像模型状态
-    voice_model_status        = "/voice_model_status"    # 语音模型状态
-    robot_status              = "/robot_status"          # 机器人状态
     make_order                = "/make_order"            # 下单
-    left_arm_action           = "/left_arm_action"       # 左臂action
-    right_arm_action          = "/right_arm_action"      # 右臂action
-    left_camera_raw_image     = "/left_camera_raw_image" # 左摄像头原始图像
-    right_camera_raw_image    = "/right_camera_raw_image"# 右摄像头原始图像
-    head_camera_raw_image     = "/head_camera_raw_image" # 头摄像头原始图像
-    bottom_camera_raw_image   = "/bottom_camera_raw_image"# 底部摄像头原始图像
     check_arm_pose            = "/check_arm_pose"        #  检查机械臂状态
     CheckLeftArmPose          = "/CheckLeftArmPose"
     CheckRightArmPose         = "/CheckRightArmPose"

@@ -78,9 +78,7 @@ class ControlCmdActionServer:
             self.server.set_succeeded(result)
         else:
             self.server.set_aborted()
-            # raise ValueError("Invalid operation")   
-        
-        #1.解析目标值
+
 
         
 

@@ -164,7 +164,7 @@ class Task():
         self.task_type   = Task_type(task_name)     # 任务信息 
         self.task_index  = 0                        # 任务序号 
         self.task_group_id = -999                   # 任务组ID
-        self.create_time = rospy.Time.now()         # 创建时间
+        self.create_time = rospy.Time.now().to_sec() # 创建时间
         self.start_time  = -999                     # 开始时间
         self.end_time    = -999                     # 结束时间
         self.duration    = -999                     # 持续时间
@@ -180,8 +180,6 @@ class Task():
         self.sleep_time_after_task  = 0             # 任务完成休眠时间
         # self.sleep_time_before_task = 0.1           # 开始任务前休眠时间
         self.sleep_time_before_task = 0           # 开始任务前休眠时间
-    
-
     
     # 设置任务完成休眠时间
     def set_sleep_time_after_task(self,sleep_time_after_task_second):
@@ -248,12 +246,9 @@ class Task():
     
     # 打印输出
     def __str__(self) -> str:
-        # rospy.loginfo(f"{rospy.get_name()} task id : {self.task_index}")
-        # rospy.loginfo(f"{rospy.get_name()} task name : {self.task_type}")
         predecessor_tasks_str = ""
         for task in self.predecessor_tasks.task_list:
             predecessor_tasks_str = predecessor_tasks_str + f"[{task.task_index}:{task.task_type}] "
-        # return "OK"
         return (
                 f"Task       : {self.task_type}\r\n"
                 f"Name       : {self.name}\r\n"
@@ -503,12 +498,6 @@ class Task_sequence():
         for index,task in enumerate(self.task_list):
             task.set_task_group_id_and_index(group_id,index)
     
-    # 弹出第一个任务
-    # def pop(self):
-    #     task = self.task_list.pop(0)
-    #     self._log_info()
-    #     return task
-    
     # 是否完成, 主要用于并行任务分析的前置任务
     def has_been_done(self):
         for task in self.task_list:
@@ -531,10 +520,6 @@ class Task_sequence():
         if self.name != "":
             log.log_update_tasks_info(self,self.name)
     
-    # 在最后一个任务后面添加返回起始点的任务
-    # def add_navigate_to_init_point(self):
-    #     task = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point,None,system.anchor_point.map_initial_pose)
-    #     self.add(task)
 
 # 任务执行器中的任务管理器
 class Task_manager_in_running():
