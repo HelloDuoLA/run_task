@@ -8,6 +8,8 @@ from tf.transformations import quaternion_from_euler, euler_from_quaternion
 # from geometry_msgs.msg import Pose
 import geometry_msgs
 import run_task.msg as msg
+import rospy
+import datetime
 # import run_task.srv as srv
 
 # 2D位姿数据结构
@@ -140,3 +142,13 @@ class Topic_name():
     right_arm_topic           = "/right_arm_move_topic"      # 右臂topic
     left_arm_result           = "/left_arm_move_result"       # 左臂topic
     right_arm_result          = "/right_arm_move_result"      # 右臂topic
+
+# 获取当前时间
+def get_current_time():
+    # 获取当前时间的秒数
+    time_sec = rospy.Time.now().to_sec()
+    # 将秒数转换为datetime对象
+    time_datetime = datetime.datetime.fromtimestamp(time_sec)
+    # 格式化时间为月日时分秒格式
+    formatted_time = time_datetime.strftime('%H:%M:%S')
+    return formatted_time

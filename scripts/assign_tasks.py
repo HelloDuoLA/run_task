@@ -447,7 +447,7 @@ class Manipulator_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second before task")
+            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
         else:
             rospy.loginfo(f"task {current_task.task_index} not sleep")
             
@@ -482,7 +482,7 @@ class Manipulator_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second before task")
+            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
         else:
             rospy.loginfo(f"task {current_task.task_index} not sleep")
             
@@ -525,7 +525,7 @@ class Manipulator_actuator():
         # 任务完成暂停时间
         if current_task.sleep_time_after_task != 0:
             time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second before task")
+            rospy.loginfo(f"task {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
         else:
             rospy.loginfo(f"task {current_task.task_index} not sleep")
             
@@ -618,13 +618,15 @@ class Image_rec_actuator():
     # 运行
     def run(self, task_image_rec_task:task.Task_image_rec):
         task_index = self.running_tasks_manager.add_task(task_image_rec_task)
+        # 任务开始
+        task_image_rec_task.update_start_status()
         # 更新机械臂状态
         system.robot.update_arm_status(task_image_rec_task.camera_id,robot.manipulation_status.arm.status.BUSY)
         
         # 任务前休眠时间
         if task_image_rec_task.sleep_time_before_task != 0:
             time.sleep(task_image_rec_task.sleep_time_before_task)
-            rospy.loginfo(f"task {task_index} sleep for {task_image_rec_task.sleep_time_before_task} second")
+            rospy.loginfo(f"task {task_index} sleep for {task_image_rec_task.sleep_time_before_task} second before task")
             
         # 发布任务
         task_info = msg.ImageRecRequest()
@@ -1066,7 +1068,7 @@ class Order_driven_task_schedul():
                 name="left arm move to rec snack")
         task_left_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL                     # 可并行
         task_left_arm_to_rec_snack.add_predecessor_task(task_left_camera_rec_container)       # 前置任务, 左摄像头食物框识别
-        task_left_arm_to_rec_snack.set_sleep_time_after_task(2)                                          # 防止画面糊掉
+        task_left_arm_to_rec_snack.set_sleep_time_after_task(1)                                          # 防止画面糊掉
         tasks_pick_snack.add(task_left_arm_to_rec_snack)
         
         #  将右臂抬到零食识别位置(可前后并行，固定)
@@ -1075,7 +1077,7 @@ class Order_driven_task_schedul():
                 name="right arm move to rec snack")
         task_right_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL                    # 可并行
         task_right_arm_to_rec_snack.add_predecessor_task(task_right_camera_rec_container)     # 前置任务, 右摄像头食物框识别
-        task_right_arm_to_rec_snack.set_sleep_time_after_task(2)                                         # 防止画面糊掉
+        task_right_arm_to_rec_snack.set_sleep_time_after_task(1)                                         # 防止画面糊掉
         tasks_pick_snack.add(task_right_arm_to_rec_snack)
         
         #  左、右摄像头零食识别(不可并行，动态)
@@ -1244,7 +1246,7 @@ class Order_driven_task_schedul():
         task_navigation_move_foward_to_drink_desk.add_predecessor_task(task_navigation_to_drink_desk)          # 前置任务, 导航到服务桌前20cm
         task_navigation_move_foward_to_drink_desk.parallel = task.Task.Task_parallel.ALL                       # 可并行
         task_navigation_move_foward_to_drink_desk.set_move_back_second(2)                                      # 移动前进2s
-        task_navigation_move_foward_to_drink_desk.set_sleep_time_after_task(2)             # 为什么不起作用呢                       # 暂停2s,给人挪机器人的时间
+        task_navigation_move_foward_to_drink_desk.set_sleep_time_after_task(2)             # ?为什么不起作用呢                       # 暂停2s,给人挪机器人的时间
         tasks_get_drink.add(task_navigation_move_foward_to_drink_desk)
         
         # 非调试模式, 可并行
