@@ -1055,7 +1055,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.left_deck_move_forward_pose, name="navigation move forward to left desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(2)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(3)                                       # 移动后退2s
         
         
         elif table_id == utilis.Device_id.RIGHT.value:
@@ -1067,7 +1067,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.right_deck_move_forward_pose, name="navigation move forward to right desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(2)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(3)                                       # 移动后退2s
             
         else:
             raise ValueError("Invalid table_id")
@@ -1297,7 +1297,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.left_deck_move_forward_pose, name="navigation move forward to left desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(2)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(3)                                       # 移动后退2s
         
         
         elif table_id == utilis.Device_id.RIGHT.value:
@@ -1309,7 +1309,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.right_deck_move_forward_pose, name="navigation move forward to right desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(2)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(3)                                       # 移动后退2s
             
         else:
             raise ValueError("Invalid table_id")
