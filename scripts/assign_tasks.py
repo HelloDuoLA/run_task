@@ -667,7 +667,7 @@ class Task_manager():
     
     # 任务完成回调
     def tm_task_finish_callback(self, current_task:task.Task, status=None, result=None):
-        rospy.loginfo(f"node: {rospy.get_name()}, task_manager, task : {current_task.task_index} is finish")
+        rospy.loginfo(f"node: {rospy.get_name()}, task_manager, task : {current_task.task_index} call tm_task_finish_callback")
         # 让任务管理器恢复正常
         if current_task.parallel == task.Task.Task_parallel.NOTALLOWED:
             self.can_run_state = True
@@ -1055,7 +1055,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.left_deck_move_forward_pose, name="navigation move forward to left desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(3)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(4)                                       # 移动后退2s
         
         
         elif table_id == utilis.Device_id.RIGHT.value:
@@ -1067,7 +1067,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.right_deck_move_forward_pose, name="navigation move forward to right desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(3)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(4)                                       # 移动后退2s
             
         else:
             raise ValueError("Invalid table_id")
@@ -1297,7 +1297,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.left_deck_move_forward_pose, name="navigation move forward to left desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(3)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(4)                                       # 移动后退2s
         
         
         elif table_id == utilis.Device_id.RIGHT.value:
@@ -1309,7 +1309,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.right_deck_move_forward_pose, name="navigation move forward to right desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(3)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(4)                                       # 移动后退2s
             
         else:
             raise ValueError("Invalid table_id")
@@ -1462,11 +1462,13 @@ def test_order_snack():
     order_info.add_snack(snack)
     order_info.add_snack(snack2)
     order_info.order_id = 2
-    order_info.table_id = utilis.Device_id.LEFT
+    order_info.table_id = utilis.Device_id.RIGHT
+    # order_info.table_id = utilis.Device_id.LEFT
     
     order_info2.add_drink(drink)
     order_info2.order_id = 3
-    order_info2.table_id = utilis.Device_id.RIGHT
+    # order_info2.table_id = utilis.Device_id.RIGHT
+    order_info2.table_id = utilis.Device_id.LEFT
 
     tasks = system.order_driven_task_schedul.add_task(order_info)
     tasks2 = system.order_driven_task_schedul.add_task(order_info2)
