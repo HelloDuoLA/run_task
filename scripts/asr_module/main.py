@@ -7,6 +7,7 @@ from ai_interaction_module import get_ai_response_as_dict, chat_with_ai
 global_count = 1
 start_timestamp = time.strftime('%Y-%m-%d_%H-%M-%S')
 
+# TODO:返回包含默认麦克风设备的索引
 def list_microphones():
     """列出系统中连接的麦克风设备"""
     p = pyaudio.PyAudio()
@@ -17,6 +18,7 @@ def list_microphones():
             print(f"{i}: {device_info['name']}")
     p.terminate()
 
+# TODO:增加一个参数,若该参数为真, 则使用默认麦克风
 def get_valid_microphone_index():
     """提示用户选择有效的麦克风设备编号"""
     p = pyaudio.PyAudio()
@@ -33,6 +35,7 @@ def get_valid_microphone_index():
         except ValueError:
             print("无效输入，请输入一个数字。")
 
+# TODO:修改为使用服务开启语音识别
 def prompt_user():
     """提示用户是否开始语音识别"""
     while True:
@@ -51,7 +54,7 @@ def voice_to_json(APPID, APIKey, APISecret, messages, duration=10, mic_index=Non
         return False, None, None, messages
 
     print("开始语音识别...")
-    recognizer = SpeechRecognizer(APPID, APIKey, APISecret)
+    recognizer = SpeechRecognizer(APPID, APIKey, APISecret)   # TODO成为全局变量
     recognizer.start_recognition()
     time.sleep(10)  # 设定识别的持续时间
     recognized_text = recognizer.stop_recognition()
@@ -61,13 +64,14 @@ def voice_to_json(APPID, APIKey, APISecret, messages, duration=10, mic_index=Non
     if recognized_text:
         print("将识别的文字传递给AI处理...")
         messages.append({"role": "user", "content": recognized_text})
+        # TODO:response_dict 是我想要的嘛
         response_files, response_dict, response = get_ai_response_as_dict(messages, count=global_count, start_timestamp=start_timestamp)
         messages.append({"role": "assistant", "content": response})
         if response_files:
             global_count += 1  # 每次成功识别并生成文件后递增计数
             print("AI处理完成并生成了文件。")
         else:
-            print("AI处理完成，但未生成文件。")
+            print("AI处理完成, 但未生成文件。") # TODO:来个返回值
         return True, response_files, response_dict, messages
     else:
         print("未识别到有效文字。")
@@ -80,6 +84,7 @@ def main():
     APIKey = '079797c2b651aada7573f75eb2ca1955'
     APISecret = 'YzU5ZWM2NjJmOGY1ODQ0ZmM3M2ViZWEy'
 
+    # TODO:让其回答一个1,加快速度
     initial_prompt = (
         "给我生成一份json文件，内容包括order_operation、table_id、snacks、drinks、other_items六个对象。"
         "order_operation包括0、1、2、3，分别代表ADD、DELETE、MODIFY、CHECK，"
