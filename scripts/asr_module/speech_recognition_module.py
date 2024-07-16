@@ -179,7 +179,8 @@ def save_audio_to_file(audio, base_dir, count):
     :param count: 第几次对话
     :return: 保存的文件路径
     """
-
+    if not os.path.exists(base_dir):
+        os.makedirs(base_dir)
     filename = f"order_{count}.wav"
     file_path = os.path.join(base_dir, filename)
     with open(file_path, "wb") as f:
@@ -188,12 +189,15 @@ def save_audio_to_file(audio, base_dir, count):
 
     return file_path
 
-def recognize_speech(APPID, APIKey, APISecret, count, start_timestamp, duration=10, mic_index=None):
+def recognize_speech(count, start_timestamp, duration=10, mic_index=None):
     recognizer = sr.Recognizer()
     try:
         mic = sr.Microphone(device_index=mic_index)
-    except IOError:
-        print(f"无法初始化麦克风设备 {mic_index}，请检查设备连接并重试。")
+    except IOError as e:
+        print(f"无法初始化麦克风设备 {mic_index}，请检查设备连接并重试。错误信息：{e}")
+        return "", None
+    except Exception as e:
+        print(f"初始化麦克风设备 {mic_index} 时发生未知错误。错误信息：{e}")
         return "", None
 
     with mic as source:
@@ -202,16 +206,6 @@ def recognize_speech(APPID, APIKey, APISecret, count, start_timestamp, duration=
         audio = None
         try:
             audio = recognizer.listen(source, timeout=duration, phrase_time_limit=duration)
-            if audio:
-                energy_threshold = recognizer.energy_threshold
-                if audio.frame_data:
-                    volume = sum(abs(sample) for sample in audio.frame_data) / len(audio.frame_data)
-                    if volume > energy_threshold:
-                        print("麦克风检测到声音。")
-                    else:
-                        print("麦克风未检测到足够的声音。")
-                else:
-                    print("未收到音频帧数据。")
         except sr.WaitTimeoutError:
             print("等待语音输入超时。")
             return ""
@@ -220,8 +214,6 @@ def recognize_speech(APPID, APIKey, APISecret, count, start_timestamp, duration=
 
     # 保存录音为 wav 文件
     base_dir = os.path.join("recordings", start_timestamp)
-    if not os.path.exists(base_dir):
-        os.makedirs(base_dir)
     save_audio_to_file(audio, base_dir, count)
 
     try:
@@ -230,6 +222,9 @@ def recognize_speech(APPID, APIKey, APISecret, count, start_timestamp, duration=
         recognized_text = ""
     except sr.RequestError as e:
         print(f"识别错误：{e}")
+        recognized_text = ""
+    except Exception as e:
+        print(f"语音识别时发生未知错误。错误信息：{e}")
         recognized_text = ""
 
     return recognized_text
