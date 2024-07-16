@@ -419,6 +419,7 @@ class Manipulator_actuator():
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
                     right_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
+            rospy.loginfo(f"right_goal {right_goal}")
             self.left_arm_pub.publish(left_goal)
             self.right_arm_pub.publish(right_goal)
 
@@ -912,7 +913,7 @@ class Order_driven_task_schedul():
             system.anchor_point.snack_deck_move_forward_pose, name="navigation move forward to snack desk")
         task_navigation_move_foward_to_snack_desk.add_predecessor_task(task_navigation_to_snack_desk)           # 前置任务, 导航到零食桌前20cm
         task_navigation_move_foward_to_snack_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-        task_navigation_move_foward_to_snack_desk.set_move_back_second(1)                                       # 移动后退1s
+        task_navigation_move_foward_to_snack_desk.set_move_back_second(1.5)                                       # 移动后退1s
         tasks_pick_snack.add(task_navigation_move_foward_to_snack_desk)
         
         #  将左臂抬到指定位置(食物框识别位置)

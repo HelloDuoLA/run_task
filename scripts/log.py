@@ -84,7 +84,7 @@ def log_pose_empirical_value(context,pose_name):
 # 保存左臂抓零食经验值
 def log_empirical_value_left_arm_grip_snack(context):
     pose_name = "left_arm_grip_snack"
-    log_pose_empirical_value(context,pose_name)
+    log_pose_empirical_value(str(context),pose_name)
 
 # 保存右臂抓零食经验值
 def log_empirical_value_right_arm_grip_snack(context):
