@@ -79,12 +79,12 @@ def log_stag_result(filename,context):
 # 保存姿势经验值
 def log_pose_empirical_value(context,pose_name):
     with open(f"{LOGDIR}/empirical_value/{pose_name}.log", 'a') as file:
-        file.write(context)
+        file.write(str(context))
         
 # 保存左臂抓零食经验值
 def log_empirical_value_left_arm_grip_snack(context):
     pose_name = "left_arm_grip_snack"
-    log_pose_empirical_value(str(context),pose_name)
+    log_pose_empirical_value(context,pose_name)
 
 # 保存右臂抓零食经验值
 def log_empirical_value_right_arm_grip_snack(context):
