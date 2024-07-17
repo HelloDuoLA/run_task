@@ -1,27 +1,27 @@
-07-17 15:42:59
+07-17 15:58:11
 
 --------------------------------------------------
 
 
-Task       : Task_navigate Navigate_to_the_snack_desk
-Name       : navigation to snack desk
-Group_id   : 2
-Index      : 2
-Create_time: 1721202176.9712195
-Start_time : 1721202177.153076
+Task       : Task_navigate Navigate_to_the_init_point
+Name       : 
+Group_id   : -999
+Index      : 0
+Create_time: 1721202918.7486997
+Start_time : 1721203091.7807293
 End_time   : -999
 Duration   : -999
 Finsih_cb  : None
 Status     : RUNNING
 Result     : INVALID
 Return_data: None
-Parallel   : ALL
+Parallel   : NOTALLOWED
 Subtask_count: 1
 Subtask_count_finished: 0
 Predecessor_tasks: 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-Target_3D_pose: x:0.47 y:-2.44 z:0.00 roll:0.00 pitch:-0.00 yaw:-3.05 
+Target_3D_pose: x:0.00 y:0.00 z:0.00 roll:0.00 pitch:-0.00 yaw:0.00 
 --------------------------------------------------
 
 
