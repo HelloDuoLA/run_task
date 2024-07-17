@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import rospy
 import sys
-import actionlib
+# import actionlib
 import random
 from pymycobot import Mercury
 from enum import Enum,auto # 任务字典
@@ -151,13 +151,9 @@ class Arm_controller():
     def __init__(self,id:utilis.Device_id) -> None:
         self.id = id 
         if(self.id == utilis.Device_id.LEFT):
-            self.request_name     = utilis.Topic_name.left_arm_topic             # 左臂移动请求话题名称
-            self.result_name      = utilis.Topic_name.left_arm_result            # 左臂移动结果话题名称
             self.control_instance = Mercury("/dev/left_arm") 
             self.arm_name = "left_arm"             
         elif(self.id == utilis.Device_id.RIGHT):
-            self.request_name     = utilis.Topic_name.right_arm_topic            # 右臂移动请求话题名称
-            self.result_name      = utilis.Topic_name.right_arm_result           # 右臂移动结果话题名称
             self.control_instance = Mercury("/dev/right_arm")                    
             self.arm_name = "right_arm"     
         
@@ -174,7 +170,7 @@ class Arm_controller():
         # 开启机械抓爪通信
         self.control_instance.set_gripper_mode(0)
 
-        self.arm_topics = self.arm_topic(self.request_name,self.result_name,self.control_instance,id)
+        self.arm_topic = self.Arm_topic(self.control_instance,id)
         
     # 机械臂是否上电的可靠认证
     def is_power_on(self):
@@ -185,53 +181,10 @@ class Arm_controller():
         return all(x == 0 for x in status)
     
 
-    class arm_topic():
-        def __init__(self,request_name,result_name,control_instance, id) -> None:
+    class Arm_topic():
+        def __init__(self,control_instance, id) -> None:
             self.id               = id
             self.control_instance = control_instance
-            self.pub = rospy.Publisher(result_name, msg.ArmMoveResult,queue_size=10)         # 发布移动结果
-            self.sub = rospy.Subscriber(request_name,msg.ArmMoveRequest,self.execute_cb,callback_args=self,queue_size=10)        # 订阅移动请求 
-        
-        
-        # 执行
-        @staticmethod
-        def execute_cb(goal:msg.ArmMoveRequest,self):
-            # rospy.loginfo(f"node: {rospy.get_name()}, arm action server execute. goal: {goal}")
-            rospy.loginfo(f"node: {rospy.get_name()}, {self.id} arm execute.task id {goal.task_index}")
-            # 1. 解析目标值
-            goal_arm_pose     = goal.arm_pose
-            goal_grasp_flag   = goal.grasp_flag
-            
-            # 先打开 and 先打开后关闭
-            if goal_grasp_flag == GripMethod.OPEN_CLOSE or goal_grasp_flag == GripMethod.OPEN_FIRST:
-                self.open_grasp()
-            # 先关闭 and 先关闭后打开
-            elif goal_grasp_flag == GripMethod.CLOSE_OPEN or goal_grasp_flag == GripMethod.CLOSE_FIRST:
-                self.close_grasp()
-            
-            
-            if goal.arm_move_method != ArmMoveMethod.OPLY_GRIP:
-                # 2. 给机械臂发送目标值
-                self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose, goal.arm_move_method)
-            
-            # 后打开 and 先关闭后打开
-            if goal_grasp_flag == GripMethod.CLOSE_OPEN or goal_grasp_flag == GripMethod.OPEN:
-                self.open_grasp()
-            # 后关闭 and 先打开后关闭
-            elif goal_grasp_flag == GripMethod.OPEN_CLOSE or goal_grasp_flag == GripMethod.CLOSE:
-                self.close_grasp()
-        
-            
-            # 构建返回数据
-            result = msg.ArmMoveResult()
-            result.arm_id     = goal.arm_id
-            result.task_index = goal.task_index
-            rospy.loginfo(f"result : {result}")
-            try:
-                # self.action_server.set_succeeded(result) #可以添加结果参数
-                self.pub.publish(result)
-            except Exception as e:
-                print(f"Exception in done_cb: {e}")
             
         # 关闭抓爪 
         def close_grasp(self):
@@ -247,7 +200,8 @@ class Arm_controller():
             
         # 机械臂移动 
         def move_arm(self,pose_type:PoseType,target_pose,move_method:ArmMoveMethod):
-            rospy.loginfo(f"{self.id} arm move to {target_pose} using {pose_type} method {move_method}")
+            rospy.loginfo(f"{self.id} arm move to {target_pose} using {pose_type} method {ArmMoveMethod(move_method).name}")
+            # rospy.loginfo(f"{self.id} arm move to {target_pose} using {pose_type.name} method {move_method.name}")
             arm_speed =  100
             if pose_type == PoseType.ANGLE:
                 result = self.control_instance.send_angles(target_pose,arm_speed)
@@ -475,17 +429,60 @@ class Arm_controller():
                 current_base_coords = self.control_instance.get_base_coords()
                 time.sleep(0.1)
             return current_base_coords
+
+# 消息执行函数
+def execute_cb(goal:msg.ArmMoveRequest,self):
+    # rospy.loginfo(f"node: {rospy.get_name()}, arm action server execute. goal: {goal}")
+    rospy.loginfo(f"node: {rospy.get_name()}, {self.id} arm execute.task id {goal.task_index}")
+    # 1. 解析目标值
+    goal_arm_pose     = goal.arm_pose
+    goal_grasp_flag   = goal.grasp_flag
+    
+    # 先打开 and 先打开后关闭
+    if goal_grasp_flag == GripMethod.OPEN_CLOSE or goal_grasp_flag == GripMethod.OPEN_FIRST:
+        self.open_grasp()
+    # 先关闭 and 先关闭后打开
+    elif goal_grasp_flag == GripMethod.CLOSE_OPEN or goal_grasp_flag == GripMethod.CLOSE_FIRST:
+        self.close_grasp()
+    
+    
+    if goal.arm_move_method != ArmMoveMethod.OPLY_GRIP:
+        # 2. 给机械臂发送目标值
+        self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose, goal.arm_move_method)
+    
+    # 后打开 and 先关闭后打开
+    if goal_grasp_flag == GripMethod.CLOSE_OPEN or goal_grasp_flag == GripMethod.OPEN:
+        self.open_grasp()
+    # 后关闭 and 先打开后关闭
+    elif goal_grasp_flag == GripMethod.OPEN_CLOSE or goal_grasp_flag == GripMethod.CLOSE:
+        self.close_grasp()
+
+    
+    # 构建返回数据
+    result = msg.ArmMoveResult()
+    result.arm_id     = goal.arm_id
+    result.task_index = goal.task_index
+    rospy.loginfo(f"result : {result}")
+    try:
+        pub.publish(result)
+    except Exception as e:
+        rospy.loginfo(f"Exception in done_cb: {e}")
+
 def talker():
     # 初始化节点，命名为'talker'
     rospy.init_node('arm_node')
 
     arm_name   = rospy.get_param(f'~arm_name')
-    global arm_controller
+    global arm_controller,pub,sub
     if arm_name == "Left":
         arm_controller  = Arm_controller(utilis.Device_id.LEFT)
+        pub = rospy.Publisher(utilis.Topic_name.left_arm_result, msg.ArmMoveResult,queue_size=10)                                                     # 发布移动结果
+        sub = rospy.Subscriber(utilis.Topic_name.left_arm_topic,msg.ArmMoveRequest,execute_cb,callback_args=arm_controller.arm_topic,queue_size=10)    # 订阅移动请求 
     elif arm_name == "Right":
         arm_controller = Arm_controller(utilis.Device_id.RIGHT)
-    
+        pub = rospy.Publisher(utilis.Topic_name.right_arm_result, msg.ArmMoveResult,queue_size=10)                                                     # 发布移动结果
+        sub = rospy.Subscriber(utilis.Topic_name.right_arm_topic,msg.ArmMoveRequest,execute_cb,callback_args=arm_controller.arm_topic,queue_size=10)    # 订阅移动请求 
+
     server = rospy.Service(f"Check{arm_name}ArmPose",srv.CheckArmPose,doCheckArmPose)
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)

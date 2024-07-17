@@ -106,6 +106,9 @@ class STag_result_list():
     
     # 根据任务与左右手对坐标值进行修正
     def modified_position(self,rec_task_type:task.Task_type.Task_image_rec,arm_id:utilis.Device_id,arm_poses):
+        global  ev_left_arm_grip_container, ev_left_arm_grip_snack_top, ev_left_arm_grip_snack_bottom
+        global  ev_left_arm_turn_off_machine, ev_left_arm_turn_on_machine, ev_right_arm_grip_container
+        global  ev_right_arm_grip_cup, ev_right_arm_grip_snack_top, ev_right_arm_grip_snack_bottom, ev_right_arm_water_cup
         # 零食
         if rec_task_type == task.Task_type.Task_image_rec.SNACK:
             # 左臂
@@ -158,8 +161,8 @@ class STag_result_list():
                 
                 # 使用经验值(没有识别到容器框)
                 if len(new_stag_result_list) == 0:
-                    rospy.loginfo("No container STag detected!!!!!!!! use experience value")
-                    stag_result          = STag_result(utilis.Device_id.LEFT)
+                    rospy.loginfo("No container STag detected!!!!!!! use experience value")
+                    stag_result          = STag_result(utilis.Device_id.LEFT, self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER])
                     stag_result.stag_id  =  self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER]
                     stag_result.base_coords = ev_left_arm_grip_container                  
                     stag_result.obj_id    = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
@@ -205,7 +208,7 @@ class STag_result_list():
                                 # 使用经验值(没有识别到容器框)
                 if len(new_stag_result_list) == 0:
                     rospy.loginfo("No container STag detected!!!!!!!! use experience value")
-                    stag_result             = STag_result(utilis.Device_id.RIGHT)
+                    stag_result             = STag_result(utilis.Device_id.RIGHT, self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER])
                     stag_result.stag_id     = self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER]
                     stag_result.base_coords = ev_right_arm_grip_container                  
                     stag_result.obj_id      = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
@@ -255,14 +258,14 @@ class STag_result_list():
                 if len(new_stag_result_list) == 1:
                     # 接水点没有识别到
                     if new_stag_result_list[0].obj_id == task.Task_image_rec.Rec_OBJ_type.CUP.value:
-                        rospy.loginfo("No water point STag detected")
+                        rospy.loginfo("No water point STag detected !!!!!!! use experience value")
                         water_point = STag_result(utilis.Device_id.RIGHT,self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.WATER_POINT])
                         water_point.base_coords = ev_right_arm_water_cup
                         water_point.obj_id = task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value
                         new_stag_result_list.append(water_point)
                     # 杯子没有识别到
                     elif new_stag_result_list[0].obj_id == task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value:
-                        rospy.loginfo("No cup STag detected")
+                        rospy.loginfo("No cup STag detected !!!!!!! use experience value")
                         grip_cup_point = STag_result(utilis.Device_id.RIGHT,self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CUP])
                         grip_cup_point.base_coords = ev_right_arm_grip_cup
                         grip_cup_point.obj_id = task.Task_image_rec.Rec_OBJ_type.CUP.value
@@ -270,7 +273,7 @@ class STag_result_list():
                 
                 # 接水点和杯子都没有识别到
                 elif len(new_stag_result_list) == 0:
-                    rospy.loginfo("No cup or water point STag detected")
+                    rospy.loginfo("No cup or water point STag detected !!!!!!! use experience value")
                     grip_cup_point = STag_result(utilis.Device_id.RIGHT,self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CUP])
                     grip_cup_point.base_coords = ev_right_arm_grip_cup
                     grip_cup_point.obj_id = task.Task_image_rec.Rec_OBJ_type.CUP.value
@@ -302,7 +305,7 @@ class STag_result_list():
             
             # 加入经验值
             if len(new_stag_result_list) == 0:
-                rospy.loginfo("No machine switch STag detected")
+                rospy.loginfo("No machine switch STag detected !!!!!!! use experience value")
                 stag_result = STag_result(utilis.Device_id.LEFT,self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH])
                 stag_result.base_coords = ev_left_arm_turn_on_machine
                 stag_result.obj_id      = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value
@@ -326,7 +329,7 @@ class STag_result_list():
             
             # 加入经验值
             if len(new_stag_result_list) == 0:
-                rospy.loginfo("No machine switch STag detected")     
+                rospy.loginfo("No machine switch STag detected !!!!!!! use experience value")     
                 stag_result = STag_result(utilis.Device_id.LEFT,self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH])
                 stag_result.base_coords = ev_left_arm_turn_off_machine
                 stag_result.obj_id      = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value
@@ -647,8 +650,9 @@ class Recognition_node():
         result.camera_id     = request.camera_id
         result.obj_positions = obj_positions
         # 发布结果
-        rospy.loginfo(f"rec result :\n {result}")
+        # rospy.loginfo(f"rec result :\n {result}")
         self.pub_result.publish(result)
+        rospy.loginfo(f"rec send result :\n")
 
 # YOLO识别
 def YOLO_rec(snack_id_list,image) -> YOLO_result_list:
@@ -780,7 +784,7 @@ def init_empirical_value():
     global  ev_right_arm_grip_cup, ev_right_arm_grip_snack_top, ev_right_arm_grip_snack_bottom, ev_right_arm_water_cup
     
     ev_left_arm_grip_container    = _get_arm_empirical_value("left_arm_grip_container")
-    ev_left_arm_grip_snack_top    = _get_arm_empirical_value("left_arm_grip_snack_top ")
+    ev_left_arm_grip_snack_top    = _get_arm_empirical_value("left_arm_grip_snack_top")
     ev_left_arm_grip_snack_bottom = _get_arm_empirical_value("left_arm_grip_snack_bottom")
     ev_left_arm_turn_off_machine  = _get_arm_empirical_value("left_arm_turn_off_machine")
     ev_left_arm_turn_on_machine   = _get_arm_empirical_value("left_arm_turn_on_machine")
@@ -790,7 +794,7 @@ def init_empirical_value():
     ev_right_arm_grip_snack_bottom = _get_arm_empirical_value("right_arm_grip_snack_bottom")
     ev_right_arm_water_cup        = _get_arm_empirical_value("right_arm_water_cup")
 # 通过名字获取经验值
-def _get_arm_empirical_value(self,anchor_point_name):
+def _get_arm_empirical_value(anchor_point_name):
     xyz = rospy.get_param(f'~{anchor_point_name}/xyz')
     return xyz
 
@@ -813,6 +817,7 @@ def talker():
     init_camera()
     init_const()
     init_camera_calibration()
+    init_empirical_value()
 
     recognition_node = Recognition_node()
     

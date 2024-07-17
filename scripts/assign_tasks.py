@@ -29,8 +29,8 @@ import control_cmd
 
 DEBUG_NAVIGATION = False     # 导航调试中, 则运动到桌子的任务均为非并行任务, 并且在完成之后需要输入任意字符才能下一步
 
-WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
-# WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
+# WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
+WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
 
 # 初始化
 class System():
@@ -275,13 +275,9 @@ class Navigation_actuator():
         else:
             rospy.loginfo(f"task {current_task.task_index} not sleep after task ")
         
-        # 设置完成状态
-        if status == actionlib.GoalStatus.SUCCEEDED:
-            rospy.loginfo(f"node: {rospy.get_name()}, navigation succeed. status : {status}")
-            current_task.update_end_status(task.Task.Task_result.SUCCEED)
-        else:
-            rospy.loginfo(f"node: {rospy.get_name()}, navigation failed. status : {status}")
-            current_task.update_end_status(task.Task.Task_result.FAILED)
+
+        rospy.loginfo(f"node: {rospy.get_name()}, navigation finish. status : {status}")
+        current_task.update_end_status(task.Task.Task_result.SUCCEED)
         
         # 任务自带的回调
         if current_task.finish_cb is not None:
@@ -322,12 +318,9 @@ class Navigation_actuator():
         else:
             rospy.loginfo(f"task index {current_task.task_index} not sleep after task")
         
-        if status == actionlib.GoalStatus.SUCCEEDED:
-            rospy.loginfo(f"node: {rospy.get_name()}, control cmd succeed. status : {status}")
-            current_task.update_end_status(task.Task.Task_result.SUCCEED)
-        else:
-            rospy.loginfo(f"node: {rospy.get_name()}, control cmd failed. status : {status}")
-            current_task.update_end_status(task.Task.Task_result.FAILED)
+        rospy.loginfo(f"node: {rospy.get_name()}, control cmd finish. status : {status}")
+        current_task.update_end_status(task.Task.Task_result.SUCCEED)
+
             
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
@@ -345,13 +338,14 @@ class Navigation_actuator():
 # 机械臂执行器 
 class Manipulator_actuator():
     def __init__(self):
+        global left_arm_pub,right_arm_pub
         # 手臂任务发布 
-        self.left_arm_pub = rospy.Publisher(utilis.Topic_name.left_arm_topic,msg.ArmMoveRequest,queue_size=10)
-        self.right_arm_pub = rospy.Publisher(utilis.Topic_name.right_arm_topic,msg.ArmMoveRequest,queue_size=10)
+        left_arm_pub  = rospy.Publisher(utilis.Topic_name.left_arm_topic, msg.ArmMoveRequest, queue_size=10)
+        right_arm_pub = rospy.Publisher(utilis.Topic_name.right_arm_topic,msg.ArmMoveRequest, queue_size=10)
         
         # 手臂结果接受
-        self.left_arm_sub  = rospy.Subscriber(utilis.Topic_name.left_arm_result,msg.ArmMoveResult ,self.do_left_arm_move_result, queue_size=10)
-        self.right_arm_sub = rospy.Subscriber(utilis.Topic_name.right_arm_result,msg.ArmMoveResult,self.do_right_arm_move_result,queue_size=10)
+        left_arm_sub  = rospy.Subscriber(utilis.Topic_name.left_arm_result,msg.ArmMoveResult ,do_left_arm_move_result, queue_size=10)
+        right_arm_sub = rospy.Subscriber(utilis.Topic_name.right_arm_result,msg.ArmMoveResult,do_right_arm_move_result,queue_size=10)
         
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
     
@@ -372,30 +366,34 @@ class Manipulator_actuator():
 
         # 左臂
         if manipulation_task.arm_id == utilis.Device_id.LEFT:
-            # 设置action 目标
-            goal                      = msg.ArmMoveRequest()
-            goal.task_index           = task_index
-            goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0].arm_pose
-            goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
-            goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
-            goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
-            goal.grasp_speed          = manipulation_task.clamp_speed
-            goal.arm_move_method      = manipulation_task.arm_move_method.value
-            goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
-            self.left_arm_pub.publish(goal)
+            # 设置手臂 目标
+            left_goal                      = msg.ArmMoveRequest()
+            left_goal.task_index           = task_index
+            left_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0].arm_pose
+            left_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
+            left_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
+            left_goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
+            left_goal.grasp_speed          = manipulation_task.clamp_speed
+            left_goal.arm_move_method      = manipulation_task.arm_move_method.value
+            left_goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
+            
+            rospy.loginfo(f"left_arm_pub type {type(left_arm_pub)}")
+            left_arm_pub.publish(left_goal)
+            rospy.loginfo(f"left_arm_pub send goal")
         # 右臂
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
             # 设置action 目标
-            goal                      = msg.ArmMoveRequest()
-            goal.task_index           = task_index
-            goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0].arm_pose
-            goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
-            goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
-            goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
-            goal.grasp_speed          = manipulation_task.clamp_speed
-            goal.arm_move_method      = manipulation_task.arm_move_method.value
-            goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
-            self.right_arm_pub.publish(goal)
+            right_goal                      = msg.ArmMoveRequest()
+            right_goal.task_index           = task_index
+            right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0].arm_pose
+            right_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
+            right_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
+            right_goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
+            right_goal.grasp_speed          = manipulation_task.clamp_speed
+            right_goal.arm_move_method      = manipulation_task.arm_move_method.value
+            right_goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
+            right_arm_pub.publish(right_goal)
+            rospy.loginfo(f"right_arm_pub send goal")
             
         elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
             left_goal              = msg.ArmMoveRequest()
@@ -419,84 +417,85 @@ class Manipulator_actuator():
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
                     right_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
-            rospy.loginfo(f"right_goal {right_goal}")
-            self.left_arm_pub.publish(left_goal)
-            self.right_arm_pub.publish(right_goal)
+
+            left_arm_pub.publish(left_goal)
+            right_arm_pub.publish(right_goal)
+            rospy.loginfo(f"right_arm_pub send goal")
+            rospy.loginfo(f"left_arm_pub send goal")
 
 
-    # 左臂接受结果信息
-    @staticmethod
-    def do_left_arm_move_result(result:msg.ArmMoveResult):
-        rospy.loginfo(f"left arm move get result : task index {result.task_index}")
+# 左臂接受结果信息
+def do_left_arm_move_result(result:msg.ArmMoveResult):
+    rospy.loginfo(f"left arm move get result : task index {result.task_index}")
 
-        current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
-        
-        # 任务完成暂停时间
-        if current_task.sleep_time_after_task != 0:
-            time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task index {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
-        else:
-            rospy.loginfo(f"task index {current_task.task_index} not sleep")
-            
-        try:
-            current_task.update_end_status(task.Task.Task_result.FAILED)
-        except Exception as e:
-            rospy.logerr(f"Exception in done_cb: {e}")
-            current_task.update_end_status(task.Task.Task_result.FAILED)
-            
-        # 任务自带的回调
-        if current_task.finish_cb != None:
-            current_task.finish_cb(None, result)
-        
-        # 删除任务
-        # 有可能同一个任务被删除两次
-        try:
-            if current_task.if_finished():
-                rospy.loginfo(f"del task index {result.task_index} in running_tasks_manager OK")
-                system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
-            else :
-                rospy.loginfo(f"task index{result.task_index} is not finished, keep in running list")
-        except:
-            rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task index {result.task_index} in running_tasks_manager error")
-        
-        # 给任务管理器的回调
-        system.task_manager.tm_task_finish_callback(current_task, None, result)
+    current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
     
-    @staticmethod
-    # 右臂接受结果信息
-    def do_right_arm_move_result(result:msg.ArmMoveResult):
-        rospy.loginfo(f"right arm move get result : task index {result.task_index}")
-
-        current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
-        # 任务完成暂停时间
-        if current_task.sleep_time_after_task != 0:
-            time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task index {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
-        else:
-            rospy.loginfo(f"task index {current_task.task_index} not sleep")
-            
-        try:
-            current_task.update_end_status(task.Task.Task_result.FAILED)
-        except Exception as e:
-            rospy.logerr(f"Exception in done_cb: {e}")
-            current_task.update_end_status(task.Task.Task_result.FAILED)
-        # 任务自带的回调
-        if current_task.finish_cb != None:
-            current_task.finish_cb(None, result)
-
-            
-        # 删除任务
-        try:
-            if current_task.if_finished():
-                rospy.loginfo(f"del task index {result.task_index} in running_tasks_manager OK")
-                system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
-            else :
-                rospy.loginfo(f"task index {result.task_index} is not finished, keep in running list")
-        except:
-            rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task index {result.task_index} in running_tasks_manager error")
+    # 任务完成暂停时间
+    if current_task.sleep_time_after_task != 0:
+        time.sleep(current_task.sleep_time_after_task)
+        rospy.loginfo(f"task index {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
+    else:
+        rospy.loginfo(f"task index {current_task.task_index} not sleep")
         
-        # 给任务管理器的回调
-        system.task_manager.tm_task_finish_callback(current_task, None, result)
+    try:
+        current_task.update_end_status(task.Task.Task_result.FAILED)
+    except Exception as e:
+        rospy.logerr(f"Exception in done_cb: {e}")
+        current_task.update_end_status(task.Task.Task_result.FAILED)
+        
+    # 任务自带的回调
+    if current_task.finish_cb != None:
+        current_task.finish_cb(None, result)
+    
+    # 删除任务
+    # 有可能同一个任务被删除两次
+    try:
+        if current_task.if_finished():
+            rospy.loginfo(f"del task index {result.task_index} in running_tasks_manager OK")
+            system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
+        else :
+            rospy.loginfo(f"task index{result.task_index} is not finished, keep in running list")
+    except:
+        rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task index {result.task_index} in running_tasks_manager error")
+    
+    # 给任务管理器的回调
+    system.task_manager.tm_task_finish_callback(current_task, None, result)
+
+
+# 右臂接受结果信息
+def do_right_arm_move_result(result:msg.ArmMoveResult):
+    rospy.loginfo(f"right arm move get result : task index {result.task_index}")
+
+    current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
+    # 任务完成暂停时间
+    if current_task.sleep_time_after_task != 0:
+        time.sleep(current_task.sleep_time_after_task)
+        rospy.loginfo(f"task index {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
+    else:
+        rospy.loginfo(f"task index {current_task.task_index} not sleep")
+        
+    try:
+        current_task.update_end_status(task.Task.Task_result.FAILED)
+    except Exception as e:
+        rospy.logerr(f"Exception in done_cb: {e}")
+        current_task.update_end_status(task.Task.Task_result.FAILED)
+    # 任务自带的回调
+    if current_task.finish_cb != None:
+        current_task.finish_cb(None, result)
+
+        
+    # 删除任务
+    try:
+        if current_task.if_finished():
+            rospy.loginfo(f"del task index {result.task_index} in running_tasks_manager OK")
+            system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
+        else :
+            rospy.loginfo(f"task index {result.task_index} is not finished, keep in running list")
+    except:
+        rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task index {result.task_index} in running_tasks_manager error")
+    
+    # 给任务管理器的回调
+    system.task_manager.tm_task_finish_callback(current_task, None, result)
     
 
 # 图像识别任务执行器
@@ -533,7 +532,7 @@ class Image_rec_actuator():
     # 识别结果话题回调
     @staticmethod
     def do_image_rec_result_callback(result:msg.ImageRecResult):
-        rospy.loginfo(f"do_image_rec_result {result}")
+        # rospy.loginfo(f"do_image_rec_result {result}")
         # 获取对应的服务对象
         current_task:task.Task_image_rec = system.image_rec_actuator.running_tasks_manager.get_task(result.task_index)
         # 根据不同任务作出不同处理
@@ -638,10 +637,10 @@ class Image_rec_actuator():
         current_task.update_end_status(task.Task.Task_result.SUCCEED)
         # 任务自带的回调
         if current_task.finish_cb is not None:
-            current_task.finish_cb(actionlib.GoalStatus.SUCCEEDED)
+            pass
 
         # 给任务管理器的回调
-        system.task_manager.tm_task_finish_callback(current_task, actionlib.GoalStatus.SUCCEEDED)
+        system.task_manager.tm_task_finish_callback(current_task)
     
 
 # 任务管理器
@@ -890,14 +889,18 @@ class Order_driven_task_schedul():
         tasks_pick_snack        = task.Task_sequence()
         
         #  手臂移到空闲位, 并关闭夹爪
-        task_left_right_arms_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE, None, utilis.Device_id.LEFT_RIGHT, \
-            [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
-            [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ,\
-                name="two arms move to idle prepare for pick snack")
+        task_left_arm_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE, None, utilis.Device_id.LEFT, \
+            system.anchor_point.left_arm_idle,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
+                name="left arm move to idle prepare for pick snack")
+        task_left_arm_idle.parallel = task.Task.Task_parallel.ALL  # 可并行
+        tasks_pick_snack.add(task_left_arm_idle)
         
-        task_left_right_arms_idle.set_subtask_count(2)                    # 两个子任务
-        task_left_right_arms_idle.parallel = task.Task.Task_parallel.ALL  # 可并行
-        tasks_pick_snack.add(task_left_right_arms_idle)
+        #  手臂移到空闲位, 并关闭夹爪
+        task_right_arm_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE, None, utilis.Device_id.RIGHT, \
+            system.anchor_point.right_arm_idle,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
+                name="right arm move to idle prepare for pick snack")
+        task_right_arm_idle.parallel = task.Task.Task_parallel.ALL  # 可并行
+        tasks_pick_snack.add(task_right_arm_idle)
         
         #  前往零食桌
         task_navigation_to_snack_desk  = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_snack_desk, None, \
@@ -1055,7 +1058,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.left_deck_move_forward_pose, name="navigation move forward to left desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(4)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(3)                                       # 移动后退2s
         
         
         elif table_id == utilis.Device_id.RIGHT.value:
@@ -1067,7 +1070,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.right_deck_move_forward_pose, name="navigation move forward to right desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(4)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(3)                                       # 移动后退2s
             
         else:
             raise ValueError("Invalid table_id")
@@ -1111,7 +1114,7 @@ class Order_driven_task_schedul():
             raise ValueError("Invalid table_id")
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL              # 可并行
         task_move_back_from_service_desk.add_predecessor_task(task_arm_placement_container)  # 前置任务, 完成放置容器
-        task_move_back_from_service_desk.set_move_back_second(2)                             # 2s内完成后退
+        task_move_back_from_service_desk.set_move_back_second(3)                             # 2s内完成后退
         tasks_pick_snack.add(task_move_back_from_service_desk)
         
         # 功能性暂停(等待前面的动作全部完成)
@@ -1297,7 +1300,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.left_deck_move_forward_pose, name="navigation move forward to left desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(4)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(2)                                       # 移动后退2s
         
         
         elif table_id == utilis.Device_id.RIGHT.value:
@@ -1309,7 +1312,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.right_deck_move_forward_pose, name="navigation move forward to right desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(4)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(2)                                       # 移动后退2s
             
         else:
             raise ValueError("Invalid table_id")
@@ -1340,7 +1343,7 @@ class Order_driven_task_schedul():
         
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL                    # 可并行
         task_move_back_from_service_desk.add_predecessor_task(task_right_arm_placement_cup)        # 前置任务, 右臂放好了杯子
-        task_move_back_from_service_desk.set_move_back_second(2)                                   # 后退2s
+        task_move_back_from_service_desk.set_move_back_second(3)                                   # 后退3s
         tasks_get_drink.add(task_move_back_from_service_desk)
         
         #  将左,右臂放到空闲位置(可并行)

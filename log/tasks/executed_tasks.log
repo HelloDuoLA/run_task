@@ -1,57 +1,27 @@
-07-16 16:00:02
+07-17 15:58:11
 
 --------------------------------------------------
 
 
-Task       : Task_image_rec COFFEE_MACHINE_SWITCH_ON
-Name       : left camera rec coffee machine turn on
-Group_id   : 3
-Index      : 5
-Create_time: 1721116684.988474
-Start_time : 1721116802.0921319
+Task       : Task_navigate Navigate_to_the_init_point
+Name       : 
+Group_id   : -999
+Index      : 0
+Create_time: 1721202918.7486997
+Start_time : 1721203091.7807293
 End_time   : -999
 Duration   : -999
 Finsih_cb  : None
 Status     : RUNNING
 Result     : INVALID
 Return_data: None
-Parallel   : ALL
+Parallel   : NOTALLOWED
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: [2:Task_manipulation Rec_machine_switch] [1:Task_navigate Move_forward] 
+Predecessor_tasks: 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-Camera_id: LEFT 
-Snack_list: []
-Need_modify_tasks: 
-          [9:Task_manipulation Turn_on_coffee_machine]
- 
-
-Task       : Task_image_rec CUP_COFFEE_MACHINE
-Name       : right camera rec cup machine
-Group_id   : 3
-Index      : 6
-Create_time: 1721116684.9885182
-Start_time : 1721116802.144854
-End_time   : -999
-Duration   : -999
-Finsih_cb  : None
-Status     : RUNNING
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: [4:Task_manipulation Rec_cup_machine] [1:Task_navigate Move_forward] 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Camera_id: RIGHT 
-Snack_list: []
-Need_modify_tasks: 
-          [7:Task_manipulation Grasp_cup_pre]
-          [8:Task_manipulation Grasp_cup]
-          [11:Task_manipulation Water_cup]
- 
+Target_3D_pose: x:0.00 y:0.00 z:0.00 roll:0.00 pitch:-0.00 yaw:0.00 
 --------------------------------------------------
 
 
