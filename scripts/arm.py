@@ -231,7 +231,7 @@ class Arm_controller():
                 # self.action_server.set_succeeded(result) #可以添加结果参数
                 self.pub.publish(result)
             except Exception as e:
-                print(f"Exception in done_cb: {e}")
+                rospy.loginfo(f"Exception in done_cb: {e}")
             
         # 关闭抓爪 
         def close_grasp(self):

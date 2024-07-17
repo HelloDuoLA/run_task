@@ -29,8 +29,8 @@ import control_cmd
 
 DEBUG_NAVIGATION = False     # 导航调试中, 则运动到桌子的任务均为非并行任务, 并且在完成之后需要输入任意字符才能下一步
 
-WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
-# WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
+# WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
+WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
 
 # 初始化
 class System():
@@ -383,6 +383,7 @@ class Manipulator_actuator():
             goal.arm_move_method      = manipulation_task.arm_move_method.value
             goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
             self.left_arm_pub.publish(goal)
+            rospy.loginfo(f"left_arm_pub send goal")
         # 右臂
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
             # 设置action 目标
@@ -396,6 +397,7 @@ class Manipulator_actuator():
             goal.arm_move_method      = manipulation_task.arm_move_method.value
             goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
             self.right_arm_pub.publish(goal)
+            rospy.loginfo(f"right_arm_pub send goal")
             
         elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
             left_goal              = msg.ArmMoveRequest()
@@ -419,9 +421,12 @@ class Manipulator_actuator():
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
                     right_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
-            rospy.loginfo(f"right_goal {right_goal}")
+
             self.left_arm_pub.publish(left_goal)
+            time.sleep(0.1)
             self.right_arm_pub.publish(right_goal)
+            rospy.loginfo(f"right_arm_pub send goal")
+            rospy.loginfo(f"left_arm_pub send goal")
 
 
     # 左臂接受结果信息
@@ -533,7 +538,7 @@ class Image_rec_actuator():
     # 识别结果话题回调
     @staticmethod
     def do_image_rec_result_callback(result:msg.ImageRecResult):
-        rospy.loginfo(f"do_image_rec_result {result}")
+        # rospy.loginfo(f"do_image_rec_result {result}")
         # 获取对应的服务对象
         current_task:task.Task_image_rec = system.image_rec_actuator.running_tasks_manager.get_task(result.task_index)
         # 根据不同任务作出不同处理
@@ -1055,7 +1060,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.left_deck_move_forward_pose, name="navigation move forward to left desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(4)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(2)                                       # 移动后退2s
         
         
         elif table_id == utilis.Device_id.RIGHT.value:
@@ -1067,7 +1072,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.right_deck_move_forward_pose, name="navigation move forward to right desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(4)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(2)                                       # 移动后退2s
             
         else:
             raise ValueError("Invalid table_id")
@@ -1297,7 +1302,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.left_deck_move_forward_pose, name="navigation move forward to left desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(4)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(2)                                       # 移动后退2s
         
         
         elif table_id == utilis.Device_id.RIGHT.value:
@@ -1309,7 +1314,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.right_deck_move_forward_pose, name="navigation move forward to right desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(4)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(2)                                       # 移动后退2s
             
         else:
             raise ValueError("Invalid table_id")
