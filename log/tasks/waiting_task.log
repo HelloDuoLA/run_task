@@ -1,13 +1,33 @@
-07-17 15:04:10
+07-17 15:42:57
 
 --------------------------------------------------
 
+
+Task       : Task_navigate Move_forward
+Name       : navigation move forward to snack desk
+Group_id   : 2
+Index      : 3
+Create_time: 1721202176.971306
+Start_time : -999
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [2:Task_navigate Navigate_to_the_snack_desk] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Target_3D_pose: x:25.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:0.00 
 
 Task       : Task_manipulation Rec_container
 Name       : left arm move to rec container
 Group_id   : 2
 Index      : 4
-Create_time: 1721199823.675532
+Create_time: 1721202176.9719663
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -29,11 +49,37 @@ arm_move_method     : XYZ
 click_length        : 0 
 
 
+Task       : Task_manipulation Rec_container
+Name       : right arm move to rec container
+Group_id   : 2
+Index      : 5
+Create_time: 1721202176.9720592
+Start_time : -999
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [3:Task_navigate Move_forward] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[54.13, 39.13, -67.06, -68.89, 38.89, -33.61] } 
+Target_clamps_status: Clamp_status_0: CLOSE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
+
+
 Task       : Task_image_rec CONTAINER
 Name       : left camera rec container
 Group_id   : 2
 Index      : 6
-Create_time: 1721199823.6756992
+Create_time: 1721202176.972116
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -55,11 +101,37 @@ Need_modify_tasks:
           [18:Task_manipulation Grasp_container]
  
 
+Task       : Task_image_rec CONTAINER
+Name       : right camera rec container
+Group_id   : 2
+Index      : 7
+Create_time: 1721202176.9721744
+Start_time : -999
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [5:Task_manipulation Rec_container] [2:Task_navigate Navigate_to_the_snack_desk] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Camera_id: RIGHT 
+Snack_list: []
+Need_modify_tasks: 
+          [13:Task_manipulation Lossen_snack]
+          [16:Task_manipulation Lossen_snack]
+          [20:Task_manipulation Grasp_container]
+ 
+
 Task       : Task_manipulation Rec_snack
 Name       : left arm move to rec snack
 Group_id   : 2
 Index      : 8
-Create_time: 1721199823.6759436
+Create_time: 1721202176.9722242
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -85,7 +157,7 @@ Task       : Task_manipulation Rec_snack
 Name       : right arm move to rec snack
 Group_id   : 2
 Index      : 9
-Create_time: 1721199823.6760077
+Create_time: 1721202176.9722717
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -111,7 +183,7 @@ Task       : Task_image_rec SNACK
 Name       : two arms rec snack
 Group_id   : 2
 Index      : 10
-Create_time: 1721199823.6760807
+Create_time: 1721202176.9723141
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -140,7 +212,7 @@ Task       : Task_manipulation Grasp_snack
 Name       : 
 Group_id   : 2
 Index      : 11
-Create_time: 1721199823.676178
+Create_time: 1721202176.9733696
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -167,7 +239,7 @@ Task       : Task_manipulation Lossen_snack
 Name       : task_placement_snack_middle
 Group_id   : 2
 Index      : 12
-Create_time: 1721199823.676234
+Create_time: 1721202176.9734554
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -194,7 +266,7 @@ Task       : Task_manipulation Lossen_snack
 Name       : 
 Group_id   : 2
 Index      : 13
-Create_time: 1721199823.6762884
+Create_time: 1721202176.9735131
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -221,7 +293,7 @@ Task       : Task_manipulation Grasp_snack
 Name       : 
 Group_id   : 2
 Index      : 14
-Create_time: 1721199823.6763883
+Create_time: 1721202176.9736123
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -248,7 +320,7 @@ Task       : Task_manipulation Lossen_snack
 Name       : task_placement_snack_middle
 Group_id   : 2
 Index      : 15
-Create_time: 1721199823.676466
+Create_time: 1721202176.9736583
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -275,7 +347,7 @@ Task       : Task_manipulation Lossen_snack
 Name       : 
 Group_id   : 2
 Index      : 16
-Create_time: 1721199823.6765163
+Create_time: 1721202176.9737005
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -302,7 +374,7 @@ Task       : Task_function PAUSE
 Name       : function pause
 Group_id   : 2
 Index      : 17
-Create_time: 1721199823.6765828
+Create_time: 1721202176.9737623
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -322,7 +394,7 @@ Task       : Task_manipulation Grasp_container
 Name       : left arm grap container prepare
 Group_id   : 2
 Index      : 18
-Create_time: 1721199823.6771362
+Create_time: 1721202176.9742439
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -348,7 +420,7 @@ Task       : Task_manipulation Grasp_container
 Name       : left arm grap container
 Group_id   : 2
 Index      : 19
-Create_time: 1721199823.6773276
+Create_time: 1721202176.9744463
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -374,7 +446,7 @@ Task       : Task_manipulation Grasp_container
 Name       : right arm grap container prepare
 Group_id   : 2
 Index      : 20
-Create_time: 1721199823.6775305
+Create_time: 1721202176.9746249
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -400,7 +472,7 @@ Task       : Task_manipulation Grasp_container
 Name       : right arm grap container
 Group_id   : 2
 Index      : 21
-Create_time: 1721199823.677711
+Create_time: 1721202176.974785
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -426,7 +498,7 @@ Task       : Task_manipulation Deliever_container
 Name       : two arms dilivery container
 Group_id   : 2
 Index      : 22
-Create_time: 1721199823.6777718
+Create_time: 1721202176.974865
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -453,7 +525,7 @@ Task       : Task_navigate Move_backward
 Name       : move back from snack desk
 Group_id   : 2
 Index      : 23
-Create_time: 1721199823.6778252
+Create_time: 1721202176.9749148
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -467,13 +539,13 @@ Subtask_count_finished: 0
 Predecessor_tasks: [21:Task_manipulation Grasp_container] [19:Task_manipulation Grasp_container] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-Target_3D_pose: x:-20.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:-20.00 
+Target_3D_pose: x:-15.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:-50.00 
 
 Task       : Task_navigate Navigate_to_the_right_service_desk
 Name       : navigation to right service desk
 Group_id   : 2
 Index      : 24
-Create_time: 1721199823.6779172
+Create_time: 1721202176.9749825
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -493,7 +565,7 @@ Task       : Task_navigate Move_forward
 Name       : navigation move forward to right desk
 Group_id   : 2
 Index      : 25
-Create_time: 1721199823.677957
+Create_time: 1721202176.9750154
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -513,7 +585,7 @@ Task       : Task_manipulation Lossen_container
 Name       : two arms placement container
 Group_id   : 2
 Index      : 26
-Create_time: 1721199823.6780765
+Create_time: 1721202176.9750643
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -540,7 +612,7 @@ Task       : Task_manipulation Move_to_IDLE
 Name       : two arms move to idle
 Group_id   : 2
 Index      : 27
-Create_time: 1721199823.6782582
+Create_time: 1721202176.9751108
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -567,7 +639,7 @@ Task       : Task_navigate Move_backward
 Name       : move back from left service desk
 Group_id   : 2
 Index      : 28
-Create_time: 1721199823.6785479
+Create_time: 1721202176.975188
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -587,7 +659,7 @@ Task       : Task_function PAUSE
 Name       : function pause
 Group_id   : 2
 Index      : 29
-Create_time: 1721199823.6786063
+Create_time: 1721202176.9752283
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -607,7 +679,7 @@ Task       : Task_navigate Navigate_to_the_drink_desk
 Name       : navigation to drink desk
 Group_id   : 3
 Index      : 0
-Create_time: 1721199823.7134733
+Create_time: 1721202177.0017524
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -627,7 +699,7 @@ Task       : Task_navigate Move_forward
 Name       : navigation move forward to drink desk
 Group_id   : 3
 Index      : 1
-Create_time: 1721199823.7136009
+Create_time: 1721202177.0018697
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -647,7 +719,7 @@ Task       : Task_manipulation Rec_machine_switch
 Name       : left arm move to rec coffee machine turn on
 Group_id   : 3
 Index      : 2
-Create_time: 1721199823.7136796
+Create_time: 1721202177.0019324
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -673,7 +745,7 @@ Task       : Task_manipulation Rec_cup_machine
 Name       : right arm move to rec cup machine prepare
 Group_id   : 3
 Index      : 3
-Create_time: 1721199823.7137332
+Create_time: 1721202177.0019872
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -699,7 +771,7 @@ Task       : Task_manipulation Rec_cup_machine
 Name       : right arm move to rec cup machine
 Group_id   : 3
 Index      : 4
-Create_time: 1721199823.7137792
+Create_time: 1721202177.0020297
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -725,7 +797,7 @@ Task       : Task_image_rec COFFEE_MACHINE_SWITCH_ON
 Name       : left camera rec coffee machine turn on
 Group_id   : 3
 Index      : 5
-Create_time: 1721199823.713826
+Create_time: 1721202177.0020828
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -749,7 +821,7 @@ Task       : Task_image_rec CUP_COFFEE_MACHINE
 Name       : right camera rec cup machine
 Group_id   : 3
 Index      : 6
-Create_time: 1721199823.715235
+Create_time: 1721202177.0021317
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -775,7 +847,7 @@ Task       : Task_manipulation Grasp_cup_pre
 Name       : right arm grasp cup prepare
 Group_id   : 3
 Index      : 7
-Create_time: 1721199823.7153597
+Create_time: 1721202177.0021777
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -801,7 +873,7 @@ Task       : Task_manipulation Grasp_cup
 Name       : right arm grasp cup
 Group_id   : 3
 Index      : 8
-Create_time: 1721199823.7154624
+Create_time: 1721202177.002228
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -827,7 +899,7 @@ Task       : Task_manipulation Turn_on_coffee_machine
 Name       : left arm turn on machine prepare
 Group_id   : 3
 Index      : 9
-Create_time: 1721199823.7190392
+Create_time: 1721202177.0024917
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -853,7 +925,7 @@ Task       : Task_manipulation Turn_off_coffee_machine
 Name       : left arm turn on machine click!!!
 Group_id   : 3
 Index      : 10
-Create_time: 1721199823.7194242
+Create_time: 1721202177.0026758
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -879,7 +951,7 @@ Task       : Task_manipulation Water_cup
 Name       : right arm water cup
 Group_id   : 3
 Index      : 11
-Create_time: 1721199823.719729
+Create_time: 1721202177.0028703
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -905,7 +977,7 @@ Task       : Task_manipulation Rec_machine_switch
 Name       : left arm move to rec coffee machine turn off
 Group_id   : 3
 Index      : 12
-Create_time: 1721199823.7198074
+Create_time: 1721202177.0029216
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -931,7 +1003,7 @@ Task       : Task_image_rec COFFEE_MACHINE_SWITCH_OFF
 Name       : left camera rec coffee machine turn off
 Group_id   : 3
 Index      : 13
-Create_time: 1721199823.7198615
+Create_time: 1721202177.002965
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -955,7 +1027,7 @@ Task       : Task_manipulation Turn_off_coffee_machine
 Name       : left arm turn off machine
 Group_id   : 3
 Index      : 14
-Create_time: 1721199823.720051
+Create_time: 1721202177.0034285
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -981,7 +1053,7 @@ Task       : Task_manipulation Turn_off_coffee_machine
 Name       : left arm turn off machine click!!!
 Group_id   : 3
 Index      : 15
-Create_time: 1721199823.7219198
+Create_time: 1721202177.0037165
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -1007,7 +1079,7 @@ Task       : Task_navigate Move_backward
 Name       : move back from drink desk
 Group_id   : 3
 Index      : 16
-Create_time: 1721199823.7220464
+Create_time: 1721202177.0037699
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -1027,7 +1099,7 @@ Task       : Task_manipulation Move_to_IDLE
 Name       : left arm move to idle
 Group_id   : 3
 Index      : 17
-Create_time: 1721199823.7221224
+Create_time: 1721202177.0038166
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -1053,7 +1125,7 @@ Task       : Task_manipulation Deliever_cup
 Name       : right arm water delivery
 Group_id   : 3
 Index      : 18
-Create_time: 1721199823.7221842
+Create_time: 1721202177.003865
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -1079,7 +1151,7 @@ Task       : Task_navigate Navigate_to_the_left_service_desk
 Name       : navigation to left service desk
 Group_id   : 3
 Index      : 19
-Create_time: 1721199823.722253
+Create_time: 1721202177.003928
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -1099,7 +1171,7 @@ Task       : Task_navigate Move_forward
 Name       : navigation move forward to left desk
 Group_id   : 3
 Index      : 20
-Create_time: 1721199823.7222903
+Create_time: 1721202177.0039957
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -1119,7 +1191,7 @@ Task       : Task_manipulation Lossen_cup
 Name       : right arm placement cup
 Group_id   : 3
 Index      : 21
-Create_time: 1721199823.7223432
+Create_time: 1721202177.0040855
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -1145,7 +1217,7 @@ Task       : Task_navigate Move_backward
 Name       : move back from left service desk
 Group_id   : 3
 Index      : 22
-Create_time: 1721199823.722393
+Create_time: 1721202177.004183
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -1165,7 +1237,7 @@ Task       : Task_manipulation Move_to_IDLE
 Name       : two arms move to idle
 Group_id   : 3
 Index      : 23
-Create_time: 1721199823.722618
+Create_time: 1721202177.0042412
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -1192,7 +1264,7 @@ Task       : Task_function PAUSE
 Name       : function pause
 Group_id   : 3
 Index      : 24
-Create_time: 1721199823.722711
+Create_time: 1721202177.0043592
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -1212,7 +1284,7 @@ Task       : Task_navigate Navigate_to_the_init_point
 Name       : 
 Group_id   : -999
 Index      : 0
-Create_time: 1721199823.7468765
+Create_time: 1721202177.004444
 Start_time : -999
 End_time   : -999
 Duration   : -999

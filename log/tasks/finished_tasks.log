@@ -1,16 +1,42 @@
-07-17 15:04:09
+07-17 15:42:59
 
 --------------------------------------------------
+
+
+Task       : Task_manipulation Move_to_IDLE
+Name       : left arm move to idle prepare for pick snack
+Group_id   : 2
+Index      : 0
+Create_time: 1721202176.9709005
+Start_time : 1721202177.0684423
+End_time   : 1721202179.5563943
+Duration   : 2.4879519939422607
+Finsih_cb  : None
+Status     : FINISHED
+Result     : FAILED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-71.31, 63.55, -34.37, 67.69, 20.23, 36.37] } 
+Target_clamps_status: Clamp_status_0: CLOSE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
 
 
 Task       : Task_manipulation Move_to_IDLE
 Name       : right arm move to idle prepare for pick snack
 Group_id   : 2
 Index      : 1
-Create_time: 1721199823.6753538
-Start_time : 1721199823.907788
-End_time   : 1721199825.5945842
-Duration   : 1.6867961883544922
+Create_time: 1721202176.9711316
+Start_time : 1721202177.1153085
+End_time   : 1721202179.79918
+Duration   : 2.6838715076446533
 Finsih_cb  : None
 Status     : FINISHED
 Result     : FAILED
@@ -23,72 +49,6 @@ Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Arm_id              : RIGHT 
 Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[71.31, 63.55, -34.38, -67.73, 20.23, -36.42] } 
-Target_clamps_status: Clamp_status_0: CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
-
-Task       : Task_navigate Navigate_to_the_snack_desk
-Name       : navigation to snack desk
-Group_id   : 2
-Index      : 2
-Create_time: 1721199823.6754155
-Start_time : 1721199824.0972679
-End_time   : 1721199845.800196
-Duration   : 21.702928066253662
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Target_3D_pose: x:0.47 y:-2.44 z:0.00 roll:0.00 pitch:-0.00 yaw:-3.05 
-
-Task       : Task_navigate Move_forward
-Name       : navigation move forward to snack desk
-Group_id   : 2
-Index      : 3
-Create_time: 1721199823.6754782
-Start_time : 1721199845.8691468
-End_time   : 1721199847.419154
-Duration   : 1.5500071048736572
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [2:Task_navigate Navigate_to_the_snack_desk] 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Target_3D_pose: x:25.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:0.00 
-
-Task       : Task_manipulation Rec_container
-Name       : right arm move to rec container
-Group_id   : 2
-Index      : 5
-Create_time: 1721199823.675622
-Start_time : 1721199847.5128236
-End_time   : 1721199849.8440752
-Duration   : 2.331251621246338
-Finsih_cb  : None
-Status     : FINISHED
-Result     : FAILED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [3:Task_navigate Move_forward] 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[54.13, 39.13, -67.06, -68.89, 38.89, -33.61] } 
 Target_clamps_status: Clamp_status_0: CLOSE  
 Clamp_speed         : 50 
 arm_move_method     : XYZ 
