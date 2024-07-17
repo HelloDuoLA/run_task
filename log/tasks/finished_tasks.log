@@ -1,4 +1,4 @@
-07-17 11:13:21
+07-17 13:07:20
 
 --------------------------------------------------
 
@@ -7,10 +7,10 @@ Task       : Task_manipulation Move_to_IDLE
 Name       : two arms move to idle prepare for pick snack
 Group_id   : 2
 Index      : 1
-Create_time: 1721185999.518573
-Start_time : 1721185999.6826375
-End_time   : 1721186001.349186
-Duration   : 1.666548490524292
+Create_time: 1721192838.465289
+Start_time : 1721192838.8024776
+End_time   : 1721192840.485587
+Duration   : 1.6831092834472656
 Finsih_cb  : None
 Status     : FINISHED
 Result     : FAILED

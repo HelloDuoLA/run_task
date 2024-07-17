@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import rospy
 import sys
-import actionlib
+# import actionlib
 import random
 from pymycobot import Mercury
 from enum import Enum,auto # 任务字典
@@ -464,10 +464,9 @@ def execute_cb(goal:msg.ArmMoveRequest,self):
     result.task_index = goal.task_index
     rospy.loginfo(f"result : {result}")
     try:
-        # self.action_server.set_succeeded(result) #可以添加结果参数
-        self.pub.publish(result)
+        pub.publish(result)
     except Exception as e:
-        print(f"Exception in done_cb: {e}")
+        rospy.loginfo(f"Exception in done_cb: {e}")
 
 def talker():
     # 初始化节点，命名为'talker'

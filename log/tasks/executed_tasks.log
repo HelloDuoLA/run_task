@@ -1,4 +1,4 @@
-07-17 11:13:21
+07-17 13:07:20
 
 --------------------------------------------------
 
@@ -7,8 +7,8 @@ Task       : Task_manipulation Move_to_IDLE
 Name       : left arm move to idle prepare for pick snack
 Group_id   : 2
 Index      : 0
-Create_time: 1721185999.5183527
-Start_time : 1721185999.6402981
+Create_time: 1721192838.4649212
+Start_time : 1721192838.5880444
 End_time   : -999
 Duration   : -999
 Finsih_cb  : None
@@ -33,8 +33,8 @@ Task       : Task_navigate Navigate_to_the_snack_desk
 Name       : navigation to snack desk
 Group_id   : 2
 Index      : 2
-Create_time: 1721185999.5186496
-Start_time : 1721185999.743532
+Create_time: 1721192838.4654045
+Start_time : 1721192838.8673291
 End_time   : -999
 Duration   : -999
 Finsih_cb  : None

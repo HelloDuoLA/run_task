@@ -275,13 +275,9 @@ class Navigation_actuator():
         else:
             rospy.loginfo(f"task {current_task.task_index} not sleep after task ")
         
-        # 设置完成状态
-        if status == actionlib.GoalStatus.SUCCEEDED:
-            rospy.loginfo(f"node: {rospy.get_name()}, navigation succeed. status : {status}")
-            current_task.update_end_status(task.Task.Task_result.SUCCEED)
-        else:
-            rospy.loginfo(f"node: {rospy.get_name()}, navigation failed. status : {status}")
-            current_task.update_end_status(task.Task.Task_result.FAILED)
+
+        rospy.loginfo(f"node: {rospy.get_name()}, navigation finish. status : {status}")
+        current_task.update_end_status(task.Task.Task_result.SUCCEED)
         
         # 任务自带的回调
         if current_task.finish_cb is not None:
@@ -322,12 +318,9 @@ class Navigation_actuator():
         else:
             rospy.loginfo(f"task index {current_task.task_index} not sleep after task")
         
-        if status == actionlib.GoalStatus.SUCCEEDED:
-            rospy.loginfo(f"node: {rospy.get_name()}, control cmd succeed. status : {status}")
-            current_task.update_end_status(task.Task.Task_result.SUCCEED)
-        else:
-            rospy.loginfo(f"node: {rospy.get_name()}, control cmd failed. status : {status}")
-            current_task.update_end_status(task.Task.Task_result.FAILED)
+        rospy.loginfo(f"node: {rospy.get_name()}, control cmd finish. status : {status}")
+        current_task.update_end_status(task.Task.Task_result.SUCCEED)
+
             
         # 给任务管理器的回调
         system.task_manager.tm_task_finish_callback(current_task, status, result)
@@ -347,8 +340,8 @@ class Manipulator_actuator():
     def __init__(self):
         global left_arm_pub,right_arm_pub
         # 手臂任务发布 
-        left_arm_pub = rospy.Publisher(utilis.Topic_name.left_arm_topic,msg.ArmMoveRequest,queue_size=10)
-        right_arm_pub = rospy.Publisher(utilis.Topic_name.right_arm_topic,msg.ArmMoveRequest,queue_size=10)
+        left_arm_pub = rospy.Publisher(utilis.Topic_name.left_arm_topic,msg.ArmMoveRequest, queue_size=10)
+        right_arm_pub = rospy.Publisher(utilis.Topic_name.right_arm_topic,msg.ArmMoveRequest, queue_size=10)
         
         # 手臂结果接受
         left_arm_sub  = rospy.Subscriber(utilis.Topic_name.left_arm_result,msg.ArmMoveResult ,do_left_arm_move_result, queue_size=10)
@@ -642,10 +635,10 @@ class Image_rec_actuator():
         current_task.update_end_status(task.Task.Task_result.SUCCEED)
         # 任务自带的回调
         if current_task.finish_cb is not None:
-            current_task.finish_cb(actionlib.GoalStatus.SUCCEEDED)
+            pass
 
         # 给任务管理器的回调
-        system.task_manager.tm_task_finish_callback(current_task, actionlib.GoalStatus.SUCCEEDED)
+        system.task_manager.tm_task_finish_callback(current_task)
     
 
 # 任务管理器
