@@ -1,0 +1,7 @@
+# 单位[s]
+# 等待开启机器的时间
+time_wait_for_turn_on_machine : 2
+# 等待关闭机器的时间
+time_wait_for_turn_off_machine: 3
+# 拍照前等待手臂稳定的时间
+time_before_get_image         : 0.3

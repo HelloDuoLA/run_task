@@ -37,13 +37,15 @@ class Pose2D():
 
 # 3D位姿数据结构
 class Pose3D():
-    def __init__(self,x=-999,y=-999,z=-999,roll=-999,pitch=-999,yaw=-999):
+    # run_time: 为执行这个动作需要的时间
+    def __init__(self,x=-999,y=-999,z=-999,roll=-999,pitch=-999,yaw=-999,run_time=-999):
         self.x     = x
         self.y     = y
         self.z     = z
         self.roll  = roll
         self.pitch = pitch
         self.yaw   = yaw
+        self.run_time = run_time
 
     def __str__(self):
         return f"x:{self.x:.2f} y:{self.y:.2f} z:{self.z:.2f} roll:{self.roll:.2f} pitch:{self.pitch:.2f} yaw:{self.yaw:.2f}"

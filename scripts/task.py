@@ -284,7 +284,7 @@ class Task_function(Task):
 class Task_navigation(Task):
     def __init__(self, task_name, finish_cb=None, target_3D_pose=utilis.Pose3D(),move_back_speed=0.15,name=""):
         super().__init__(task_name,finish_cb,name)
-        self.target_3D_pose  = target_3D_pose
+        self.target_3D_pose    = target_3D_pose
         self.move_back_second  = 4                  # 后退时间
     
     # 设置目的点

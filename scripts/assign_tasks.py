@@ -41,8 +41,6 @@ class System():
         System.instance = self
         self.anchor_point = self.Anchor_point()  # 固定参数读取
         
-        # TODO: 增加默认值
-        
         rospy.loginfo(f"node: {rospy.get_name()}, system init")
         # 执行器初始化
         rospy.loginfo(f"node: {rospy.get_name()}, navigation_actuator")
@@ -105,23 +103,30 @@ class System():
             self._initialize_robot_anchor_point()
             self._initialize_arm_anchor_point()
             self._initialize_other_config()
+            self._initialize_use_time()
+            
+        def _initialize_use_time(self):
+            self.time_wait_for_turn_on_machine  = rospy.get_param(f'~time_wait_for_turn_on_machine')
+            self.time_wait_for_turn_off_machine = rospy.get_param(f'~time_wait_for_turn_off_machine')
+            self.time_before_get_image          = rospy.get_param(f'~time_before_get_image')
             
         # 后退距离
         def _initialize_other_config(self):
-            self.snack_deck_move_forward_pose =  self._get_control_cmd_x_yaw("SnackDeckMoveforward")
-            self.drink_deck_move_forward_pose =  self._get_control_cmd_x_yaw("DrinkDeckMoveforward")
-            self.left_deck_move_forward_pose  =  self._get_control_cmd_x_yaw("LeftDeckMoveforward")
-            self.right_deck_move_forward_pose =  self._get_control_cmd_x_yaw("RightDeckMoveforward")
+            self.snack_deck_move_forward_pose =  self._get_control_cmd_x_yaw_time("SnackDeckMoveforward")
+            self.drink_deck_move_forward_pose =  self._get_control_cmd_x_yaw_time("DrinkDeckMoveforward")
+            self.left_deck_move_forward_pose  =  self._get_control_cmd_x_yaw_time("LeftDeckMoveforward")
+            self.right_deck_move_forward_pose =  self._get_control_cmd_x_yaw_time("RightDeckMoveforward")
             
-            self.snack_deck_move_back_pose =  self._get_control_cmd_x_yaw("SnackDeckMoveBack")
-            self.drink_deck_move_back_pose =  self._get_control_cmd_x_yaw("DrinkDeckMoveBack")
-            self.left_deck_move_back_pose  =  self._get_control_cmd_x_yaw("LeftDeckMoveBack")
-            self.right_deck_move_back_pose =  self._get_control_cmd_x_yaw("RightDeckMoveBack")
+            self.snack_deck_move_back_pose =  self._get_control_cmd_x_yaw_time("SnackDeckMoveBack")
+            self.drink_deck_move_back_pose =  self._get_control_cmd_x_yaw_time("DrinkDeckMoveBack")
+            self.left_deck_move_back_pose  =  self._get_control_cmd_x_yaw_time("LeftDeckMoveBack")
+            self.right_deck_move_back_pose =  self._get_control_cmd_x_yaw_time("RightDeckMoveBack")
             
-        def _get_control_cmd_x_yaw(self,name):
-            target_pose = utilis.Pose3D()
+        def _get_control_cmd_x_yaw_time(self,name):
+            target_pose     = utilis.Pose3D()
             target_pose.x   = rospy.get_param(f'~{name}/x')
             target_pose.yaw = rospy.get_param(f'~{name}/yaw')
+            target_pose.run_time = rospy.get_param(f'~{name}/time')
             return target_pose
         
         # 初始化机器人位点常量配置
@@ -917,12 +922,12 @@ class Order_driven_task_schedul():
             system.anchor_point.snack_deck_move_forward_pose, name="navigation move forward to snack desk")
         task_navigation_move_foward_to_snack_desk.add_predecessor_task(task_navigation_to_snack_desk)           # 前置任务, 导航到零食桌前20cm
         task_navigation_move_foward_to_snack_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-        task_navigation_move_foward_to_snack_desk.set_move_back_second(1.5)                                       # 移动后退1s
+        task_navigation_move_foward_to_snack_desk.set_move_back_second(system.anchor_point.snack_deck_move_forward_pose.run_time)  # 移动后退1s
         tasks_pick_snack.add(task_navigation_move_foward_to_snack_desk)
         
         #  将左臂抬到指定位置(食物框识别位置)
         task_left_arm_to_rec_contianer = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_container, None, utilis.Device_id.LEFT, \
-            system.anchor_point.left_arm_container_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
+            system.anchor_point.left_arm_container_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="left arm move to rec container")
         task_left_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL             # 可并行
         task_left_arm_to_rec_contianer.add_predecessor_task(task_navigation_move_foward_to_snack_desk)    # 前置任务, 机器人移动到位
@@ -930,7 +935,7 @@ class Order_driven_task_schedul():
         
         #  将右臂抬到指定位置(食物框识别位置)
         task_right_arm_to_rec_contianer = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_container, None, utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_container_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
+            system.anchor_point.right_arm_container_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="right arm move to rec container")
         task_right_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL           # 可并行
         task_right_arm_to_rec_contianer.add_predecessor_task(task_navigation_move_foward_to_snack_desk)  # 前置任务, 机器人移动到位
@@ -940,6 +945,7 @@ class Order_driven_task_schedul():
         task_left_camera_rec_container = task.Task_image_rec(task.Task_type.Task_image_rec.CONTAINER, None, utilis.Device_id.LEFT,\
             name="left camera rec container")
         task_left_camera_rec_container.parallel = task.Task.Task_parallel.ALL               # 可并行
+        task_left_camera_rec_container.set_sleep_time_before_task(system.anchor_point.time_before_get_image) # 获取照片前暂停一下，以免图片模糊
         task_left_camera_rec_container.add_predecessor_task(task_left_arm_to_rec_contianer) # 前置任务, 左臂移动到食物框识别位置
         task_left_camera_rec_container.add_predecessor_task(task_navigation_to_snack_desk)  # 前置任务, 导航到零食桌
         tasks_pick_snack.add(task_left_camera_rec_container)
@@ -948,6 +954,7 @@ class Order_driven_task_schedul():
         task_right_camera_rec_container = task.Task_image_rec(task.Task_type.Task_image_rec.CONTAINER, None, utilis.Device_id.RIGHT,\
             name="right camera rec container")
         task_right_camera_rec_container.parallel = task.Task.Task_parallel.ALL                  # 可并行
+        task_right_camera_rec_container.set_sleep_time_before_task(system.anchor_point.time_before_get_image) # 获取照片前暂停一下，以免图片模糊
         task_right_camera_rec_container.add_predecessor_task(task_right_arm_to_rec_contianer)   # 前置任务, 右臂移动到食物框识别位置
         task_right_camera_rec_container.add_predecessor_task(task_navigation_to_snack_desk)     # 前置任务, 导航到零食桌
         
@@ -959,7 +966,6 @@ class Order_driven_task_schedul():
                 name="left arm move to rec snack")
         task_left_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL                     # 可并行
         task_left_arm_to_rec_snack.add_predecessor_task(task_left_camera_rec_container)       # 前置任务, 左摄像头食物框识别
-        task_left_arm_to_rec_snack.set_sleep_time_after_task(0.5)                                          # 防止画面糊掉
         tasks_pick_snack.add(task_left_arm_to_rec_snack)
         
         #  将右臂抬到零食识别位置(可前后并行，固定)
@@ -968,13 +974,13 @@ class Order_driven_task_schedul():
                 name="right arm move to rec snack")
         task_right_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL                    # 可并行
         task_right_arm_to_rec_snack.add_predecessor_task(task_right_camera_rec_container)     # 前置任务, 右摄像头食物框识别
-        task_right_arm_to_rec_snack.set_sleep_time_after_task(0.5)                                         # 防止画面糊掉
         tasks_pick_snack.add(task_right_arm_to_rec_snack)
         
         #  左、右摄像头零食识别(不可并行，动态)
         task_rec_snack = task.Task_image_rec(task.Task_type.Task_image_rec.SNACK, None, utilis.Device_id.LEFT_RIGHT,\
             name="two arms rec snack")
         task_rec_snack.set_snack_list(snack_list)
+        task_rec_snack.set_sleep_time_before_task(system.anchor_point.time_before_get_image)   # 获取照片前暂停一下，以免图片模糊.set_sleep_time_before_task(system.anchor_point.time_before_get_image) # 获取照片前暂停一下，以免图片模糊
         task_rec_snack.add_predecessor_task(task_left_arm_to_rec_snack)                        # 前置任务, 左臂移动到零食识别位置
         task_rec_snack.add_predecessor_task(task_right_arm_to_rec_snack)                       # 前置任务, 右臂移动到零食识别位置
         tasks_pick_snack.add(task_rec_snack)
@@ -1044,6 +1050,7 @@ class Order_driven_task_schedul():
         # 机器人后退
         task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             system.anchor_point.snack_deck_move_back_pose, name="move back from snack desk")
+        task_move_back_from_snack_desk.set_move_back_second(system.anchor_point.snack_deck_move_back_pose.run_time)  # 设置运行时间
         task_move_back_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)   # 前置任务, 左臂抓取容器
         task_move_back_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)    # 前置任务, 右臂抓取容器
         task_move_back_from_snack_desk.parallel = task.Task.Task_parallel.ALL
@@ -1059,7 +1066,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.left_deck_move_forward_pose, name="navigation move forward to left desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(3)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(system.anchor_point.left_deck_move_forward_pose.run_time)  # 设置运行时间
         
         
         elif table_id == utilis.Device_id.RIGHT.value:
@@ -1071,7 +1078,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.right_deck_move_forward_pose, name="navigation move forward to right desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(3)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(system.anchor_point.right_deck_move_forward_pose.run_time)  # 设置运行时间
             
         else:
             raise ValueError("Invalid table_id")
@@ -1108,14 +1115,15 @@ class Order_driven_task_schedul():
         if table_id == utilis.Device_id.LEFT.value:
             task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             system.anchor_point.left_deck_move_back_pose, name="move back from left service desk")
+            task_move_back_from_service_desk.set_move_back_second(system.anchor_point.left_deck_move_back_pose.run_time)    # 设置运行时间
         elif table_id == utilis.Device_id.RIGHT.value:
             task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             system.anchor_point.right_deck_move_back_pose, name="move back from left service desk")
+            task_move_back_from_service_desk.set_move_back_second(system.anchor_point.right_deck_move_back_pose.run_time)    # 设置运行时间
         else:
             raise ValueError("Invalid table_id")
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL              # 可并行
         task_move_back_from_service_desk.add_predecessor_task(task_arm_placement_container)  # 前置任务, 完成放置容器
-        task_move_back_from_service_desk.set_move_back_second(3)                             # 2s内完成后退
         tasks_pick_snack.add(task_move_back_from_service_desk)
         
         # 功能性暂停(等待前面的动作全部完成)
@@ -1139,13 +1147,11 @@ class Order_driven_task_schedul():
         # 向前移动到饮料桌子
         task_navigation_move_foward_to_drink_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_forward, None,\
             system.anchor_point.drink_deck_move_forward_pose, name="navigation move forward to drink desk")
-        task_navigation_move_foward_to_drink_desk.add_predecessor_task(task_navigation_to_drink_desk)          # 前置任务, 导航到服务桌前20cm
-        task_navigation_move_foward_to_drink_desk.parallel = task.Task.Task_parallel.ALL                       # 可并行
-        task_navigation_move_foward_to_drink_desk.set_move_back_second(2)                                      # 移动前进2s
-        task_navigation_move_foward_to_drink_desk.set_sleep_time_after_task(0.5)                                 # 暂停2s,给人挪机器人的时间
+        task_navigation_move_foward_to_drink_desk.add_predecessor_task(task_navigation_to_drink_desk)                               # 前置任务, 导航到服务桌前20cm
+        task_navigation_move_foward_to_drink_desk.parallel = task.Task.Task_parallel.ALL                                            # 可并行
+        task_navigation_move_foward_to_drink_desk.set_move_back_second(system.anchor_point.drink_deck_move_forward_pose.run_time)   # 移动前进2s
+        task_navigation_move_foward_to_drink_desk.set_sleep_time_after_task(0.5)                                                    # 暂停2s,给人挪机器人的时间
         tasks_get_drink.add(task_navigation_move_foward_to_drink_desk)
-        
-
         
         #  左臂抬到指定位置识别咖啡机开关 开
         task_left_arm_to_rec_coffee_machine_turn_on = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_machine_switch, None, utilis.Device_id.LEFT, \
@@ -1172,7 +1178,8 @@ class Order_driven_task_schedul():
         #  左臂图像识别(咖啡机开关位置, 开的时候)
         task_left_camera_rec_coffee_machine_turn_on = task.Task_image_rec(task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON,None,utilis.Device_id.LEFT,\
             name="left camera rec coffee machine turn on")
-        task_left_camera_rec_coffee_machine_turn_on.parallel = task.Task.Task_parallel.ALL                               # 可并行 
+        task_left_camera_rec_coffee_machine_turn_on.parallel = task.Task.Task_parallel.ALL                               # 可并行
+        task_left_camera_rec_coffee_machine_turn_on.set_sleep_time_before_task(system.anchor_point.time_before_get_image) # 获取照片前暂停一下，以免图片模糊
         task_left_camera_rec_coffee_machine_turn_on.add_predecessor_task(task_left_arm_to_rec_coffee_machine_turn_on)    # 前置任务, 左臂到位
         task_left_camera_rec_coffee_machine_turn_on.add_predecessor_task(task_navigation_move_foward_to_drink_desk)                  # 前置任务, 导航到饮料桌
         tasks_get_drink.add(task_left_camera_rec_coffee_machine_turn_on)
@@ -1181,6 +1188,7 @@ class Order_driven_task_schedul():
         task_right_camera_rec_cup_machine = task.Task_image_rec(task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE,None,utilis.Device_id.RIGHT,\
             name="right camera rec cup machine")
         task_right_camera_rec_cup_machine.parallel = task.Task.Task_parallel.ALL                               # 可并行
+        task_right_camera_rec_cup_machine.set_sleep_time_before_task(system.anchor_point.time_before_get_image)# 获取照片前暂停一下，以免图片模糊
         task_right_camera_rec_cup_machine.add_predecessor_task(task_right_arm_to_rec_cup)                      # 前置任务, 右臂到位,
         task_right_camera_rec_cup_machine.add_predecessor_task(task_navigation_move_foward_to_drink_desk)      # 前置任务, 导航到饮料桌
         tasks_get_drink.add(task_right_camera_rec_cup_machine)
@@ -1204,7 +1212,6 @@ class Order_driven_task_schedul():
         tasks_get_drink.add(task_right_arm_grasp_cup)
         task_right_camera_rec_cup_machine.add_need_modify_task(task_right_arm_grasp_cup)     # 右臂绑定 夹取杯子和移动杯子
 
-
         # 左臂放置到按钮下方, 进行准备
         task_left_arm_turn_on_machine_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Turn_on_coffee_machine,None,utilis.Device_id.LEFT,\
             copy.deepcopy(system.anchor_point.left_arm_machine_turn_off_pre),arm.GripMethod.CLOSE,\
@@ -1222,7 +1229,7 @@ class Order_driven_task_schedul():
         task_left_arm_turn_on_machine_click.parallel = task.Task.Task_parallel.ALL                   # 可并行
         task_left_arm_turn_on_machine_click.status   = task.Task.Task_status.BEREADY                 
         task_left_arm_turn_on_machine_click.add_predecessor_task(task_left_arm_turn_on_machine_pre)  # 前置任务, 左臂到达开关下方
-        task_left_arm_turn_on_machine_click.set_sleep_time_after_task(2)                                        # 等待两秒
+        task_left_arm_turn_on_machine_click.set_sleep_time_after_task(system.anchor_point.time_wait_for_turn_on_machine)   # 等待
         tasks_get_drink.add(task_left_arm_turn_on_machine_click)
         
         #  右臂将杯子挪到咖啡机
@@ -1237,7 +1244,7 @@ class Order_driven_task_schedul():
         
         #  左臂抬到指定位置识别咖啡机开关 关
         task_left_arm_to_rec_coffee_machine_turn_off = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_machine_switch, None, \
-            utilis.Device_id.LEFT, system.anchor_point.left_arm_machine_turn_off_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.X_YZ,\
+            utilis.Device_id.LEFT, system.anchor_point.left_arm_machine_turn_off_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.X_YZ,\
                 name="left arm move to rec coffee machine turn off")
         task_left_arm_to_rec_coffee_machine_turn_off.parallel = task.Task.Task_parallel.ALL                       # 可并行
         task_left_arm_to_rec_coffee_machine_turn_off.add_predecessor_task(task_left_arm_turn_on_machine_pre)      # 前置任务, 打开了之后再识别关
@@ -1247,6 +1254,7 @@ class Order_driven_task_schedul():
         task_left_camera_rec_coffee_machine_turn_off = task.Task_image_rec(task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF,None,
             utilis.Device_id.LEFT, name="left camera rec coffee machine turn off")
         task_left_camera_rec_coffee_machine_turn_off.parallel = task.Task.Task_parallel.ALL                                # 可并行
+        task_left_camera_rec_coffee_machine_turn_off.set_sleep_time_before_task(system.anchor_point.time_before_get_image) # 获取照片前暂停一下，以免图片模糊
         task_left_camera_rec_coffee_machine_turn_off.add_predecessor_task(task_left_arm_to_rec_coffee_machine_turn_off)    # 绑定前置任务, 手臂到位
         tasks_get_drink.add(task_left_camera_rec_coffee_machine_turn_off)
         
@@ -1264,14 +1272,15 @@ class Order_driven_task_schedul():
                 name="left arm turn off machine click!!!")
         task_left_arm_turn_off_machine_click.status   = task.Task.Task_status.BEREADY                 
         task_left_arm_turn_off_machine_click.add_predecessor_task(task_left_arm_turn_off_machine_pre)  # 前置任务,抓具放在了开关上面
-        task_left_arm_turn_off_machine_click.set_sleep_time_after_task(3)                                         # 等待3s
+        task_left_arm_turn_off_machine_click.set_sleep_time_after_task(system.anchor_point.time_wait_for_turn_off_machine)      # 等待3s
         tasks_get_drink.add(task_left_arm_turn_off_machine_click)
         
-        #  机器人后退
+        #  饮料桌机器人后退
         task_move_back_from_drink_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             system.anchor_point.drink_deck_move_back_pose, name="move back from drink desk")
         task_move_back_from_drink_desk.parallel = task.Task.Task_parallel.ALL                          # 可并行
         task_move_back_from_drink_desk.add_predecessor_task(task_left_arm_turn_off_machine_pre)        # 前置任务,左臂已经关闭咖啡机了
+        task_move_back_from_drink_desk.set_move_back_second(system.anchor_point.drink_deck_move_back_pose.run_time) # 设置运行时间
         tasks_get_drink.add(task_move_back_from_drink_desk)
         
         #  左臂抬到休闲位
@@ -1301,7 +1310,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.left_deck_move_forward_pose, name="navigation move forward to left desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(2)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(system.anchor_point.left_deck_move_forward_pose.run_time)    # 移动后退2s
         
         
         elif table_id == utilis.Device_id.RIGHT.value:
@@ -1313,7 +1322,7 @@ class Order_driven_task_schedul():
                 system.anchor_point.right_deck_move_forward_pose, name="navigation move forward to right desk")
             task_navigation_move_foward_to_service_desk.add_predecessor_task(task_navigation_to_service_desk)         # 前置任务, 导航到服务桌前20cm
             task_navigation_move_foward_to_service_desk.parallel = task.Task.Task_parallel.ALL                        # 可并行
-            task_navigation_move_foward_to_service_desk.set_move_back_second(2)                                       # 移动后退2s
+            task_navigation_move_foward_to_service_desk.set_move_back_second(system.anchor_point.right_deck_move_forward_pose.run_time)    # 移动后退2s
             
         else:
             raise ValueError("Invalid table_id")
@@ -1336,15 +1345,16 @@ class Order_driven_task_schedul():
         if table_id == utilis.Device_id.LEFT.value:
             task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             system.anchor_point.left_deck_move_back_pose, name="move back from left service desk")
+            task_move_back_from_service_desk.set_move_back_second(system.anchor_point.left_deck_move_back_pose.run_time)    # 设置运行时间
         elif table_id == utilis.Device_id.RIGHT.value:
             task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             system.anchor_point.right_deck_move_back_pose, name="move back from left service desk")
+            task_move_back_from_service_desk.set_move_back_second(system.anchor_point.right_deck_move_back_pose.run_time)    # 设置运行时间
         else:
             raise ValueError("Invalid table_id")
         
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL                    # 可并行
         task_move_back_from_service_desk.add_predecessor_task(task_right_arm_placement_cup)        # 前置任务, 右臂放好了杯子
-        task_move_back_from_service_desk.set_move_back_second(3)                                   # 后退3s
         tasks_get_drink.add(task_move_back_from_service_desk)
         
         #  将左,右臂放到空闲位置(可并行)
