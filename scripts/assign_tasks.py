@@ -13,6 +13,7 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal, MoveBaseFeedback
 import copy
 from enum import Enum,auto
 import time
+import std_srvs.srv as std_srvs
 
 # 自定义包
 rospack = rospkg.RosPack()
@@ -438,10 +439,10 @@ def do_left_arm_move_result(result:msg.ArmMoveResult):
         rospy.loginfo(f"task index {current_task.task_index} not sleep")
         
     try:
-        current_task.update_end_status(task.Task.Task_result.FAILED)
+        current_task.update_end_status(task.Task.Task_result.SUCCEED)
     except Exception as e:
         rospy.logerr(f"Exception in done_cb: {e}")
-        current_task.update_end_status(task.Task.Task_result.FAILED)
+        current_task.update_end_status(task.Task.Task_result.SUCCEED)
         
     # 任务自带的回调
     if current_task.finish_cb != None:
@@ -475,10 +476,10 @@ def do_right_arm_move_result(result:msg.ArmMoveResult):
         rospy.loginfo(f"task index {current_task.task_index} not sleep")
         
     try:
-        current_task.update_end_status(task.Task.Task_result.FAILED)
+        current_task.update_end_status(task.Task.Task_result.SUCCEED)
     except Exception as e:
         rospy.logerr(f"Exception in done_cb: {e}")
-        current_task.update_end_status(task.Task.Task_result.FAILED)
+        current_task.update_end_status(task.Task.Task_result.SUCCEED)
     # 任务自带的回调
     if current_task.finish_cb != None:
         current_task.finish_cb(None, result)
@@ -1438,6 +1439,18 @@ def talker():
     rospy.init_node('assign_tasks')
     global system
     system = System()
+    
+    # 等待手臂,摄像头节点完成初始化
+    rospy.loginfo("waiting for arm and camera nodes...")
+    left_arm_client = rospy.ServiceProxy(utilis.Topic_name.left_arm_prepare_service,std_srvs.Empty)
+    right_arm_client = rospy.ServiceProxy(utilis.Topic_name.right_arm_prepare_service,std_srvs.Empty)
+    camera_prepare_service = rospy.ServiceProxy(utilis.Topic_name.camera_prepare_service,std_srvs.Empty)
+
+    left_arm_client.client.wait_for_service()
+    right_arm_client.client.wait_for_service()
+    right_arm_client.client.wait_for_service()
+    
+
     test_order_snack()
     # test_other()
     

@@ -8,6 +8,7 @@ from pymycobot import Mercury
 from enum import Enum,auto # 任务字典
 import time
 import copy
+import std_srvs.srv as std_srvs
 
 # 增加头文件路径 
 import rospkg
@@ -467,6 +468,11 @@ def execute_cb(goal:msg.ArmMoveRequest,self):
         pub.publish(result)
     except Exception as e:
         rospy.loginfo(f"Exception in done_cb: {e}")
+        
+def doPrepareReq(request):
+    print("Received an empty service request")
+    # 这里执行你需要的操作
+    return std_srvs.EmptyResponse() 
 
 def talker():
     # 初始化节点，命名为'talker'
@@ -478,12 +484,15 @@ def talker():
         arm_controller  = Arm_controller(utilis.Device_id.LEFT)
         pub = rospy.Publisher(utilis.Topic_name.left_arm_result, msg.ArmMoveResult,queue_size=10)                                                     # 发布移动结果
         sub = rospy.Subscriber(utilis.Topic_name.left_arm_topic,msg.ArmMoveRequest,execute_cb,callback_args=arm_controller.arm_topic,queue_size=10)    # 订阅移动请求 
+        service_name = utilis.Topic_name.left_arm_prepare_service
     elif arm_name == "Right":
         arm_controller = Arm_controller(utilis.Device_id.RIGHT)
         pub = rospy.Publisher(utilis.Topic_name.right_arm_result, msg.ArmMoveResult,queue_size=10)                                                     # 发布移动结果
         sub = rospy.Subscriber(utilis.Topic_name.right_arm_topic,msg.ArmMoveRequest,execute_cb,callback_args=arm_controller.arm_topic,queue_size=10)    # 订阅移动请求 
-
+        service_name = utilis.Topic_name.right_arm_prepare_service
+        
     server = rospy.Service(f"Check{arm_name}ArmPose",srv.CheckArmPose,doCheckArmPose)
+    prepare_server = rospy.Service(service_name,std_srvs.Empty,doPrepareReq)
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)
 

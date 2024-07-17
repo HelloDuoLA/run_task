@@ -12,6 +12,7 @@ import time
 from tf.transformations import euler_matrix
 from typing import List
 import copy
+from std_srvs.srv import Empty
 
 rospack = rospkg.RosPack()
 package_path = rospack.get_path('run_task')
@@ -810,6 +811,11 @@ def init_camera_calibration():
                            3.828147183491327119e-05, 1.508161050588582202e-03, 
                            9.120081467574957523e-01], dtype=np.float32)
 
+def doPrepareReq(request):
+    print("Received an empty service request")
+    # 这里执行你需要的操作
+    return std_srvs.EmptyResponse()  # 返回空响应
+
 def talker():
     # 初始化节点，命名为'camera'
     rospy.init_node('camera')
@@ -820,6 +826,8 @@ def talker():
     init_empirical_value()
 
     recognition_node = Recognition_node()
+    
+    prepare_server = rospy.Service(utilis.Topic_name.camera_prepare_service,std_srvs.Empty,doPrepareReq)
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)
