@@ -109,6 +109,7 @@ class System():
             self.time_wait_for_turn_on_machine  = rospy.get_param(f'~time_wait_for_turn_on_machine')
             self.time_wait_for_turn_off_machine = rospy.get_param(f'~time_wait_for_turn_off_machine')
             self.time_before_get_image          = rospy.get_param(f'~time_before_get_image')
+            self.time_interval_for_task         = rospy.get_param(f'~time_interval_for_task')
             
         # 后退距离
         def _initialize_other_config(self):
@@ -668,7 +669,7 @@ class Task_manager():
         # 每0.1s执行一次任务
         # TODO:调试时为3秒
         # timer = rospy.Timer(rospy.Duration(0.3), self.timer_callback)
-        timer = rospy.Timer(rospy.Duration(0.1), self.timer_callback)
+        timer = rospy.Timer(rospy.Duration(system.anchor_point.time_interval_for_task), self.timer_callback)
     
     # 任务完成回调
     def tm_task_finish_callback(self, current_task:task.Task, status=None, result=None):
@@ -801,6 +802,7 @@ class Task_manager():
                             raise ValueError("robot.Robot.Robot_status error!!!!!!!")
                     # 手臂任务检测手臂是否闲置
                     elif current_task.task_type.task_type.__class__ == task.Task_type.Task_manipulation:
+                        # TODO 如果是松开零食的任务, 则还需要判断松开点是否空闲
                         if system.robot.is_arm_idle(current_task.arm_id) == True:
                             # rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can run. manipulation task")
                             return Task_manager.Run_task_return_code.can_run_can_next

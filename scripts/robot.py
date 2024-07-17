@@ -54,10 +54,25 @@ class Robot():
         def __str__(self) -> str:
             return self.name
         
+        def __eq__(self, value: object) -> bool:
+            if isinstance(value,self.__class__):
+                return self.value == value.value
+            elif isinstance(value, int):
+                return self.value == value
+        
     class Common_status(Enum):
         IDLE      = 0           # 空闲
         BUSY      = auto()      # 忙碌
         DONCHANGE = auto()      # 不改变
+        
+        def __str__(self) -> str:
+            return self.name
+        
+        def __eq__(self, value: object) -> bool:
+            if isinstance(value,self.__class__):
+                return self.value == value.value
+            elif isinstance(value, int):
+                return self.value == value
     
     def __str__(self):
         return f"Robot status: {self.robot_status}, left arm status: {self.left_manipulation_status.arm_info.arm_status}, \
@@ -67,9 +82,8 @@ class Robot():
         self.robot_status              = self.Robot_status.IDLE                         # 机器人状态
         self.right_manipulation_status = manipulation_status(utilis.Device_id.RIGHT)    # 右臂
         self.left_manipulation_status  = manipulation_status(utilis.Device_id.LEFT)     # 左臂
-        # self.pose = pose                                                                # 3D位姿
-        self.image_recognition_status  = self.Common_status.IDLE                        # 图像识别状态,默认空闲
-        self.voice_recognition_status  = self.Common_status.IDLE                        # 语音识别状态,默认空闲
+        self.lossen_snack_point_status = self.Common_status.IDLE                        # 松开零食点状态
+
     
 
     # 获取2D位姿
