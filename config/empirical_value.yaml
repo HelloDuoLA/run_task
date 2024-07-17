@@ -1,0 +1,39 @@
+# 左臂抓容器
+left_arm_grip_container:
+  xyz: [390, 180, 360]
+
+# 左臂抓零食(上层)
+left_arm_grip_snack_top:
+  xyz: [0.0, 0.0, 0.0]
+
+# 左臂抓零食(下层)
+left_arm_grip_snack_bottom:
+  xyz: [0.0, 0.0, 0.0]
+
+# 左臂关闭咖啡机
+left_arm_turn_off_machine:
+  xyz: [320, 70, 480]
+
+# 左臂打开咖啡机
+left_arm_turn_on_machine:
+  xyz: [320, 70, 480]
+
+# 右臂抓容器
+right_arm_grip_container:
+  xyz: [340, -70, 360]
+  
+# 右臂抓杯子
+right_arm_grip_cup:
+  xyz: [420, -280, 220]
+
+# 右臂抓零食(上层)
+right_arm_grip_snack_top:
+  xyz: [0.0, 0.0, 0.0]
+
+# 右臂抓零食(下层)
+right_arm_grip_snack_bottom:
+  xyz: [0.0, 0.0, 0.0]
+
+# 右臂浇水
+right_arm_water_cup:
+  xyz: [310, 30, 230]
