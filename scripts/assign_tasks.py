@@ -895,14 +895,20 @@ class Order_driven_task_schedul():
         tasks_pick_snack        = task.Task_sequence()
         
         #  手臂移到空闲位, 并关闭夹爪
-        task_left_right_arms_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE, None, utilis.Device_id.LEFT_RIGHT, \
-            [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
-            [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ,\
+        task_left_arm_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE, None, utilis.Device_id.LEFT, \
+            [system.anchor_point.left_arm_idle],[arm.GripMethod.CLOSE,], arm_move_method = arm.ArmMoveMethod.XYZ,\
+                name="left arm move to idle prepare for pick snack")
+        
+        task_left_arm_idle.parallel = task.Task.Task_parallel.ALL  # 可并行
+        tasks_pick_snack.add(task_left_arm_idle)
+        
+        #  手臂移到空闲位, 并关闭夹爪
+        task_right_arm_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE, None, utilis.Device_id.RIGHT, \
+            [system.anchor_point.right_arm_idle],[arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="two arms move to idle prepare for pick snack")
         
-        task_left_right_arms_idle.set_subtask_count(2)                    # 两个子任务
-        task_left_right_arms_idle.parallel = task.Task.Task_parallel.ALL  # 可并行
-        tasks_pick_snack.add(task_left_right_arms_idle)
+        task_right_arm_idle.parallel = task.Task.Task_parallel.ALL  # 可并行
+        tasks_pick_snack.add(task_right_arm_idle)
         
         #  前往零食桌
         task_navigation_to_snack_desk  = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_snack_desk, None, \

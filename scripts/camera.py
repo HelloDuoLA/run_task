@@ -746,10 +746,10 @@ def init_camera():
     
     left_camera_id  = 4
     right_camera_id = 6
-    left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_V4L2)
-    right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_V4L2)    
-    # left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_GSTREAMER)
-    # right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_GSTREAMER)
+    # left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_V4L2)
+    # right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_V4L2)    
+    left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_GSTREAMER)
+    right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_GSTREAMER)
     
     
     frame_width     = rospy.get_param(f'~frame_width',  1280)
@@ -784,7 +784,7 @@ def init_empirical_value():
     global  ev_right_arm_grip_cup, ev_right_arm_grip_snack_top, ev_right_arm_grip_snack_bottom, ev_right_arm_water_cup
     
     ev_left_arm_grip_container    = _get_arm_empirical_value("left_arm_grip_container")
-    ev_left_arm_grip_snack_top    = _get_arm_empirical_value("left_arm_grip_snack_top ")
+    ev_left_arm_grip_snack_top    = _get_arm_empirical_value("left_arm_grip_snack_top")
     ev_left_arm_grip_snack_bottom = _get_arm_empirical_value("left_arm_grip_snack_bottom")
     ev_left_arm_turn_off_machine  = _get_arm_empirical_value("left_arm_turn_off_machine")
     ev_left_arm_turn_on_machine   = _get_arm_empirical_value("left_arm_turn_on_machine")
@@ -794,7 +794,7 @@ def init_empirical_value():
     ev_right_arm_grip_snack_bottom = _get_arm_empirical_value("right_arm_grip_snack_bottom")
     ev_right_arm_water_cup        = _get_arm_empirical_value("right_arm_water_cup")
 # 通过名字获取经验值
-def _get_arm_empirical_value(self,anchor_point_name):
+def _get_arm_empirical_value(anchor_point_name):
     xyz = rospy.get_param(f'~{anchor_point_name}/xyz')
     return xyz
 
@@ -817,6 +817,7 @@ def talker():
     init_camera()
     init_const()
     init_camera_calibration()
+    init_empirical_value()
 
     recognition_node = Recognition_node()
     

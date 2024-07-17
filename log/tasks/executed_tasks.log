@@ -1,4 +1,4 @@
-07-17 10:11:26
+07-17 10:33:45
 
 --------------------------------------------------
 
@@ -7,8 +7,8 @@ Task       : Task_manipulation Move_to_IDLE
 Name       : two arms move to idle prepare for pick snack
 Group_id   : 2
 Index      : 0
-Create_time: 1721182254.0776224
-Start_time : 1721182254.1756132
+Create_time: 1721183595.940694
+Start_time : 1721183596.0257494
 End_time   : -999
 Duration   : -999
 Finsih_cb  : None
@@ -29,32 +29,6 @@ Clamp_speed         : 50
 arm_move_method     : XYZ 
 click_length        : 0 
 
-
-Task       : Task_image_rec CONTAINER
-Name       : left camera rec container
-Group_id   : 2
-Index      : 5
-Create_time: 1721182254.0781586
-Start_time : 1721182280.7539632
-End_time   : -999
-Duration   : -999
-Finsih_cb  : None
-Status     : RUNNING
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: [3:Task_manipulation Rec_container] [1:Task_navigate Navigate_to_the_snack_desk] 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Camera_id: LEFT 
-Snack_list: []
-Need_modify_tasks: 
-          [12:Task_manipulation Lossen_snack]
-          [15:Task_manipulation Lossen_snack]
-          [17:Task_manipulation Grasp_container]
- 
 --------------------------------------------------
 
 

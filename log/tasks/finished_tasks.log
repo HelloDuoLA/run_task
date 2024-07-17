@@ -1,4 +1,4 @@
-07-17 10:11:26
+07-17 10:33:45
 
 --------------------------------------------------
 
@@ -7,10 +7,10 @@ Task       : Task_navigate Navigate_to_the_snack_desk
 Name       : navigation to snack desk
 Group_id   : 2
 Index      : 1
-Create_time: 1721182254.0778975
-Start_time : 1721182254.378046
-End_time   : 1721182276.5282526
-Duration   : 22.150206565856934
+Create_time: 1721183595.9409187
+Start_time : 1721183596.1966093
+End_time   : 1721183618.1548579
+Duration   : 21.958248615264893
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -27,10 +27,10 @@ Task       : Task_navigate Move_forward
 Name       : navigation move forward to snack desk
 Group_id   : 2
 Index      : 2
-Create_time: 1721182254.078003
-Start_time : 1721182276.6539152
-End_time   : 1721182278.2002602
-Duration   : 1.5463449954986572
+Create_time: 1721183595.9412086
+Start_time : 1721183618.205278
+End_time   : 1721183619.7700386
+Duration   : 1.564760684967041
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -47,10 +47,10 @@ Task       : Task_manipulation Rec_container
 Name       : left arm move to rec container
 Group_id   : 2
 Index      : 3
-Create_time: 1721182254.0780623
-Start_time : 1721182278.2626352
-End_time   : 1721182280.5926836
-Duration   : 2.3300483226776123
+Create_time: 1721183595.9413464
+Start_time : 1721183619.8196929
+End_time   : 1721183622.1604452
+Duration   : 2.340752363204956
 Finsih_cb  : None
 Status     : FINISHED
 Result     : FAILED
@@ -73,10 +73,10 @@ Task       : Task_manipulation Rec_container
 Name       : right arm move to rec container
 Group_id   : 2
 Index      : 4
-Create_time: 1721182254.0781093
-Start_time : 1721182278.327178
-End_time   : 1721182280.676988
-Duration   : 2.3498098850250244
+Create_time: 1721183595.9414508
+Start_time : 1721183619.900272
+End_time   : 1721183622.2552662
+Duration   : 2.354994297027588
 Finsih_cb  : None
 Status     : FINISHED
 Result     : FAILED
@@ -96,13 +96,39 @@ click_length        : 0
 
 
 Task       : Task_image_rec CONTAINER
+Name       : left camera rec container
+Group_id   : 2
+Index      : 5
+Create_time: 1721183595.9415276
+Start_time : 1721183622.3166127
+End_time   : 1721183623.031901
+Duration   : 0.7152881622314453
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: [3:Task_manipulation Rec_container] [1:Task_navigate Navigate_to_the_snack_desk] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Camera_id: LEFT 
+Snack_list: []
+Need_modify_tasks: 
+          [12:Task_manipulation Lossen_snack]
+          [15:Task_manipulation Lossen_snack]
+          [17:Task_manipulation Grasp_container]
+ 
+
+Task       : Task_image_rec CONTAINER
 Name       : right camera rec container
 Group_id   : 2
 Index      : 6
-Create_time: 1721182254.0782123
-Start_time : 1721182280.8118942
-End_time   : 1721182284.538414
-Duration   : 3.726519823074341
+Create_time: 1721183595.9416156
+Start_time : 1721183622.3917167
+End_time   : 1721183623.63812
+Duration   : 1.2464032173156738
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -122,13 +148,39 @@ Need_modify_tasks:
  
 
 Task       : Task_manipulation Rec_snack
+Name       : left arm move to rec snack
+Group_id   : 2
+Index      : 7
+Create_time: 1721183595.9417593
+Start_time : 1721183623.2133722
+End_time   : 1721183624.97405
+Duration   : 1.7606778144836426
+Finsih_cb  : None
+Status     : FINISHED
+Result     : FAILED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: [5:Task_image_rec CONTAINER] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0.5
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-80.1, -17.86, -145.64, 119.68, 79.12, 52.44] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
+
+
+Task       : Task_manipulation Rec_snack
 Name       : right arm move to rec snack
 Group_id   : 2
 Index      : 8
-Create_time: 1721182254.0782986
-Start_time : 1721182284.661472
-End_time   : 1721182286.4695916
-Duration   : 1.808119535446167
+Create_time: 1721183595.9418297
+Start_time : 1721183623.7174034
+End_time   : 1721183625.5425034
+Duration   : 1.8250999450683594
 Finsih_cb  : None
 Status     : FINISHED
 Result     : FAILED
