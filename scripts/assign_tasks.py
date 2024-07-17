@@ -345,13 +345,14 @@ class Navigation_actuator():
 # 机械臂执行器 
 class Manipulator_actuator():
     def __init__(self):
+        global left_arm_pub,right_arm_pub
         # 手臂任务发布 
-        self.left_arm_pub = rospy.Publisher(utilis.Topic_name.left_arm_topic,msg.ArmMoveRequest,queue_size=10)
-        self.right_arm_pub = rospy.Publisher(utilis.Topic_name.right_arm_topic,msg.ArmMoveRequest,queue_size=10)
+        left_arm_pub = rospy.Publisher(utilis.Topic_name.left_arm_topic,msg.ArmMoveRequest,queue_size=10)
+        right_arm_pub = rospy.Publisher(utilis.Topic_name.right_arm_topic,msg.ArmMoveRequest,queue_size=10)
         
         # 手臂结果接受
-        self.left_arm_sub  = rospy.Subscriber(utilis.Topic_name.left_arm_result,msg.ArmMoveResult ,self.do_left_arm_move_result, queue_size=10)
-        self.right_arm_sub = rospy.Subscriber(utilis.Topic_name.right_arm_result,msg.ArmMoveResult,self.do_right_arm_move_result,queue_size=10)
+        left_arm_sub  = rospy.Subscriber(utilis.Topic_name.left_arm_result,msg.ArmMoveResult ,do_left_arm_move_result, queue_size=10)
+        right_arm_sub = rospy.Subscriber(utilis.Topic_name.right_arm_result,msg.ArmMoveResult,do_right_arm_move_result,queue_size=10)
         
         self.running_tasks_manager = task.Task_manager_in_running() # 正在执行的任务管理器
     
@@ -382,7 +383,7 @@ class Manipulator_actuator():
             goal.grasp_speed          = manipulation_task.clamp_speed
             goal.arm_move_method      = manipulation_task.arm_move_method.value
             goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
-            self.left_arm_pub.publish(goal)
+            left_arm_pub.publish(goal)
             rospy.loginfo(f"left_arm_pub send goal")
         # 右臂
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
@@ -396,7 +397,7 @@ class Manipulator_actuator():
             goal.grasp_speed          = manipulation_task.clamp_speed
             goal.arm_move_method      = manipulation_task.arm_move_method.value
             goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
-            self.right_arm_pub.publish(goal)
+            right_arm_pub.publish(goal)
             rospy.loginfo(f"right_arm_pub send goal")
             
         elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
@@ -422,86 +423,84 @@ class Manipulator_actuator():
                     right_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
 
-            self.left_arm_pub.publish(left_goal)
-            time.sleep(0.1)
-            self.right_arm_pub.publish(right_goal)
+            left_arm_pub.publish(left_goal)
+            right_arm_pub.publish(right_goal)
             rospy.loginfo(f"right_arm_pub send goal")
             rospy.loginfo(f"left_arm_pub send goal")
 
 
-    # 左臂接受结果信息
-    @staticmethod
-    def do_left_arm_move_result(result:msg.ArmMoveResult):
-        rospy.loginfo(f"left arm move get result : task index {result.task_index}")
+# 左臂接受结果信息
+def do_left_arm_move_result(result:msg.ArmMoveResult):
+    rospy.loginfo(f"left arm move get result : task index {result.task_index}")
 
-        current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
-        
-        # 任务完成暂停时间
-        if current_task.sleep_time_after_task != 0:
-            time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task index {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
-        else:
-            rospy.loginfo(f"task index {current_task.task_index} not sleep")
-            
-        try:
-            current_task.update_end_status(task.Task.Task_result.FAILED)
-        except Exception as e:
-            rospy.logerr(f"Exception in done_cb: {e}")
-            current_task.update_end_status(task.Task.Task_result.FAILED)
-            
-        # 任务自带的回调
-        if current_task.finish_cb != None:
-            current_task.finish_cb(None, result)
-        
-        # 删除任务
-        # 有可能同一个任务被删除两次
-        try:
-            if current_task.if_finished():
-                rospy.loginfo(f"del task index {result.task_index} in running_tasks_manager OK")
-                system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
-            else :
-                rospy.loginfo(f"task index{result.task_index} is not finished, keep in running list")
-        except:
-            rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task index {result.task_index} in running_tasks_manager error")
-        
-        # 给任务管理器的回调
-        system.task_manager.tm_task_finish_callback(current_task, None, result)
+    current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
     
-    @staticmethod
-    # 右臂接受结果信息
-    def do_right_arm_move_result(result:msg.ArmMoveResult):
-        rospy.loginfo(f"right arm move get result : task index {result.task_index}")
-
-        current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
-        # 任务完成暂停时间
-        if current_task.sleep_time_after_task != 0:
-            time.sleep(current_task.sleep_time_after_task)
-            rospy.loginfo(f"task index {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
-        else:
-            rospy.loginfo(f"task index {current_task.task_index} not sleep")
-            
-        try:
-            current_task.update_end_status(task.Task.Task_result.FAILED)
-        except Exception as e:
-            rospy.logerr(f"Exception in done_cb: {e}")
-            current_task.update_end_status(task.Task.Task_result.FAILED)
-        # 任务自带的回调
-        if current_task.finish_cb != None:
-            current_task.finish_cb(None, result)
-
-            
-        # 删除任务
-        try:
-            if current_task.if_finished():
-                rospy.loginfo(f"del task index {result.task_index} in running_tasks_manager OK")
-                system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
-            else :
-                rospy.loginfo(f"task index {result.task_index} is not finished, keep in running list")
-        except:
-            rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task index {result.task_index} in running_tasks_manager error")
+    # 任务完成暂停时间
+    if current_task.sleep_time_after_task != 0:
+        time.sleep(current_task.sleep_time_after_task)
+        rospy.loginfo(f"task index {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
+    else:
+        rospy.loginfo(f"task index {current_task.task_index} not sleep")
         
-        # 给任务管理器的回调
-        system.task_manager.tm_task_finish_callback(current_task, None, result)
+    try:
+        current_task.update_end_status(task.Task.Task_result.FAILED)
+    except Exception as e:
+        rospy.logerr(f"Exception in done_cb: {e}")
+        current_task.update_end_status(task.Task.Task_result.FAILED)
+        
+    # 任务自带的回调
+    if current_task.finish_cb != None:
+        current_task.finish_cb(None, result)
+    
+    # 删除任务
+    # 有可能同一个任务被删除两次
+    try:
+        if current_task.if_finished():
+            rospy.loginfo(f"del task index {result.task_index} in running_tasks_manager OK")
+            system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
+        else :
+            rospy.loginfo(f"task index{result.task_index} is not finished, keep in running list")
+    except:
+        rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task index {result.task_index} in running_tasks_manager error")
+    
+    # 给任务管理器的回调
+    system.task_manager.tm_task_finish_callback(current_task, None, result)
+
+
+# 右臂接受结果信息
+def do_right_arm_move_result(result:msg.ArmMoveResult):
+    rospy.loginfo(f"right arm move get result : task index {result.task_index}")
+
+    current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
+    # 任务完成暂停时间
+    if current_task.sleep_time_after_task != 0:
+        time.sleep(current_task.sleep_time_after_task)
+        rospy.loginfo(f"task index {current_task.task_index} sleep for {current_task.sleep_time_after_task} second after task")
+    else:
+        rospy.loginfo(f"task index {current_task.task_index} not sleep")
+        
+    try:
+        current_task.update_end_status(task.Task.Task_result.FAILED)
+    except Exception as e:
+        rospy.logerr(f"Exception in done_cb: {e}")
+        current_task.update_end_status(task.Task.Task_result.FAILED)
+    # 任务自带的回调
+    if current_task.finish_cb != None:
+        current_task.finish_cb(None, result)
+
+        
+    # 删除任务
+    try:
+        if current_task.if_finished():
+            rospy.loginfo(f"del task index {result.task_index} in running_tasks_manager OK")
+            system.manipulator_actuator.running_tasks_manager.del_task(result.task_index)
+        else :
+            rospy.loginfo(f"task index {result.task_index} is not finished, keep in running list")
+    except:
+        rospy.loginfo(f"!!!!!!!!!!!!!!!!!!!!del task index {result.task_index} in running_tasks_manager error")
+    
+    # 给任务管理器的回调
+    system.task_manager.tm_task_finish_callback(current_task, None, result)
     
 
 # 图像识别任务执行器
