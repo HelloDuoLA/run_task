@@ -9,7 +9,7 @@
     <!-- 识别模块 -->
     <include file="$(find run_task)/launch/camera.launch" /> 
     <!-- 安排模块 -->
-    <include file="$(find run_task)/launch/assgin_task.launch" /> 
+    <include file="$(find run_task)/launch/assign_tasks.launch" /> 
     <!-- 控制倒车模块 -->
     <include file="$(find run_task)/launch/control_cmd.launch" /> 
 

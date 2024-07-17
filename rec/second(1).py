@@ -27,9 +27,9 @@ with rep.new_layer():
         rep.modify.semantics([("class", "ckool")])
         with ckool_y:
             rep.modify.pose(
-                position=rep.distribution.uniform((-1.3, 2.2, 0.9), (-1.1, 2.2, 1.1)),
                 # position=(-0.91, 2.18, 0.96),
                 # position=rep.distribution.uniform((-1.9, 2.16, 0.6), (-1.9, 2.2, 0.8)),
+                position=rep.distribution.uniform((-1.1, 2.2, 0.9), (-0.9, 2.2, 1.1)),
                 rotation=rep.distribution.uniform((0, 0, 0), (0, 0, 0)),
                 scale=rep.distribution.uniform(0.03, 0.04)
             )
@@ -62,7 +62,7 @@ with rep.new_layer():
         rep.modify.semantics([("class", "ckool")])
         with ckool_p:
             rep.modify.pose(
-                position=rep.distribution.uniform((-1.3, 2.2, 0.9), (-1.1, 2.2, 1.1)),
+                position=rep.distribution.uniform((-1.1, 2.2, 0.9), (-0.9, 2.2, 1.1)),
                 rotation=rep.distribution.uniform((0, 0, 0), (0, 0, 0)),
                 scale=rep.distribution.uniform(0.03, 0.04)
             )
@@ -95,16 +95,97 @@ with rep.new_layer():
         rep.modify.semantics([("class", "chenpidan")])
         with chenpidan_y:
             rep.modify.pose(
-                position=rep.distribution.uniform((-1.5, 2.16, 0.8), (-1.3, 2.23, 1.3)),
-                rotation=rep.distribution.uniform((0, 0, 0), (0, 360, 0)),
-                scale=rep.distribution.uniform(0.04, 0.05)
+                position=rep.distribution.uniform((-0.7, 2.16, 0.9), (-0.5, 2.23, 1.1)),
+                rotation=rep.distribution.uniform((0, 0, 0), (0, 0, 0)),
+                scale=rep.distribution.uniform(0.03, 0.04)
             )
         return chenpidan_y.node
-
-
     rep.randomizer.register(env_chenpidan_y)
 
+    def env_guodong_o(size=5):
+        guodong_o = rep.randomizer.instantiate(
+            rep.utils.get_usd_files(GUODONG_O, recursive=False),
+            size=size,
+            mode="scene_instance",
+        )
+        rep.modify.semantics([("class", "guodong")])
+        with guodong_o:
+            rep.modify.pose(
+                position=rep.distribution.uniform((-1.2, 2.2, 0.9), (-1.0, 2.2, 1.1)),
+                rotation=rep.distribution.uniform((0, 0, 0), (0, 0, 0)),
+                scale=rep.distribution.uniform(0.03, 0.04)
+            )
+        return guodong_o.node
+    rep.randomizer.register(env_guodong_o)
+
+    def env_guodong_p(size=5):
+        guodong_p = rep.randomizer.instantiate(
+            rep.utils.get_usd_files(GUODONG_P, recursive=False),
+            size=size,
+            mode="scene_instance",
+        )
+        rep.modify.semantics([("class", "guodong")])
+        with guodong_p:
+            rep.modify.pose(
+                position=rep.distribution.uniform((-1.7, 2.16, 0.9), (-1.5, 2.23, 1.1)),
+                rotation=rep.distribution.uniform((0, 0, 0), (0, 0, 0)),
+                scale=rep.distribution.uniform(0.03, 0.04)
+            )
+        return guodong_p.node
+    rep.randomizer.register(env_guodong_p)
+
+    def env_yida_o(size=5):
+        yida_o = rep.randomizer.instantiate(
+            rep.utils.get_usd_files(YIDA_O, recursive=False),
+            size=size,
+            mode="scene_instance",
+        )
+
+        with yida_o:
+            rep.modify.semantics([("class", "yida")])
+            rep.modify.pose(
+                position=rep.distribution.uniform((-0.7, 2.16, 0.9), (-0.5, 2.23, 1.1)),
+                rotation=rep.distribution.uniform((0, 0, 0), (0, 0, 0)),
+                scale=rep.distribution.uniform(0.03, 0.04)
+            )
+        return yida_o.node
+    rep.randomizer.register(env_yida_o)
+
+    def env_yida_r(size=5):
+        yida_r = rep.randomizer.instantiate(
+            rep.utils.get_usd_files(YIDA_R, recursive=False),
+            size=size,
+            mode="scene_instance",
+        )
+
+        with yida_r:
+            rep.modify.semantics([("class", "yida")])
+            rep.modify.pose(
+                position=rep.distribution.uniform((-1.2, 2.2, 0.9), (-1.0, 2.2, 1.1)),
+                rotation=rep.distribution.uniform((0, 0, 0), (0, 0, 0)),
+                scale=rep.distribution.uniform(0.03, 0.04)
+            )
+        return yida_r.node
+    rep.randomizer.register(env_yida_r)
+
+    def env_yiliduo(size=5):
+        yiliduo = rep.randomizer.instantiate(
+            rep.utils.get_usd_files(YILIDUO, recursive=False),
+            size=size,
+            mode="scene_instance",
+        )
+        # rep.modify.semantics([("class", "yiliduo")])
+
+        with yiliduo:
+            rep.modify.semantics([("class", "yiliduo")])
+            rep.modify.pose(
+                position=rep.distribution.uniform((-1.7, 2.16, 0.9), (-1.5, 2.23, 1.1)),
+                rotation=rep.distribution.uniform((0, 0, 0), (0, 0, 0)),
+                scale=rep.distribution.uniform(0.03, 0.04)
+            )
+        return yiliduo.node
     # Setup camera and attach it to render product
+    rep.randomizer.register(env_yiliduo)
 
     # sphere lights for bonus challenge randomization
     def sphere_lights(num):
@@ -143,12 +224,17 @@ with rep.new_layer():
     camera = rep.create.camera(position=sequential_pos[0], look_at=look_at_postion)
     render_product = rep.create.render_product(camera, resolution=(1280, 960))
     # trigger on frame for an interval
-    with rep.trigger.on_frame(num_frames=100):
+    with rep.trigger.on_frame(num_frames=850):
         # rep.randomizer.env_ckool_y(1)
         # rep.randomizer.env_ckool_r(1)
-        rep.randomizer.env_ckool_p(1)
-        rep.randomizer.env_chenpidan_r(1)
-        # rep.randomizer.env_chenpidan_y(1)
+        # rep.randomizer.env_ckool_p(1)
+        # rep.randomizer.env_chenpidan_r(1)
+        rep.randomizer.env_chenpidan_y(1)
+        rep.randomizer.env_guodong_o(1)
+        rep.randomizer.env_guodong_p(1)
+        # rep.randomizer.env_yida_o(1)
+        # rep.randomizer.env_yida_r(1)
+        # rep.randomizer.env_yiliduo(1)
 
 
         rep.randomizer.sphere_lights(10)
