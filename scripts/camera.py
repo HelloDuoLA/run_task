@@ -670,6 +670,13 @@ def STag_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LE
         [-tag_size/2, tag_size/2 ,  0]
     ], dtype=np.float32)
     
+    # objectPoints = np.array([
+    #     [-tag_size/2, tag_size/2,  0],
+    #     [tag_size/2 , tag_size/2,  0],
+    #     [tag_size/2 , -tag_size/2 ,  0],
+    #     [-tag_size/2, -tag_size/2 ,  0]
+    # ], dtype=np.float32)
+    
     
     (corners_list, ids, rejected_corners_list) = stag.detectMarkers(image, libraryHD)
     
@@ -704,7 +711,7 @@ def STag_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LE
         log.log_stag_result(f'{image_name}_STag.txt',f"Index: {i}, ID: {id[0]}\n")
         imagePoints  = corners_list[i]
         # flags=cv2.SOLVEPNP_IPPE_SQUARE # 参数有毒
-        success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
+        success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs,flags=cv2.SOLVEPNP_IPPE_SQUARE)
         if success:
             stag_result = STag_result(device_id, id[0], (imagePoints[0][0] + imagePoints[0][2])/2, [translationVector[0][0],translationVector[1][0],translationVector[2][0]])
             stag_result_list.add(stag_result)
@@ -748,7 +755,19 @@ def init_camera():
     left_camera_id  = 4
     right_camera_id = 6
     # left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_V4L2)
-    # right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_V4L2)    
+    # right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_V4L2)  
+    #     gst_str = ('v4l2src device=/dev/video1 ! '
+            #    'video/x-raw, width=(int)640, height=(int)480, format=(string)BGR ! '
+            #    'videoconvert ! appsink')  
+    # gst_str = (
+    # 'v4l2src device=/dev/video1 ! '  # 从指定设备捕获视频
+    # 'video/x-raw, width=(int)640, height=(int)480, format=(string)BGR ! '  # 设置捕获的视频格式和分辨率
+    # 'nvvidconv ! '  # 使用nvvidconv进行硬件加速的视频格式转换
+    # 'video/x-raw(memory:NVMM), format=(string)NV12 ! '  # 转换为NV12格式，适用于NVIDIA硬件
+    # 'nvvidconv ! '  # 再次使用nvvidconv将视频转换为适合OpenCV处理的格式
+    # 'video/x-raw, format=(string)BGR ! '  # 转换为OpenCV期望的BGR格式
+    # 'apps
+    
     left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_GSTREAMER)
     right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_GSTREAMER)
     
