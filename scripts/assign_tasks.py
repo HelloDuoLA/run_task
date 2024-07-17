@@ -340,7 +340,7 @@ class Manipulator_actuator():
     def __init__(self):
         global left_arm_pub,right_arm_pub
         # 手臂任务发布 
-        left_arm_pub = rospy.Publisher(utilis.Topic_name.left_arm_topic,msg.ArmMoveRequest, queue_size=10)
+        left_arm_pub  = rospy.Publisher(utilis.Topic_name.left_arm_topic,msg.ArmMoveRequest, queue_size=10)
         right_arm_pub = rospy.Publisher(utilis.Topic_name.right_arm_topic,msg.ArmMoveRequest, queue_size=10)
         
         # 手臂结果接受
@@ -888,17 +888,15 @@ class Order_driven_task_schedul():
         
         #  手臂移到空闲位, 并关闭夹爪
         task_left_arm_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE, None, utilis.Device_id.LEFT, \
-            [system.anchor_point.left_arm_idle],[arm.GripMethod.CLOSE,], arm_move_method = arm.ArmMoveMethod.XYZ,\
+            system.anchor_point.left_arm_idle,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="left arm move to idle prepare for pick snack")
-        
         task_left_arm_idle.parallel = task.Task.Task_parallel.ALL  # 可并行
         tasks_pick_snack.add(task_left_arm_idle)
         
         #  手臂移到空闲位, 并关闭夹爪
         task_right_arm_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE, None, utilis.Device_id.RIGHT, \
-            [system.anchor_point.right_arm_idle],[arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ,\
-                name="two arms move to idle prepare for pick snack")
-        
+            system.anchor_point.right_arm_idle,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
+                name="right arm move to idle prepare for pick snack")
         task_right_arm_idle.parallel = task.Task.Task_parallel.ALL  # 可并行
         tasks_pick_snack.add(task_right_arm_idle)
         
