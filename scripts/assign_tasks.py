@@ -340,7 +340,7 @@ class Manipulator_actuator():
     def __init__(self):
         global left_arm_pub,right_arm_pub
         # 手臂任务发布 
-        left_arm_pub  = rospy.Publisher(utilis.Topic_name.left_arm_topic,msg.ArmMoveRequest, queue_size=10)
+        left_arm_pub  = rospy.Publisher(utilis.Topic_name.left_arm_topic, msg.ArmMoveRequest, queue_size=10)
         right_arm_pub = rospy.Publisher(utilis.Topic_name.right_arm_topic,msg.ArmMoveRequest, queue_size=10)
         
         # 手臂结果接受
@@ -366,31 +366,33 @@ class Manipulator_actuator():
 
         # 左臂
         if manipulation_task.arm_id == utilis.Device_id.LEFT:
-            # 设置action 目标
-            goal                      = msg.ArmMoveRequest()
-            goal.task_index           = task_index
-            goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0].arm_pose
-            goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
-            goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
-            goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
-            goal.grasp_speed          = manipulation_task.clamp_speed
-            goal.arm_move_method      = manipulation_task.arm_move_method.value
-            goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
-            left_arm_pub.publish(goal)
+            # 设置手臂 目标
+            left_goal                      = msg.ArmMoveRequest()
+            left_goal.task_index           = task_index
+            left_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0].arm_pose
+            left_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
+            left_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
+            left_goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
+            left_goal.grasp_speed          = manipulation_task.clamp_speed
+            left_goal.arm_move_method      = manipulation_task.arm_move_method.value
+            left_goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
+            
+            rospy.loginfo(f"left_arm_pub type {type(left_arm_pub)}")
+            left_arm_pub.publish(left_goal)
             rospy.loginfo(f"left_arm_pub send goal")
         # 右臂
         elif manipulation_task.arm_id == utilis.Device_id.RIGHT:
             # 设置action 目标
-            goal                      = msg.ArmMoveRequest()
-            goal.task_index           = task_index
-            goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0].arm_pose
-            goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
-            goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
-            goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
-            goal.grasp_speed          = manipulation_task.clamp_speed
-            goal.arm_move_method      = manipulation_task.arm_move_method.value
-            goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
-            right_arm_pub.publish(goal)
+            right_goal                      = msg.ArmMoveRequest()
+            right_goal.task_index           = task_index
+            right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[0].arm_pose
+            right_goal.arm_pose.type_id     = manipulation_task.target_arms_pose[0].type_id.value
+            right_goal.arm_pose.arm_id      = manipulation_task.target_arms_pose[0].arm_id.value
+            right_goal.grasp_flag           = manipulation_task.target_clamps_status[0].value
+            right_goal.grasp_speed          = manipulation_task.clamp_speed
+            right_goal.arm_move_method      = manipulation_task.arm_move_method.value
+            right_goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
+            right_arm_pub.publish(right_goal)
             rospy.loginfo(f"right_arm_pub send goal")
             
         elif manipulation_task.arm_id == utilis.Device_id.LEFT_RIGHT:
