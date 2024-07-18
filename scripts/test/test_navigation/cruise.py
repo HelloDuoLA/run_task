@@ -320,10 +320,56 @@ def get_transform_xy_yaw(target_frame, source_frame):
     except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
         rospy.logerr(e)
         return None, None, None
+    
+def get_current_position():
+    # rospy.init_node('transform_listener', anonymous=True)
 
+    tf_buffer = tf2_ros.Buffer()
+    listener = tf2_ros.TransformListener(tf_buffer)
+    target_frame = "map"
+    source_frame = "base_footprint"
+    try:
+        # 等待变换关系变得可用
+        trans = tf_buffer.lookup_transform(target_frame, source_frame, rospy.Time(0), rospy.Duration(4.0))
+        # 提取xy位置
+        x = trans.transform.translation.x
+        y = trans.transform.translation.y
+        z = trans.transform.translation.z
+        # 提取四元数
+        quaternion = (
+            trans.transform.rotation.x,
+            trans.transform.rotation.y,
+            trans.transform.rotation.z,
+            trans.transform.rotation.w
+        )
+        # 四元数转欧拉角，提取yaw
+        rospy.loginfo(f"\nposition_x: {x:.5f}\n"
+                      f"position_y: {y:.5f}\n"
+                      f"position_z: {z:.5f}\n"
+                      f"orientation_x: {trans.transform.rotation.x:.5f}\n"
+                      f"orientation_y: {trans.transform.rotation.y:.5f}\n"
+                      f"orientation_z: {trans.transform.rotation.z:.5f}\n"
+                      f"orientation_w: {trans.transform.rotation.w:.5f}\n"
+                      )
+    except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
+        rospy.logerr(e)
+        
+def talker2():
+    # 初始化节点，命名为'talker'
+    rospy.init_node('get_current_position')
+
+    # 设置发布消息的频率，1Hz
+    rate = rospy.Rate(1)
+
+    while not rospy.is_shutdown():
+        # rospy.loginfo("arm")
+        get_current_position()
+        # 按照设定的频率延时
+        rate.sleep()
 
 if __name__ == '__main__':
     try:
         talker()
+        # talker2()
     except rospy.ROSInterruptException:
         pass
