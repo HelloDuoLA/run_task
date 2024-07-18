@@ -11,10 +11,10 @@ from tf.transformations import euler_matrix
 def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
     # 假设的三维点 (例如，一个简单的正方形)
     objectPoints = np.array([
-        [-tag_size/2, -tag_size/2,  0],
-        [tag_size/2 , -tag_size/2,  0],
-        [tag_size/2 , tag_size/2 ,  0],
-        [-tag_size/2, tag_size/2 ,  0]
+        [-tag_size/2, tag_size/2,    0],
+        [tag_size/2 , tag_size/2,    0],
+        [tag_size/2 , -tag_size/2 ,  0],
+        [-tag_size/2, -tag_size/2 ,  0]
     ], dtype=np.float32)
     
     print(objectPoints)
@@ -52,7 +52,7 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
             print(f"Index: {i}, ID: {id[0]}")
             file.write(f"Index: {i}, ID: {id[0]}\n")
             imagePoints  = corners_list[i]
-            success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
+            success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs,flags=cv2.SOLVEPNP_IPPE_SQUARE)
             if success:
                 xyz_list_with_id.append([id[0],translationVector.flatten().tolist()])
                 # print(translationVector)
@@ -123,8 +123,8 @@ if __name__ == "__main__":
     # print(xyz_list[0][0])
     # print(xyz_list[0][1])
     new_xyz_list = []
-    base_coords_left        = [360, 170, 500, -180, 0.0, -90]
-    base_coords_right       = [360, -170, 500, -180, 0.0, 90]
+    base_coords_left        = [360, 170, 550, -180, 0.0, -90]
+    base_coords_right       = [360, -170, 550, -180, 0.0, 90]
     yaw = -(-90)
     
     for i in range(len(xyz_list)):
@@ -134,20 +134,19 @@ if __name__ == "__main__":
             print("left")
             print(f"left   arm end pose {base_coords_left[:3]}")
             print(f"stag xyz : {xyz}")
-            print(f"shousuan    xyz:{base_coords_left[0] + xyz[0] + 50}  {base_coords_left[1] - xyz[1] +112 } {360}")
+            print(f"shousuan    xyz:{base_coords_left[0] + xyz[0] + 50 -70}  {base_coords_left[1] - xyz[1] +112 +24} {360}")
             print("right")
             print(f"stag xyz : {xyz}")
             print(f"right  arm end pose {base_coords_right[:3]}")
-            print(f"shousuan    xyz:{base_coords_right[0] - xyz[0] - 60}  {base_coords_right[1] + xyz[1] + 28} {360}\r\n\r\n")
+            print(f"shousuan    xyz:{base_coords_right[0] - xyz[0] -10}  {base_coords_right[1] + xyz[1] + 28} {360}\r\n\r\n")
     
 # 左臂
-    # 测量 377.1903549671729  198.06082067219978 370
-    # 实际 400, 190, 360, -180, 0.0, -90
-
+    # 测量 417.6091392309916  181.90436435986203 360
+    # 实际 350, 205, 360
 
 # 右臂
-    # 测量 374.12324680506197  -53.320242449382704 370
-    # 实际[330.0, -90, 370, -180, 0, 90]
+    # 测量 363.65428888818434  -74.73163299738266 360
+    # 实际 [425, -74, 360, -180, 0.0, 90]
     
 
 # 01 通过

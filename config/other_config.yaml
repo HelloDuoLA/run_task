@@ -26,9 +26,9 @@ SnackDeckMoveforward:
   time : 2
 
 DrinkDeckMoveforward:
-  x  : 20
+  x  : 0.2
   yaw: 0
-  time : 2
+  time : 0.2
 
 LeftDeckMoveforward:
   x  : 20

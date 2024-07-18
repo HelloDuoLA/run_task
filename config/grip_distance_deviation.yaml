@@ -7,14 +7,14 @@ LeftArmGripSnack:
 # 左臂松零食
 # 相对于抓容器的位置
 LeftArmLossenSnack:
-  x_bias: -40
+  x_bias: 0
   y_bias: -40
   z_bias: 20  # 380
 
 # 左臂抓容器
 LeftArmGripContainer:
-  x_bias : 40
-  y_bias : 112
+  x_bias : -20
+  y_bias : 136
   z_const: 360
 
 # 左臂准备 开 咖啡开关
@@ -42,14 +42,14 @@ RightArmGripSnack:
 # 右臂松零食
 # 相对于抓容器的位置
 RightArmLossenSnack:
-  x_bias: 40
+  x_bias: 0
   y_bias: 40
   z_bias: 20  # 380
 
 # 右臂抓容器
 RightArmGripContainer:
-  x_bias : -65
-  y_bias : -25
+  x_bias : -10
+  y_bias : +28
   z_const: 360
 
 
