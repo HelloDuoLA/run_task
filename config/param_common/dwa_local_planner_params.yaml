@@ -23,7 +23,7 @@ DWAPlannerROS:
   latch_xy_goal_tolerance: false #设置为true时表示：如果到达容错距离内,机器人就会原地旋转；即使转动是会跑出容错距离外。
 
   #前向模拟参数
-  sim_time:  2        #前向模拟轨迹的时间，单位为：s
+  sim_time:  2.5        #前向模拟轨迹的时间，单位为：s
   vx_samples: 6       #x方向速度空间的采样点数
   vy_samples: 0       #y方向速度空间采样点数.。差分驱动机器人y方向永远只有1个值（0.0）
   vtheta_samples: 20  #旋转方向的速度空间采样点数
