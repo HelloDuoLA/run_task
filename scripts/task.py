@@ -309,6 +309,8 @@ class Task_image_rec(Task):
     class Rec_OBJ_type(Enum):
         LOSSEN_SNACK   = 0        # 松开零食
         CONTAINER      = auto()   # 容器
+        CONTAINER_LEFT = auto()   # 容器左端
+        CONTAINER_RIGHT= auto()   # 容器右端
         MACHINE_SWITCH = auto()   # 机器开关
         CUP            = auto()   # 杯子
         WATER_POINT    = auto()   # 接水点

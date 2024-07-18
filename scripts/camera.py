@@ -61,6 +61,8 @@ class STag_result_list():
     
     STag_other_enum_2_stag_num = {
         task.Task_image_rec.Rec_OBJ_type.CONTAINER :     9,
+        task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT: 9,
+        task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT:9,
         task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH: 6,
         task.Task_image_rec.Rec_OBJ_type.CUP:            2,
         task.Task_image_rec.Rec_OBJ_type.WATER_POINT:    11
@@ -134,16 +136,16 @@ class STag_result_list():
         elif rec_task_type == task.Task_type.Task_image_rec.CONTAINER:
             if arm_id == utilis.Device_id.LEFT:
                 # 左手
-                new_stag_result_list = [ ]
+                new_stag_result_list = []
                 for i in range(len(self.stag_result_list)):
                     stag_result = copy.deepcopy(self.stag_result_list[i]) 
                     # 寻找容器STag
-                    if stag_result.stag_id == self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER]:
+                    if stag_result.stag_id == self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT]:
 
                         stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[0] + LeftArmGripContainer.x # x = x + x + bias
                         stag_result.base_coords[1] = arm_poses[1] - stag_result.image_coords[1] + LeftArmGripContainer.y # y = y - y + bias
                         stag_result.base_coords[2] = LeftArmGripContainer.const_z                     #固定z坐标
-                        stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
+                        stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT.value
                         new_stag_result_list.append(stag_result)
                         # 记录经验值
                         log.log_empirical_value_left_arm_grip_container(stag_result.base_coords)
@@ -163,10 +165,10 @@ class STag_result_list():
                 # 使用经验值(没有识别到容器框)
                 if len(new_stag_result_list) == 0:
                     rospy.loginfo("No container STag detected!!!!!!! use experience value")
-                    stag_result          = STag_result(utilis.Device_id.LEFT, self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER])
-                    stag_result.stag_id  =  self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER]
+                    stag_result          = STag_result(utilis.Device_id.LEFT, self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT])
+                    stag_result.stag_id  =  self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT]
                     stag_result.base_coords = ev_left_arm_grip_container                  
-                    stag_result.obj_id    = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
+                    stag_result.obj_id    = task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT.value
                     new_stag_result_list.append(stag_result)
                     
                     # 零食放置点
@@ -185,11 +187,11 @@ class STag_result_list():
                 for i in range(len(self.stag_result_list)):
                     stag_result = copy.deepcopy(self.stag_result_list[i]) 
                     # 寻找容器STag
-                    if stag_result.stag_id == self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER]:
+                    if stag_result.stag_id == self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT]:
                         stag_result.base_coords[0] = arm_poses[0] - stag_result.image_coords[0] + RightArmGripContainer.x # x = x - x + bias
                         stag_result.base_coords[1] = arm_poses[1] + stag_result.image_coords[1] + RightArmGripContainer.y # y = y + y + bias
                         stag_result.base_coords[2] = RightArmGripContainer.const_z                     #固定z坐标
-                        stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
+                        stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT.value
                         new_stag_result_list.append(stag_result)
                         # 记录经验值
                         log.log_empirical_value_right_arm_grip_container(stag_result.base_coords)
@@ -205,14 +207,13 @@ class STag_result_list():
                         # 记录经验值
                         log.log_empirical_value_right_arm_lossen_snack(put_snack_point.base_coords)
                 
-                # TODO:加入经验值
-                                # 使用经验值(没有识别到容器框)
+                # 使用经验值(没有识别到容器框)
                 if len(new_stag_result_list) == 0:
                     rospy.loginfo("No container STag detected!!!!!!!! use experience value")
-                    stag_result             = STag_result(utilis.Device_id.RIGHT, self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER])
-                    stag_result.stag_id     = self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER]
+                    stag_result             = STag_result(utilis.Device_id.RIGHT, self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT])
+                    stag_result.stag_id     = self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT]
                     stag_result.base_coords = ev_right_arm_grip_container                  
-                    stag_result.obj_id      = task.Task_image_rec.Rec_OBJ_type.CONTAINER.value
+                    stag_result.obj_id      = task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT.value
                     new_stag_result_list.append(stag_result)
                     
                     # 零食放置点
