@@ -1516,7 +1516,7 @@ def test_order_snack():
     # order_info2.table_id = utilis.Device_id.RIGHT
     order_info2.table_id = utilis.Device_id.LEFT
 
-    tasks = system.order_driven_task_schedul.add_task(order_info)
+    # tasks = system.order_driven_task_schedul.add_task(order_info)
     tasks2 = system.order_driven_task_schedul.add_task(order_info2)
     # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
 
