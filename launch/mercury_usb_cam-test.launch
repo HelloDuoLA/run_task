@@ -10,7 +10,7 @@
   </node> -->
 
   <arg name="image_width" default="1280"/>
-  <arg name="image_height" default="720"/>
+  <arg name="image_height" default="960"/>
   
   <!-- elephant bottom  /dev/video2  left /dev/video4  right /dev/video6-->
   <node name="usb_cam_left" pkg="usb_cam" type="usb_cam_node" output="screen" >
@@ -39,6 +39,6 @@
     <param name="autosize" value="true" />
   </node-->
 
-   <node pkg="rviz" type="rviz" name="rviz" args="-d /home/elephant/xzc_code/ros_ws/src/run_task/rviz/camera2.rviz"/>
+   <!-- <node pkg="rviz" type="rviz" name="rviz" args="-d /home/elephant/xzc_code/ros_ws/src/run_task/rviz/camera2.rviz"/> -->
 </launch>
 

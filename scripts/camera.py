@@ -460,6 +460,10 @@ class Recognition_node():
     # 图像识别请求回调
     def do_image_rec_request(request:msg.ImageRecRequest,self:Recognition_node):
         rospy.loginfo(f"node name :{rospy.get_name()}, get request {request}")
+        # while right_camera.grab():
+        #     pass
+        # while left_camera.grab():
+        #     pass
         
         result = msg.ImageRecResult()
         # 识别零食,左右都要用
@@ -711,7 +715,8 @@ def STag_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LE
         log.log_stag_result(f'{image_name}_STag.txt',f"Index: {i}, ID: {id[0]}\n")
         imagePoints  = corners_list[i]
         # flags=cv2.SOLVEPNP_IPPE_SQUARE # 参数有毒
-        success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs,flags=cv2.SOLVEPNP_IPPE_SQUARE)
+        # success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs,flags=cv2.SOLVEPNP_IPPE_SQUARE)
+        success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
         if success:
             stag_result = STag_result(device_id, id[0], (imagePoints[0][0] + imagePoints[0][2])/2, [translationVector[0][0],translationVector[1][0],translationVector[2][0]])
             stag_result_list.add(stag_result)
@@ -752,21 +757,63 @@ def get_deviation(name,z_is_const=False):
 def init_camera():
     global left_camera,right_camera
     
+    # camera_ids = [4, 6]
+    # cameras = {}
+
+    # for cid in camera_ids:
+    #     # 构建GStreamer管道字符串，包括帧率设置
+    #     gstreamer_pipeline = (
+    #         f'v4l2src device=/dev/video{cid} ! '
+    #         'video/x-raw, format=(string)YUY2, width=(int)1280, height=(int)960, framerate=(fraction)5/1 ! '
+    #         'queue max-size-buffers=1 ! '
+    #         'videoconvert ! appsink'
+    #     )
+    #     cameras[cid] = cv2.VideoCapture(gstreamer_pipeline, cv2.CAP_GSTREAMER)
+
+    # # 检查摄像头是否正确打开
+    # for cid, camera in cameras.items():
+    #     if not camera.isOpened():
+    #         print(f"摄像头 {cid} 无法打开。")
+    #     else:
+    #         print(f"摄像头 {cid} 已成功打开。")
+            
+    # left_camera  = cameras[4]
+    # right_camera = cameras[6]
+    
+
+    
+    # left_gstreamer_pipeline = (
+    #     f'v4l2src device=/dev/video{left_camera_id} ! '
+    #     'video/x-raw, format=(string)YUY2, width=(int)1280, height=(int)960, framerate=(fraction)5/1 ! '
+    #     'videoconvert ! appsink'
+    # )
+        
+    
+    # right_gstreamer_pipeline = (
+    #     f'v4l2src device=/dev/video{right_camera_id} ! '
+    #     'video/x-raw, format=(string)YUY2, width=(int)1280, height=(int)960, framerate=(fraction)5/1 ! '
+    #     'videoconvert ! appsink'
+    # )
+    
+    # left_camera = cv2.VideoCapture(left_gstreamer_pipeline, cv2.CAP_GSTREAMER)
+    # right_camera = cv2.VideoCapture(right_gstreamer_pipeline, cv2.CAP_GSTREAMER)
+    
+    # if not left_camera.isOpened():
+    #     print(f"左摄像头无法打开。")
+    # else:
+    #     print(f"左摄像头成功打开。")
+        
+    # if not right_camera.isOpened():
+    #     print(f"左摄像头无法打开。")
+    # else:
+    #     print(f"左摄像头成功无法打开。")
+    
     left_camera_id  = 4
     right_camera_id = 6
+        
+        
     # left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_V4L2)
     # right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_V4L2)  
-    #     gst_str = ('v4l2src device=/dev/video1 ! '
-            #    'video/x-raw, width=(int)640, height=(int)480, format=(string)BGR ! '
-            #    'videoconvert ! appsink')  
-    # gst_str = (
-    # 'v4l2src device=/dev/video1 ! '  # 从指定设备捕获视频
-    # 'video/x-raw, width=(int)640, height=(int)480, format=(string)BGR ! '  # 设置捕获的视频格式和分辨率
-    # 'nvvidconv ! '  # 使用nvvidconv进行硬件加速的视频格式转换
-    # 'video/x-raw(memory:NVMM), format=(string)NV12 ! '  # 转换为NV12格式，适用于NVIDIA硬件
-    # 'nvvidconv ! '  # 再次使用nvvidconv将视频转换为适合OpenCV处理的格式
-    # 'video/x-raw, format=(string)BGR ! '  # 转换为OpenCV期望的BGR格式
-    # 'apps
     
     left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_GSTREAMER)
     right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_GSTREAMER)

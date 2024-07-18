@@ -8,6 +8,7 @@
 </launch>
 
 <!-- source ./devel/setup.bash -->
+<!-- roscore -->
 <!-- roslaunch run_task arm.launch  -->
 <!-- roslaunch run_task camera.launch -->
 <!-- roslaunch run_task assign_tasks.launch  -->
