@@ -780,33 +780,7 @@ def init_camera():
     # left_camera  = cameras[4]
     # right_camera = cameras[6]
     
-
-    
-    # left_gstreamer_pipeline = (
-    #     f'v4l2src device=/dev/video{left_camera_id} ! '
-    #     'video/x-raw, format=(string)YUY2, width=(int)1280, height=(int)960, framerate=(fraction)5/1 ! '
-    #     'videoconvert ! appsink'
-    # )
-        
-    
-    # right_gstreamer_pipeline = (
-    #     f'v4l2src device=/dev/video{right_camera_id} ! '
-    #     'video/x-raw, format=(string)YUY2, width=(int)1280, height=(int)960, framerate=(fraction)5/1 ! '
-    #     'videoconvert ! appsink'
-    # )
-    
-    # left_camera = cv2.VideoCapture(left_gstreamer_pipeline, cv2.CAP_GSTREAMER)
-    # right_camera = cv2.VideoCapture(right_gstreamer_pipeline, cv2.CAP_GSTREAMER)
-    
-    # if not left_camera.isOpened():
-    #     print(f"左摄像头无法打开。")
-    # else:
-    #     print(f"左摄像头成功打开。")
-        
-    # if not right_camera.isOpened():
-    #     print(f"左摄像头无法打开。")
-    # else:
-    #     print(f"左摄像头成功无法打开。")
+    # gst-launch-1.0 v4l2src device=/dev/video0 ! image/jpeg, width=640, height=480, framerate=30/1 ! jpegdec ! videoconvert ! appsink sync=false emit-signals=true max-buffers=1 drop=true
     
     left_camera_id  = 4
     right_camera_id = 6

@@ -360,7 +360,12 @@ class Manipulator_actuator():
     def run(self, manipulation_task:task.Task_manipulation):
         # 加在运行序列中
         task_index = self.running_tasks_manager.add_task(manipulation_task)
+        # 更新手臂状态
         system.robot.update_arm_status(manipulation_task.arm_id,robot.manipulation_status.arm.status.BUSY)
+        # !如果是放零食任务, 则需要更新放零食位置的状态
+        if manipulation_task.task_type == task.Task_type.Task_manipulation.Lossen_snack:
+            system.robot.lossen_snack_point_status = robot.Robot.Common_status.BUSY
+
         rospy.loginfo(f"manipulation task index {manipulation_task.task_index} is running ")
         
         # 任务开始
@@ -436,6 +441,9 @@ def do_left_arm_move_result(result:msg.ArmMoveResult):
     rospy.loginfo(f"left arm move get result : task index {result.task_index}")
 
     current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
+    # !如果是夹容器的准备动作, 则需要更新放零食位置的状态 
+    if current_task.task_type == task.Task_type.Task_manipulation.Grasp_container_pre:
+        system.robot.lossen_snack_point_status = robot.Robot.Common_status.IDLE
     
     # 任务完成暂停时间
     if current_task.sleep_time_after_task != 0:
@@ -472,8 +480,12 @@ def do_left_arm_move_result(result:msg.ArmMoveResult):
 # 右臂接受结果信息
 def do_right_arm_move_result(result:msg.ArmMoveResult):
     rospy.loginfo(f"right arm move get result : task index {result.task_index}")
-
     current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
+    
+    # !如果是夹容器的准备动作, 则需要更新放零食位置的状态 
+    if current_task.task_type == task.Task_type.Task_manipulation.Grasp_container_pre:
+        system.robot.lossen_snack_point_status = robot.Robot.Common_status.IDLE
+        
     # 任务完成暂停时间
     if current_task.sleep_time_after_task != 0:
         time.sleep(current_task.sleep_time_after_task)
@@ -553,9 +565,9 @@ class Image_rec_actuator():
                     task_grasp_snack:task.Task_manipulation         = current_task.need_modify_tasks.task_list[i*3]
                     task_grasp_snack.modify_xyz_select_arm(snack_xyz,arm_id)
                     task_lossen_snack_pre:task.Task_manipulation    = current_task.need_modify_tasks.task_list[i*3+1]
-                    # 左臂松零食使用 X_Z_Y_OTHER
+                    # 左臂松零食使用 X_Z_Y
                     if arm_id == utilis.Device_id.LEFT:
-                        task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.X_Z_Y_OTHER)
+                        task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.X_Z_Y)
                     else:
                         task_lossen_snack_pre.select_arm(arm_id)
                     task_lossen_snack:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*3+2]
@@ -582,11 +594,11 @@ class Image_rec_actuator():
             for need_modify_task in current_task.need_modify_tasks.task_list:
                 # 松开零食
                 if need_modify_task.task_type == task.Task_type.Task_manipulation.Lossen_snack:
-                    # 改变xy
+                    # 改变xy()
                     need_modify_task.modify_target_xy(lossen_snack_xyz,result.camera_id)
                     # !!!不改变任务状态
                 # 抓容器, 变的是xy坐标
-                elif need_modify_task.task_type == task.Task_type.Task_manipulation.Grasp_container:
+                elif need_modify_task.task_type == task.Task_type.Task_manipulation.Grasp_container_pre:
                     need_modify_task.modify_target_xy(container_xyz,result.camera_id)
                     # 修改任务状态
                     need_modify_task.status = task.Task.Task_status.BEREADY
@@ -802,7 +814,13 @@ class Task_manager():
                             raise ValueError("robot.Robot.Robot_status error!!!!!!!")
                     # 手臂任务检测手臂是否闲置
                     elif current_task.task_type.task_type.__class__ == task.Task_type.Task_manipulation:
-                        # TODO 如果是松开零食的任务, 则还需要判断松开点是否空闲
+                        # 如果是松开零食的任务, 则还需要判断松开点是否空闲
+                        if current_task.task_type.task_type == task.Task_type.Task_manipulation.Lossen_snack:
+                            if system.robot.lossen_snack_point_status == robot.Robot.Common_status.IDLE:
+                                pass
+                            elif system.robot.lossen_snack_point_status == robot.Robot.Common_status.BUSY:
+                                return Task_manager.Run_task_return_code.cannot_run_can_next
+                            
                         if system.robot.is_arm_idle(current_task.arm_id) == True:
                             # rospy.loginfo(f"node: {rospy.get_name()}, task {current_task.task_index} can run. manipulation task")
                             return Task_manager.Run_task_return_code.can_run_can_next
@@ -997,7 +1015,7 @@ class Order_driven_task_schedul():
         tasks_pick_snack.add(task_function_pause)
         
         # 左臂夹取零食框, 准备动作
-        task_left_arm_grap_container_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
+        task_left_arm_grap_container_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container_pre,None,utilis.Device_id.LEFT,\
                 [copy.deepcopy(system.anchor_point.left_arm_container_grip_pre)],\
                     [arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.Z_XY,\
                         name="left arm grap container prepare")
@@ -1017,7 +1035,7 @@ class Order_driven_task_schedul():
         
         
         # 右臂夹取零食框, 准备动作
-        task_right_arm_grap_container_pre    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
+        task_right_arm_grap_container_pre    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container_pre,None,utilis.Device_id.RIGHT,\
                 [copy.deepcopy(system.anchor_point.right_arm_container_grip_pre)],\
                     [arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.Z_XY,\
                         name="right arm grap container prepare")
@@ -1397,9 +1415,9 @@ class Order_driven_task_schedul():
         task_grasp_snack_seq.add(task_grasp_snack)
         
         # 放置零食中间位置
-        task_placement_snack_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_snack,None,utilis.Device_id.TBD,\
+        task_placement_snack_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_snack_pre,None,utilis.Device_id.TBD,\
             [system.anchor_point.left_arm_snack_placement_pre,system.anchor_point.right_arm_snack_placement_pre],\
-            target_clamps_status = [arm.GripMethod.DONTCANGE, arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.X_Y_Z_OTHER,\
+            target_clamps_status = [arm.GripMethod.DONTCANGE, arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.X_Y_Z,\
             name="task_placement_snack_middle")
         task_placement_snack_pre.status   = task.Task.Task_status.NOTREADY  # 需要选择是左臂还是右臂
         task_placement_snack_pre.parallel = task.Task.Task_parallel.ALL
@@ -1409,7 +1427,7 @@ class Order_driven_task_schedul():
         # 放置零食
         task_placement_snack = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_snack,None,utilis.Device_id.TBD,\
             [system.anchor_point.left_arm_snack_placement,system.anchor_point.right_arm_snack_placement],\
-            target_clamps_status = arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.X_Y_Z)
+            target_clamps_status = arm.GripMethod.OPEN, arm_move_method = arm.ArmMoveMethod.YZ_XANGLE)
         
         task_placement_snack.parallel = task.Task.Task_parallel.ALL
         task_placement_snack.status = task.Task.Task_status.NOTREADY              # 需要参数

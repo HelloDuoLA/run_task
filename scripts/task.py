@@ -79,8 +79,10 @@ class Task_type():
         Move               = auto()                  # 机械臂移动
         Move_to_IDLE       = auto()                  # 机械臂空闲
         Grasp_snack        = auto()                  # 夹零食
+        Lossen_snack_pre   = auto()                  # 放零食
         Lossen_snack       = auto()                  # 放零食
         Rec_snack          = auto()                  # 识别零食
+        Grasp_container_pre= auto()                  # 夹容器准备动作
         Grasp_container    = auto()                  # 夹容器
         Deliever_container = auto()                  # 送容器
         Rec_container      = auto()                  # 识别容器

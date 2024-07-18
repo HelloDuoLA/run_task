@@ -14,18 +14,19 @@ LeftArmSnackRec:
 # 左臂抓零食位点
 LeftArmGripSnack:
   # x y z待定(与识别框的偏移量), 手势确定
-  coords:  [-999, -999, -999, -90, 0.0, -90]
+  coords:  [-999, -999, -999, -90, 0, -90]
 
 # TODO:待修改
 # 左臂零食放置位点 准备点
 LeftArmSnackPlacementPre:
-  coords:  [230, 170 , 450, -180, 0, 0]
+  # coords:  [230, 170 , 450, -180, 0, 0]
+  coords:  [230, 170 , 500, -90, 0, -90]
 
 # TODO:待修改
 # 左臂零食放置位点
 LeftArmSnackPlacement:
   # x y 待定(与识别框的偏移量), z比抓取框高20mm 
-  coords:  [-999, -999, 380, -180, 0, 0]
+  coords:  [-999, -999, 400, -180, 0, -90]
 
 # 左臂抓框时的准备位点
 LeftArmGripContainerPre:
@@ -101,14 +102,13 @@ RightArmGripSnack:
 # TODO:待修改
 # 右臂零食放置位点 准备点
 RightArmSnackPlacementPre:
-
-  coords:  [230, -170, 450,  180, 0, 0]
+  coords:  [230, -170, 500,  90, 0, 90]
 
 # TODO:待修改
 # 右臂零食放置位点
 RightArmSnackPlacement:
   # x y 待定(与识别框的偏移量), z比抓取框高20mm 
-  coords:  [-999, -999, 380, 180, 0, 0]
+  coords:  [-999, -999, 400, -180, 0, 90]
 
 # 右臂抓框时的准备位点
 RightArmGripContainerPre:

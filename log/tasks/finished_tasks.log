@@ -1,4 +1,4 @@
-07-18 10:05:47
+07-18 11:11:20
 
 --------------------------------------------------
 
@@ -7,10 +7,10 @@ Task       : Task_manipulation Move_to_IDLE
 Name       : left arm move to idle prepare for pick snack
 Group_id   : 2
 Index      : 0
-Create_time: 1721268145.333392
-Start_time : 1721268145.5245504
-End_time   : 1721268147.1398344
-Duration   : 1.6152839660644531
+Create_time: 1721272102.2788408
+Start_time : 1721272102.5133867
+End_time   : 1721272105.5426998
+Duration   : 3.029313087463379
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -33,10 +33,10 @@ Task       : Task_manipulation Move_to_IDLE
 Name       : right arm move to idle prepare for pick snack
 Group_id   : 2
 Index      : 1
-Create_time: 1721268145.333544
-Start_time : 1721268145.5794067
-End_time   : 1721268147.1725864
-Duration   : 1.593179702758789
+Create_time: 1721272102.2790256
+Start_time : 1721272102.5615149
+End_time   : 1721272105.5500176
+Duration   : 2.9885027408599854
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -59,10 +59,10 @@ Task       : Task_navigate Navigate_to_the_snack_desk
 Name       : navigation to snack desk
 Group_id   : 2
 Index      : 2
-Create_time: 1721268145.3336287
-Start_time : 1721268145.609641
-End_time   : 1721268168.34763
-Duration   : 22.73798894882202
+Create_time: 1721272102.279084
+Start_time : 1721272102.5921228
+End_time   : 1721272137.5159826
+Duration   : 34.92385983467102
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -79,10 +79,10 @@ Task       : Task_navigate Move_forward
 Name       : navigation move forward to snack desk
 Group_id   : 2
 Index      : 3
-Create_time: 1721268145.333724
-Start_time : 1721268168.6058838
-End_time   : 1721268170.6522343
-Duration   : 2.0463504791259766
+Create_time: 1721272102.2791383
+Start_time : 1721272137.6056058
+End_time   : 1721272139.639117
+Duration   : 2.033511161804199
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -96,39 +96,13 @@ Sleep_time_after_task  : 0
 Target_3D_pose: x:25.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:0.00 
 
 Task       : Task_manipulation Rec_container
-Name       : right arm move to rec container
-Group_id   : 2
-Index      : 5
-Create_time: 1721268145.3338263
-Start_time : 1721268170.7742984
-End_time   : 1721268171.5835316
-Duration   : 0.8092331886291504
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [3:Task_navigate Move_forward] 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[54.13, 39.13, -67.06, -68.89, 38.89, -33.61] } 
-Target_clamps_status: Clamp_status_0: DONTCANGE  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
-
-Task       : Task_manipulation Rec_container
 Name       : left arm move to rec container
 Group_id   : 2
 Index      : 4
-Create_time: 1721268145.3337767
-Start_time : 1721268170.719695
-End_time   : 1721268171.5601087
-Duration   : 0.8404135704040527
+Create_time: 1721272102.279192
+Start_time : 1721272139.714592
+End_time   : 1721272140.5410173
+Duration   : 0.826425313949585
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -147,14 +121,40 @@ arm_move_method     : XYZ
 click_length        : 0 
 
 
+Task       : Task_manipulation Rec_container
+Name       : right arm move to rec container
+Group_id   : 2
+Index      : 5
+Create_time: 1721272102.2792382
+Start_time : 1721272139.7617013
+End_time   : 1721272140.5811863
+Duration   : 0.8194849491119385
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: [3:Task_navigate Move_forward] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[54.13, 39.13, -67.06, -68.89, 38.89, -33.61] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
+
+
 Task       : Task_image_rec CONTAINER
 Name       : left camera rec container
 Group_id   : 2
 Index      : 6
-Create_time: 1721268145.3339043
-Start_time : 1721268171.908001
-End_time   : 1721268172.7980652
-Duration   : 0.8900642395019531
+Create_time: 1721272102.2792926
+Start_time : 1721272140.6054788
+End_time   : 1721272141.4175057
+Duration   : 0.8120269775390625
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -170,17 +170,17 @@ Snack_list: []
 Need_modify_tasks: 
           [13:Task_manipulation Lossen_snack]
           [16:Task_manipulation Lossen_snack]
-          [18:Task_manipulation Grasp_container]
+          [18:Task_manipulation Grasp_container_pre]
  
 
 Task       : Task_image_rec CONTAINER
 Name       : right camera rec container
 Group_id   : 2
 Index      : 7
-Create_time: 1721268145.3340073
-Start_time : 1721268172.4527047
-End_time   : 1721268173.3044813
-Duration   : 0.8517765998840332
+Create_time: 1721272102.279355
+Start_time : 1721272141.13521
+End_time   : 1721272141.8975892
+Duration   : 0.7623791694641113
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -196,17 +196,17 @@ Snack_list: []
 Need_modify_tasks: 
           [13:Task_manipulation Lossen_snack]
           [16:Task_manipulation Lossen_snack]
-          [20:Task_manipulation Grasp_container]
+          [20:Task_manipulation Grasp_container_pre]
  
 
 Task       : Task_manipulation Rec_snack
 Name       : left arm move to rec snack
 Group_id   : 2
 Index      : 8
-Create_time: 1721268145.3340595
-Start_time : 1721268173.0210097
-End_time   : 1721268174.3005438
-Duration   : 1.279534101486206
+Create_time: 1721272102.2794092
+Start_time : 1721272141.6910257
+End_time   : 1721272142.9913065
+Duration   : 1.3002808094024658
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -229,10 +229,10 @@ Task       : Task_manipulation Rec_snack
 Name       : right arm move to rec snack
 Group_id   : 2
 Index      : 9
-Create_time: 1721268145.3342311
-Start_time : 1721268173.4057214
-End_time   : 1721268174.7188263
-Duration   : 1.3131048679351807
+Create_time: 1721272102.279453
+Start_time : 1721272142.056057
+End_time   : 1721272143.35543
+Duration   : 1.299372911453247
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -255,10 +255,10 @@ Task       : Task_image_rec SNACK
 Name       : two arms rec snack
 Group_id   : 2
 Index      : 10
-Create_time: 1721268145.33428
-Start_time : 1721268174.8884828
-End_time   : 1721268176.0537884
-Duration   : 1.1653056144714355
+Create_time: 1721272102.2795308
+Start_time : 1721272143.5505736
+End_time   : 1721272144.6246634
+Duration   : 1.074089765548706
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -273,21 +273,151 @@ Camera_id: LEFT_RIGHT
 Snack_list: ['id:1,name:YIDA,count:1', 'id:4,name:RUSUANJUN,count:1']
 Need_modify_tasks: 
           [11:Task_manipulation Grasp_snack]
-          [12:Task_manipulation Lossen_snack]
+          [12:Task_manipulation Lossen_snack_pre]
           [13:Task_manipulation Lossen_snack]
           [14:Task_manipulation Grasp_snack]
-          [15:Task_manipulation Lossen_snack]
+          [15:Task_manipulation Lossen_snack_pre]
           [16:Task_manipulation Lossen_snack]
  
+
+Task       : Task_manipulation Grasp_snack
+Name       : 
+Group_id   : 2
+Index      : 14
+Create_time: 1721272102.2808778
+Start_time : 1721272144.7948241
+End_time   : 1721272150.466687
+Duration   : 5.671862840652466
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[414.86456298828125, 227.4698028564453, 566.1146240234375, -90, 0, -90] } 
+Target_clamps_status: Clamp_status_0: OPEN_CLOSE  
+Clamp_speed         : 50 
+arm_move_method     : YZ_X 
+click_length        : 0 
+
+
+Task       : Task_manipulation Grasp_snack
+Name       : 
+Group_id   : 2
+Index      : 11
+Create_time: 1721272102.2796082
+Start_time : 1721272144.7617018
+End_time   : 1721272150.6503334
+Duration   : 5.888631582260132
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[425.4998779296875, -39.930267333984375, 387.3639221191406, 90, 0, 90] } 
+Target_clamps_status: Clamp_status_0: OPEN_CLOSE  
+Clamp_speed         : 50 
+arm_move_method     : YZ_X 
+click_length        : 0 
+
+
+Task       : Task_manipulation Lossen_snack_pre
+Name       : task_placement_snack_middle
+Group_id   : 2
+Index      : 15
+Create_time: 1721272102.2810473
+Start_time : 1721272150.7965653
+End_time   : 1721272154.0843863
+Duration   : 3.287821054458618
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: [14:Task_manipulation Grasp_snack] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[230, 170, 500, -90, 0, -90] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
+Clamp_speed         : 50 
+arm_move_method     : X_Z_Y 
+click_length        : 0 
+
+
+Task       : Task_manipulation Lossen_snack_pre
+Name       : task_placement_snack_middle
+Group_id   : 2
+Index      : 12
+Create_time: 1721272102.2796636
+Start_time : 1721272150.756852
+End_time   : 1721272154.4391038
+Duration   : 3.6822519302368164
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: [11:Task_manipulation Grasp_snack] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[230, -170, 500, 90, 0, 90] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
+Clamp_speed         : 50 
+arm_move_method     : X_Y_Z 
+click_length        : 0 
+
+
+Task       : Task_manipulation Lossen_snack
+Name       : 
+Group_id   : 2
+Index      : 16
+Create_time: 1721272102.2811537
+Start_time : 1721272154.3625884
+End_time   : 1721272158.5556192
+Duration   : 4.193030834197998
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: [15:Task_manipulation Lossen_snack_pre] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[412.1129455566406, 147.7678680419922, 400, -180, 0, -90] } 
+Target_clamps_status: Clamp_status_0: OPEN  
+Clamp_speed         : 50 
+arm_move_method     : YZ_XANGLE 
+click_length        : 0 
+
 
 Task       : Task_function PAUSE
 Name       : function pause
 Group_id   : 2
 Index      : 17
-Create_time: 1721268145.334773
-Start_time : 1721268176.1176782
-End_time   : 1721268176.117769
-Duration   : 9.083747863769531e-05
+Create_time: 1721272102.2812295
+Start_time : 1721272158.8780131
+End_time   : 1721272158.8781676
+Duration   : 0.0001544952392578125
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -300,170 +430,14 @@ Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 
 
-Task       : Task_manipulation Grasp_snack
-Name       : 
-Group_id   : 2
-Index      : 14
-Create_time: 1721268145.3346157
-Start_time : 1721268176.4349148
-End_time   : 1721268182.0427384
-Duration   : 5.607823610305786
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[370.93035888671875, 175.53286743164062, 561.8635864257812, -90, 0.0, -90] } 
-Target_clamps_status: Clamp_status_0: OPEN_CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : YZ_X 
-click_length        : 0 
-
-
-Task       : Task_manipulation Grasp_snack
-Name       : 
-Group_id   : 2
-Index      : 11
-Create_time: 1721268145.3343537
-Start_time : 1721268176.3960693
-End_time   : 1721268183.3262606
-Duration   : 6.930191278457642
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[395.5266418457031, -108.7840347290039, 382.36700439453125, 90, 0, 90] } 
-Target_clamps_status: Clamp_status_0: OPEN_CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : YZ_X 
-click_length        : 0 
-
-
-Task       : Task_manipulation Lossen_snack
-Name       : task_placement_snack_middle
-Group_id   : 2
-Index      : 15
-Create_time: 1721268145.3346632
-Start_time : 1721268182.0939143
-End_time   : 1721268189.3746402
-Duration   : 7.280725955963135
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [14:Task_manipulation Grasp_snack] 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[230, 170, 450, -180, 0, 0] } 
-Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
-Clamp_speed         : 50 
-arm_move_method     : X_Z_Y_OTHER 
-click_length        : 0 
-
-
-Task       : Task_manipulation Lossen_snack
-Name       : task_placement_snack_middle
-Group_id   : 2
-Index      : 12
-Create_time: 1721268145.3344343
-Start_time : 1721268183.5945761
-End_time   : 1721268191.1455135
-Duration   : 7.5509374141693115
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [11:Task_manipulation Grasp_snack] 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[230, -170, 450, 180, 0, 0] } 
-Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
-Clamp_speed         : 50 
-arm_move_method     : X_Y_Z_OTHER 
-click_length        : 0 
-
-
-Task       : Task_manipulation Lossen_snack
-Name       : 
-Group_id   : 2
-Index      : 16
-Create_time: 1721268145.3347092
-Start_time : 1721268189.5942497
-End_time   : 1721268193.9930923
-Duration   : 4.3988425731658936
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [15:Task_manipulation Lossen_snack] 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[360.216064453125, 138.48741149902344, 380, -180, 0, 0] } 
-Target_clamps_status: Clamp_status_0: OPEN  
-Clamp_speed         : 50 
-arm_move_method     : X_Y_Z 
-click_length        : 0 
-
-
-Task       : Task_manipulation Lossen_snack
-Name       : 
-Group_id   : 2
-Index      : 13
-Create_time: 1721268145.3345182
-Start_time : 1721268191.3942082
-End_time   : 1721268196.3482985
-Duration   : 4.954090356826782
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [12:Task_manipulation Lossen_snack] 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[359.6204528808594, -39.51852798461914, 380, 180, 0, 0] } 
-Target_clamps_status: Clamp_status_0: OPEN  
-Clamp_speed         : 50 
-arm_move_method     : X_Y_Z 
-click_length        : 0 
-
-
-Task       : Task_manipulation Grasp_container
+Task       : Task_manipulation Grasp_container_pre
 Name       : left arm grap container prepare
 Group_id   : 2
 Index      : 18
-Create_time: 1721268145.3362815
-Start_time : 1721268194.0984402
-End_time   : 1721268199.9785178
-Duration   : 5.880077600479126
+Create_time: 1721272102.28172
+Start_time : 1721272159.1588664
+End_time   : 1721272162.2470706
+Duration   : 3.0882041454315186
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -475,21 +449,21 @@ Predecessor_tasks:
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[400.216064453125, 178.48741149902344, 430, -180, 0.0, -90] } 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[452.1129455566406, 187.7678680419922, 430, -180, 0.0, -90] } 
 Target_clamps_status: Clamp_status_0: OPEN  
 Clamp_speed         : 50 
 arm_move_method     : Z_XY 
 click_length        : 0 
 
 
-Task       : Task_manipulation Grasp_container
+Task       : Task_manipulation Grasp_container_pre
 Name       : right arm grap container prepare
 Group_id   : 2
 Index      : 20
-Create_time: 1721268145.3368604
-Start_time : 1721268196.496763
-End_time   : 1721268202.3036819
-Duration   : 5.8069188594818115
+Create_time: 1721272102.2822084
+Start_time : 1721272159.1970255
+End_time   : 1721272163.092462
+Duration   : 3.8954365253448486
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -501,7 +475,7 @@ Predecessor_tasks:
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[319.6204528808594, -79.51852416992188, 430, -180, 0.0, 90] } 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[370.43023681640625, -68.50656127929688, 430, -180, 0.0, 90] } 
 Target_clamps_status: Clamp_status_0: OPEN  
 Clamp_speed         : 50 
 arm_move_method     : Z_XY 
@@ -512,10 +486,10 @@ Task       : Task_manipulation Grasp_container
 Name       : left arm grap container
 Group_id   : 2
 Index      : 19
-Create_time: 1721268145.3364842
-Start_time : 1721268200.0986454
-End_time   : 1721268202.629666
-Duration   : 2.5310206413269043
+Create_time: 1721272102.2819493
+Start_time : 1721272162.4559956
+End_time   : 1721272164.9663737
+Duration   : 2.510378122329712
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -523,7 +497,7 @@ Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 1
-Predecessor_tasks: [18:Task_manipulation Grasp_container] 
+Predecessor_tasks: [18:Task_manipulation Grasp_container_pre] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Arm_id              : LEFT 
@@ -534,14 +508,14 @@ arm_move_method     : MODIFY_Z
 click_length        : 0 
 
 
-Task       : Task_manipulation Grasp_container
-Name       : right arm grap container
+Task       : Task_manipulation Lossen_snack
+Name       : 
 Group_id   : 2
-Index      : 21
-Create_time: 1721268145.3370347
-Start_time : 1721268202.4950986
-End_time   : 1721268204.9740145
-Duration   : 2.4789159297943115
+Index      : 13
+Create_time: 1721272102.279716
+Start_time : 1721272163.3598363
+End_time   : 1721272166.4106786
+Duration   : 3.05084228515625
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -549,7 +523,33 @@ Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 1
-Predecessor_tasks: [20:Task_manipulation Grasp_container] 
+Predecessor_tasks: [12:Task_manipulation Lossen_snack_pre] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[410.43023681640625, -28.506563186645508, 400, -180, 0, 90] } 
+Target_clamps_status: Clamp_status_0: OPEN  
+Clamp_speed         : 50 
+arm_move_method     : YZ_XANGLE 
+click_length        : 0 
+
+
+Task       : Task_manipulation Grasp_container
+Name       : right arm grap container
+Group_id   : 2
+Index      : 21
+Create_time: 1721272102.2824154
+Start_time : 1721272166.6592171
+End_time   : 1721272169.1326041
+Duration   : 2.4733870029449463
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: [20:Task_manipulation Grasp_container_pre] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Arm_id              : RIGHT 
@@ -564,10 +564,10 @@ Task       : Task_manipulation Deliever_container
 Name       : two arms dilivery container
 Group_id   : 2
 Index      : 22
-Create_time: 1721268145.3371089
-Start_time : 1721268205.1943712
-End_time   : 1721268206.269645
-Duration   : 1.0752737522125244
+Create_time: 1721272102.282471
+Start_time : 1721272169.3586156
+End_time   : 1721272170.4202864
+Duration   : 1.0616707801818848
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -591,10 +591,10 @@ Task       : Task_manipulation Deliever_container
 Name       : two arms dilivery container
 Group_id   : 2
 Index      : 22
-Create_time: 1721268145.3371089
-Start_time : 1721268205.1943712
-End_time   : 1721268206.269645
-Duration   : 1.0752737522125244
+Create_time: 1721272102.282471
+Start_time : 1721272169.3586156
+End_time   : 1721272170.4202864
+Duration   : 1.0616707801818848
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -618,10 +618,10 @@ Task       : Task_navigate Move_backward
 Name       : move back from snack desk
 Group_id   : 2
 Index      : 23
-Create_time: 1721268145.3371618
-Start_time : 1721268205.2520757
-End_time   : 1721268209.2940655
-Duration   : 4.041989803314209
+Create_time: 1721272102.282524
+Start_time : 1721272169.398252
+End_time   : 1721272173.4288416
+Duration   : 4.030589580535889
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -638,10 +638,10 @@ Task       : Task_navigate Navigate_to_the_right_service_desk
 Name       : navigation to right service desk
 Group_id   : 2
 Index      : 24
-Create_time: 1721268145.3372304
-Start_time : 1721268209.3884695
-End_time   : 1721268232.4167068
-Duration   : 23.028237342834473
+Create_time: 1721272102.2825937
+Start_time : 1721272173.5505943
+End_time   : 1721272199.1778166
+Duration   : 25.627222299575806
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -658,10 +658,10 @@ Task       : Task_navigate Move_forward
 Name       : navigation move forward to right desk
 Group_id   : 2
 Index      : 25
-Create_time: 1721268145.337292
-Start_time : 1721268232.4884956
-End_time   : 1721268235.5490632
-Duration   : 3.060567617416382
+Create_time: 1721272102.2826288
+Start_time : 1721272199.3506908
+End_time   : 1721272202.3864837
+Duration   : 3.035792827606201
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -678,10 +678,37 @@ Task       : Task_manipulation Lossen_container
 Name       : two arms placement container
 Group_id   : 2
 Index      : 26
-Create_time: 1721268145.337352
-Start_time : 1721268235.7962282
-End_time   : 1721268238.3696153
-Duration   : 2.5733871459960938
+Create_time: 1721272102.2826786
+Start_time : 1721272202.6562622
+End_time   : 1721272205.2068155
+Duration   : 2.550553321838379
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 2
+Subtask_count_finished: 2
+Predecessor_tasks: [25:Task_navigate Move_forward] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : LEFT_RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[0, 0, -80, 0, 0, 0] 
+                       Arm_pose_1: arm RIGHT, pose type BASE_COORDS, coords:[0, 0, -80, 0, 0, 0] } 
+Target_clamps_status: Clamp_status_0: OPEN Clamp_status_1: OPEN  
+Clamp_speed         : 50 
+arm_move_method     : MODIFY_Z 
+click_length        : 0 
+
+
+Task       : Task_manipulation Lossen_container
+Name       : two arms placement container
+Group_id   : 2
+Index      : 26
+Create_time: 1721272102.2826786
+Start_time : 1721272202.6562622
+End_time   : 1721272205.2068155
+Duration   : 2.550553321838379
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -705,10 +732,10 @@ Task       : Task_manipulation Move_to_IDLE
 Name       : two arms move to idle
 Group_id   : 2
 Index      : 27
-Create_time: 1721268145.337399
-Start_time : 1721268238.4948328
-End_time   : 1721268240.1208417
-Duration   : 1.6260089874267578
+Create_time: 1721272102.282725
+Start_time : 1721272205.362824
+End_time   : 1721272206.931506
+Duration   : 1.5686819553375244
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -732,10 +759,10 @@ Task       : Task_navigate Move_backward
 Name       : move back from left service desk
 Group_id   : 2
 Index      : 28
-Create_time: 1721268145.3374639
-Start_time : 1721268238.5678825
-End_time   : 1721268241.6143882
-Duration   : 3.0465056896209717
+Create_time: 1721272102.2827766
+Start_time : 1721272205.399734
+End_time   : 1721272208.5401144
+Duration   : 3.140380382537842
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -752,10 +779,10 @@ Task       : Task_function PAUSE
 Name       : function pause
 Group_id   : 2
 Index      : 29
-Create_time: 1721268145.3375068
-Start_time : 1721268241.8088703
-End_time   : 1721268241.8089457
-Duration   : 7.534027099609375e-05
+Create_time: 1721272102.282818
+Start_time : 1721272208.670389
+End_time   : 1721272208.6704574
+Duration   : 6.842613220214844e-05
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -768,40 +795,14 @@ Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 
 
-Task       : Task_manipulation Rec_cup_machine
-Name       : right arm move to rec cup machine prepare
-Group_id   : 3
-Index      : 3
-Create_time: 1721268145.3513994
-Start_time : 1721268242.1851811
-End_time   : 1721268243.7438
-Duration   : 1.5586187839508057
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[0, 0, -115, 0, 90, 0] } 
-Target_clamps_status: Clamp_status_0: CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
-
 Task       : Task_manipulation Rec_machine_switch
 Name       : left arm move to rec coffee machine turn on
 Group_id   : 3
 Index      : 2
-Create_time: 1721268145.3513415
-Start_time : 1721268242.137036
-End_time   : 1721268243.7360454
-Duration   : 1.5990092754364014
+Create_time: 1721272102.303713
+Start_time : 1721272208.9848042
+End_time   : 1721272210.5783463
+Duration   : 1.5935420989990234
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -821,13 +822,39 @@ click_length        : 0
 
 
 Task       : Task_manipulation Rec_cup_machine
+Name       : right arm move to rec cup machine prepare
+Group_id   : 3
+Index      : 3
+Create_time: 1721272102.3037813
+Start_time : 1721272209.0284417
+End_time   : 1721272210.5948753
+Duration   : 1.5664336681365967
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[0, 0, -115, 0, 90, 0] } 
+Target_clamps_status: Clamp_status_0: CLOSE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
+
+
+Task       : Task_manipulation Rec_cup_machine
 Name       : right arm move to rec cup machine
 Group_id   : 3
 Index      : 4
-Create_time: 1721268145.35148
-Start_time : 1721268243.9032054
-End_time   : 1721268243.9508317
-Duration   : 0.04762625694274902
+Create_time: 1721272102.3038356
+Start_time : 1721272210.7583613
+End_time   : 1721272210.8022237
+Duration   : 0.043862342834472656
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -850,10 +877,10 @@ Task       : Task_navigate Navigate_to_the_drink_desk
 Name       : navigation to drink desk
 Group_id   : 3
 Index      : 0
-Create_time: 1721268145.3507164
-Start_time : 1721268242.0884337
-End_time   : 1721268258.3236403
-Duration   : 16.235206604003906
+Create_time: 1721272102.3034854
+Start_time : 1721272208.950591
+End_time   : 1721272227.1740112
+Duration   : 18.22342014312744
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -870,10 +897,10 @@ Task       : Task_navigate Move_forward
 Name       : navigation move forward to drink desk
 Group_id   : 3
 Index      : 1
-Create_time: 1721268145.350825
-Start_time : 1721268258.5885081
-End_time   : 1721268261.1348443
-Duration   : 2.5463361740112305
+Create_time: 1721272102.303638
+Start_time : 1721272227.250575
+End_time   : 1721272229.7849464
+Duration   : 2.5343713760375977
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -890,10 +917,10 @@ Task       : Task_image_rec COFFEE_MACHINE_SWITCH_ON
 Name       : left camera rec coffee machine turn on
 Group_id   : 3
 Index      : 5
-Create_time: 1721268145.3515978
-Start_time : 1721268261.2885952
-End_time   : 1721268262.1495368
-Duration   : 0.8609416484832764
+Create_time: 1721272102.3038878
+Start_time : 1721272229.9506884
+End_time   : 1721272230.7814708
+Duration   : 0.830782413482666
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -914,10 +941,10 @@ Task       : Task_image_rec CUP_COFFEE_MACHINE
 Name       : right camera rec cup machine
 Group_id   : 3
 Index      : 6
-Create_time: 1721268145.3516514
-Start_time : 1721268261.825322
-End_time   : 1721268262.672704
-Duration   : 0.8473820686340332
+Create_time: 1721272102.3039365
+Start_time : 1721272230.494608
+End_time   : 1721272231.3422644
+Duration   : 0.8476564884185791
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -940,10 +967,10 @@ Task       : Task_manipulation Turn_on_coffee_machine
 Name       : left arm turn on machine prepare
 Group_id   : 3
 Index      : 9
-Create_time: 1721268145.352223
-Start_time : 1721268262.372063
-End_time   : 1721268265.993063
-Duration   : 3.621000051498413
+Create_time: 1721272102.3043854
+Start_time : 1721272231.032057
+End_time   : 1721272234.7160287
+Duration   : 3.683971643447876
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -955,7 +982,7 @@ Predecessor_tasks:
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[337.4361267089844, 108.50271606445312, 481.1325988769531, -90, 0.0, -90] } 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[353.5583190917969, 87.77403259277344, 482.9031677246094, -90, 0.0, -90] } 
 Target_clamps_status: Clamp_status_0: CLOSE  
 Clamp_speed         : 50 
 arm_move_method     : Z_XY 
@@ -966,10 +993,10 @@ Task       : Task_manipulation Grasp_cup_pre
 Name       : right arm grasp cup prepare
 Group_id   : 3
 Index      : 7
-Create_time: 1721268145.3517191
-Start_time : 1721268262.7812464
-End_time   : 1721268266.115534
-Duration   : 3.334287643432617
+Create_time: 1721272102.3040304
+Start_time : 1721272231.6838703
+End_time   : 1721272235.033925
+Duration   : 3.3500547409057617
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -981,7 +1008,7 @@ Predecessor_tasks:
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[250, -302.3179626464844, 220.0, 90, 0, 90] } 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[250, -308.5644226074219, 220.0, 90, 0, 90] } 
 Target_clamps_status: Clamp_status_0: OPEN  
 Clamp_speed         : 50 
 arm_move_method     : XYZ 
@@ -992,10 +1019,10 @@ Task       : Task_manipulation Turn_off_coffee_machine
 Name       : left arm turn on machine click!!!
 Group_id   : 3
 Index      : 10
-Create_time: 1721268145.3524003
-Start_time : 1721268266.0798752
-End_time   : 1721268268.709035
-Duration   : 2.629159688949585
+Create_time: 1721272102.3046036
+Start_time : 1721272234.983691
+End_time   : 1721272237.6036935
+Duration   : 2.620002508163452
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -1018,10 +1045,10 @@ Task       : Task_manipulation Rec_machine_switch
 Name       : left arm move to rec coffee machine turn off
 Group_id   : 3
 Index      : 12
-Create_time: 1721268145.3526192
-Start_time : 1721268268.7800488
-End_time   : 1721268268.84283
-Duration   : 0.06278109550476074
+Create_time: 1721272102.3048494
+Start_time : 1721272237.6844025
+End_time   : 1721272237.7370923
+Duration   : 0.05268979072570801
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -1044,10 +1071,10 @@ Task       : Task_manipulation Grasp_cup
 Name       : right arm grasp cup
 Group_id   : 3
 Index      : 8
-Create_time: 1721268145.3517728
-Start_time : 1721268266.3796444
-End_time   : 1721268269.6535373
-Duration   : 3.273892879486084
+Create_time: 1721272102.3040898
+Start_time : 1721272235.2836385
+End_time   : 1721272238.375306
+Duration   : 3.091667413711548
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -1059,7 +1086,7 @@ Predecessor_tasks: [7:Task_manipulation Grasp_cup_pre]
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[467.9943542480469, -302.3179626464844, 220.0, 90, 0, 90] } 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[447.2319030761719, -308.5644226074219, 220.0, 90, 0, 90] } 
 Target_clamps_status: Clamp_status_0: CLOSE  
 Clamp_speed         : 50 
 arm_move_method     : XYZ 
@@ -1070,10 +1097,10 @@ Task       : Task_image_rec COFFEE_MACHINE_SWITCH_OFF
 Name       : left camera rec coffee machine turn off
 Group_id   : 3
 Index      : 13
-Create_time: 1721268145.3526661
-Start_time : 1721268269.0802176
-End_time   : 1721268269.852261
-Duration   : 0.7720434665679932
+Create_time: 1721272102.3048983
+Start_time : 1721272237.9777772
+End_time   : 1721272238.738978
+Duration   : 0.7612006664276123
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -1094,10 +1121,10 @@ Task       : Task_manipulation Water_cup
 Name       : right arm water cup
 Group_id   : 3
 Index      : 11
-Create_time: 1721268145.3525634
-Start_time : 1721268269.9895046
-End_time   : 1721268273.7142608
-Duration   : 3.7247562408447266
+Create_time: 1721272102.3047924
+Start_time : 1721272238.5129578
+End_time   : 1721272241.9306996
+Duration   : 3.4177417755126953
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -1109,7 +1136,7 @@ Predecessor_tasks: [8:Task_manipulation Grasp_cup]
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[312.1535949707031, 32.64533233642578, 230.0, 90, 0, 90] } 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[338.77197265625, 18.769685745239258, 230.0, 90, 0, 90] } 
 Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
 Clamp_speed         : 50 
 arm_move_method     : X_YZ 
@@ -1120,10 +1147,10 @@ Task       : Task_manipulation Turn_off_coffee_machine
 Name       : left arm turn off machine
 Group_id   : 3
 Index      : 14
-Create_time: 1721268145.3528228
-Start_time : 1721268273.880155
-End_time   : 1721268276.2778263
-Duration   : 2.3976712226867676
+Create_time: 1721272102.3050942
+Start_time : 1721272242.1836147
+End_time   : 1721272244.593705
+Duration   : 2.410090208053589
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -1146,10 +1173,10 @@ Task       : Task_manipulation Turn_off_coffee_machine
 Name       : left arm turn off machine click!!!
 Group_id   : 3
 Index      : 15
-Create_time: 1721268145.3530219
-Start_time : 1721268276.5801597
-End_time   : 1721268280.1573915
-Duration   : 3.5772318840026855
+Create_time: 1721272102.3052704
+Start_time : 1721272244.8830626
+End_time   : 1721272248.5042999
+Duration   : 3.621237277984619
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -1172,10 +1199,10 @@ Task       : Task_navigate Move_backward
 Name       : move back from drink desk
 Group_id   : 3
 Index      : 16
-Create_time: 1721268145.3530989
-Start_time : 1721268280.1806715
-End_time   : 1721268284.2202528
-Duration   : 4.039581298828125
+Create_time: 1721272102.3053284
+Start_time : 1721272248.7777162
+End_time   : 1721272252.8084323
+Duration   : 4.030716180801392
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -1192,10 +1219,10 @@ Task       : Task_manipulation Move_to_IDLE
 Name       : left arm move to idle
 Group_id   : 3
 Index      : 17
-Create_time: 1721268145.353146
-Start_time : 1721268284.3811731
-End_time   : 1721268284.4563694
-Duration   : 0.0751962661743164
+Create_time: 1721272102.3053865
+Start_time : 1721272252.985088
+End_time   : 1721272253.0688472
+Duration   : 0.08375906944274902
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -1218,10 +1245,10 @@ Task       : Task_manipulation Deliever_cup
 Name       : right arm water delivery
 Group_id   : 3
 Index      : 18
-Create_time: 1721268145.3531911
-Start_time : 1721268284.426713
-End_time   : 1721268285.1769032
-Duration   : 0.750190258026123
+Create_time: 1721272102.305437
+Start_time : 1721272253.038982
+End_time   : 1721272253.8122687
+Duration   : 0.7732868194580078
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -1244,10 +1271,10 @@ Task       : Task_navigate Navigate_to_the_left_service_desk
 Name       : navigation to left service desk
 Group_id   : 3
 Index      : 19
-Create_time: 1721268145.3532476
-Start_time : 1721268284.496135
-End_time   : 1721268310.224437
-Duration   : 25.728302001953125
+Create_time: 1721272102.305505
+Start_time : 1721272253.0814474
+End_time   : 1721272277.3058035
+Duration   : 24.224356174468994
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -1264,10 +1291,10 @@ Task       : Task_navigate Move_forward
 Name       : navigation move forward to left desk
 Group_id   : 3
 Index      : 20
-Create_time: 1721268145.3532817
-Start_time : 1721268310.4737747
-End_time   : 1721268313.51008
-Duration   : 3.0363054275512695
+Create_time: 1721272102.3055441
+Start_time : 1721272277.577705
+End_time   : 1721272280.6144354
+Duration   : 3.0367305278778076
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -1279,146 +1306,6 @@ Predecessor_tasks: [19:Task_navigate Navigate_to_the_left_service_desk]
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Target_3D_pose: x:30.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:0.00 
-
-Task       : Task_manipulation Lossen_cup
-Name       : right arm placement cup
-Group_id   : 3
-Index      : 21
-Create_time: 1721268145.3533444
-Start_time : 1721268313.7805517
-End_time   : 1721268315.852787
-Duration   : 2.072235345840454
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : NOTALLOWED
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [20:Task_navigate Move_forward] 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[0, 0, -20, 0, 0, 0] } 
-Target_clamps_status: Clamp_status_0: OPEN  
-Clamp_speed         : 50 
-arm_move_method     : MODIFY_Z 
-click_length        : 0 
-
-
-Task       : Task_navigate Move_backward
-Name       : move back from left service desk
-Group_id   : 3
-Index      : 22
-Create_time: 1721268145.3533952
-Start_time : 1721268316.1738462
-End_time   : 1721268319.2161148
-Duration   : 3.0422685146331787
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: [21:Task_manipulation Lossen_cup] 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Target_3D_pose: x:-50.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:80.00 
-
-Task       : Task_manipulation Move_to_IDLE
-Name       : two arms move to idle
-Group_id   : 3
-Index      : 23
-Create_time: 1721268145.3534377
-Start_time : 1721268319.4805455
-End_time   : 1721268321.063093
-Duration   : 1.5825474262237549
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 2
-Subtask_count_finished: 2
-Predecessor_tasks: [22:Task_navigate Move_backward] 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : LEFT_RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-71.31, 63.55, -34.37, 67.69, 20.23, 36.37] 
-                       Arm_pose_1: arm RIGHT, pose type ANGLE, joint:[71.31, 63.55, -34.38, -67.73, 20.23, -36.42] } 
-Target_clamps_status: Clamp_status_0: CLOSE Clamp_status_1: CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
-
-Task       : Task_manipulation Move_to_IDLE
-Name       : two arms move to idle
-Group_id   : 3
-Index      : 23
-Create_time: 1721268145.3534377
-Start_time : 1721268319.4805455
-End_time   : 1721268321.063093
-Duration   : 1.5825474262237549
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 2
-Subtask_count_finished: 2
-Predecessor_tasks: [22:Task_navigate Move_backward] 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : LEFT_RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-71.31, 63.55, -34.37, 67.69, 20.23, 36.37] 
-                       Arm_pose_1: arm RIGHT, pose type ANGLE, joint:[71.31, 63.55, -34.38, -67.73, 20.23, -36.42] } 
-Target_clamps_status: Clamp_status_0: CLOSE Clamp_status_1: CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
-
-Task       : Task_function PAUSE
-Name       : function pause
-Group_id   : 3
-Index      : 24
-Create_time: 1721268145.3535109
-Start_time : 1721268321.2898734
-End_time   : 1721268321.2899308
-Duration   : 5.745887756347656e-05
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : NOTALLOWED
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-
-
-Task       : Task_navigate Navigate_to_the_init_point
-Name       : 
-Group_id   : -999
-Index      : 0
-Create_time: 1721268145.3535874
-Start_time : 1721268321.573649
-End_time   : 1721268347.1980543
-Duration   : 25.62440538406372
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : NOTALLOWED
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Target_3D_pose: x:0.00 y:0.00 z:0.00 roll:0.00 pitch:-0.00 yaw:0.00 
 --------------------------------------------------
 
 

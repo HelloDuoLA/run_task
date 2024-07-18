@@ -40,6 +40,7 @@ class ArmMoveMethod(Enum):
     OPLY_GRIP  = auto()
     X_Y_Z_OTHER= auto()
     X_Z_Y_OTHER= auto()
+    YZ_XANGLE  = auto()
     
     
     def __str__(self) -> str:
@@ -408,6 +409,18 @@ class Arm_controller():
                     result = self.control_instance.send_base_coords(target_pose,arm_speed)
                     self.wait(result)
                     
+                    
+                elif move_method == ArmMoveMethod.YZ_XANGLE:
+                    current_base_coords = self.get_base_coords()
+                    base_coords_change_yz = copy.deepcopy(current_base_coords)
+                    base_coords_change_yz[1] = target_pose[1]
+                    base_coords_change_yz[2] = target_pose[2]
+                    result = self.control_instance.send_base_coords(base_coords_change_yz,arm_speed)
+                    self.wait(result)
+                    
+                    # change x angles
+                    result = self.control_instance.send_base_coords(target_pose,arm_speed)
+                    self.wait(result)
                 else:
                     raise ValueError("Invalid move method")
         
