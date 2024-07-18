@@ -8,19 +8,19 @@ from tf.transformations import euler_matrix
 
 def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
     # 假设的三维点 (例如，一个简单的正方形)
-    objectPoints = np.array([
-        [-tag_size/2, -tag_size/2,  0],
-        [tag_size/2 , -tag_size/2,  0],
-        [tag_size/2 , tag_size/2 ,  0],
-        [-tag_size/2, tag_size/2 ,  0]
-    ], dtype=np.float32)
-    
     # objectPoints = np.array([
-    #     [-tag_size/2, tag_size/2,  0],
-    #     [tag_size/2 , tag_size/2,  0],
-    #     [tag_size/2 , -tag_size/2 ,  0],
-    #     [-tag_size/2, -tag_size/2 ,  0]
+    #     [-tag_size/2, -tag_size/2,  0],
+    #     [tag_size/2 , -tag_size/2,  0],
+    #     [tag_size/2 , tag_size/2 ,  0],
+    #     [-tag_size/2, tag_size/2 ,  0]
     # ], dtype=np.float32)
+    
+    objectPoints = np.array([
+        [-tag_size/2, tag_size/2,  0],
+        [tag_size/2 , tag_size/2,  0],
+        [tag_size/2 , -tag_size/2 ,  0],
+        [-tag_size/2, -tag_size/2 ,  0]
+    ], dtype=np.float32)
     
     print(objectPoints)
     
@@ -56,7 +56,8 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
             file.write(f"Index: {i}, ID: {id[0]}\n")
             imagePoints  = corners_list[i]
             print(f"imagePoints \n {imagePoints}")
-            success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs,flags=cv2.SOLVEPNP_IPPE_SQUARE)
+            # success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs,flags=cv2.SOLVEPNP_IPPE_SQUARE)
+            success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
             if success:
                 xyz_list_with_id.append([id[0],translationVector.flatten().tolist()])
                 # print(translationVector)
