@@ -21,7 +21,7 @@ SnackDesk:
 # 饮料台位姿
 DrinkDesk:
   position_x: 0.52355
-  position_y: -2.04851
+  position_y: -2.24851
   position_z: -0.00002
   orientation_x: 0.00152
   orientation_y: 0.00167

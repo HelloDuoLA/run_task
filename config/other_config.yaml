@@ -11,12 +11,12 @@ DrinkDeckMoveBack:
 
 LeftDeckMoveBack:
   x  : -50
-  yaw: 80
+  yaw: 90
   time : 3
 
 RightDeckMoveBack:
   x  : -50
-  yaw: -80
+  yaw: -90
   time : 3
 
 # 前进距离 [mm]
