@@ -12,7 +12,7 @@ import time
 from tf.transformations import euler_matrix
 from typing import List
 import copy
-from std_srvs.srv import Empty
+import std_srvs.srv as std_srvs
 
 rospack = rospkg.RosPack()
 package_path = rospack.get_path('run_task')

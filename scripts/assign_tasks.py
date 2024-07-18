@@ -668,8 +668,8 @@ class Task_manager():
         self.can_run_state    = True                  #是否能够执行任务
         # 每0.1s执行一次任务
         # TODO:调试时为3秒
-        # timer = rospy.Timer(rospy.Duration(0.3), self.timer_callback)
-        timer = rospy.Timer(rospy.Duration(system.anchor_point.time_interval_for_task), self.timer_callback)
+        timer = rospy.Timer(rospy.Duration(0.3), self.timer_callback)
+        # timer = rospy.Timer(rospy.Duration(system.anchor_point.time_interval_for_task), self.timer_callback)
     
     # 任务完成回调
     def tm_task_finish_callback(self, current_task:task.Task, status=None, result=None):
@@ -1458,9 +1458,9 @@ def talker():
     right_arm_client = rospy.ServiceProxy(utilis.Topic_name.right_arm_prepare_service,std_srvs.Empty)
     camera_prepare_service = rospy.ServiceProxy(utilis.Topic_name.camera_prepare_service,std_srvs.Empty)
 
-    left_arm_client.client.wait_for_service()
-    right_arm_client.client.wait_for_service()
-    right_arm_client.client.wait_for_service()
+    left_arm_client.wait_for_service()
+    right_arm_client.wait_for_service()
+    camera_prepare_service.wait_for_service()
     
 
     test_order_snack()
