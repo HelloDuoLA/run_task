@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import argparse
 import numpy as np
 import cv2
@@ -117,6 +118,13 @@ if __name__ == "__main__":
     with open(dist_file_path, 'r') as file:
         line = file.readline()
         dist_coeffs = np.array(list(map(float, line.split())), dtype=np.float32)
+        
+        
+    camera_matrix = np.array([[532.76634274 ,  0.,         306.22017641],
+                    [  0.         , 532.94411762, 225.40097394],
+                    [  0.         ,  0.         , 1.        ]], dtype=np.float32)
+    
+    dist_coeffs = np.array([ 0.17156132, -0.66222681, -0.00294354,  0.00106322,  0.73823942], dtype=np.float32)
         
     # print(f"Distortion Coefficients: {dist_coeffs}")
     
