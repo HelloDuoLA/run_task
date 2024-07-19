@@ -130,23 +130,24 @@ if __name__ == "__main__":
     for i in range(len(xyz_list)):
         id  = xyz_list[i][0]
         xyz = xyz_list[i][1]
-        if id == 9:
+        if id == 4:
             print("left")
             print(f"left   arm end pose {base_coords_left[:3]}")
             print(f"stag xyz : {xyz}")
-            print(f"shousuan    xyz:{base_coords_left[0] + xyz[0] + 50 -70}  {base_coords_left[1] - xyz[1] +112 +24} {360}")
+            print(f"shousuan    xyz:{base_coords_left[0] + xyz[0] + 50 -70}  {base_coords_left[1] - xyz[1] -27} {360}")
+        elif id == 5:
             print("right")
             print(f"stag xyz : {xyz}")
             print(f"right  arm end pose {base_coords_right[:3]}")
-            print(f"shousuan    xyz:{base_coords_right[0] - xyz[0] -10}  {base_coords_right[1] + xyz[1] + 28} {360}\r\n\r\n")
-    
+            print(f"shousuan    xyz:{base_coords_right[0] - xyz[0] -10}  {base_coords_right[1] + xyz[1] + 28 + 16} {360}\r\n\r\n")
+
 # 左臂
-    # 测量 417.6091392309916  181.90436435986203 360
-    # 实际 350, 205, 360
+    # 测量 249.06119241017598  308.43419947730547 360
+    # 实际 260, 145, 360
 
 # 右臂
-    # 测量 363.65428888818434  -74.73163299738266 360
-    # 实际 [425, -74, 360, -180, 0.0, 90]
+    # 测量 310.62117478922283  -156.6327899259884 360
+    # 实际 310, -140, 360
     
 
 # 01 通过

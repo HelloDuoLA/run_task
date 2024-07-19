@@ -45,27 +45,28 @@ class STag_result():
 class STag_result_list():
     # TODO:值域为STag码, 根据实际修改
     STag_Snack_dict = {
-        8 : order.Snack.Snack_id.YIDA.value,
-        7 : order.Snack.Snack_id.GUOSHU.value,
-        1 : order.Snack.Snack_id.CKU.value,
-        4 : order.Snack.Snack_id.RUSUANJUN.value,
-        3 : order.Snack.Snack_id.CHENPIDAN.value,
+        0 : order.Snack.Snack_id.CKU.value,
+        0 : order.Snack.Snack_id.GUOSHU.value,
+        1 : order.Snack.Snack_id.RUSUANJUN.value,
+        2 : order.Snack.Snack_id.CHENPIDAN.value,
+        3 : order.Snack.Snack_id.YIDA.value,
     }
     
     STag_other_dict = {
-        9  : task.Task_image_rec.Rec_OBJ_type.CONTAINER.value ,
-        6 : task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value,
-        2  : task.Task_image_rec.Rec_OBJ_type.CUP.value,
-        11 : task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value
+        4 : task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT.value,
+        5 : task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT.value,
+        6  : task.Task_image_rec.Rec_OBJ_type.CUP.value,
+        7 : task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value,
+        8 : task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value
     }
     
     STag_other_enum_2_stag_num = {
-        task.Task_image_rec.Rec_OBJ_type.CONTAINER :     9,
-        task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT: 9,
-        task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT:9,
-        task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH: 6,
-        task.Task_image_rec.Rec_OBJ_type.CUP:            2,
-        task.Task_image_rec.Rec_OBJ_type.WATER_POINT:    11
+        # task.Task_image_rec.Rec_OBJ_type.CONTAINER :     9,
+        task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT: 4,
+        task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT:5,
+        task.Task_image_rec.Rec_OBJ_type.CUP:            6,
+        task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH: 7,
+        task.Task_image_rec.Rec_OBJ_type.WATER_POINT:    8
     }
     
     
