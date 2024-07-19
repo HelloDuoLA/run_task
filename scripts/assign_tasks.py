@@ -583,7 +583,8 @@ class Image_rec_actuator():
         elif current_task.task_type.task_type == task.Task_type.Task_image_rec.CONTAINER:
             # 获取结果
             for obj_position in result.obj_positions:
-                if obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.CONTAINER:
+                if obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT or\
+                    obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT :
                     # 抓取容器区域
                     container_xyz = obj_position.position
                 elif obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK:

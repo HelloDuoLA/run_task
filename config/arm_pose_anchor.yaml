@@ -5,7 +5,7 @@ LeftArmIdle:
 
 # 左臂食物框识别位点
 LeftArmContainerRec:
-  angles: [-54.13, 39.13, -67.06, 68.89, 38.9, 33.61]
+  angles: [-57.8, 32.65, -66.77, 75.38, 33.39, 42.65]
 
 # 左臂零食识别位点
 LeftArmSnackRec:
@@ -88,7 +88,7 @@ RightArmIdle:
 
 # 右臂食物框识别位点
 RightArmContainerRec:
-  angles: [54.13, 39.13, -67.06, -68.89, 38.89, -33.61]
+  angles: [52.75, 42.33, -66.09, -67.39, 40.94, -31.12]
 
 # 右臂零食识别位点
 RightArmSnackRec:

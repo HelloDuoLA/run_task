@@ -1,7 +1,59 @@
-07-18 16:59:27
+07-19 09:33:06
 
 --------------------------------------------------
 
+
+Task       : Task_image_rec CONTAINER
+Name       : left camera rec container
+Group_id   : 2
+Index      : 6
+Create_time: 1721352756.4675562
+Start_time : 1721352784.5638776
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : RUNNING
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [4:Task_manipulation Rec_container] [2:Task_navigate Navigate_to_the_snack_desk] 
+Sleep_time_before_task : 1
+Sleep_time_after_task  : 0
+Camera_id: LEFT 
+Snack_list: []
+Need_modify_tasks: 
+          [13:Task_manipulation Lossen_snack]
+          [16:Task_manipulation Lossen_snack]
+          [18:Task_manipulation Grasp_container_pre]
+ 
+
+Task       : Task_image_rec CONTAINER
+Name       : right camera rec container
+Group_id   : 2
+Index      : 7
+Create_time: 1721352756.4676135
+Start_time : 1721352785.6060889
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : RUNNING
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [5:Task_manipulation Rec_container] [2:Task_navigate Navigate_to_the_snack_desk] 
+Sleep_time_before_task : 1
+Sleep_time_after_task  : 0
+Camera_id: RIGHT 
+Snack_list: []
+Need_modify_tasks: 
+          [13:Task_manipulation Lossen_snack]
+          [16:Task_manipulation Lossen_snack]
+          [20:Task_manipulation Grasp_container_pre]
+ 
 --------------------------------------------------
 
 
