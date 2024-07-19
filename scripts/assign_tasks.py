@@ -161,7 +161,7 @@ class System():
             self.left_arm_idle                 = self._get_arm_anchor_angle("LeftArmIdle")                # 左臂闲置
             self.left_arm_container_rec        = self._get_arm_anchor_angle("LeftArmContainerRec")        # 左臂识别容器
             self.left_arm_snack_rec            = self._get_arm_anchor_angle("LeftArmSnackRec")            # 左臂零食识别
-            self.left_arm_snack_grip_pre       = self._get_arm_anchor_angle("LeftArmSnackRecPre")         # 左臂零食抓取准备点
+            self.left_arm_snack_grip_pre       = self._get_arm_anchor_angle("LeftArmGripSnackPre")         # 左臂零食抓取准备点
             self.left_arm_snack_grip           = self._get_arm_anchor_coord("LeftArmGripSnack")           # 左臂零食抓取
             self.left_arm_snack_placement_pre  = self._get_arm_anchor_coord("LeftArmSnackPlacementPre")   # 左臂零食放置准备点
             self.left_arm_snack_placement      = self._get_arm_anchor_coord("LeftArmSnackPlacement")      # 左臂零食放置
@@ -172,9 +172,9 @@ class System():
             self.left_arm_machine_turn_on_rec  = self._get_arm_anchor_angle("LeftArmMachineTurnOnRec")    # 左臂 开 咖啡机识别
             self.left_arm_machine_turn_off_rec = self._get_arm_anchor_angle("LeftArmMachineTurnOFFRec")   # 左臂 关 咖啡机识别
             self.left_arm_machine_turn_on_pre  = self._get_arm_anchor_coord("LeftArmMachineTurnOnPre")    # 左臂 开 咖啡机预备动作
-            self.left_arm_machine_turn_on_click= self._get_arm_anchor_coord("LeftArmMachineTurnOnClick")    # 左臂 开 咖啡机 向上拨一拨
+            self.left_arm_machine_turn_on_click= self._get_arm_anchor_coord("LeftArmMachineTurnOnClick")  # 左臂 开 咖啡机 向上拨一拨
             self.left_arm_machine_turn_off_pre = self._get_arm_anchor_coord("LeftArmMachineTurnOffPre")   # 左臂 关 咖啡机预备动作
-            self.left_arm_machine_turn_off_click= self._get_arm_anchor_coord("LeftArmMachineTurnOffClick")   # 左臂 关 咖啡机预备动作
+            self.left_arm_machine_turn_off_click= self._get_arm_anchor_coord("LeftArmMachineTurnOffClick")# 左臂 关 咖啡机预备动作
             
             
             self.right_arm_idle                = self._get_arm_anchor_angle("RightArmIdle")               # 右臂空闲
