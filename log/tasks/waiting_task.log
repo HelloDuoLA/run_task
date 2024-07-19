@@ -1,4 +1,4 @@
-07-19 19:59:00
+07-19 19:59:02
 
 --------------------------------------------------
 
@@ -27,32 +27,6 @@ Need_modify_tasks:
           [12:Task_manipulation Lossen_snack]
           [16:Task_manipulation Lossen_snack]
           [7:Task_manipulation Grasp_container_pre]
- 
-
-Task       : Task_image_rec CONTAINER
-Name       : right camera rec container
-Group_id   : 6
-Index      : 3
-Create_time: 1721390340.3474026
-Start_time : -999
-End_time   : -999
-Duration   : -999
-Finsih_cb  : None
-Status     : BEREADY
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: [1:Task_manipulation Rec_container] 
-Sleep_time_before_task : 1
-Sleep_time_after_task  : 0
-Camera_id: RIGHT 
-Snack_list: []
-Need_modify_tasks: 
-          [12:Task_manipulation Lossen_snack]
-          [16:Task_manipulation Lossen_snack]
-          [8:Task_manipulation Grasp_container_pre]
  
 
 Task       : Task_manipulation Rec_snack
