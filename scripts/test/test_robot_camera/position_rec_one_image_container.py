@@ -17,9 +17,9 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
         [-tag_size/2, -tag_size/2 ,  0]
     ], dtype=np.float32)
     
-    print(objectPoints)
-    print(f"mtx \n {mtx}")
-    print(f"distCoeffs \n {distCoeffs}")
+    # print(objectPoints)
+    # print(f"mtx \n {mtx}")
+    # print(f"distCoeffs \n {distCoeffs}")
     
     (corners_list, ids, rejected_corners_list) = stag.detectMarkers(image, libraryHD)
     
@@ -114,6 +114,12 @@ if __name__ == "__main__":
         dist_coeffs = np.array(list(map(float, line.split())), dtype=np.float32)
         
     # print(f"Distortion Coefficients: {dist_coeffs}")
+    
+    # camera_matrix = np.array([[532.76634274 ,  0.,         306.22017641],
+    #             [  0.         , 532.94411762, 225.40097394],
+    #             [  0.         ,  0.         , 1.        ]], dtype=np.float32)
+    
+    # dist_coeffs = np.array([ 0.17156132, -0.66222681, -0.00294354,  0.00106322,  0.73823942], dtype=np.float32)
     
     image = cv2.imread(args.image_path)
     
