@@ -142,7 +142,6 @@ class STag_result_list():
                     stag_result = copy.deepcopy(self.stag_result_list[i]) 
                     # 寻找容器STag
                     if stag_result.stag_id == self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT]:
-
                         stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[0] + LeftArmGripContainer.x # x = x + x + bias
                         stag_result.base_coords[1] = arm_poses[1] - stag_result.image_coords[1] + LeftArmGripContainer.y # y = y - y + bias
                         stag_result.base_coords[2] = LeftArmGripContainer.const_z                     #固定z坐标
@@ -160,7 +159,16 @@ class STag_result_list():
                         
                         new_stag_result_list.append(put_snack_point)
                         # 记录经验值
-                        log.log_empirical_value_left_arm_lossen_snack(put_snack_point.base_coords)
+                        # log.log_empirical_value_left_arm_lossen_snack(put_snack_point.base_coords)
+                        
+                        # 手臂躲避点
+                        arm_dodge_point = copy.deepcopy(stag_result)
+                        arm_dodge_point.base_coords[0] = stag_result.base_coords[0] + LeftArmGripContainerDodge.x
+                        arm_dodge_point.base_coords[1] = stag_result.base_coords[1] + LeftArmGripContainerDodge.y
+                        arm_dodge_point.base_coords[2] = stag_result.base_coords[2] + LeftArmGripContainerDodge.z
+                        arm_dodge_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.CONTAINER_DODGE.value
+                        new_stag_result_list.append(arm_dodge_point)
+                        
                 
                 
                 # 使用经验值(没有识别到容器框)
@@ -795,8 +803,10 @@ def init_camera():
     right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_GSTREAMER)
     
     
-    frame_width     = rospy.get_param(f'~frame_width',  1280)
-    frame_height    = rospy.get_param(f'~frame_height', 960)
+    # frame_width     = rospy.get_param(f'~frame_width',  1280)
+    # frame_height    = rospy.get_param(f'~frame_height', 960)    
+    frame_width     = rospy.get_param(f'~frame_width',  640)
+    frame_height    = rospy.get_param(f'~frame_height', 480)
     
     left_camera.set(cv2.CAP_PROP_FRAME_WIDTH , frame_width)
     left_camera.set(cv2.CAP_PROP_FRAME_HEIGHT, frame_height)
@@ -809,15 +819,18 @@ def init_const():
     global LeftArmGripSnack, LeftArmGripContainer, LeftArmGripTurnOnMachineSwitch, LeftArmGripTurnOFFMachineSwitch
     global RightArmGripSnack, RightArmGripContainer, RightArmGripCup, RightArmWaterCup
     global LeftArmLossenSnack, RightArmLossenSnack 
+    global LeftArmGripContainerDodge, RightArmGripContainerDodge
     # 获取项偏移
     LeftArmGripSnack                = get_deviation("LeftArmGripSnack")
     LeftArmLossenSnack              = get_deviation("LeftArmLossenSnack")
     LeftArmGripContainer            = get_deviation("LeftArmGripContainer",True)
+    LeftArmGripContainerDodge       = get_deviation("LeftArmGripContainerDodge")
     LeftArmGripTurnOnMachineSwitch  = get_deviation("LeftArmGripTurnOnMachineSwitch")
     LeftArmGripTurnOFFMachineSwitch = get_deviation("LeftArmGripTurnOFFMachineSwitch")
     RightArmGripSnack               = get_deviation("RightArmGripSnack")
     RightArmLossenSnack             = get_deviation("RightArmLossenSnack")
     RightArmGripContainer           = get_deviation("RightArmGripContainer",True)
+    RightArmGripContainerDodge      = get_deviation("RightArmGripContainerDodge")
     RightArmGripCup                 = get_deviation("RightArmGripCup",True)
     RightArmWaterCup                = get_deviation("RightArmWaterCup",True)
     
@@ -834,7 +847,7 @@ def init_empirical_value():
     ev_right_arm_grip_container   = _get_arm_empirical_value("right_arm_grip_container")
     ev_right_arm_grip_cup         = _get_arm_empirical_value("right_arm_grip_cup")
     ev_right_arm_grip_snack_top   = _get_arm_empirical_value("right_arm_grip_snack_top")
-    ev_right_arm_grip_snack_bottom = _get_arm_empirical_value("right_arm_grip_snack_bottom")
+    ev_right_arm_grip_snack_bottom= _get_arm_empirical_value("right_arm_grip_snack_bottom")
     ev_right_arm_water_cup        = _get_arm_empirical_value("right_arm_water_cup")
 # 通过名字获取经验值
 def _get_arm_empirical_value(anchor_point_name):

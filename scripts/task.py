@@ -83,6 +83,7 @@ class Task_type():
         Lossen_snack_pre   = auto()                  # 放零食
         Lossen_snack       = auto()                  # 放零食
         Rec_snack          = auto()                  # 识别零食
+        Grasp_container_dodge= auto()                # 夹容器前躲开容器的动作
         Grasp_container_pre= auto()                  # 夹容器准备动作
         Grasp_container    = auto()                  # 夹容器
         Deliever_container = auto()                  # 送容器
@@ -314,6 +315,7 @@ class Task_image_rec(Task):
     class Rec_OBJ_type(Enum):
         LOSSEN_SNACK   = 0        # 松开零食
         CONTAINER      = auto()   # 容器
+        CONTAINER_DODGE= auto()   # 容器外一点
         CONTAINER_LEFT = auto()   # 容器左端
         CONTAINER_RIGHT= auto()   # 容器右端
         MACHINE_SWITCH = auto()   # 机器开关
