@@ -565,20 +565,29 @@ class Image_rec_actuator():
                 for i in range(snack_count):
                     snack_xyz                = result.obj_positions[i].position
                     arm_id                   = result.obj_positions[i].arm_id
-                    task_grasp_snack_pre:task.Task_manipulation     = current_task.need_modify_tasks.task_list[i*4]
+                    task_grasp_snack_pre:task.Task_manipulation     = current_task.need_modify_tasks.task_list[i*6]
                     task_grasp_snack_pre.select_arm(arm_id)
-                    task_grasp_snack:task.Task_manipulation         = current_task.need_modify_tasks.task_list[i*4+1]
+                    task_grasp_snack:task.Task_manipulation         = current_task.need_modify_tasks.task_list[i*6+1]
                     task_grasp_snack.modify_xyz_select_arm(snack_xyz,arm_id)
-                    task_lossen_snack_pre:task.Task_manipulation    = current_task.need_modify_tasks.task_list[i*4+2]
+                    task_lossen_snack_pre:task.Task_manipulation    = current_task.need_modify_tasks.task_list[i*6+2]
                     # 左臂松零食使用 X_Z_Y
                     if arm_id == utilis.Device_id.LEFT:
                         task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.X_Z_Y)
                     else:
                         task_lossen_snack_pre.select_arm(arm_id)
-                    task_lossen_snack:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*4+3]
+                    task_lossen_snack:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*6+3]
                     task_lossen_snack.select_arm(arm_id)
                     
-                    task_grasp_snack_pre         = task.Task.Task_status.BEREADY
+                    task_left_arm_grap_container_pre :task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*6+4]
+                    task_right_arm_grap_container_pre:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*6+5]
+                    
+                    # 左臂则, 左臂夹取零食框的准备动作需要等放零食结束. 而右臂不需要
+                    if arm_id == utilis.Device_id.LEFT:
+                        task_right_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack)
+                    elif arm_id == utilis.Device_id.RIGHT:
+                        task_left_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack)
+                    
+                    task_grasp_snack_pre.status  = task.Task.Task_status.BEREADY
                     task_grasp_snack.status      = task.Task.Task_status.BEREADY
                     task_lossen_snack_pre.status = task.Task.Task_status.BEREADY
                     task_lossen_snack.status     = task.Task.Task_status.BEREADY
@@ -1411,14 +1420,15 @@ class Order_driven_task_schedul():
         return init_task
 
     # 创建抓取零食的任务
-    def create_task_grasp_snack(self,snack_rec_task:task.Task_image_rec,left_arm_container_rec_task:task.Task_image_rec, right_arm_container_rec_task:task.Task_image_rec):
+    def create_task_grasp_snack(self,snack_rec_task:task.Task_image_rec,left_arm_container_rec_task:task.Task_image_rec, right_arm_container_rec_task:task.Task_image_rec,\
+        task_left_arm_grap_container_pre,task_right_arm_grap_container_pre):
         # 抓取零食任务序列
         task_grasp_snack_seq = task.Task_sequence()
         
         # 抓取准备动作
         task_grasp_snack_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_snack_pre,None,utilis.Device_id.TBD,\
             [system.anchor_point.left_arm_snack_grip_pre,system.anchor_point.right_arm_snack_grip_pre],\
-            target_clamps_status = arm.GripMethod.OPEN_CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ)
+            target_clamps_status = arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ)
         task_grasp_snack_pre.parallel = task.Task.Task_parallel.ALL
         task_grasp_snack_pre.status = task.Task.Task_status.NOTREADY       # 需要参数
         task_grasp_snack_seq.add(task_grasp_snack_pre)
@@ -1454,11 +1464,17 @@ class Order_driven_task_schedul():
         task_placement_snack.add_predecessor_task(task_placement_snack_pre)    # 添加前置任务
         task_grasp_snack_seq.add(task_placement_snack)
         
+        # 夹容器前把夹零食任务做完
+        task_left_arm_grap_container_pre.add_predecessor_task(task_placement_snack)
+        task_right_arm_grap_container_pre.add_predecessor_task(task_placement_snack)
+        
         # 将抓取零食任务与图像识别任务绑定
         snack_rec_task.add_need_modify_task(task_grasp_snack_pre)           # 抓零食准备位点
         snack_rec_task.add_need_modify_task(task_grasp_snack)               # 抓零食
         snack_rec_task.add_need_modify_task(task_placement_snack_pre)       # 放零食中间点
         snack_rec_task.add_need_modify_task(task_placement_snack)           # 放零食
+        snack_rec_task.add_need_modify_task(task_left_arm_grap_container_pre)   # 容器夹取准备动作
+        snack_rec_task.add_need_modify_task(task_right_arm_grap_container_pre)  # 容器夹取准备动作
         left_arm_container_rec_task.add_need_modify_task(task_placement_snack)
         right_arm_container_rec_task.add_need_modify_task(task_placement_snack)
         
@@ -1527,11 +1543,7 @@ class Order_driven_task_schedul():
         task_rec_snack.add_predecessor_task(task_left_arm_to_rec_snack)                        # 前置任务, 左臂移动到零食识别位置
         task_rec_snack.add_predecessor_task(task_right_arm_to_rec_snack)                       # 前置任务, 右臂移动到零食识别位置
         tasks_pick_snack.add(task_rec_snack)
-
-        # 零食抓取任务
-        snack_count = snack_list.get_all_snack_count()
-        for i in range(snack_count):
-            tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
+        
         
         # 左臂夹取零食框, 准备动作
         task_left_arm_grap_container_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container_pre,None,utilis.Device_id.LEFT,\
@@ -1541,7 +1553,7 @@ class Order_driven_task_schedul():
         task_left_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行
         task_left_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数
         tasks_pick_snack.add(task_left_arm_grap_container_pre)
-        task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_pre)  # 识别容器绑定 夹取容器准备动作
+        
         
         # 右臂夹取零食框, 准备动作
         task_right_arm_grap_container_pre    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container_pre,None,utilis.Device_id.RIGHT,\
@@ -1551,6 +1563,15 @@ class Order_driven_task_schedul():
         task_right_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行  
         task_right_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数 
         tasks_pick_snack.add(task_right_arm_grap_container_pre)
+
+        # 零食抓取任务
+        snack_count = snack_list.get_all_snack_count()
+        for i in range(snack_count):
+            tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container,\
+                task_left_arm_grap_container_pre,task_right_arm_grap_container_pre))
+        
+
+        task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_pre)  # 识别容器绑定 夹取容器准备动作
         task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container_pre) # 识别容器绑定 夹取容器
         
         
@@ -1682,7 +1703,7 @@ def test_order_snack():
 
     # log.log_tasks_info(tasks_get_snack,"new_all_task.log")
     
-    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
+    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)

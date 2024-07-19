@@ -195,6 +195,10 @@ class Task():
     # 添加前置任务
     def add_predecessor_task(self,task):
         self.predecessor_tasks.add(task)
+    
+    # 删除前置任务
+    def del_prodecessor_task(self,task):
+        self.predecessor_tasks.remove_task_nolog(task)
         
     # 设置任务状态
     def set_status(self,status:Task_status):
@@ -445,6 +449,7 @@ class Task_manipulation(Task):
             
         if arm_move_method != None:
             self.arm_move_method = arm_move_method
+    
         
     # 打印字符串
     def __str__(self) -> str:
@@ -519,6 +524,10 @@ class Task_sequence():
     def remove_task(self,task:Task):
         self.task_list.remove(task)
         self._log_info()
+        
+    # 删除任务, 不打印日志
+    def remove_task_nolog(self,task:Task):
+        self.task_list.remove(task)
         
     # 打印信息
     def _log_info(self):
