@@ -37,7 +37,7 @@ LeftArmGripContainerPre:
 LeftArmGripContainer:
   # x y 待定(与识别框的偏移量)
   # coords:  [-999, -999, 360, -180, 0.0, -90]
-  coords:  [0, 0, -70, 0, 0, 0]
+  coords:  [0, 0, -60, 0, 0, 0]
 
 # 左臂零食框递送时的位点
 LeftArmContainerDelivery:
@@ -119,7 +119,7 @@ RightArmGripContainerPre:
 RightArmGripContainer:
   # x y 待定(与识别框的偏移量)
   # coords:  [-999, -999, 360, -180, 0.0, 90]
-  coords:  [0, 0, -70, 0, 0, 0]
+  coords:  [0, 0, -60, 0, 0, 0]
 
 # 右臂零食框递送时的位点
 RightArmContainerDelivery:

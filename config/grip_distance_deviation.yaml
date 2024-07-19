@@ -37,7 +37,7 @@ RightArmGripSnack:
   # x_bias: -90
   x_bias: -100
   y_bias: 78
-  z_bias: 10
+  z_bias: -5
 
 # 右臂松零食
 # 相对于抓容器的位置

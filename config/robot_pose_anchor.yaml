@@ -10,19 +10,20 @@ InitialPose:
 
 # 零食台位姿
 SnackDesk:
-  position_x: 0.51098
-  position_y: -2.31026
-  position_z: 0.00009
-  orientation_x: 0.00024
-  orientation_y: 0.00114
-  orientation_z: 0.99994
-  orientation_w: 0.01119
+  # position_x: 0.51
+  position_x: 0.31
+  position_y: -2.31
+  position_z: 0
+  orientation_x: 0
+  orientation_y: 0
+  orientation_z: 1
+  orientation_w: 0
   
 # 饮料台位姿
 DrinkDesk:
   position_x: 0.52355
   position_y: -2.24851
-  position_z: -0.00002
+  position_z: -0
   orientation_x: 0.00152
   orientation_y: 0.00167
   orientation_z: -0.66211

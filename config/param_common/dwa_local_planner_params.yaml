@@ -40,7 +40,7 @@ DWAPlannerROS:
   max_scaling_factor: 0.3       #最大缩放因子。max_scaling_factor为上式的值的大小。
 
   #预防振动参数
-  oscillation_reset_dist: 0.02  #当机器人在运动，但是运动幅度不大于多少时，认为机器人处于振荡状态，单位：m
+  oscillation_reset_dist: 0.05  #当机器人在运动，但是运动幅度不大于多少时，认为机器人处于振荡状态，单位：m
   oscillation_reset_angle: 0.05 #当机器人在运动，但是运动幅度不大于多少时，认为机器人处于振荡状态，单位：rad
 
   #调试参数

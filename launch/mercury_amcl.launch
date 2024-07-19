@@ -14,7 +14,7 @@
       <!-- <param name="odom_model_type" value="omnid"/> -->
       <param name="odom_model_type" value="diff"/>
       <!-- <param name="odom_model_type" value="diff-corrected"/> -->
-      <param name="odom_alpha5" value="0.1"/>
+      <!-- <param name="odom_alpha5" value="0.1"/> -->
       <param name="gui_publish_rate" value="10.0"/>
       <!-- <param name="laser_max_beams" value="120"/> -->
       <param name="laser_max_beams" value="60"/>
@@ -56,10 +56,10 @@
       <remap from="scan" to="$(arg scan_topic)"/>
 
       <!-- 自己添加的修改参数 -->
-      <param name="odom_alpha1" value="1.0"/>     <!-- 旋转引起的旋转误差 -->
-      <param name="odom_alpha2" value="0.6"/>     <!-- 平移引起的旋转误差 -->
-      <param name="odom_alpha3" value="1.0"/>     <!-- 平移引起的平移误差 -->
-      <param name="odom_alphaa" value="0.2"/>     <!-- 旋转引起的平移误差 -->
+      <param name="odom_alpha1" value="1.5"/>     <!-- 旋转引起的旋转误差 -->
+      <param name="odom_alpha2" value="0.2"/>     <!-- 平移引起的旋转误差 -->
+      <param name="odom_alpha3" value="0.5"/>     <!-- 平移引起的平移误差 -->
+      <param name="odom_alphaa" value="0.5"/>     <!-- 旋转引起的平移误差 -->
 
     </node>
 </launch>
