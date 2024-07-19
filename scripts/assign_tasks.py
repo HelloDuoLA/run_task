@@ -104,7 +104,8 @@ class System():
             self._initialize_arm_anchor_point()
             self._initialize_other_config()
             self._initialize_use_time()
-            
+        
+        # 特殊的使用时间
         def _initialize_use_time(self):
             self.time_wait_for_turn_on_machine  = rospy.get_param(f'~time_wait_for_turn_on_machine')
             self.time_wait_for_turn_off_machine = rospy.get_param(f'~time_wait_for_turn_off_machine')
@@ -160,6 +161,7 @@ class System():
             self.left_arm_idle                 = self._get_arm_anchor_angle("LeftArmIdle")                # 左臂闲置
             self.left_arm_container_rec        = self._get_arm_anchor_angle("LeftArmContainerRec")        # 左臂识别容器
             self.left_arm_snack_rec            = self._get_arm_anchor_angle("LeftArmSnackRec")            # 左臂零食识别
+            self.left_arm_snack_grip_pre       = self._get_arm_anchor_angle("LeftArmSnackRecPre")         # 左臂零食抓取准备点
             self.left_arm_snack_grip           = self._get_arm_anchor_coord("LeftArmGripSnack")           # 左臂零食抓取
             self.left_arm_snack_placement_pre  = self._get_arm_anchor_coord("LeftArmSnackPlacementPre")   # 左臂零食放置准备点
             self.left_arm_snack_placement      = self._get_arm_anchor_coord("LeftArmSnackPlacement")      # 左臂零食放置
@@ -178,6 +180,7 @@ class System():
             self.right_arm_idle                = self._get_arm_anchor_angle("RightArmIdle")               # 右臂空闲
             self.right_arm_container_rec       = self._get_arm_anchor_angle("RightArmContainerRec")       # 右臂识别容器
             self.right_arm_snack_rec           = self._get_arm_anchor_angle("RightArmSnackRec")           # 右臂识别零食
+            self.right_arm_snack_grip_pre      = self._get_arm_anchor_angle("RightArmGripSnackPre")       # 右臂零食抓取准备点
             self.right_arm_snack_grip          = self._get_arm_anchor_coord("RightArmGripSnack")          # 右臂零食抓取
             self.right_arm_snack_placement_pre = self._get_arm_anchor_coord("RightArmSnackPlacementPre")  # 右臂零食放置准备点
             self.right_arm_snack_placement     = self._get_arm_anchor_coord("RightArmSnackPlacement")     # 右臂零食放置
@@ -562,17 +565,20 @@ class Image_rec_actuator():
                 for i in range(snack_count):
                     snack_xyz                = result.obj_positions[i].position
                     arm_id                   = result.obj_positions[i].arm_id
-                    task_grasp_snack:task.Task_manipulation         = current_task.need_modify_tasks.task_list[i*3]
+                    task_grasp_snack_pre:task.Task_manipulation     = current_task.need_modify_tasks.task_list[i*4]
+                    task_grasp_snack_pre.select_arm(arm_id)
+                    task_grasp_snack:task.Task_manipulation         = current_task.need_modify_tasks.task_list[i*4+1]
                     task_grasp_snack.modify_xyz_select_arm(snack_xyz,arm_id)
-                    task_lossen_snack_pre:task.Task_manipulation    = current_task.need_modify_tasks.task_list[i*3+1]
+                    task_lossen_snack_pre:task.Task_manipulation    = current_task.need_modify_tasks.task_list[i*4+2]
                     # 左臂松零食使用 X_Z_Y
                     if arm_id == utilis.Device_id.LEFT:
                         task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.X_Z_Y)
                     else:
                         task_lossen_snack_pre.select_arm(arm_id)
-                    task_lossen_snack:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*3+2]
+                    task_lossen_snack:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*4+3]
                     task_lossen_snack.select_arm(arm_id)
                     
+                    task_grasp_snack_pre         = task.Task.Task_status.BEREADY
                     task_grasp_snack.status      = task.Task.Task_status.BEREADY
                     task_lossen_snack_pre.status = task.Task.Task_status.BEREADY
                     task_lossen_snack.status     = task.Task.Task_status.BEREADY
@@ -1400,21 +1406,32 @@ class Order_driven_task_schedul():
     # 创建前往初始点的任务
     def create_task_navigate_to_init_point(self):
         #  前往初始位置
-        return task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point,None,system.anchor_point.map_initial_pose)
+        init_task = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point,None,system.anchor_point.map_initial_pose)
+        init_task.parallel = task.Task.Task_parallel.ALL
+        return init_task
 
     # 创建抓取零食的任务
     def create_task_grasp_snack(self,snack_rec_task:task.Task_image_rec,left_arm_container_rec_task:task.Task_image_rec, right_arm_container_rec_task:task.Task_image_rec):
         # 抓取零食任务序列
         task_grasp_snack_seq = task.Task_sequence()
         
+        # 抓取准备动作
+        task_grasp_snack_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_snack_pre,None,utilis.Device_id.TBD,\
+            [system.anchor_point.left_arm_snack_grip_pre,system.anchor_point.right_arm_snack_grip_pre],\
+            target_clamps_status = arm.GripMethod.OPEN_CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ)
+        task_grasp_snack_pre.parallel = task.Task.Task_parallel.ALL
+        task_grasp_snack_pre.status = task.Task.Task_status.NOTREADY       # 需要参数
+        task_grasp_snack_seq.add(task_grasp_snack_pre)
+        
         # 抓取零食
         # 抓取坐标待定
         # TODO: 如果是一个手臂抓取两次零食, 则放置零食到抓取零食需要修改抓取方式
         task_grasp_snack = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_snack,None,utilis.Device_id.TBD,\
             [system.anchor_point.left_arm_snack_grip,system.anchor_point.right_arm_snack_grip],\
-            target_clamps_status = arm.GripMethod.OPEN_CLOSE, arm_move_method = arm.ArmMoveMethod.YZ_X)
+            target_clamps_status  = arm.GripMethod.OPEN_CLOSE, arm_move_method = arm.ArmMoveMethod.YZ_X)
         task_grasp_snack.parallel = task.Task.Task_parallel.ALL
-        task_grasp_snack.status = task.Task.Task_status.NOTREADY       # 需要参数
+        task_grasp_snack.status   = task.Task.Task_status.NOTREADY       # 需要参数
+        task_grasp_snack.add_predecessor_task(task_grasp_snack_pre)      # 添加前置任务
         task_grasp_snack_seq.add(task_grasp_snack)
         
         # 放置零食中间位置
@@ -1438,6 +1455,7 @@ class Order_driven_task_schedul():
         task_grasp_snack_seq.add(task_placement_snack)
         
         # 将抓取零食任务与图像识别任务绑定
+        snack_rec_task.add_need_modify_task(task_grasp_snack_pre)           # 抓零食准备位点
         snack_rec_task.add_need_modify_task(task_grasp_snack)               # 抓零食
         snack_rec_task.add_need_modify_task(task_placement_snack_pre)       # 放零食中间点
         snack_rec_task.add_need_modify_task(task_placement_snack)           # 放零食
@@ -1664,7 +1682,7 @@ def test_order_snack():
 
     # log.log_tasks_info(tasks_get_snack,"new_all_task.log")
     
-    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
+    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)

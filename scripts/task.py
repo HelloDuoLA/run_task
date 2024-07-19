@@ -78,6 +78,7 @@ class Task_type():
         Grasp              = 400                     # 夹具夹取
         Move               = auto()                  # 机械臂移动
         Move_to_IDLE       = auto()                  # 机械臂空闲
+        Grasp_snack_pre    = auto()                  # 夹零食
         Grasp_snack        = auto()                  # 夹零食
         Lossen_snack_pre   = auto()                  # 放零食
         Lossen_snack       = auto()                  # 放零食
