@@ -1010,10 +1010,6 @@ class Order_driven_task_schedul():
         snack_count = snack_list.get_all_snack_count()
         for i in range(snack_count):
             tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
-
-        # 功能暂停任务(等待全部零食抓取完毕)
-        task_function_pause = task.Task_function(task.Task_type.Task_function.PAUSE, None,name="function pause")
-        tasks_pick_snack.add(task_function_pause)
         
         # 左臂夹取零食框, 准备动作
         task_left_arm_grap_container_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container_pre,None,utilis.Device_id.LEFT,\
@@ -1025,16 +1021,6 @@ class Order_driven_task_schedul():
         tasks_pick_snack.add(task_left_arm_grap_container_pre)
         task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_pre)  # 识别容器绑定 夹取容器准备动作
         
-        # 左臂夹取零食框
-        task_left_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
-                [copy.deepcopy(system.anchor_point.left_arm_container_grip)],\
-                    [arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
-                        name="left arm grap container")
-        task_left_arm_grap_container.parallel = task.Task.Task_parallel.ALL                  # 可并行
-        task_left_arm_grap_container.add_predecessor_task(task_left_arm_grap_container_pre)  # 前置任务, 完成准备动作
-        tasks_pick_snack.add(task_left_arm_grap_container)
-        
-        
         # 右臂夹取零食框, 准备动作
         task_right_arm_grap_container_pre    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container_pre,None,utilis.Device_id.RIGHT,\
                 [copy.deepcopy(system.anchor_point.right_arm_container_grip_pre)],\
@@ -1045,6 +1031,22 @@ class Order_driven_task_schedul():
         tasks_pick_snack.add(task_right_arm_grap_container_pre)
         task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container_pre) # 识别容器绑定 夹取容器
         
+        
+        # 功能暂停任务(等待全部零食抓取完毕)
+        task_function_pause = task.Task_function(task.Task_type.Task_function.PAUSE, None,name="function pause")
+        task_function_pause.add_predecessor_task(task_left_arm_grap_container_pre)  
+        task_function_pause.add_predecessor_task(task_right_arm_grap_container_pre)  
+        tasks_pick_snack.add(task_function_pause)
+        
+        # 左臂夹取零食框
+        task_left_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
+                [copy.deepcopy(system.anchor_point.left_arm_container_grip)],\
+                    [arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
+                        name="left arm grap container")
+        task_left_arm_grap_container.parallel = task.Task.Task_parallel.ALL                  # 可并行
+        task_left_arm_grap_container.add_predecessor_task(task_left_arm_grap_container_pre)  # 前置任务, 完成准备动作
+        tasks_pick_snack.add(task_left_arm_grap_container)
+            
         
         # 右臂夹取零食框
         task_right_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
