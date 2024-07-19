@@ -1449,7 +1449,133 @@ class Order_driven_task_schedul():
     # !!!
     # 创建在零食桌前的任务
     def test_tasks_at_snack_desk(self,snack_list:order.Snack_list)->task.Task_sequence:
-        pass
+        tasks_pick_snack        = task.Task_sequence()
+        #  将左臂抬到指定位置(食物框识别位置)
+        task_left_arm_to_rec_contianer = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_container, None, utilis.Device_id.LEFT, \
+            system.anchor_point.left_arm_container_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
+                name="left arm move to rec container")
+        task_left_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL             # 可并行
+        # task_left_arm_to_rec_contianer.add_predecessor_task(task_navigation_move_foward_to_snack_desk)    # 前置任务, 机器人移动到位
+        tasks_pick_snack.add(task_left_arm_to_rec_contianer)
+        
+        #  将右臂抬到指定位置(食物框识别位置)
+        task_right_arm_to_rec_contianer = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_container, None, utilis.Device_id.RIGHT,\
+            system.anchor_point.right_arm_container_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
+                name="right arm move to rec container")
+        task_right_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL           # 可并行
+        # task_right_arm_to_rec_contianer.add_predecessor_task(task_navigation_move_foward_to_snack_desk)  # 前置任务, 机器人移动到位
+        tasks_pick_snack.add(task_right_arm_to_rec_contianer)
+        
+        #  左摄像头食物框识别(可前后并行，固定)
+        task_left_camera_rec_container = task.Task_image_rec(task.Task_type.Task_image_rec.CONTAINER, None, utilis.Device_id.LEFT,\
+            name="left camera rec container")
+        task_left_camera_rec_container.parallel = task.Task.Task_parallel.ALL               # 可并行
+        task_left_camera_rec_container.set_sleep_time_before_task(system.anchor_point.time_before_get_image) # 获取照片前暂停一下，以免图片模糊
+        task_left_camera_rec_container.add_predecessor_task(task_left_arm_to_rec_contianer) # 前置任务, 左臂移动到食物框识别位置
+        # task_left_camera_rec_container.add_predecessor_task(task_navigation_to_snack_desk)  # 前置任务, 导航到零食桌
+        tasks_pick_snack.add(task_left_camera_rec_container)
+        
+        #  右摄像头食物框识别(可前后并行，固定)
+        task_right_camera_rec_container = task.Task_image_rec(task.Task_type.Task_image_rec.CONTAINER, None, utilis.Device_id.RIGHT,\
+            name="right camera rec container")
+        task_right_camera_rec_container.parallel = task.Task.Task_parallel.ALL                  # 可并行
+        task_right_camera_rec_container.set_sleep_time_before_task(system.anchor_point.time_before_get_image) # 获取照片前暂停一下，以免图片模糊
+        task_right_camera_rec_container.add_predecessor_task(task_right_arm_to_rec_contianer)   # 前置任务, 右臂移动到食物框识别位置
+        # task_right_camera_rec_container.add_predecessor_task(task_navigation_to_snack_desk)     # 前置任务, 导航到零食桌
+        
+        tasks_pick_snack.add(task_right_camera_rec_container)
+        
+        #  将左臂抬到零食识别位置(可前后并行，固定)
+        task_left_arm_to_rec_snack = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_snack, None, utilis.Device_id.LEFT, \
+            system.anchor_point.left_arm_snack_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
+                name="left arm move to rec snack")
+        task_left_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL                     # 可并行
+        task_left_arm_to_rec_snack.add_predecessor_task(task_left_camera_rec_container)       # 前置任务, 左摄像头食物框识别
+        tasks_pick_snack.add(task_left_arm_to_rec_snack)
+        
+        #  将右臂抬到零食识别位置(可前后并行，固定)
+        task_right_arm_to_rec_snack = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_snack, None, utilis.Device_id.RIGHT, \
+            system.anchor_point.right_arm_snack_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
+                name="right arm move to rec snack")
+        task_right_arm_to_rec_snack.parallel = task.Task.Task_parallel.ALL                    # 可并行
+        task_right_arm_to_rec_snack.add_predecessor_task(task_right_camera_rec_container)     # 前置任务, 右摄像头食物框识别
+        tasks_pick_snack.add(task_right_arm_to_rec_snack)
+        
+        #  左、右摄像头零食识别(不可并行，动态)
+        task_rec_snack = task.Task_image_rec(task.Task_type.Task_image_rec.SNACK, None, utilis.Device_id.LEFT_RIGHT,\
+            name="two arms rec snack")
+        task_rec_snack.set_snack_list(snack_list)
+        task_rec_snack.set_sleep_time_before_task(system.anchor_point.time_before_get_image)   # 获取照片前暂停一下，以免图片模糊
+        task_rec_snack.add_predecessor_task(task_left_arm_to_rec_snack)                        # 前置任务, 左臂移动到零食识别位置
+        task_rec_snack.add_predecessor_task(task_right_arm_to_rec_snack)                       # 前置任务, 右臂移动到零食识别位置
+        tasks_pick_snack.add(task_rec_snack)
+
+        # 零食抓取任务
+        snack_count = snack_list.get_all_snack_count()
+        for i in range(snack_count):
+            tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
+        
+        # 左臂夹取零食框, 准备动作
+        task_left_arm_grap_container_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container_pre,None,utilis.Device_id.LEFT,\
+                [copy.deepcopy(system.anchor_point.left_arm_container_grip_pre)],\
+                    [arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.Z_XY,\
+                        name="left arm grap container prepare")
+        task_left_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行
+        task_left_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数
+        tasks_pick_snack.add(task_left_arm_grap_container_pre)
+        task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_pre)  # 识别容器绑定 夹取容器准备动作
+        
+        # 右臂夹取零食框, 准备动作
+        task_right_arm_grap_container_pre    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container_pre,None,utilis.Device_id.RIGHT,\
+                [copy.deepcopy(system.anchor_point.right_arm_container_grip_pre)],\
+                    [arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.Z_XY,\
+                        name="right arm grap container prepare")
+        task_right_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行  
+        task_right_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数 
+        tasks_pick_snack.add(task_right_arm_grap_container_pre)
+        task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container_pre) # 识别容器绑定 夹取容器
+        
+        
+        # 功能暂停任务(等待全部零食抓取完毕)
+        task_function_pause = task.Task_function(task.Task_type.Task_function.PAUSE, None,name="function pause")
+        task_function_pause.add_predecessor_task(task_left_arm_grap_container_pre)  
+        task_function_pause.add_predecessor_task(task_right_arm_grap_container_pre)  
+        tasks_pick_snack.add(task_function_pause)
+        
+        # 左臂夹取零食框
+        task_left_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.LEFT,\
+                [copy.deepcopy(system.anchor_point.left_arm_container_grip)],\
+                    [arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
+                        name="left arm grap container")
+        task_left_arm_grap_container.parallel = task.Task.Task_parallel.ALL                  # 可并行
+        task_left_arm_grap_container.add_predecessor_task(task_left_arm_grap_container_pre)  # 前置任务, 完成准备动作
+        tasks_pick_snack.add(task_left_arm_grap_container)
+            
+        
+        # 右臂夹取零食框
+        task_right_arm_grap_container    = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container,None,utilis.Device_id.RIGHT,\
+                [copy.deepcopy(system.anchor_point.right_arm_container_grip)],\
+                    [arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
+                        name="right arm grap container")
+        task_right_arm_grap_container.parallel = task.Task.Task_parallel.ALL                   # 可并行  
+        task_right_arm_grap_container.add_predecessor_task(task_right_arm_grap_container_pre)  # 前置任务, 完成准备动作
+        tasks_pick_snack.add(task_right_arm_grap_container)
+        
+        
+        #  左、右臂将零食框放到指定高度
+        task_arm_dilivery_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Deliever_container,None,utilis.Device_id.LEFT_RIGHT,\
+                [system.anchor_point.left_arm_container_delivery,system.anchor_point.right_arm_container_delivery],\
+                    [arm.GripMethod.DONTCANGE,arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
+                        name="two arms dilivery container")
+        
+        task_arm_dilivery_container.parallel = task.Task.Task_parallel.ALL
+        task_arm_dilivery_container.set_subtask_count(2)  # 两个子任务
+        task_arm_dilivery_container.add_predecessor_task(task_left_arm_grap_container)        # 前置任务, 左臂抓取容器
+        task_arm_dilivery_container.add_predecessor_task(task_right_arm_grap_container)       # 前置任务, 右臂抓取容器
+        tasks_pick_snack.add(task_arm_dilivery_container)
+        
+        return tasks_pick_snack
+        
     
     # 创建放置容器的任务
     def test_tasks_lossen_container(self,table_id : utilis.Device_id):
@@ -1519,12 +1645,12 @@ def test_order_snack():
     # order_info2.table_id = utilis.Device_id.RIGHT
     order_info2.table_id = utilis.Device_id.LEFT
 
-    tasks = system.order_driven_task_schedul.add_task(order_info)
-    tasks2 = system.order_driven_task_schedul.add_task(order_info2)
+    # tasks = system.order_driven_task_schedul.add_task(order_info)
+    # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
     # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
 
-    # tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)
-    # tasks_get_snack.update_group_id(6)
+    tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)
+    tasks_get_snack.update_group_id(6)
     
     # tasks_lossen_snack = system.order_driven_task_schedul.test_tasks_lossen_container(order_info.table_id)
     # tasks_lossen_snack.update_group_id(7)
@@ -1537,7 +1663,7 @@ def test_order_snack():
 
     # log.log_tasks_info(tasks_get_snack,"new_all_task.log")
     
-    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
+    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
