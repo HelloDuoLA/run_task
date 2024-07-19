@@ -115,11 +115,11 @@ if __name__ == "__main__":
         
     # print(f"Distortion Coefficients: {dist_coeffs}")
     
-    # camera_matrix = np.array([[532.76634274 ,  0.,         306.22017641],
-    #             [  0.         , 532.94411762, 225.40097394],
-    #             [  0.         ,  0.         , 1.        ]], dtype=np.float32)
+    camera_matrix = np.array([[532.76634274 ,  0.,         306.22017641],
+                [  0.         , 532.94411762, 225.40097394],
+                [  0.         ,  0.         , 1.        ]], dtype=np.float32)
     
-    # dist_coeffs = np.array([ 0.17156132, -0.66222681, -0.00294354,  0.00106322,  0.73823942], dtype=np.float32)
+    dist_coeffs = np.array([ 0.17156132, -0.66222681, -0.00294354,  0.00106322,  0.73823942], dtype=np.float32)
     
     image = cv2.imread(args.image_path)
     
@@ -140,20 +140,20 @@ if __name__ == "__main__":
             print("left")
             print(f"left   arm end pose {base_coords_left[:3]}")
             print(f"stag xyz : {xyz}")
-            print(f"shousuan    xyz:{base_coords_left[0] + xyz[0] + 50 -70}  {base_coords_left[1] - xyz[1] -27} {360}")
+            print(f"shousuan    xyz:{base_coords_left[0] + xyz[0] + 50 -70 -38}  {base_coords_left[1] - xyz[1] -27+50} {360}")
         elif id == 5:
             print("right")
             print(f"stag xyz : {xyz}")
             print(f"right  arm end pose {base_coords_right[:3]}")
-            print(f"shousuan    xyz:{base_coords_right[0] - xyz[0] -10}  {base_coords_right[1] + xyz[1] + 28 + 16} {360}\r\n\r\n")
+            print(f"shousuan    xyz:{base_coords_right[0] - xyz[0] -10+13}  {base_coords_right[1] + xyz[1] + 28} {360}\r\n\r\n")
 
 # 左臂
-    # 测量 249.06119241017598  308.43419947730547 360
-    # 实际 260, 145, 360
+    # 测量 338.3680243045468  120.438263718245 360
+    # 实际 [300, 170, 360, -180, 0.0, -90]
 
 # 右臂
-    # 测量 310.62117478922283  -156.6327899259884 360
-    # 实际 310, -140, 360
+    # 测量 347.0343116372131  -136.5482111450548 360
+    # 实际 360, -120, 360
     
 
 # 01 通过

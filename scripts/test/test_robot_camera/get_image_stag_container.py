@@ -11,10 +11,10 @@ for camera in cameras.values():
     # camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
     # camera.set(cv2.CAP_PROP_FRAME_WIDTH,  1280)
     # camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-    # camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    # camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-    camera.set(cv2.CAP_PROP_FRAME_WIDTH,  1280)
-    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 960)
+    camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    # camera.set(cv2.CAP_PROP_FRAME_WIDTH,  1280)
+    # camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 960)
 
 # 拍照次数
 photo_count = 2
