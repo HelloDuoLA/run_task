@@ -1,14 +1,14 @@
-07-19 19:59:02
+07-19 20:27:57
 
 --------------------------------------------------
 
 
-Task       : Task_image_rec CONTAINER
-Name       : right camera rec container
+Task       : Task_manipulation Grasp_container_pre
+Name       : left arm grap container prepare
 Group_id   : 6
-Index      : 3
-Create_time: 1721390340.3474026
-Start_time : 1721390341.3199506
+Index      : 7
+Create_time: 1721392048.6163578
+Start_time : 1721392077.5124197
 End_time   : -999
 Duration   : -999
 Finsih_cb  : None
@@ -18,16 +18,16 @@ Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: [1:Task_manipulation Rec_container] 
-Sleep_time_before_task : 1
+Predecessor_tasks: [16:Task_manipulation Lossen_snack] 
+Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-Camera_id: RIGHT 
-Snack_list: []
-Need_modify_tasks: 
-          [12:Task_manipulation Lossen_snack]
-          [16:Task_manipulation Lossen_snack]
-          [8:Task_manipulation Grasp_container_pre]
- 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[390.0, 180.0, 430, -180, 0.0, -90] } 
+Target_clamps_status: Clamp_status_0: OPEN  
+Clamp_speed         : 50 
+arm_move_method     : Z_XY 
+click_length        : 0 
+
 --------------------------------------------------
 
 
