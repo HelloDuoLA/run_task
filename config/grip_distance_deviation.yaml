@@ -53,7 +53,7 @@ LeftArmGripTurnOFFMachineSwitch:
 LeftArmWaterCup:
   x_bias: -30
   y_bias: -96
-  z_const: 230
+  z_const: 240   # 有用
 
 
 # !!!!!以下为右臂
@@ -73,16 +73,16 @@ RightArmBottomSnackGrip:
   z_const: 400
 
 # 右臂抓容器
-RightArmGripContainer:     # 这里的z无用
+RightArmGripContainer:     
   x_bias : 40
   y_bias : 50
-  z_const: 390   # 有用的嘛
+  z_const: 390   # 这里的z无用
 
 # 右臂松零食(相对于抓容器的位置)
 RightArmLossenSnack:
   x_bias: -40
   y_bias: 80
-  z_bias: 20  # 410
+  z_bias: 20    # 这里的z无用
 
 
 # 右臂抓容器, 躲避放置零食的位点(相对于抓容器的位置)
