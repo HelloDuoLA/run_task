@@ -37,7 +37,7 @@ def grip_cup(arm:Mercury,arm_name:str,cup_position:list,machine_position:list):
     print(f"{arm_name} change x : {ret}")
     
     print(f"{arm_name} close gripper")
-    ret = arm.set_gripper_state(1,10)
+    ret = arm.set_gripper_state(1,50)
     time.sleep(2)
     print(f"{arm_name} close gripper. ret : {ret}")
     
@@ -75,7 +75,7 @@ def grip_cup(arm:Mercury,arm_name:str,cup_position:list,machine_position:list):
     
     # 松手
     print(f"{arm_name} open gripper")
-    ret = arm.set_gripper_state(0,100)
+    ret = arm.set_gripper_state(0,50)
     time.sleep(2)
     print(f"{arm_name} open gripper. ret : {ret}")
     
@@ -87,7 +87,7 @@ def grip_cup(arm:Mercury,arm_name:str,cup_position:list,machine_position:list):
     
     # 闭爪
     print(f"{arm_name} close gripper")
-    ret = arm.set_gripper_state(1,100)
+    ret = arm.set_gripper_state(1,50)
     time.sleep(2)
     print(f"{arm_name} open gripper. ret : {ret}")
         

@@ -127,13 +127,37 @@ if __name__ == "__main__":
         id  = xyz_list[i][0]
         xyz = xyz_list[i][1]
         if id == 7:
-            print(f"id {id} machie switch")
+            print(f"no add anything x:{base_coords[0] + xyz[2]},y:{base_coords[1] - xyz[1]},z:{base_coords[2] + xyz[0]}" )
+            print(f"id {id} machie switch on")
             print(f"base_coord {base_coords [:3]}")
-            print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 - 50 }  {base_coords[1] - xyz[1] - 78} {base_coords[2] + xyz[0] +40 -60}\r\n\r\n")
+            turn_on_position = [base_coords[0] + xyz[2] - 90 - 50 -24, base_coords[1] - xyz[1] - 30, base_coords[2] + xyz[0] -40]
+            print(f"shousuan  xyz:{turn_on_position[0] }  {turn_on_position[1]} {turn_on_position[2]}\r\n\r\n")
+            
+            print(f"id {id} machie switch off")
+            print(f"base_coord {base_coords [:3]}")
+            print(f"shousuan  xyz:{turn_on_position[0] + 10}  {turn_on_position[1] - 20} {turn_on_position[2]+160}\r\n\r\n")
 
-    
-# 实际 [370.0, 134.0, 420.0, -90, 0.0, -90]
-# 测量 408.3585694262373  133.79036186545983 476.8474648663423
+# 计算 354.3806982086797  92.67845168662515 439.0931363313384
+# 实际 330.0, 140.0, 420.0,
+
+
+# 计算 330.0, 140.0, 420.0
+# 实际 340.0, 120.0, 580.0
+
+# 中间位点退3cm
+
+
+# 无增添, 机器头顶原点xy为
+# 由左臂计算得
+# 423.07130007121157,y:144.94315965144358,z:457.7357283405782
+
+# 左臂有添加
+# 259.07130007121157  114.94315965144358 417.7357283405782
+
+# 由右臂计算接水点得
+# 添加偏差后的数值为
+# 220.12015503201485  18.081667692421348 240
+# 
     
     
 

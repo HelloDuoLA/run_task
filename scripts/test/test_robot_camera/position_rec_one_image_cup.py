@@ -122,7 +122,7 @@ if __name__ == "__main__":
     
     xyz_list = STag_rec(args.tag_size,camera_matrix,dist_coeffs,image,11)
    #!!!!!!!!!!!!!!!!!!!!!!!!
-    base_coords  = [50, -210, 200, 90, 0, 90]
+    base_coords  = [20, -230, 190, 90, 0, 90]
 
     print(f"right  arm end pose {base_coords[:3]}")
     
@@ -136,20 +136,21 @@ if __name__ == "__main__":
             print(f"id {id} cup")
             print(f"base_coord {base_coords [:3]}")
             # print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 }  {base_coords[1] + xyz[1] + 78} {base_coords[2] - xyz[0]}\r\n\r\n")
-            print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 }  {base_coords[1] + xyz[1] + 78 } {220}\r\n\r\n")
+            print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 }  {base_coords[1] + xyz[1] + 78 +5} {220}\r\n\r\n")
         elif id == 8:
             # 接水点
             print(f"id {id} water cup")
             print(f"base_coord {base_coords [:3]}")
-            # print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 }  {base_coords[1] + xyz[1] + 78} {base_coords[2] - xyz[0]}\r\n\r\n")
-            print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 -85 - 20}  {base_coords[1] + xyz[1] + 78 +10-40 } {230}\r\n\r\n")
+            # print(f"no add anything  xyz:{base_coords[0] + xyz[2]}  {base_coords[1] + xyz[1] + 78} {base_coords[2] - xyz[0]}\r\n\r\n")
+            print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 -85 - 20 -10}  {base_coords[1] + xyz[1] + 78 +20 } {240}\r\n\r\n")
     
     # 杯子 
-    # 实测 
-    # 计算 418.2730280432854  -229.86021421630687 220
+    #  
+    # 计算 366.3341317213499  -218.29547304507213 220
+    # 实际 366, -213, 220,
     
     
     # 接水点
-    # 实测   
-    # 计算 278.6180988619242  73.59045177992357 220
+    # 计算   309.89173177685063  -8.406522935066562 230
+    # 实际   [290, 40, 240, 90, 0, 90]
 
