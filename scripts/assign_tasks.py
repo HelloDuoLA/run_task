@@ -447,6 +447,7 @@ def do_left_arm_move_result(result:msg.ArmMoveResult):
 
     current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
     # !如果是夹容器的躲避动作, 则需要更新放零食位置的状态 
+    
     if current_task.task_type == task.Task_type.Task_manipulation.Grasp_container_dodge:
         system.robot.lossen_snack_point_status = robot.Robot.Common_status.IDLE
     
@@ -488,7 +489,7 @@ def do_right_arm_move_result(result:msg.ArmMoveResult):
     current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
     
     # !如果是夹容器的准备动作, 则需要更新放零食位置的状态 
-    if current_task.task_type == task.Task_type.Task_manipulation.Grasp_container_pre:
+    if current_task.task_type == task.Task_type.Task_manipulation.Grasp_container_dodge:
         system.robot.lossen_snack_point_status = robot.Robot.Common_status.IDLE
         
     # 任务完成暂停时间
@@ -1474,7 +1475,7 @@ class Order_driven_task_schedul():
         
         # 夹容器前把夹零食任务做完
         task_left_arm_grap_container_dodge.add_predecessor_task(task_placement_snack)
-        task_left_arm_grap_container_dodge.add_predecessor_task(task_placement_snack)
+        task_right_arm_grap_container_dodge.add_predecessor_task(task_placement_snack)
         
         # 将抓取零食任务与图像识别任务绑定
         snack_rec_task.add_need_modify_task(task_grasp_snack_pre)           # 抓零食准备位点
@@ -1482,7 +1483,7 @@ class Order_driven_task_schedul():
         snack_rec_task.add_need_modify_task(task_placement_snack_pre)       # 放零食中间点
         snack_rec_task.add_need_modify_task(task_placement_snack)           # 放零食
         snack_rec_task.add_need_modify_task(task_left_arm_grap_container_dodge)   # 容器夹取准备动作
-        snack_rec_task.add_need_modify_task(task_left_arm_grap_container_dodge)   # 容器夹取准备动作
+        snack_rec_task.add_need_modify_task(task_right_arm_grap_container_dodge)   # 容器夹取准备动作
         left_arm_container_rec_task.add_need_modify_task(task_placement_snack)
         right_arm_container_rec_task.add_need_modify_task(task_placement_snack)
         
@@ -1494,7 +1495,7 @@ class Order_driven_task_schedul():
         tasks_pick_snack        = task.Task_sequence()
         #  将左臂抬到指定位置(食物框识别位置)
         task_left_arm_to_rec_contianer = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_container, None, utilis.Device_id.LEFT, \
-            system.anchor_point.left_arm_container_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
+            system.anchor_point.left_arm_container_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="left arm move to rec container")
         task_left_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL             # 可并行
         # task_left_arm_to_rec_contianer.add_predecessor_task(task_navigation_move_foward_to_snack_desk)    # 前置任务, 机器人移动到位
@@ -1502,7 +1503,7 @@ class Order_driven_task_schedul():
         
         #  将右臂抬到指定位置(食物框识别位置)
         task_right_arm_to_rec_contianer = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_container, None, utilis.Device_id.RIGHT,\
-            system.anchor_point.right_arm_container_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
+            system.anchor_point.right_arm_container_rec, arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="right arm move to rec container")
         task_right_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL           # 可并行
         # task_right_arm_to_rec_contianer.add_predecessor_task(task_navigation_move_foward_to_snack_desk)  # 前置任务, 机器人移动到位
@@ -1561,6 +1562,8 @@ class Order_driven_task_schedul():
         task_left_arm_grap_container_dodge.status   = task.Task.Task_status.BEREADY        
         tasks_pick_snack.add(task_left_arm_grap_container_dodge)
         
+        task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_dodge)  # 识别容器修改
+         
         # 右臂夹取零食框前的躲避动作
         task_right_arm_grap_container_dodge = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container_dodge,None,utilis.Device_id.RIGHT,\
                 [copy.deepcopy(system.anchor_point.right_arm_container_grip_dodge)],\
@@ -1569,6 +1572,9 @@ class Order_driven_task_schedul():
         task_right_arm_grap_container_dodge.parallel = task.Task.Task_parallel.ALL          # 可并行
         task_right_arm_grap_container_dodge.status   = task.Task.Task_status.BEREADY        
         tasks_pick_snack.add(task_right_arm_grap_container_dodge)
+        
+        
+        task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container_dodge)  # 识别容器修改
         
 
         # 零食抓取任务
@@ -1585,7 +1591,8 @@ class Order_driven_task_schedul():
                         name="left arm grap container prepare")
         task_left_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行
         task_left_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数
-        task_left_arm_grap_container_pre.add_predecessor_task(task_left_arm_grap_container_dodge)  # 前置任务, 躲避动作
+        task_left_arm_grap_container_pre.add_predecessor_task(task_left_arm_grap_container_dodge)   # 前置任务, 躲避动作
+        task_left_arm_grap_container_pre.add_predecessor_task(task_right_arm_grap_container_dodge)  # 前置任务, 躲避动作
         tasks_pick_snack.add(task_left_arm_grap_container_pre)
         
         task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_pre)  # 识别容器绑定 夹取容器准备动作
@@ -1597,6 +1604,7 @@ class Order_driven_task_schedul():
                         name="right arm grap container prepare")
         task_right_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行  
         task_right_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数 
+        task_right_arm_grap_container_pre.add_predecessor_task(task_left_arm_grap_container_dodge)   # 前置任务, 躲避动作
         task_right_arm_grap_container_pre.add_predecessor_task(task_right_arm_grap_container_dodge)  # 前置任务, 躲避动作
         tasks_pick_snack.add(task_right_arm_grap_container_pre)
         

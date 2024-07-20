@@ -15,13 +15,13 @@ LeftArmBottomSnackGrip:
 # 左臂抓容器
 LeftArmGripContainer:
   x_bias : -36
-  y_bias : 45
+  y_bias : -45
   z_const: 390     # 这里的z无用
 
 # 左臂松零食(相对于抓容器的位置)
 LeftArmLossenSnack:
-  x_bias: +10
-  y_bias: -60
+  x_bias: +40
+  y_bias: -80
   z_bias: 20  # 410
 
 # TODO:待定
@@ -61,7 +61,7 @@ LeftArmWaterCup:
 
 # 右臂抓零食
 RightArmGripSnack:
-  x_bias: 90
+  x_bias: -90
   y_bias: 58
   z_bias: 20
 
@@ -81,7 +81,7 @@ RightArmGripContainer:     # 这里的z无用
 
 # 右臂松零食(相对于抓容器的位置)
 RightArmLossenSnack:
-  x_bias: 30
+  x_bias: -40
   y_bias: 80
   z_bias: 20  # 410
 

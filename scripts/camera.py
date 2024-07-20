@@ -152,7 +152,7 @@ class STag_result_list():
         # 容器
         elif rec_task_type == task.Task_type.Task_image_rec.CONTAINER:
             if arm_id == utilis.Device_id.LEFT:
-                # 左手
+                # !左手
                 new_stag_result_list = []
                 for i in range(len(self.stag_result_list)):
                     stag_result = copy.deepcopy(self.stag_result_list[i]) 
