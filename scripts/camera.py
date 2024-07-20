@@ -122,6 +122,14 @@ class STag_result_list():
                     stag_result.base_coords[0] = arm_poses[0]  +  stag_result.image_coords[2] + LeftArmGripSnack.x    # x = x + z + bias
                     stag_result.base_coords[1] = arm_poses[1]  -  stag_result.image_coords[1] + LeftArmGripSnack.y    # y = y - y + bias
                     stag_result.base_coords[2] = arm_poses[2]  +  stag_result.image_coords[0] + LeftArmGripSnack.z    # z = z + x + bias
+                    
+                    # 上层零食
+                    if stag_result.base_coords[2] > 500 :
+                        stag_result.base_coords[2] = LeftArmTopSnackPlacement
+                    # 下层零食
+                    else:
+                        stag_result.base_coords[2] = LeftArmBottomSnackPlacement
+                        
                     # 记录经验值
                     log.log_empirical_value_left_arm_grip_snack(stag_result.base_coords)
             # 右臂
@@ -131,6 +139,14 @@ class STag_result_list():
                     stag_result.base_coords[0] = arm_poses[0]  +  stag_result.image_coords[2] + RightArmGripSnack.x   # x = x + z + bias
                     stag_result.base_coords[1] = arm_poses[1]  +  stag_result.image_coords[1] + RightArmGripSnack.y   # y = y + y + bias
                     stag_result.base_coords[2] = arm_poses[2]  -  stag_result.image_coords[0] + RightArmGripSnack.z   # z = z - x + bias
+                    
+                    # 上层零食
+                    if stag_result.base_coords[2] > 500 :
+                        stag_result.base_coords[2] = RightArmTopSnackPlacement
+                    # 下层零食
+                    else:
+                        stag_result.base_coords[2] = RightArmBottomSnackPlacement
+                        
                     # 记录经验值
                     log.log_empirical_value_right_arm_grip_snack(stag_result.base_coords)
         # 容器
@@ -188,15 +204,24 @@ class STag_result_list():
                     put_snack_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
                     
                     new_stag_result_list.append(put_snack_point)
+                    
+                    # 躲闪点
+                    dodge_point = copy.deepcopy(stag_result)
+                    dodge_point.base_coords[0] = stag_result.base_coords[0] + LeftArmGripContainerDodge.x
+                    dodge_point.base_coords[1] = stag_result.base_coords[1] + LeftArmGripContainerDodge.y
+                    dodge_point.base_coords[2] = stag_result.base_coords[2] + LeftArmGripContainerDodge.z
+                    dodge_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.CONTAINER_DODGE.value
+                    new_stag_result_list.append(dodge_point)
                         
                 self.stag_result_list = new_stag_result_list
             elif arm_id == utilis.Device_id.RIGHT:
-                # 右手
+                # !右手
                 new_stag_result_list = [ ]
                 for i in range(len(self.stag_result_list)):
                     stag_result = copy.deepcopy(self.stag_result_list[i]) 
                     # 寻找容器STag
                     if stag_result.stag_id == self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT]:
+                        # 抓容器准备位点
                         stag_result.base_coords[0] = arm_poses[0] - stag_result.image_coords[0] + RightArmGripContainer.x # x = x - x + bias
                         stag_result.base_coords[1] = arm_poses[1] + stag_result.image_coords[1] + RightArmGripContainer.y # y = y + y + bias
                         stag_result.base_coords[2] = RightArmGripContainer.const_z                     #固定z坐标
@@ -214,7 +239,17 @@ class STag_result_list():
                         
                         new_stag_result_list.append(put_snack_point)
                         # 记录经验值
-                        log.log_empirical_value_right_arm_lossen_snack(put_snack_point.base_coords)
+                        # log.log_empirical_value_right_arm_lossen_snack(put_snack_point.base_coords)
+                        
+                        # 躲闪点
+                        dodge_point = copy.deepcopy(stag_result)
+                        dodge_point.base_coords[0] = stag_result.base_coords[0] + RightArmGripContainerDodge.x
+                        dodge_point.base_coords[1] = stag_result.base_coords[1] + RightArmGripContainerDodge.y
+                        dodge_point.base_coords[2] = stag_result.base_coords[2] + RightArmGripContainerDodge.z
+                        dodge_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.CONTAINER_DODGE.value
+                        
+                        new_stag_result_list.append(dodge_point)
+                        
                 
                 # 使用经验值(没有识别到容器框)
                 if len(new_stag_result_list) == 0:
@@ -820,19 +855,26 @@ def init_const():
     global RightArmGripSnack, RightArmGripContainer, RightArmGripCup, RightArmWaterCup
     global LeftArmLossenSnack, RightArmLossenSnack 
     global LeftArmGripContainerDodge, RightArmGripContainerDodge
+    global RightArmTopSnackPlacement,RightArmBottomSnackPlacement
+    global LeftArmTopSnackPlacement,LeftArmBottomSnackPlacement
+    
     # 获取项偏移
     LeftArmGripSnack                = get_deviation("LeftArmGripSnack")
     LeftArmLossenSnack              = get_deviation("LeftArmLossenSnack")
     LeftArmGripContainer            = get_deviation("LeftArmGripContainer",True)
-    LeftArmGripContainerDodge       = get_deviation("LeftArmGripContainerDodge")
+    LeftArmGripContainerDodge       = get_deviation("LeftArmGripContainerDodge",True)
     LeftArmGripTurnOnMachineSwitch  = get_deviation("LeftArmGripTurnOnMachineSwitch")
     LeftArmGripTurnOFFMachineSwitch = get_deviation("LeftArmGripTurnOFFMachineSwitch")
     RightArmGripSnack               = get_deviation("RightArmGripSnack")
     RightArmLossenSnack             = get_deviation("RightArmLossenSnack")
     RightArmGripContainer           = get_deviation("RightArmGripContainer",True)
-    RightArmGripContainerDodge      = get_deviation("RightArmGripContainerDodge")
+    RightArmGripContainerDodge      = get_deviation("RightArmGripContainerDodge",True)
     RightArmGripCup                 = get_deviation("RightArmGripCup",True)
     RightArmWaterCup                = get_deviation("RightArmWaterCup",True)
+    RightArmTopSnackPlacement       = rospy.get_param(f'~{RightArmTopSnackPlacement}/const_z')
+    RightArmBottomSnackPlacement    = rospy.get_param(f'~{RightArmBottomSnackPlacement}/const_z')
+    LeftArmTopSnackPlacement        = rospy.get_param(f'~{LeftArmTopSnackPlacement}/const_z')
+    LeftArmBottomSnackPlacement     = rospy.get_param(f'~{LeftArmBottomSnackPlacement}/const_z')
     
 def init_empirical_value():   
     global  ev_left_arm_grip_container, ev_left_arm_grip_snack_top, ev_left_arm_grip_snack_bottom
