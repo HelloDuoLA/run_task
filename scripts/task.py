@@ -318,7 +318,9 @@ class Task_image_rec(Task):
         CONTAINER_DODGE= auto()   # 容器外一点
         CONTAINER_LEFT = auto()   # 容器左端
         CONTAINER_RIGHT= auto()   # 容器右端
-        MACHINE_SWITCH = auto()   # 机器开关
+        MACHINE_SWITCH_ON  = auto()   # 机器开
+        MACHINE_SWITCH_OFF = auto()   # 机器关
+        MACHINE_SWITCH_TRA = auto()   # 机器转移
         CUP            = auto()   # 杯子
         WATER_POINT    = auto()   # 接水点
         

@@ -632,6 +632,7 @@ class Image_rec_actuator():
         elif current_task.task_type.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON or \
             current_task.task_type.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF :
             # 获取结果
+            # TODO:待修改
             for obj_position in result.obj_positions:
                 if obj_position.obj_id == task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH:
                     switch_xyz = obj_position.position

@@ -171,11 +171,8 @@ class STag_result_list():
                         put_snack_point.base_coords[0] = stag_result.base_coords[0] + LeftArmLossenSnack.x
                         put_snack_point.base_coords[1] = stag_result.base_coords[1] + LeftArmLossenSnack.y
                         put_snack_point.base_coords[2] = stag_result.base_coords[2] + LeftArmLossenSnack.z
-                        put_snack_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
-                        
+                        put_snack_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value     
                         new_stag_result_list.append(put_snack_point)
-                        # 记录经验值
-                        # log.log_empirical_value_left_arm_lossen_snack(put_snack_point.base_coords)
                         
                         # 手臂躲避点
                         arm_dodge_point = copy.deepcopy(stag_result)
@@ -186,8 +183,7 @@ class STag_result_list():
                         new_stag_result_list.append(arm_dodge_point)
                         
                 
-                
-                # 使用经验值(没有识别到容器框)
+                # !使用经验值(没有识别到容器框)
                 if len(new_stag_result_list) == 0:
                     rospy.loginfo("No container STag detected!!!!!!! use experience value")
                     stag_result          = STag_result(utilis.Device_id.LEFT, self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT])
@@ -202,7 +198,6 @@ class STag_result_list():
                     put_snack_point.base_coords[1] = stag_result.base_coords[1] + LeftArmLossenSnack.y
                     put_snack_point.base_coords[2] = stag_result.base_coords[2] + LeftArmLossenSnack.z
                     put_snack_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
-                    
                     new_stag_result_list.append(put_snack_point)
                     
                     # 躲闪点
@@ -236,10 +231,7 @@ class STag_result_list():
                         put_snack_point.base_coords[1] = stag_result.base_coords[1] + RightArmLossenSnack.y
                         put_snack_point.base_coords[2] = stag_result.base_coords[2] + RightArmLossenSnack.z
                         put_snack_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
-                        
                         new_stag_result_list.append(put_snack_point)
-                        # 记录经验值
-                        # log.log_empirical_value_right_arm_lossen_snack(put_snack_point.base_coords)
                         
                         # 躲闪点
                         dodge_point = copy.deepcopy(stag_result)
@@ -247,7 +239,6 @@ class STag_result_list():
                         dodge_point.base_coords[1] = stag_result.base_coords[1] + RightArmGripContainerDodge.y
                         dodge_point.base_coords[2] = stag_result.base_coords[2] + RightArmGripContainerDodge.z
                         dodge_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.CONTAINER_DODGE.value
-                        
                         new_stag_result_list.append(dodge_point)
                         
                 
@@ -266,8 +257,15 @@ class STag_result_list():
                     put_snack_point.base_coords[1] = stag_result.base_coords[1] + RightArmLossenSnack.y
                     put_snack_point.base_coords[2] = stag_result.base_coords[2] + RightArmLossenSnack.z
                     put_snack_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.LOSSEN_SNACK.value
-                    
                     new_stag_result_list.append(put_snack_point)
+                    
+                    # 躲闪点
+                    dodge_point = copy.deepcopy(stag_result)
+                    dodge_point.base_coords[0] = stag_result.base_coords[0] + RightArmGripContainerDodge.x
+                    dodge_point.base_coords[1] = stag_result.base_coords[1] + RightArmGripContainerDodge.y
+                    dodge_point.base_coords[2] = stag_result.base_coords[2] + RightArmGripContainerDodge.z
+                    dodge_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.CONTAINER_DODGE.value
+                    new_stag_result_list.append(dodge_point)
                         
                 self.stag_result_list = new_stag_result_list
         
@@ -278,6 +276,7 @@ class STag_result_list():
             for i in range(len(self.stag_result_list)):
                 stag_result = copy.deepcopy(self.stag_result_list[i])  
                 # 先判断是不是杯子或接水点
+                # TODO:修改为只识别杯子
                 if stag_result.stag_id == self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.CUP]:
                     # 杯子
                     stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[2] + RightArmGripCup.x  # x = x + z + bias
@@ -297,7 +296,7 @@ class STag_result_list():
                     # 记录经验值
                     log.log_empirical_value_right_arm_water_cup(stag_result.base_coords)
             
-            # 加入经验值
+            # !加入经验值
             if len(new_stag_result_list) != 2:
                 rospy.loginfo("No cup or water point STag detected")
                 
@@ -331,7 +330,6 @@ class STag_result_list():
                     water_point.obj_id = task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value
                     
                     new_stag_result_list.append(water_point)
-            
             self.stag_result_list = new_stag_result_list
             
         # 打开咖啡机开关
@@ -341,13 +339,39 @@ class STag_result_list():
             for i in range(len(self.stag_result_list)):
                 stag_result = copy.deepcopy(self.stag_result_list[i])  
                 if stag_result.stag_id == self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH]:
+                    # 开机键
                     stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[2] + LeftArmGripTurnOnMachineSwitch.x  # x = x + z + bias
                     stag_result.base_coords[1] = arm_poses[1] - stag_result.image_coords[1] + LeftArmGripTurnOnMachineSwitch.y  # y = y - y + bias
                     stag_result.base_coords[2] = arm_poses[2] + stag_result.image_coords[0] + LeftArmGripTurnOnMachineSwitch.z  # z = z + x + bias
-                    stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value
+                    stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH_ON.value
                     new_stag_result_list.append(stag_result)
                     # 记录经验值
                     log.log_empirical_value_left_arm_turn_on_machine(stag_result.base_coords)
+                    
+                    # TODO:关机键
+                    turn_off_point = copy.deepcopy(stag_result)
+                    turn_off_point.base_coords[0] = stag_result.base_coords[0] + LeftArmGripTurnOFFMachineSwitch.x
+                    turn_off_point.base_coords[1] = stag_result.base_coords[1] + LeftArmGripTurnOFFMachineSwitch.y
+                    turn_off_point.base_coords[2] = stag_result.base_coords[2] + LeftArmGripTurnOFFMachineSwitch.z
+                    turn_off_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH_OFF.value
+                    new_stag_result_list.append(turn_off_point)
+                    
+                    # TODO:转移点
+                    tran_point = copy.deepcopy(stag_result)
+                    tran_point.base_coords[0] = stag_result.base_coords[0] + LeftArmGripTranMachineSwitch.x
+                    tran_point.base_coords[1] = stag_result.base_coords[1] + LeftArmGripTranMachineSwitch.y
+                    tran_point.base_coords[2] = stag_result.base_coords[2] + LeftArmGripTranMachineSwitch.z
+                    tran_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH_TRA.value
+                    new_stag_result_list.append(tran_point)
+                    
+                    # TODO:接水点
+                    water_point = copy.deepcopy(stag_result)
+                    water_point.base_coords[0] = stag_result.base_coords[0] + LeftArmWaterCup.x
+                    water_point.base_coords[1] = stag_result.base_coords[1] + LeftArmWaterCup.y
+                    water_point.base_coords[2] = stag_result.base_coords[2] + LeftArmWaterCup.z
+                    water_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value
+                    new_stag_result_list.append(water_point)
+                    
             
             # 加入经验值
             if len(new_stag_result_list) == 0:
@@ -358,7 +382,9 @@ class STag_result_list():
                 new_stag_result_list.append(stag_result)
             
             self.stag_result_list = new_stag_result_list
+            
         # 关闭咖啡机开关
+        # TODO: 删除
         elif rec_task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF:
             # 识别关机, 只有左手
             new_stag_result_list = [ ]
@@ -851,12 +877,14 @@ def init_camera():
 
 # 初始化偏移常量
 def init_const():
-    global LeftArmGripSnack, LeftArmGripContainer, LeftArmGripTurnOnMachineSwitch, LeftArmGripTurnOFFMachineSwitch
-    global RightArmGripSnack, RightArmGripContainer, RightArmGripCup, RightArmWaterCup
+    global LeftArmGripSnack, LeftArmGripContainer, LeftArmGripTurnOnMachineSwitch, LeftArmGripTurnOFFMachineSwitch, LeftArmGripTranMachineSwitch
+    global RightArmGripSnack, RightArmGripContainer, RightArmGripCup
     global LeftArmLossenSnack, RightArmLossenSnack 
     global LeftArmGripContainerDodge, RightArmGripContainerDodge
     global RightArmTopSnackGrip,RightArmBottomSnackGrip
     global LeftArmTopSnackGrip,LeftArmBottomSnackGrip
+    
+    global LeftArmWaterCup, RightArmWaterCup
     
     # 获取项偏移
     LeftArmGripSnack                = get_deviation("LeftArmGripSnack")
@@ -864,7 +892,9 @@ def init_const():
     LeftArmGripContainer            = get_deviation("LeftArmGripContainer",True)
     LeftArmGripContainerDodge       = get_deviation("LeftArmGripContainerDodge",True)
     LeftArmGripTurnOnMachineSwitch  = get_deviation("LeftArmGripTurnOnMachineSwitch")
+    LeftArmGripTranMachineSwitch    = get_deviation("LeftArmGripTranMachineSwitch")
     LeftArmGripTurnOFFMachineSwitch = get_deviation("LeftArmGripTurnOFFMachineSwitch")
+    LeftArmWaterCup                 = get_deviation("LeftArmWaterCup",True)
     RightArmGripSnack               = get_deviation("RightArmGripSnack")
     RightArmLossenSnack             = get_deviation("RightArmLossenSnack")
     RightArmGripContainer           = get_deviation("RightArmGripContainer",True)
