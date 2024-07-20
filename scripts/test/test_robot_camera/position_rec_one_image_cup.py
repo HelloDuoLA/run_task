@@ -9,10 +9,10 @@ from tf.transformations import euler_matrix
 def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
     # 假设的三维点 (例如，一个简单的正方形)
     objectPoints = np.array([
-        [-tag_size/2, -tag_size/2,  0],
-        [tag_size/2 , -tag_size/2,  0],
-        [tag_size/2 , tag_size/2 ,  0],
-        [-tag_size/2, tag_size/2 ,  0]
+        [-tag_size/2, tag_size/2,  0],
+        [tag_size/2 , tag_size/2,  0],
+        [tag_size/2 , -tag_size/2 ,  0],
+        [-tag_size/2, -tag_size/2 ,  0]
     ], dtype=np.float32)
     
     print(objectPoints)
@@ -98,7 +98,7 @@ if __name__ == "__main__":
         data = [list(map(float, line.split())) for line in lines]
 
     # 转换为numpy矩阵
-    camera_matrix = np.array(data)
+    # camera_matrix = np.array(data)
     # print(f"Camera Matrix: {camera_matrix}")
     
     dist_file_path = f"{calibration_path}/dist.txt"
@@ -107,9 +107,16 @@ if __name__ == "__main__":
     # 从文件读取畸变系数
     with open(dist_file_path, 'r') as file:
         line = file.readline()
-        dist_coeffs = np.array(list(map(float, line.split())), dtype=np.float32)
+        # dist_coeffs = np.array(list(map(float, line.split())), dtype=np.float32)
         
     # print(f"Distortion Coefficients: {dist_coeffs}")
+    
+    camera_matrix = np.array([[532.76634274 ,  0.,         306.22017641],
+                [  0.         , 532.94411762, 225.40097394],
+                [  0.         ,  0.         , 1.        ]], dtype=np.float32)
+    
+    dist_coeffs = np.array([ 0.17156132, -0.66222681, -0.00294354,  0.00106322,  0.73823942], dtype=np.float32)
+    
     
     image = cv2.imread(args.image_path)
     
@@ -124,13 +131,13 @@ if __name__ == "__main__":
         # print(f"id: {xyz_list[i][0]} xyz: {xyz_list[i][1]}")
         id  = xyz_list[i][0]
         xyz = xyz_list[i][1]
-        if id == 2:
+        if id == 6:
             # 杯子
             print(f"id {id} cup")
             print(f"base_coord {base_coords [:3]}")
             # print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 }  {base_coords[1] + xyz[1] + 78} {base_coords[2] - xyz[0]}\r\n\r\n")
             print(f"shousuan  xyz:{base_coords[0] + xyz[2] - 90 }  {base_coords[1] + xyz[1] + 78 } {220}\r\n\r\n")
-        elif id == 11:
+        elif id == 8:
             # 接水点
             print(f"id {id} water cup")
             print(f"base_coord {base_coords [:3]}")

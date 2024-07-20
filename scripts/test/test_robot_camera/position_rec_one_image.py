@@ -9,13 +9,6 @@ from tf.transformations import euler_matrix
 
 def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
     # 假设的三维点 (例如，一个简单的正方形)
-    # objectPoints = np.array([
-    #     [-tag_size/2, -tag_size/2,  0],
-    #     [tag_size/2 , -tag_size/2,  0],
-    #     [tag_size/2 , tag_size/2 ,  0],
-    #     [-tag_size/2, tag_size/2 ,  0]
-    # ], dtype=np.float32)
-    
     objectPoints = np.array([
         [-tag_size/2, tag_size/2,  0],
         [tag_size/2 , tag_size/2,  0],
