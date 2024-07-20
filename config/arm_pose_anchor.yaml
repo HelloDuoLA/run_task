@@ -31,20 +31,16 @@ LeftArmSnackPlacement:
   # x y 待定(与识别框的偏移量), z比抓取框高20mm 
   coords:  [-999, -999, 360, -180, 0, -90]
 
-# TODO: 需要需改高度
 # 左臂抓框时, 躲避放置零食的位点
 LeftArmGripContainerDodge:
   # x y 与 左臂抓框时的位点 相同, z轴比抓框高 
   coords:  [-1, -1, 430, -180, 0.0, -90]
 
-# TODO: 需要需改高度
 # 左臂抓框时的准备位点
 LeftArmGripContainerPre:
   # x y 与 左臂抓框时的位点 相同, z轴比抓框高40mm  
   coords:  [-999, -999, 380, -180, 0.0, -90]
 
-
-# TODO: 需要需改高度
 # 左臂抓框时的位点
 LeftArmGripContainer:
   # x y 待定(与识别框的偏移量)
@@ -111,10 +107,8 @@ RightArmContainerRec:
 RightArmSnackRec:
   angles: [76.87, 21.81, -150.56, -107.2, 61.99, -8.4]
 
-# ! 新增
 # 右臂抓零食位点准备位点
 RightArmGripSnackPre:
-  # x y z待定(与识别框的偏移量), 手势确定
   angles:  [76.87, 21.81, -150.56, -107.2, 61.99, -8.4]
 
 # 右臂抓零食位点
@@ -131,19 +125,19 @@ RightArmSnackPlacement:
   # x y 待定(与识别框的偏移量), z比抓取框高20mm 
   coords:  [-999, -999, 380, -180, 0, 90]
 
-# TODO: 需要改变高度
+
 # 右臂抓框时, 躲避放置零食的位点
 RightArmGripContainerDodge:
   # x y 与 左臂抓框时的位点 相同, z轴比抓框高 
   coords:  [-1, -1, 430, -180, 0, 90]
 
-# TODO: 修改为与框高度差不多
+
 # 右臂抓框时的准备位点
 RightArmGripContainerPre:
   # x y 与 左臂抓框时的位点 相同, z轴比抓框高 
   coords:  [-1, -1, 380, -180, 0, 90]
 
-# TODO: 高度调低
+
 # 右臂抓框时的位点
 RightArmGripContainer:
   # coords:  [-999, -999, 360, -180, 0.0, 90]

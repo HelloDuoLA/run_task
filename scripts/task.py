@@ -96,6 +96,7 @@ class Task_type():
         Lossen_cup         = auto()                  # 放杯子
         Rec_cup_machine    = auto()                  # 识别杯子和咖啡机
         Turn_on_coffee_machine  = auto()             # 打开咖啡机
+        Turn_tra_coffee_machine = auto()             # 转移咖啡机
         Turn_off_coffee_machine = auto()             # 关闭咖啡机
         Rec_machine_switch = auto()                  # 识别咖啡机开关
     

@@ -36,7 +36,7 @@ LeftArmGripTurnOnMachineSwitch:
   y_bias: -30
   z_bias: -40     
 
-# 左臂从开咖啡机转移到关咖啡机(相对开咖啡机偏移)
+# 左臂从开咖啡机 转移 到关咖啡机(相对开咖啡机偏移)
 LeftArmGripTranMachineSwitch:
   x_bias: -30
   y_bias: -20
@@ -51,8 +51,8 @@ LeftArmGripTurnOFFMachineSwitch:
 # 左臂识别开关换算到接水点位置
 # TODO:
 LeftArmWaterCup:
-  x_bias: -205
-  y_bias: -98
+  x_bias: -30
+  y_bias: -96
   z_const: 230
 
 
