@@ -1029,11 +1029,35 @@ class Order_driven_task_schedul():
         task_rec_snack.add_predecessor_task(task_left_arm_to_rec_snack)                        # 前置任务, 左臂移动到零食识别位置
         task_rec_snack.add_predecessor_task(task_right_arm_to_rec_snack)                       # 前置任务, 右臂移动到零食识别位置
         tasks_pick_snack.add(task_rec_snack)
+        
+        # 左臂夹取零食框前的躲避动作
+        task_left_arm_grap_container_dodge = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container_dodge,None,utilis.Device_id.LEFT,\
+                [copy.deepcopy(system.anchor_point.left_arm_container_grip_dodge)],\
+                    [arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.Z_XY,\
+                        name="left arm grap container dodge")
+        task_left_arm_grap_container_dodge.parallel = task.Task.Task_parallel.ALL          # 可并行
+        task_left_arm_grap_container_dodge.status   = task.Task.Task_status.BEREADY        
+        tasks_pick_snack.add(task_left_arm_grap_container_dodge)
+        
+        task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_dodge)  # 识别容器修改
+         
+        # 右臂夹取零食框前的躲避动作
+        task_right_arm_grap_container_dodge = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container_dodge,None,utilis.Device_id.RIGHT,\
+                [copy.deepcopy(system.anchor_point.right_arm_container_grip_dodge)],\
+                    [arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.Z_XY,\
+                        name="right arm grap container dodge")
+        task_right_arm_grap_container_dodge.parallel = task.Task.Task_parallel.ALL          # 可并行
+        task_right_arm_grap_container_dodge.status   = task.Task.Task_status.BEREADY        
+        tasks_pick_snack.add(task_right_arm_grap_container_dodge)
+        
+        task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container_dodge)  # 识别容器修改
+        
 
         # 零食抓取任务
         snack_count = snack_list.get_all_snack_count()
         for i in range(snack_count):
-            tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container))
+            tasks_pick_snack.add(self.create_task_grasp_snack(task_rec_snack,task_left_camera_rec_container,task_right_camera_rec_container,\
+                task_left_arm_grap_container_dodge,task_right_arm_grap_container_dodge))
         
         # 左臂夹取零食框, 准备动作
         task_left_arm_grap_container_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container_pre,None,utilis.Device_id.LEFT,\
@@ -1042,6 +1066,8 @@ class Order_driven_task_schedul():
                         name="left arm grap container prepare")
         task_left_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行
         task_left_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数
+        task_left_arm_grap_container_pre.add_predecessor_task(task_left_arm_grap_container_dodge)   # 前置任务, 躲避动作
+        task_left_arm_grap_container_pre.add_predecessor_task(task_right_arm_grap_container_dodge)  # 前置任务, 躲避动作
         tasks_pick_snack.add(task_left_arm_grap_container_pre)
         task_left_camera_rec_container.add_need_modify_task(task_left_arm_grap_container_pre)  # 识别容器绑定 夹取容器准备动作
         
@@ -1052,6 +1078,8 @@ class Order_driven_task_schedul():
                         name="right arm grap container prepare")
         task_right_arm_grap_container_pre.parallel = task.Task.Task_parallel.ALL          # 可并行  
         task_right_arm_grap_container_pre.status   = task.Task.Task_status.NOTREADY       # 需要参数 
+        task_right_arm_grap_container_pre.add_predecessor_task(task_left_arm_grap_container_dodge)   # 前置任务, 躲避动作
+        task_right_arm_grap_container_pre.add_predecessor_task(task_right_arm_grap_container_dodge)  # 前置任务, 躲避动作
         tasks_pick_snack.add(task_right_arm_grap_container_pre)
         task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container_pre) # 识别容器绑定 夹取容器
         
@@ -1572,7 +1600,6 @@ class Order_driven_task_schedul():
         task_right_arm_grap_container_dodge.parallel = task.Task.Task_parallel.ALL          # 可并行
         task_right_arm_grap_container_dodge.status   = task.Task.Task_status.BEREADY        
         tasks_pick_snack.add(task_right_arm_grap_container_dodge)
-        
         
         task_right_camera_rec_container.add_need_modify_task(task_right_arm_grap_container_dodge)  # 识别容器修改
         
