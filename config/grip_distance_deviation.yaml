@@ -5,11 +5,11 @@ LeftArmGripSnack:
   z_bias: +45
 
 # 左臂上层零食放置高度
-LeftArmTopSnackPlacement:
+LeftArmTopSnackGrip:
   z_const: 550
 
 # 左臂下层零食放置高度
-LeftArmBottomSnackPlacement:
+LeftArmBottomSnackGrip:
   z_const: 380
 
 # 左臂抓容器
@@ -66,11 +66,11 @@ RightArmGripSnack:
   z_bias: 20
 
 # 右臂上层零食放置高度
-RightArmTopSnackPlacement:
+RightArmTopSnackGrip:
   z_const: 550
 
 # 右臂下层零食放置高度
-RightArmBottomSnackPlacement:
+RightArmBottomSnackGrip:
   z_const: 400
 
 # 右臂抓容器
@@ -88,7 +88,7 @@ RightArmLossenSnack:
 
 # TODO:待定
 # 右臂抓容器, 躲避放置零食的位点(相对于抓容器的位置)
-RighttArmGripContainerDodge:
+RightArmGripContainerDodge:
   x_bias : 0
   y_bias : -70
   z_const: 360        # 这里的z无用

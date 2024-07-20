@@ -125,10 +125,10 @@ class STag_result_list():
                     
                     # 上层零食
                     if stag_result.base_coords[2] > 500 :
-                        stag_result.base_coords[2] = LeftArmTopSnackPlacement
+                        stag_result.base_coords[2] = LeftArmTopSnackGrip
                     # 下层零食
                     else:
-                        stag_result.base_coords[2] = LeftArmBottomSnackPlacement
+                        stag_result.base_coords[2] = LeftArmBottomSnackGrip
                         
                     # 记录经验值
                     log.log_empirical_value_left_arm_grip_snack(stag_result.base_coords)
@@ -142,10 +142,10 @@ class STag_result_list():
                     
                     # 上层零食
                     if stag_result.base_coords[2] > 500 :
-                        stag_result.base_coords[2] = RightArmTopSnackPlacement
+                        stag_result.base_coords[2] = RightArmTopSnackGrip
                     # 下层零食
                     else:
-                        stag_result.base_coords[2] = RightArmBottomSnackPlacement
+                        stag_result.base_coords[2] = RightArmBottomSnackGrip
                         
                     # 记录经验值
                     log.log_empirical_value_right_arm_grip_snack(stag_result.base_coords)
@@ -855,8 +855,8 @@ def init_const():
     global RightArmGripSnack, RightArmGripContainer, RightArmGripCup, RightArmWaterCup
     global LeftArmLossenSnack, RightArmLossenSnack 
     global LeftArmGripContainerDodge, RightArmGripContainerDodge
-    global RightArmTopSnackPlacement,RightArmBottomSnackPlacement
-    global LeftArmTopSnackPlacement,LeftArmBottomSnackPlacement
+    global RightArmTopSnackGrip,RightArmBottomSnackGrip
+    global LeftArmTopSnackGrip,LeftArmBottomSnackGrip
     
     # 获取项偏移
     LeftArmGripSnack                = get_deviation("LeftArmGripSnack")
@@ -871,10 +871,10 @@ def init_const():
     RightArmGripContainerDodge      = get_deviation("RightArmGripContainerDodge",True)
     RightArmGripCup                 = get_deviation("RightArmGripCup",True)
     RightArmWaterCup                = get_deviation("RightArmWaterCup",True)
-    RightArmTopSnackPlacement       = rospy.get_param(f'~{RightArmTopSnackPlacement}/const_z')
-    RightArmBottomSnackPlacement    = rospy.get_param(f'~{RightArmBottomSnackPlacement}/const_z')
-    LeftArmTopSnackPlacement        = rospy.get_param(f'~{LeftArmTopSnackPlacement}/const_z')
-    LeftArmBottomSnackPlacement     = rospy.get_param(f'~{LeftArmBottomSnackPlacement}/const_z')
+    RightArmTopSnackGrip            = rospy.get_param(f'~RightArmTopSnackGrip/z_const')
+    RightArmBottomSnackGrip         = rospy.get_param(f'~RightArmBottomSnackGrip/z_const')
+    LeftArmTopSnackGrip             = rospy.get_param(f'~LeftArmTopSnackGrip/z_const')
+    LeftArmBottomSnackGrip          = rospy.get_param(f'~LeftArmBottomSnackGrip/z_const')
     
 def init_empirical_value():   
     global  ev_left_arm_grip_container, ev_left_arm_grip_snack_top, ev_left_arm_grip_snack_bottom
