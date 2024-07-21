@@ -363,6 +363,9 @@ class Task_image_rec(Task):
     def get_need_modify_task(self,index):
         return self.need_modify_tasks[index]
     
+    def get_snack_count(self):
+        return self.snack_list.get_all_snack_count()
+    
     # 打印输出
     def __str__(self) -> str:
         need_modify_tasks_str = "\r\n"

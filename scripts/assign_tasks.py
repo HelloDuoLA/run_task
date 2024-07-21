@@ -568,16 +568,16 @@ class Image_rec_actuator():
         # 根据不同任务作出不同处理
         # 识别零食
         if current_task.task_type.task_type == task.Task_type.Task_image_rec.SNACK:
-            snack_count = len(result.obj_positions)
+            rec_snack_count = len(result.obj_positions)
             try:
-                for i in range(snack_count):
+                for i in range(rec_snack_count):
                     snack_xyz                = result.obj_positions[i].position
                     arm_id                   = result.obj_positions[i].arm_id
-                    task_grasp_snack_pre:task.Task_manipulation     = current_task.need_modify_tasks.task_list[i*6]
+                    task_grasp_snack_pre:task.Task_manipulation     = current_task.need_modify_tasks.task_list[i*6]   # 抓零食准备任务
                     task_grasp_snack_pre.select_arm(arm_id)
-                    task_grasp_snack:task.Task_manipulation         = current_task.need_modify_tasks.task_list[i*6+1]
+                    task_grasp_snack:task.Task_manipulation         = current_task.need_modify_tasks.task_list[i*6+1] # 抓零食任务
                     task_grasp_snack.modify_xyz_select_arm(snack_xyz,arm_id)
-                    task_lossen_snack_pre:task.Task_manipulation    = current_task.need_modify_tasks.task_list[i*6+2]
+                    task_lossen_snack_pre:task.Task_manipulation    = current_task.need_modify_tasks.task_list[i*6+2] # 松零食准备任务
 
                     if arm_id == utilis.Device_id.LEFT:
                         # 左臂松零食准备动作使用 Z_X_Y
@@ -589,11 +589,11 @@ class Image_rec_actuator():
                             task_lossen_snack_pre.select_arm(arm_id)
                     else:
                         task_lossen_snack_pre.select_arm(arm_id)
-                    task_lossen_snack:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*6+3]
+                    task_lossen_snack:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*6+3]  # 松零食任务
                     task_lossen_snack.select_arm(arm_id)
                     
-                    task_left_arm_grap_container_pre :task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*6+4]
-                    task_right_arm_grap_container_pre:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*6+5]
+                    task_left_arm_grap_container_pre :task.Task_manipulation  = current_task.need_modify_tasks.task_list[i*6+4] # 左臂夹取零食框的准备动作
+                    task_right_arm_grap_container_pre:task.Task_manipulation  = current_task.need_modify_tasks.task_list[i*6+5] # 右臂夹取零食框的准备动作
                     
                     # 左臂则, 左臂夹取零食框的准备动作需要等放零食结束. 而右臂不需要
                     if arm_id == utilis.Device_id.LEFT:
@@ -607,7 +607,18 @@ class Image_rec_actuator():
                     task_lossen_snack.status     = task.Task.Task_status.BEREADY
             except:
                 rospy.loginfo("!!!!snack count is not equal to task count")
-                
+            
+            # 没有识别到的零食, 删除需要任务里的前置任务
+            req_snack_count = current_task.get_snack_count()
+            if rec_snack_count < req_snack_count:
+                for i in range(rec_snack_count,req_snack_count):
+                    task_left_arm_grap_container_pre :task.Task_manipulation  = current_task.need_modify_tasks.task_list[i*6+4] # 左臂夹取零食框的准备动作
+                    task_right_arm_grap_container_pre:task.Task_manipulation  = current_task.need_modify_tasks.task_list[i*6+5] # 右臂夹取零食框的准备动作
+                    task_lossen_snack:task.Task_manipulation                  = current_task.need_modify_tasks.task_list[i*6+3]  # 松零食任务
+                    task_right_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack)  # 删除前置任务
+                    task_left_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack)   # 删除前置任务
+                    
+              
         # 识别容器
         elif current_task.task_type.task_type == task.Task_type.Task_image_rec.CONTAINER:
             # 获取结果
