@@ -77,5 +77,5 @@ recovery_behavior_3:
   #完成该恢复行为机器人必须移动的距离，单位：m
   limited_distance: 0.3  
   #对应的局部路径规划器的名称
-  #planner_namespace: “DWAPlannerROS”
-  planner_namespace: TebLocalPlannerROS
+  planner_namespace: DWAPlannerROS
+  # planner_namespace: TebLocalPlannerROS

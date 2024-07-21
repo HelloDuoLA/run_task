@@ -12,7 +12,7 @@ InitialPose:
 SnackDesk:
   # position_x: 0.51
   position_x: 0.48
-  position_y: -2.31
+  position_y: -2.36
   position_z: 0
   orientation_x: 0
   orientation_y: 0
@@ -45,7 +45,7 @@ RightServiceDesk:
 # 左服务台位姿
 LeftServiceDesk:
   position_x: 1.95
-  position_y: -2.02
+  position_y: -2.07
   position_z: 0
   orientation_x: 0
   orientation_y: 0
