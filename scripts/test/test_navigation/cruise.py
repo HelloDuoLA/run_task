@@ -325,7 +325,7 @@ def get_current_position():
     # rospy.init_node('transform_listener', anonymous=True)
 
     tf_buffer = tf2_ros.Buffer()
-    listener = tf2_ros.TransformListener(tf_buffer)
+    listener  = tf2_ros.TransformListener(tf_buffer)
     target_frame = "map"
     source_frame = "base_footprint"
     try:

@@ -1,31 +1,27 @@
-# speech_recognition_module.py
-
-import websocket
-import datetime
 import hashlib
 import base64
 import hmac
 import json
 import time
 import ssl
-import wave
-import os
 import pyaudio
+import websocket
 from wsgiref.handlers import format_date_time
-import speech_recognition as sr
 from datetime import datetime
 from time import mktime
 from urllib.parse import urlencode
-import _thread as thread
+import threading
 import logging
+import wave
+import numpy as np
+import os
 
 STATUS_FIRST_FRAME = 0  # 第一帧的标识
 STATUS_CONTINUE_FRAME = 1  # 中间帧标识
 STATUS_LAST_FRAME = 2  # 最后一帧的标识
 
 # 设置日志记录
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(asctime)s - %(message)s')
-
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
 class Ws_Param:
     # 初始化
@@ -70,11 +66,16 @@ class Ws_Param:
 
 
 class SpeechRecognizer:
-    def __init__(self, APPID, APIKey, APISecret):
+    def __init__(self, APPID, APIKey, APISecret, mic_index=None):
         self.wsParam = Ws_Param(APPID, APIKey, APISecret)
         self.ws = None
         self.recognized_text = ""
         self.is_recognizing = False
+        self.mic_index = mic_index
+        self.silence_threshold = 200  # 静音阈值
+        self.silence_duration = 3  # 静音持续时长（秒）
+        self.max_initial_wait = 20  # 初始等待时长（秒）
+        self.last_audio_time = time.time()
 
     def on_message(self, ws, message):
         try:
@@ -103,12 +104,23 @@ class SpeechRecognizer:
     def on_open(self, ws):
         def run(*args):
             p = pyaudio.PyAudio()
-            stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000)
+            stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, input_device_index=self.mic_index, frames_per_buffer=8000)
             status = STATUS_FIRST_FRAME
 
+            frames = []
+            initial_wait_start = time.time()
             while self.is_recognizing:
                 buf = stream.read(8000)
-                if not buf:
+                frames.append(buf)
+                audio_data = np.frombuffer(buf, dtype=np.int16)
+
+                # 检查是否静音
+                audio_level = np.abs(audio_data).mean()
+                if audio_level > self.silence_threshold:
+                    self.last_audio_time = time.time()
+
+                if time.time() - self.last_audio_time > self.silence_duration and time.time() - initial_wait_start > self.max_initial_wait:
+                    self.is_recognizing = False
                     status = STATUS_LAST_FRAME
 
                 if status == STATUS_FIRST_FRAME:
@@ -146,6 +158,7 @@ class SpeechRecognizer:
                         logging.info("Sent last frame")
                     except websocket.WebSocketConnectionClosedException:
                         logging.error("WebSocket connection closed. Unable to send last frame.")
+                        
                     break
                 time.sleep(0.04)
 
@@ -154,13 +167,31 @@ class SpeechRecognizer:
             p.terminate()
             ws.close()
 
-        thread.start_new_thread(run, ())
+            # 保存音频数据
+            self.save_audio(frames)
+
+        threading.Thread(target=run).start()
+
+    def save_audio(self, frames):
+        base_dir = os.path.join("recordings", time.strftime('%Y-%m-%d_%H-%M-%S'))
+        if not os.path.exists(base_dir):
+            os.makedirs(base_dir)
+        filename = f"order_{int(time.time())}.wav"
+        file_path = os.path.join(base_dir, filename)
+
+        with wave.open(file_path, 'wb') as wf:
+            wf.setnchannels(1)
+            wf.setsampwidth(pyaudio.PyAudio().get_sample_size(pyaudio.paInt16))
+            wf.setframerate(16000)
+            wf.writeframes(b''.join(frames))
+        print(f"录音文件已保存：{file_path}")
 
     def start_recognition(self):
         self.recognized_text = ""
         self.is_recognizing = True
         wsUrl = self.wsParam.create_url()
-        self.ws = websocket.WebSocketApp(wsUrl, on_message=self.on_message, on_error=self.on_error, on_close=self.on_close)
+        self.ws = websocket.WebSocketApp(wsUrl, on_message=self.on_message, on_error=self.on_error,
+                                         on_close=self.on_close)
         self.ws.on_open = self.on_open
         self.ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
 
@@ -169,62 +200,27 @@ class SpeechRecognizer:
         if self.ws:
             self.ws.close()
             self.ws = None
+        self.process_recognized_text()
         return self.recognized_text
 
-def save_audio_to_file(audio, base_dir, count):
-    """
-    将音频数据保存到文件中
-    :param audio: 音频数据
-    :param base_dir: 基础目录路径
-    :param count: 第几次对话
-    :return: 保存的文件路径
-    """
-    if not os.path.exists(base_dir):
-        os.makedirs(base_dir)
-    filename = f"order_{count}.wav"
-    file_path = os.path.join(base_dir, filename)
-    with open(file_path, "wb") as f:
-        f.write(audio.get_wav_data())
-    print(f"录音文件已保存：{file_path}")
+    def process_recognized_text(self):
+        """
+        加工recognized_text中的内容，确保所有的关键短语都替换为完整的短语。
+        """
+        # 定义替换规则，确保每个短语只替换一次
+        replacements = {
+            "益达口香糖": ["口香糖", "益达", "亿达"],
+            "果蔬果冻": ["古式果冻"],
+            "C酷果冻": ["西裤果冻", "西裤"],
+            "伊利每益添乳酸菌": ["乳酸菌", "伊利每一天乳酸菌", "每一天乳酸菌"],
+            "金津陈皮丹": ["陈皮丹", "晶晶成皮蛋", "金成绩单", "晶晶层皮弹"]
+        }
 
-    return file_path
+        # 进行替换，确保每个替换规则只被应用一次
+        for full_phrase, keywords in replacements.items():
+            for keyword in keywords:
+                if keyword in self.recognized_text and full_phrase not in self.recognized_text:
+                    self.recognized_text = self.recognized_text.replace(keyword, full_phrase)
 
-def recognize_speech(count, start_timestamp, duration=10, mic_index=None):
-    recognizer = sr.Recognizer()
-    try:
-        mic = sr.Microphone(device_index=mic_index)
-    except IOError as e:
-        print(f"无法初始化麦克风设备 {mic_index}，请检查设备连接并重试。错误信息：{e}")
-        return "", None
-    except Exception as e:
-        print(f"初始化麦克风设备 {mic_index} 时发生未知错误。错误信息：{e}")
-        return "", None
+        return self.recognized_text
 
-    with mic as source:
-        recognizer.adjust_for_ambient_noise(source)
-        print("请开始说话...")
-        audio = None
-        try:
-            audio = recognizer.listen(source, timeout=duration, phrase_time_limit=duration)
-        except sr.WaitTimeoutError:
-            print("等待语音输入超时。")
-            return ""
-
-    print("语音识别结束，正在处理...")
-
-    # 保存录音为 wav 文件
-    base_dir = os.path.join("recordings", start_timestamp)
-    save_audio_to_file(audio, base_dir, count)
-
-    try:
-        recognized_text = recognizer.recognize_google(audio, language='zh-CN')
-    except sr.UnknownValueError:
-        recognized_text = ""
-    except sr.RequestError as e:
-        print(f"识别错误：{e}")
-        recognized_text = ""
-    except Exception as e:
-        print(f"语音识别时发生未知错误。错误信息：{e}")
-        recognized_text = ""
-
-    return recognized_text

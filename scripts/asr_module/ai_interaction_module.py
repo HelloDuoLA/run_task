@@ -1,48 +1,31 @@
-# ai_interaction_module.py
-
-import requests
 import json
 import os
+import re
 import time
+from http import HTTPStatus
+import dashscope
+from dashscope import Generation
 
-def get_access_token():
-    """
-    使用 API Key，Secret Key 获取access_token
-    """
-    client_id = "jL0h3ooGPLw73P9EKorcnCkD"
-    client_secret = "RyIpyqI4Rq7u0NZXGI9T3y1Qfp9qhpdL"
-    url = f"https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id={client_id}&client_secret={client_secret}"
-
-    payload = json.dumps("")
-    headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-    }
-
-    response = requests.request("POST", url, headers=headers, data=payload)
-    return response.json().get("access_token")
+# 设置API密钥
+dashscope.api_key = "sk-7a78d83cef354876abead0b8d1e7d18b"
 
 def chat_with_ai(messages):
-    access_token = get_access_token()
-    url = f"https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_adv_pro?access_token={access_token}"
-
-    payload = json.dumps({
-        "messages": messages
-    })
-
-    headers = {
-        'Content-Type': 'application/json'
-    }
-
-    response = requests.request("POST", url, headers=headers, data=payload)
-
-    if response.status_code == 200:
-        result = response.json().get("result")
+    response = Generation.call(model="qwen-turbo",
+                               messages=messages,
+                               result_format='message')
+    if response.status_code == HTTPStatus.OK:
+        result = response.output.choices[0]['message']['content']
         return result
     else:
-        print("API调用失败:", response.text)
+        print('Request id: %s, Status code: %s, error code: %s, error message: %s' % (
+            response.request_id, response.status_code,
+            response.code, response.message
+        ))
         return None
 
+def remove_comments(json_string):
+    pattern = re.compile(r'//.*')
+    return re.sub(pattern, '', json_string)
 
 def extract_json_objects(text):
     """
@@ -64,12 +47,13 @@ def extract_json_objects(text):
             elif text[end] == '}':
                 brace_count -= 1
                 if brace_count == 0:
-                    json_objects.append(text[start:end + 1])
+                    json_obj_str = text[start:end + 1]
+                    json_obj_str = remove_comments(json_obj_str)
+                    json_objects.append(json_obj_str)
                     break
             end += 1
         start = end + 1
     return json_objects
-
 
 def split_orders(json_content):
     """
@@ -82,7 +66,6 @@ def split_orders(json_content):
         return data["orders"]
     else:
         return [data]
-
 
 def save_json_to_file(json_content, base_dir, count):
     """
@@ -154,5 +137,11 @@ def get_ai_response_as_dict(messages, count, start_timestamp):
     # 保存JSON并返回文件路径列表和JSON对象
     files, json_objects = save_json_to_file(result, os.path.join("json_files", start_timestamp), count)
     if json_objects:
-        return files, json.loads(json_objects[0]), result  # 返回第一个JSON对象的字典形式
+        try:
+            first_json_object = json.loads(json_objects[0])
+        except json.JSONDecodeError as e:
+            print(f"JSONDecodeError: {e}")
+            print(f"Invalid JSON: {json_objects[0]}")
+            first_json_object = None
+        return files, first_json_object, result  # 返回第一个JSON对象的字典形式
     return files, None, result
