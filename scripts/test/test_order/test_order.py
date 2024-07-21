@@ -43,7 +43,6 @@ def talker():
     # obj_3 =order.Order.Operation(3)
     # rospy.loginfo(f"obj_3 : {obj_3}")
     
-    
     while not rospy.is_shutdown():
         rospy.loginfo("test_order")
         pub.publish(msg_order)

@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="run_task" type="asr.py" name="asr_node" output="screen" respawn="true">
+    </node>
+</launch>

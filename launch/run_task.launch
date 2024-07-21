@@ -12,9 +12,7 @@
     <include file="$(find run_task)/launch/assign_tasks.launch" /> 
     <!-- 控制倒车模块 -->
     <include file="$(find run_task)/launch/control_cmd.launch" /> 
-
     <!-- 语音识别模块 -->
-    
-
+    <include file="$(find run_task)/launch/asr.launch" /> 
 
 </launch> 
