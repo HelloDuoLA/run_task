@@ -10,7 +10,7 @@ LeftArmTopSnackGrip:
 
 # 左臂下层零食放置高度
 LeftArmBottomSnackGrip:
-  z_const: 380
+  z_const: 390
 
 # 左臂抓容器
 LeftArmGripContainer:
@@ -20,7 +20,7 @@ LeftArmGripContainer:
 
 # 左臂松零食(相对于抓容器的位置)
 LeftArmLossenSnack:
-  x_bias: +40
+  x_bias: +50
   y_bias: -80
   z_bias: 20  # 410
 

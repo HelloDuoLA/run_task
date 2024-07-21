@@ -1,8 +1,10 @@
+import threading
+import logging
+import time
 import hashlib
 import base64
 import hmac
 import json
-import time
 import ssl
 import pyaudio
 import websocket
@@ -10,11 +12,10 @@ from wsgiref.handlers import format_date_time
 from datetime import datetime
 from time import mktime
 from urllib.parse import urlencode
-import threading
-import logging
 import wave
 import numpy as np
 import os
+import re
 
 STATUS_FIRST_FRAME = 0  # 第一帧的标识
 STATUS_CONTINUE_FRAME = 1  # 中间帧标识
@@ -22,6 +23,7 @@ STATUS_LAST_FRAME = 2  # 最后一帧的标识
 
 # 设置日志记录
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+
 
 class Ws_Param:
     # 初始化
@@ -38,15 +40,12 @@ class Ws_Param:
     # 生成url
     def create_url(self):
         url = 'wss://ws-api.xfyun.cn/v2/iat'
-        # 生成RFC1123格式的时间戳
         now = datetime.now()
         date = format_date_time(mktime(now.timetuple()))
 
-        # 拼接字符串
         signature_origin = "host: " + "ws-api.xfyun.cn" + "\n"
         signature_origin += "date: " + date + "\n"
         signature_origin += "GET " + "/v2/iat " + "HTTP/1.1"
-        # 进行hmac-sha256进行加密
         signature_sha = hmac.new(self.APISecret.encode('utf-8'), signature_origin.encode('utf-8'),
                                  digestmod=hashlib.sha256).digest()
         signature_sha = base64.b64encode(signature_sha).decode(encoding='utf-8')
@@ -54,13 +53,11 @@ class Ws_Param:
         authorization_origin = "api_key=\"%s\", algorithm=\"%s\", headers=\"%s\", signature=\"%s\"" % (
             self.APIKey, "hmac-sha256", "host date request-line", signature_sha)
         authorization = base64.b64encode(authorization_origin.encode('utf-8')).decode(encoding='utf-8')
-        # 将请求的鉴权参数组合为字典
         v = {
             "authorization": authorization,
             "date": date,
             "host": "ws-api.xfyun.cn"
         }
-        # 拼接鉴权参数，生成url
         url = url + '?' + urlencode(v)
         return url
 
@@ -72,10 +69,11 @@ class SpeechRecognizer:
         self.recognized_text = ""
         self.is_recognizing = False
         self.mic_index = mic_index
-        self.silence_threshold = 200  # 静音阈值
+        self.silence_threshold = 400  # 静音阈值
         self.silence_duration = 3  # 静音持续时长（秒）
-        self.max_initial_wait = 20  # 初始等待时长（秒）
+        self.max_initial_wait = 10  # 初始等待时长（秒）
         self.last_audio_time = time.time()
+        self.closed_event = threading.Event()  # 用于检测 WebSocket 关闭事件
 
     def on_message(self, ws, message):
         try:
@@ -90,25 +88,30 @@ class SpeechRecognizer:
                 for i in data:
                     for w in i["cw"]:
                         result += w["w"]
-                logging.info(f"sid:{sid} call success!, data is: {json.dumps(data, ensure_ascii=False)}")
-                self.recognized_text += result
+                if result.strip():  # 仅当结果不为空时记录日志
+                    logging.info(f"sid:{sid} call success!, data is: {json.dumps(data, ensure_ascii=False)}")
+                    self.recognized_text += result
         except Exception as e:
             logging.error(f"receive msg, but parse exception: {e}")
 
     def on_error(self, ws, error):
         logging.error(f"### error: {error}")
 
-    def on_close(self, ws, a, b):
+    def on_close(self, ws, close_status_code, close_msg):
         logging.info("### closed ###")
+        self.closed_event.set()  # 触发事件
 
     def on_open(self, ws):
         def run(*args):
             p = pyaudio.PyAudio()
-            stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, input_device_index=self.mic_index, frames_per_buffer=8000)
+            stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True,
+                            input_device_index=self.mic_index, frames_per_buffer=8000)
             status = STATUS_FIRST_FRAME
 
             frames = []
             initial_wait_start = time.time()
+            self.last_audio_time = time.time()  # 初始化最后音频时间
+
             while self.is_recognizing:
                 buf = stream.read(8000)
                 frames.append(buf)
@@ -116,12 +119,20 @@ class SpeechRecognizer:
 
                 # 检查是否静音
                 audio_level = np.abs(audio_data).mean()
+                logging.info(f"Audio level: {audio_level}")  # 打印音频电平
+
                 if audio_level > self.silence_threshold:
                     self.last_audio_time = time.time()
+                    logging.info("Detected speech, resetting last_audio_time")  # 检测到讲话，重置时间
 
+                # 检查静音时间和初始等待时间
                 if time.time() - self.last_audio_time > self.silence_duration and time.time() - initial_wait_start > self.max_initial_wait:
                     self.is_recognizing = False
                     status = STATUS_LAST_FRAME
+                    logging.info("Silence duration exceeded, stopping recognition")  # 静音时间超过，停止识别
+
+                if status == STATUS_LAST_FRAME:
+                    break  # 立即退出循环
 
                 if status == STATUS_FIRST_FRAME:
                     d = {"common": self.wsParam.CommonArgs,
@@ -149,18 +160,17 @@ class SpeechRecognizer:
                         logging.error("WebSocket connection closed. Unable to send continue frame.")
                         break
 
-                elif status == STATUS_LAST_FRAME:
-                    d = {"data": {"status": 2, "format": "audio/L16;rate=16000",
-                                  "audio": str(base64.b64encode(buf), 'utf-8'),
-                                  "encoding": "raw"}}
-                    try:
-                        ws.send(json.dumps(d))
-                        logging.info("Sent last frame")
-                    except websocket.WebSocketConnectionClosedException:
-                        logging.error("WebSocket connection closed. Unable to send last frame.")
-                        
-                    break
                 time.sleep(0.04)
+
+            if status == STATUS_LAST_FRAME:
+                d = {"data": {"status": 2, "format": "audio/L16;rate=16000",
+                              "audio": str(base64.b64encode(buf), 'utf-8'),
+                              "encoding": "raw"}}
+                try:
+                    ws.send(json.dumps(d))
+                    logging.info("Sent last frame")
+                except websocket.WebSocketConnectionClosedException:
+                    logging.error("WebSocket connection closed. Unable to send last frame.")
 
             stream.stop_stream()
             stream.close()
@@ -189,6 +199,7 @@ class SpeechRecognizer:
     def start_recognition(self):
         self.recognized_text = ""
         self.is_recognizing = True
+        self.closed_event.clear()  # 清除事件
         wsUrl = self.wsParam.create_url()
         self.ws = websocket.WebSocketApp(wsUrl, on_message=self.on_message, on_error=self.on_error,
                                          on_close=self.on_close)
@@ -201,6 +212,7 @@ class SpeechRecognizer:
             self.ws.close()
             self.ws = None
         self.process_recognized_text()
+        self.swap_items_if_needed()
         return self.recognized_text
 
     def process_recognized_text(self):
@@ -209,11 +221,12 @@ class SpeechRecognizer:
         """
         # 定义替换规则，确保每个短语只替换一次
         replacements = {
-            "益达口香糖": ["口香糖", "益达", "亿达"],
-            "果蔬果冻": ["古式果冻"],
-            "C酷果冻": ["西裤果冻", "西裤"],
-            "伊利每益添乳酸菌": ["乳酸菌", "伊利每一天乳酸菌", "每一天乳酸菌"],
-            "金津陈皮丹": ["陈皮丹", "晶晶成皮蛋", "金成绩单", "晶晶层皮弹"]
+            "拿": ["那", "哪"],
+            "益达口香糖": ["口香糖", "益达", "亿达", "月达", "一达", "亿打"],
+            "果蔬果冻": ["古式果冻", "果素果冻"],
+            "C酷果冻": ["西裤果冻", "是酷果冻"],
+            "伊利每益添乳酸菌": ["乳酸菌"],
+            "金津陈皮丹": ["陈皮丹", "成绩单", "盛皮蛋", "成皮蛋", "层皮弹", "呈批单"]
         }
 
         # 进行替换，确保每个替换规则只被应用一次
@@ -223,4 +236,26 @@ class SpeechRecognizer:
                     self.recognized_text = self.recognized_text.replace(keyword, full_phrase)
 
         return self.recognized_text
+
+    def swap_items_if_needed(self):
+        """
+        检查并交换特定短语的位置。
+        """
+        items = ["益达口香糖", "果蔬果冻", "C酷果冻", "伊利每益添乳酸菌", "金津陈皮丹"]
+        pattern = re.compile(r"拿(.*?)和(.*?)到(.*?)桌子上")
+        match = pattern.search(self.recognized_text)
+
+        if match:
+            first_item = match.group(1).strip()
+            second_item = match.group(2).strip()
+            location = match.group(3).strip()
+
+            for item in items:
+                if item in second_item and item not in first_item:
+                    # 交换位置
+                    new_first_item = second_item
+                    new_second_item = first_item
+                    new_text = f"拿{new_first_item}和{new_second_item}到{location}桌子上"
+                    self.recognized_text = self.recognized_text.replace(match.group(0), new_text)
+                    break
 

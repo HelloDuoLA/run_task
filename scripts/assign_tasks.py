@@ -574,9 +574,9 @@ class Image_rec_actuator():
                     task_grasp_snack:task.Task_manipulation         = current_task.need_modify_tasks.task_list[i*6+1]
                     task_grasp_snack.modify_xyz_select_arm(snack_xyz,arm_id)
                     task_lossen_snack_pre:task.Task_manipulation    = current_task.need_modify_tasks.task_list[i*6+2]
-                    # 左臂松零食使用 X_Z_Y
+                    # 左臂松零食使用 X_Y_Z
                     if arm_id == utilis.Device_id.LEFT:
-                        task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.X_Z_Y)
+                        task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.X_Y_Z)
                     else:
                         task_lossen_snack_pre.select_arm(arm_id)
                     task_lossen_snack:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i*6+3]
@@ -1505,7 +1505,7 @@ class Order_driven_task_schedul():
         # 放置零食中间位置
         task_placement_snack_pre = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_snack_pre,None,utilis.Device_id.TBD,\
             [system.anchor_point.left_arm_snack_placement_pre,system.anchor_point.right_arm_snack_placement_pre],\
-            target_clamps_status = [arm.GripMethod.DONTCANGE, arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.X_Y_Z,\
+            target_clamps_status = [arm.GripMethod.DONTCANGE, arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.X_Z_Y,\
             name="task_placement_snack_middle")
         task_placement_snack_pre.status   = task.Task.Task_status.NOTREADY  # 需要选择是左臂还是右臂
         task_placement_snack_pre.parallel = task.Task.Task_parallel.ALL

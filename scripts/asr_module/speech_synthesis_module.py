@@ -78,15 +78,15 @@ class SpeechSynthesizer:
             audio = message["data"]["audio"]
             audio = base64.b64decode(audio)
             status = message["data"]["status"]
-            # print(message)
+
             if code != 0:
                 errMsg = message["message"]
-                # print("sid:%s call error:%s code is:%s" % (sid, errMsg, code))
+                print("sid:%s call error:%s code is:%s" % (sid, errMsg, code))
                 ws.close()
             else:
                 self.audio_data.write(audio)
                 if status == 2:
-                    print("ws is closed")
+
                     ws.close()
                     time.sleep(1)  # 确保接收到所有数据后再进行下一步
                     self.audio_data.seek(0)
@@ -99,7 +99,7 @@ class SpeechSynthesizer:
         print("### error:", error)
 
     def on_close(self, ws, close_status_code, close_msg):
-        print("### closed ###")
+        print("")
 
     def on_open(self, ws):
         def run(*args):
@@ -107,7 +107,7 @@ class SpeechSynthesizer:
                  "business": self.wsParam.BusinessArgs,
                  "data": self.wsParam.Data}
             d = json.dumps(d)
-            print("------>开始发送文本数据")
+
             ws.send(d)
 
         thread.start_new_thread(run, ())

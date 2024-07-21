@@ -10,9 +10,8 @@ InitialPose:
 
 # 零食台位姿
 SnackDesk:
-  # position_x: 0.51
-  position_x: 0.48
-  position_y: -2.36
+  position_x: 0.51
+  position_y: -2.34
   position_z: 0
   orientation_x: 0
   orientation_y: 0
