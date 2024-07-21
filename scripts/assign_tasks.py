@@ -1893,18 +1893,18 @@ def test_order_snack():
     # order_info2.table_id = utilis.Device_id.RIGHT
     order_info2.table_id = utilis.Device_id.LEFT
 
-    # tasks = system.order_driven_task_schedul.add_task(order_info)
-    # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
+    tasks = system.order_driven_task_schedul.add_task(order_info)
+    tasks2 = system.order_driven_task_schedul.add_task(order_info2)
     # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
 
-    tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)
-    tasks_get_snack.update_group_id(6)
+    # tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)
+    # tasks_get_snack.update_group_id(6)
     
     # tasks_lossen_snack = system.order_driven_task_schedul.test_tasks_lossen_container(order_info.table_id)
     # tasks_lossen_snack.update_group_id(7)
     
-    tasks_get_drink = system.order_driven_task_schedul.test_tasks_at_drink_desk()
-    tasks_get_drink.update_group_id(8)
+    # tasks_get_drink = system.order_driven_task_schedul.test_tasks_at_drink_desk()
+    # tasks_get_drink.update_group_id(8)
     
     # task_lossen_cup = system.order_driven_task_schedul.test_tasks_lossen_cup(order_info.table_id)
     # task_lossen_cup.update_group_id(9)
@@ -1913,7 +1913,7 @@ def test_order_snack():
     
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
-    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
+    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
     
 if __name__ == '__main__':

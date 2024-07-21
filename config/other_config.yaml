@@ -5,7 +5,7 @@ SnackDeckMoveBack:
   time : 4
 
 DrinkDeckMoveBack:
-  x  : -60
+  x  : -50
   yaw: -90
   time : 4
 
