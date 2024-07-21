@@ -14,6 +14,7 @@ import copy
 from enum import Enum,auto
 import time
 import std_srvs.srv as std_srvs
+import std_msgs.msg  as std_msgs
 
 # 自定义包
 rospack = rospkg.RosPack()
@@ -49,6 +50,7 @@ class System():
         self.image_rec_actuator   =  Image_rec_actuator()   # 图像识别执行器
         rospy.loginfo(f"node: {rospy.get_name()}, manipulator_actuator")
         self.manipulator_actuator =  Manipulator_actuator() # 机械臂执行器
+                                                            # 语音识别执行器
         
         # 机器人状态
         self.robot                =  robot.Robot()           # 机器人
@@ -62,6 +64,8 @@ class System():
         # 设置初始位姿
         # TODO:调试需要,暂时注释
         # self.set_initial_pose()
+        
+        
     
     # 设置初始位姿
     def set_initial_pose(self):
@@ -715,6 +719,40 @@ class Image_rec_actuator():
         system.task_manager.tm_task_finish_callback(current_task)
     
 
+# !语音识别任务执行器
+class ASR_actuator():
+    def __init__(self):
+        # 语音识别请求
+        self.asr_request_pub = rospy.Publisher(utilis.Topic_name.asr_request,std_msgs.Empty,queue_size=10)
+
+    def run(self,asr_task:task.Task_speech_recognition):
+        current_task = asr_task
+        # 任务开始
+        asr_task.update_start_status()
+
+        # 任务前休眠时间
+        if asr_task.sleep_time_before_task != 0:
+            time.sleep(asr_task.sleep_time_before_task)
+            rospy.loginfo(f"task index {asr_task.task_index} sleep for {asr_task.sleep_time_before_task} second before task")
+            
+        self.asr_request_pub.publish(std_msgs.Empty())
+        rospy.loginfo("send asr request")
+        
+        # 任务完成暂停时间
+        if current_task.sleep_time_after_task != 0:
+            time.sleep(current_task.sleep_time_after_task)
+        else:
+            pass
+        
+        # 更新任务状态
+        current_task.update_end_status(task.Task.Task_result.SUCCEED)
+        # 任务自带的回调
+        if current_task.finish_cb is not None:
+            pass
+        
+        system.task_manager.tm_task_finish_callback(asr_task)
+        
+        
 # 任务管理器
 # 判断哪些任务能够运行
 class Task_manager():
@@ -1858,10 +1896,15 @@ def talker():
     right_arm_client = rospy.ServiceProxy(utilis.Topic_name.right_arm_prepare_service,std_srvs.Empty)
     rospy.loginfo("waiting for camera nodes...")
     camera_prepare_service = rospy.ServiceProxy(utilis.Topic_name.camera_prepare_service,std_srvs.Empty)
+    rospy.loginfo("waiting for asr nodes...")
+    asr_prepare_service = rospy.ServiceProxy(utilis.Topic_name.asr_prepare_service,std_srvs.Empty)
 
     left_arm_client.wait_for_service()
     right_arm_client.wait_for_service()
     camera_prepare_service.wait_for_service()
+    
+    # TODO:等待语音识别节点完成初始化
+    # asr_prepare_service.wait_for_service()
     
 
     test_order_snack()

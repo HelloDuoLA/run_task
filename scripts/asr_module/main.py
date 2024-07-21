@@ -46,11 +46,8 @@ def prompt_user():
 
 def voice_to_json(APPID, APIKey, APISecret, messages, mic_index):
     global global_count
-
-    if not prompt_user():
-        print("已取消本次语音识别。")
-        return False, None, None, messages
-
+    
+    # !: 不在此处进行下一步判断
     recognizer = SpeechRecognizer(APPID, APIKey, APISecret, mic_index)
     print("开始语音识别...")
     recognizer.start_recognition()
@@ -72,6 +69,7 @@ def voice_to_json(APPID, APIKey, APISecret, messages, mic_index):
             print("AI处理完成，但未生成文件。")
             # 调用语音合成函数
             tts(APPID, APIKey, APISecret, response)
+            # TODO: 需要返回点不一样的东西
         return True, response_files, response_dict, messages
     else:
         print("未识别到有效文字。")
@@ -79,7 +77,7 @@ def voice_to_json(APPID, APIKey, APISecret, messages, mic_index):
 
 
 def main():
-    global global_count
+    # global global_count
     APPID = 'ec798696'
     APIKey = '079797c2b651aada7573f75eb2ca1955'
     APISecret = 'YzU5ZWM2NjJmOGY1ODQ0ZmM3M2ViZWEy'
@@ -151,10 +149,12 @@ def main():
     # 开始语音对话
     while True:
         try:
-            continue_recognition, _, _, messages = voice_to_json(APPID, APIKey, APISecret,
-                                                        messages, mic_index)
-            if not continue_recognition:
+            if not prompt_user():
+                print("已取消本次语音识别。")
                 break
+            else :
+                continue_recognition, _, _, messages = voice_to_json(APPID, APIKey, APISecret,
+                                                            messages, mic_index)
         except KeyboardInterrupt:
             print("程序已终止。")
             break

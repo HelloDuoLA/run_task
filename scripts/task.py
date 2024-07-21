@@ -288,6 +288,14 @@ class Task_function(Task):
     def __str__(self) -> str:
         return super().__str__() 
 
+# 语音识别任务
+class Task_speech_recognition(Task):
+    def __init__(self, task_name, finish_cb=None,name=""):
+        super().__init__(task_name,finish_cb,name)
+    
+    # 打印输出
+    def __str__(self) -> str:
+        return super().__str__()
         
 # 导航任务
 class Task_navigation(Task):

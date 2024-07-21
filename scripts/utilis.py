@@ -130,10 +130,12 @@ class Topic_name():
     right_arm_topic           = "right_arm_move_topic"       # 右臂移动请求topic
     left_arm_result           = "left_arm_move_result"       # 左臂移动结果topic
     right_arm_result          = "right_arm_move_result"      # 右臂移动结果topic
+    asr_request               = "asr_request"                # 语音识别请求
     # 等待左手臂节点, 右手臂节点和摄像头节点可用
     left_arm_prepare_service  = "left_arm_prepare_service"
     right_arm_prepare_service = "right_arm_prepare_service"
     camera_prepare_service    = "camera_prepare_service" 
+    asr_prepare_service       = "asr_prepare_service" 
 
 # 获取当前时间
 def get_current_time():
