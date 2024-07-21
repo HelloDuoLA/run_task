@@ -1,7 +1,7 @@
 # 后退距离 [mm], 角度 [°] , 时间 [s]
 SnackDeckMoveBack:
-  x    : -10
-  yaw  : -90
+  x    : -2
+  yaw  : -80
   time : 4
 
 DrinkDeckMoveBack:
@@ -27,7 +27,7 @@ SnackDeckMoveforward:
   time : 2.5
 
 DrinkDeckMoveforward:
-  x  : 20
+  x  : 15
   yaw: 0
   time : 2
 

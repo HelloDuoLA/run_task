@@ -16,7 +16,7 @@ LeftArmSnackRec:
 LeftArmGripSnackPre:
   # x y z待定(与识别框的偏移量), 手势确定
   # angles:  [-61.89, -4.64, -144.53, 129.69, 83.13, 34.92]
-  coords:  [260, 250, 470, -90, 0, -90]
+  coords:  [260, 280, 470, -90, 0, -90]
 
 # 左臂抓零食位点
 LeftArmGripSnack:

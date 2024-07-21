@@ -52,7 +52,7 @@ LeftArmGripTurnOFFMachineSwitch:
 # TODO:
 LeftArmWaterCup:
   x_bias: -40
-  y_bias: -96
+  y_bias: -86
   z_const: 240   # 有用
 
 
