@@ -380,6 +380,31 @@ class STag_result_list():
                 stag_result.base_coords = ev_left_arm_turn_on_machine
                 stag_result.obj_id      = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value
                 new_stag_result_list.append(stag_result)
+                
+                # 关机键
+                turn_off_point = copy.deepcopy(stag_result)
+                turn_off_point.base_coords[0] = stag_result.base_coords[0] + LeftArmGripTurnOFFMachineSwitch.x
+                turn_off_point.base_coords[1] = stag_result.base_coords[1] + LeftArmGripTurnOFFMachineSwitch.y
+                turn_off_point.base_coords[2] = stag_result.base_coords[2] + LeftArmGripTurnOFFMachineSwitch.z
+                turn_off_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH_OFF.value
+                new_stag_result_list.append(turn_off_point)
+                
+                # 转移点
+                tran_point = copy.deepcopy(stag_result)
+                tran_point.base_coords[0] = stag_result.base_coords[0] + LeftArmGripTranMachineSwitch.x
+                tran_point.base_coords[1] = stag_result.base_coords[1] + LeftArmGripTranMachineSwitch.y
+                tran_point.base_coords[2] = stag_result.base_coords[2] + LeftArmGripTranMachineSwitch.z
+                tran_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH_TRA.value
+                new_stag_result_list.append(tran_point)
+                
+                # 接水点
+                water_point = copy.deepcopy(stag_result)
+                water_point.base_coords[0] = stag_result.base_coords[0] + LeftArmWaterCup.x
+                water_point.base_coords[1] = stag_result.base_coords[1] + LeftArmWaterCup.y
+                water_point.base_coords[2] = LeftArmWaterCup.const_z                            # 固定值
+                water_point.obj_id  = task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value
+                new_stag_result_list.append(water_point)
+                
             
             self.stag_result_list = new_stag_result_list
             
