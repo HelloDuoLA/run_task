@@ -161,7 +161,7 @@ class System():
             self.left_arm_idle                 = self._get_arm_anchor_angle("LeftArmIdle")                # 左臂闲置
             self.left_arm_container_rec        = self._get_arm_anchor_angle("LeftArmContainerRec")        # 左臂识别容器
             self.left_arm_snack_rec            = self._get_arm_anchor_angle("LeftArmSnackRec")            # 左臂零食识别
-            self.left_arm_snack_grip_pre       = self._get_arm_anchor_angle("LeftArmGripSnackPre")        # 左臂零食抓取准备点
+            self.left_arm_snack_grip_pre       = self._get_arm_anchor_coord("LeftArmGripSnackPre")        # 左臂零食抓取准备点
             self.left_arm_snack_grip           = self._get_arm_anchor_coord("LeftArmGripSnack")           # 左臂零食抓取
             self.left_arm_snack_placement_pre  = self._get_arm_anchor_coord("LeftArmSnackPlacementPre")   # 左臂零食放置准备点
             self.left_arm_snack_placement      = self._get_arm_anchor_coord("LeftArmSnackPlacement")      # 左臂零食放置

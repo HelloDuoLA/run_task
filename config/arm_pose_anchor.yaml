@@ -5,7 +5,7 @@ LeftArmIdle:
 
 # 左臂食物框识别位点
 LeftArmContainerRec:
-  angles: [-57.8, 32.65, -66.77, 75.38, 33.39, 42.65]
+  angles: [-61.41, 28.64, -76.33, 64.55, 31.97, 30.71]
 
 # 左臂零食识别位点
 LeftArmSnackRec:
@@ -15,7 +15,8 @@ LeftArmSnackRec:
 # 左臂抓零食位点准备位点(识别位置前往下层会碰撞)
 LeftArmGripSnackPre:
   # x y z待定(与识别框的偏移量), 手势确定
-  angles:  [-61.89, -4.64, -144.53, 129.69, 83.13, 34.92]
+  # angles:  [-61.89, -4.64, -144.53, 129.69, 83.13, 34.92]
+  coords:  [260, 250, 470, -90, 0, -90]
 
 # 左臂抓零食位点
 LeftArmGripSnack:
@@ -24,7 +25,7 @@ LeftArmGripSnack:
 
 # 左臂零食放置位点 准备点
 LeftArmSnackPlacementPre:
-  coords:  [250, 130 , 500, -90, 0, -90]
+  coords:  [260, 220 , 500, -90, 0, -90]
 
 # 左臂零食放置位点
 LeftArmSnackPlacement:
@@ -60,7 +61,7 @@ LeftArmContainerPlacement:
 
 # 左臂咖啡机识别位点
 LeftArmMachineTurnOnRec:
-  angles: [-60.67, 17.05, -152.33, 123.97, 65.58, 10.15]
+  angles: [-54.14, 34.18, -145.1, 126.18, 60.41, 0.66]
 
 # TODO:不需要识别
 # 左臂咖啡机识别位点, 关机位点, 需要修改
@@ -101,7 +102,7 @@ RightArmIdle:
 
 # 右臂食物框识别位点
 RightArmContainerRec:
-  angles: [52.75, 42.33, -66.09, -67.39, 40.94, -31.12]
+  angles: [55.88, 38.52, -76.22, -58.23, 41.24, -20.51]
 
 # 右臂零食识别位点
 RightArmSnackRec:
