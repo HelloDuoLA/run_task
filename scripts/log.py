@@ -12,13 +12,11 @@ sys.path.insert(0,package_path + "/scripts")
 
 
 LOGDIR = package_path + "/log/"
-SUBDIR = ["orders","tasks","STag_result","images","finished_tasks","empirical_value"]
+SUBDIR = ["orders","tasks","STag_result","images","empirical_value"]
 
 for sub_dir in SUBDIR:
     if not os.path.exists(LOGDIR + sub_dir):
         os.makedirs(LOGDIR + sub_dir)
-
-
 def get_current_time():
     # 获取当前时间的秒数
     time_sec = rospy.Time.now().to_sec()
