@@ -187,6 +187,4 @@ RightArmCupDelivery:
 
 # 右臂杯子的放置位姿
 RightArmCupPlacement:
-  # 同杯子转移位点
-  # coords: [300, 0, 220, 90, 0, 90]
   coords: [0, 0, -20, 0, 0, 0]

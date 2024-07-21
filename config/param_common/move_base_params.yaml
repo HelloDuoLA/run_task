@@ -9,8 +9,8 @@ base_global_planner: "global_planner/GlobalPlanner"
 
 #设置局部路径规划器
 #局部路径规划器会在文件【teb_local_planner.launch】、【dwa_local_planner.launch】对应文件内重新设置
-#base_local_planner: "dwa_local_planner/DWAPlannerROS"
-base_local_planner: "teb_local_planner/TebLocalPlannerROS"
+base_local_planner: "dwa_local_planner/DWAPlannerROS"
+# base_local_planner: "teb_local_planner/TebLocalPlannerROS"
 
 #发布机器人速度控制命令话题cmd_vel的频率，单位：Hz
 controller_frequency: 10.0 

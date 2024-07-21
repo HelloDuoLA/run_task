@@ -21,7 +21,6 @@ RightDeckMoveBack:
 
 # 前进距离 [mm]
 SnackDeckMoveforward:
-  # x  : 25
   x  : 25
   yaw: 0
   time : 2.5

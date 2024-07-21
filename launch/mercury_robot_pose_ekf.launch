@@ -3,6 +3,7 @@
   <arg name="is_cartographer" default="false"/>
   <!-- Robot pose ekf 拓展卡尔曼滤波-->
   <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf" output="screen" unless="$(arg is_cartographer)">
+    <!-- ! 原来是什么 -->
     <param name="output_frame" value="odom_combined"/>
     <param name="base_footprint_frame" value="base_footprint"/>
     <param name="freq" value="30.0"/>
