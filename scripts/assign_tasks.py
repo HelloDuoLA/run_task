@@ -664,7 +664,7 @@ class Image_rec_actuator():
                 elif need_modify_task.task_type == task.Task_type.Task_manipulation.Water_cup:
                     need_modify_task.modify_target_xyz(water_xyz,result.camera_id)
                     # 修改任务状态
-                    need_modify_task.status = task.Task.Task_status
+                    need_modify_task.status = task.Task.Task_status.BEREADY
 
         # 识别杯子
         elif current_task.task_type.task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE:
@@ -1903,17 +1903,17 @@ def test_order_snack():
     # tasks_lossen_snack = system.order_driven_task_schedul.test_tasks_lossen_container(order_info.table_id)
     # tasks_lossen_snack.update_group_id(7)
     
-    # tasks_get_drink = system.order_driven_task_schedul.test_tasks_at_drink_desk()
-    # tasks_get_drink.update_group_id(8)
+    tasks_get_drink = system.order_driven_task_schedul.test_tasks_at_drink_desk()
+    tasks_get_drink.update_group_id(8)
     
     # task_lossen_cup = system.order_driven_task_schedul.test_tasks_lossen_cup(order_info.table_id)
     # task_lossen_cup.update_group_id(9)
 
     # log.log_tasks_info(tasks_get_snack,"new_all_task.log")
     
-    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
+    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
-    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
+    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)
     
 if __name__ == '__main__':

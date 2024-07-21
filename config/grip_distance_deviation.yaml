@@ -51,7 +51,7 @@ LeftArmGripTurnOFFMachineSwitch:
 # 左臂识别开关换算到接水点位置
 # TODO:
 LeftArmWaterCup:
-  x_bias: -30
+  x_bias: -40
   y_bias: -96
   z_const: 240   # 有用
 
@@ -94,7 +94,7 @@ RightArmGripContainerDodge:
 # 右臂抓杯子
 RightArmGripCup:
   x_bias : -90
-  y_bias : 83
+  y_bias : 73
   z_const: 220
 
 # 右臂杯子接水

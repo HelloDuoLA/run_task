@@ -55,18 +55,18 @@ class STag_result_list():
     STag_other_dict = {
         4 : task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT.value,
         5 : task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT.value,
-        6  : task.Task_image_rec.Rec_OBJ_type.CUP.value,
-        7 : task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value,
+        6 : task.Task_image_rec.Rec_OBJ_type.CUP.value,
+        7 : task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH_ON.value,
         8 : task.Task_image_rec.Rec_OBJ_type.WATER_POINT.value
     }
     
     STag_other_enum_2_stag_num = {
         # task.Task_image_rec.Rec_OBJ_type.CONTAINER :     9,
-        task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT: 4,
-        task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT:5,
-        task.Task_image_rec.Rec_OBJ_type.CUP:            6,
-        task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH: 7,
-        task.Task_image_rec.Rec_OBJ_type.WATER_POINT:    8
+        task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT    : 4,
+        task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT   : 5,
+        task.Task_image_rec.Rec_OBJ_type.CUP               : 6,
+        task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH_ON : 7,
+        task.Task_image_rec.Rec_OBJ_type.WATER_POINT       : 8
     }
     
     
@@ -337,7 +337,7 @@ class STag_result_list():
             new_stag_result_list = [ ]
             for i in range(len(self.stag_result_list)):
                 stag_result = copy.deepcopy(self.stag_result_list[i])  
-                if stag_result.stag_id == self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH]:
+                if stag_result.stag_id == self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH_ON]:
                     # 开机键
                     stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[2] + LeftArmGripTurnOnMachineSwitch.x  # x = x + z + bias
                     stag_result.base_coords[1] = arm_poses[1] - stag_result.image_coords[1] + LeftArmGripTurnOnMachineSwitch.y  # y = y - y + bias
