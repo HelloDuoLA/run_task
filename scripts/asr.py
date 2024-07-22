@@ -5,6 +5,7 @@ import sys
 import rospkg
 import std_srvs.srv as std_srvs
 import std_msgs.msg  as std_msgs
+import time
 
 # 自定义包
 rospack = rospkg.RosPack()
@@ -100,7 +101,7 @@ class Asr_node():
     def run(self):
         try:
             # 欢迎语
-            self.welcome()
+            self.say_welcome()
             while True:
                 continue_recognition, response_files, response_dict,  self.messages = asr_module.voice_to_json(self.APPID, self.APIKey, self.APISecret,
                                                                 self.messages, self.mic_index)
@@ -109,11 +110,32 @@ class Asr_node():
                     # TODO:
                     # 处理json
                     order_info  = msg.OrderInfo()
+                    order_info.order_operation = response_dict.get("order_operation", 0)
+                    order_info.table_id        = response_dict.get("table_id", 1)
+                    snack_list = []
+                    for snack_id, count in response_dict["snacks"].items():
+                        snack = msg.SnackIDWithCount()
+                        snack.snack_id = int(snack_id)
+                        snack.count = count
+                        snack_list.append(snack)
+                    
+                    drink_list = []
+                    for drink_id, count in response_dict["drinks"].items():
+                        drink = msg.DrinkIDWithCount()
+                        drink.drink_id = int(drink_id)
+                        drink.count = count
+                        drink_list.append(drink)
+                        
+                    order_info.snacks = snack_list
+                    order_info.drinks = drink_list
+    
                     # 发布订单数据
                     self.order_pub.publish(order_info)
-                    # break
+                    self.say_do_service()
+                    break
                 else:
                     rospy.loginfo("语音识别失败")
+                    time.sleep(1)
         except KeyboardInterrupt:
             print("程序已终止。")
     
@@ -122,9 +144,14 @@ class Asr_node():
         asr_module.text_to_speech(self.APPID, self.APIKey, self.APISecret, content)
     
     # 欢迎语
-    def welcome(self):
+    def say_welcome(self):
         huanyingyu = "你好,送餐机器人为你服务"
         self.text_to_speech(huanyingyu)
+        
+    # 欢迎语
+    def say_do_service(self):
+        content = "好的, 马上为你送达"
+        self.text_to_speech(content)
 
 # 准备完成服务
 def doPrepareReq(request):
