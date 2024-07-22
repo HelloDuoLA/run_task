@@ -1,6 +1,6 @@
-# 后退距离 [mm], 角度 [°] , 时间 [s]
+# 后退距离 [cm], 角度 [°] , 时间 [s]
 SnackDeckMoveBack:
-  x    : -2
+  x    : -5
   yaw  : -80
   time : 4
 

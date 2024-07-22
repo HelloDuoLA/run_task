@@ -1129,7 +1129,7 @@ class Order_driven_task_schedul():
         # 左臂夹取零食框前的躲避动作
         task_left_arm_grap_container_dodge = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container_dodge,None,utilis.Device_id.LEFT,\
                 [copy.deepcopy(system.anchor_point.left_arm_container_grip_dodge)],\
-                    [arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.Z_XY,\
+                    [arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.Z_XY,\
                         name="left arm grap container dodge")
         task_left_arm_grap_container_dodge.parallel = task.Task.Task_parallel.ALL          # 可并行
         task_left_arm_grap_container_dodge.status   = task.Task.Task_status.BEREADY        
@@ -1140,7 +1140,7 @@ class Order_driven_task_schedul():
         # 右臂夹取零食框前的躲避动作
         task_right_arm_grap_container_dodge = task.Task_manipulation(task.Task_type.Task_manipulation.Grasp_container_dodge,None,utilis.Device_id.RIGHT,\
                 [copy.deepcopy(system.anchor_point.right_arm_container_grip_dodge)],\
-                    [arm.GripMethod.DONTCANGE], arm_move_method = arm.ArmMoveMethod.Z_XY,\
+                    [arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.Z_XY,\
                         name="right arm grap container dodge")
         task_right_arm_grap_container_dodge.parallel = task.Task.Task_parallel.ALL          # 可并行
         task_right_arm_grap_container_dodge.status   = task.Task.Task_status.BEREADY        

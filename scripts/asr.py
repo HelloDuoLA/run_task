@@ -152,7 +152,7 @@ class Asr_node():
     
     # 欢迎语
     def say_welcome(self):
-        huanyingyu = "你好,送餐机器人为你服务"
+        huanyingyu = "机器人为你服务"
         self.text_to_speech(huanyingyu)
         
     # 欢迎语

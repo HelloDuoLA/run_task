@@ -16,6 +16,7 @@ import wave
 import numpy as np
 import os
 import re
+import time
 
 LOGDIR = "/home/elephant/xzc_code/ros_ws/src/run_task/log/"
 
@@ -72,9 +73,9 @@ class SpeechRecognizer:
         self.recognized_text = ""
         self.is_recognizing = False
         self.mic_index = mic_index
-        self.silence_threshold = 400  # 静音阈值
-        self.silence_duration = 3  # 静音持续时长（秒）
-        self.max_initial_wait = 10  # 初始等待时长（秒）
+        self.silence_threshold = 600  # 静音阈值
+        self.silence_duration = 5  # 静音持续时长（秒）
+        self.max_initial_wait = 5  # 初始等待时长（秒）
         self.last_audio_time = time.time()
         self.closed_event = threading.Event()  # 用于检测 WebSocket 关闭事件
 
@@ -92,7 +93,8 @@ class SpeechRecognizer:
                     for w in i["cw"]:
                         result += w["w"]
                 if result.strip():  # 仅当结果不为空时记录日志
-                    logging.info(f"sid:{sid} call success!, data is: {json.dumps(data, ensure_ascii=False)}")
+                    # print(f"sid:{sid} call success!, data is: {json.dumps(data, ensure_ascii=False)}")
+                    print(f"sid:{sid} call success!")
                     self.recognized_text += result
         except Exception as e:
             logging.error(f"receive msg, but parse exception: {e}")
@@ -101,7 +103,7 @@ class SpeechRecognizer:
         logging.error(f"### error: {error}")
 
     def on_close(self, ws, close_status_code, close_msg):
-        logging.info("### closed ###")
+        print("### closed ###")
         self.closed_event.set()  # 触发事件
 
     def on_open(self, ws):
@@ -122,17 +124,17 @@ class SpeechRecognizer:
 
                 # 检查是否静音
                 audio_level = np.abs(audio_data).mean()
-                logging.info(f"Audio level: {audio_level}")  # 打印音频电平
+                print(f"Audio level: {audio_level}")  # 打印音频电平
 
                 if audio_level > self.silence_threshold:
                     self.last_audio_time = time.time()
-                    logging.info("Detected speech, resetting last_audio_time")  # 检测到讲话，重置时间
+                    print("Detected speech, resetting last_audio_time")  # 检测到讲话，重置时间
 
                 # 检查静音时间和初始等待时间
                 if time.time() - self.last_audio_time > self.silence_duration and time.time() - initial_wait_start > self.max_initial_wait:
                     self.is_recognizing = False
                     status = STATUS_LAST_FRAME
-                    logging.info("Silence duration exceeded, stopping recognition")  # 静音时间超过，停止识别
+                    print("Silence duration exceeded, stopping recognition")  # 静音时间超过，停止识别
 
                 if status == STATUS_LAST_FRAME:
                     break  # 立即退出循环
@@ -146,7 +148,7 @@ class SpeechRecognizer:
                     d = json.dumps(d)
                     try:
                         ws.send(d)
-                        logging.info("Sent first frame")
+                        print("Sent first frame")
                     except websocket.WebSocketConnectionClosedException:
                         logging.error("WebSocket connection closed. Unable to send first frame.")
                         break
@@ -158,7 +160,8 @@ class SpeechRecognizer:
                                   "encoding": "raw"}}
                     try:
                         ws.send(json.dumps(d))
-                        logging.info("Sent continue frame")
+                        start_timestamp = time.strftime('%Y-%m-%d_%H-%M-%S')
+                        print(f"{start_timestamp} Sent continue frame")
                     except websocket.WebSocketConnectionClosedException:
                         logging.error("WebSocket connection closed. Unable to send continue frame.")
                         break
@@ -171,7 +174,7 @@ class SpeechRecognizer:
                               "encoding": "raw"}}
                 try:
                     ws.send(json.dumps(d))
-                    logging.info("Sent last frame")
+                    print("Sent last frame")
                 except websocket.WebSocketConnectionClosedException:
                     logging.error("WebSocket connection closed. Unable to send last frame.")
 
@@ -229,7 +232,8 @@ class SpeechRecognizer:
             "果蔬果冻": ["古式果冻", "果素果冻"],
             "C酷果冻": ["西裤果冻", "是酷果冻"],
             "伊利每益添乳酸菌": ["乳酸菌"],
-            "金津陈皮丹": ["陈皮丹", "成绩单", "盛皮蛋", "成皮蛋", "层皮弹", "呈批单"]
+            "金津陈皮丹": ["陈皮丹", "成绩单", "盛皮蛋", "成皮蛋", "层皮弹", "呈批单"],
+            "咖啡": ["阿飞", "啊飞"]
         }
 
         # 进行替换，确保每个替换规则只被应用一次

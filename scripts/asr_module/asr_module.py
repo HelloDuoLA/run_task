@@ -170,5 +170,5 @@ def test_tts():
 
 
 if __name__ == "__main__":
-    test_tts()
-    # main()
+    # test_tts()
+    main()
