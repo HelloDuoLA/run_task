@@ -74,8 +74,8 @@ class SpeechRecognizer:
         self.is_recognizing = False
         self.mic_index = mic_index
         self.silence_threshold = 1000  # 静音阈值
-        self.silence_duration = 3  # 静音持续时长（秒）
-        self.max_initial_wait = 10  # 初始等待时长（秒）
+        self.silence_duration = 3      # 静音持续时长（秒）
+        self.max_initial_wait = 10     # 初始等待时长（秒）
         self.last_audio_time = 9999999999999999
         self.closed_event = threading.Event()  # 用于检测 WebSocket 关闭事件
         self.global_count = global_count
@@ -138,23 +138,6 @@ class SpeechRecognizer:
                     self.is_recognizing = False
                     status = STATUS_LAST_FRAME
                     print("Initial duration exceeded, stopping recognition")
-                # # 检查静音时间和初始等待时间
-                # else:
-                #     if time.time() - self.last_audio_time > self.silence_duration:
-                #         self.is_recognizing = False
-                #         status = STATUS_LAST_FRAME
-                #         print("Silence duration exceeded, stopping recognition")# 静音时间超过，停止识别
-                # time.time() - initial_wait_start > self.max_initial_wait
-                # if time.time() - initial_wait_start > self.max_initial_wait:
-                #     if time.time() - self.last_audio_time > self.silence_duration:
-                #         self.is_recognizing = False
-                #         status = STATUS_LAST_FRAME
-                #         print("Silence duration exceeded, stopping recognition")
-                # else:
-                #     if time.time() - self.last_audio_time > self.silence_duration:
-                #         self.is_recognizing = False
-                #         status = STATUS_LAST_FRAME
-                #         print("Silence duration exceeded, stopping recognition")
                   
                 if status == STATUS_LAST_FRAME:
                     break  # 立即退出循环
