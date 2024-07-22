@@ -46,8 +46,6 @@ def prompt_user():
 
 def voice_to_json(APPID, APIKey, APISecret, messages, mic_index):
     global global_count
-    
-    # !: 不在此处进行下一步判断
     recognizer = SpeechRecognizer(APPID, APIKey, APISecret, mic_index)
     print("开始语音识别...")
     recognizer.start_recognition()
@@ -66,10 +64,9 @@ def voice_to_json(APPID, APIKey, APISecret, messages, mic_index):
         if response_files:
             print("AI处理完成并生成了文件。")
         else:
-            print("AI处理完成，但未生成文件。")
+            print("AI处理完成, 但未生成文件。")
             # 调用语音合成函数
             tts(APPID, APIKey, APISecret, response)
-            # TODO: 需要返回点不一样的东西
         return True, response_files, response_dict, messages
     else:
         print("未识别到有效文字。")

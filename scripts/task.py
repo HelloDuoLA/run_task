@@ -53,8 +53,6 @@ class Task_type():
             except AttributeError:
                 # 如果对方没有value属性，比较对方本身
                 return self.value == value
-
-        
     
     # 图像识别任务
     class Task_image_rec(Enum):
@@ -510,6 +508,22 @@ class Task_sequence():
         if del_last_naviagte_to_init_point == True:
             if len(self.task_list) > 0:
                 if self.task_list[-1].task_type == Task_type.Task_navigate.Navigate_to_the_init_point:
+                    self.task_list.pop()
+        # 单任务
+        if isinstance(task,Task):
+            self.task_list.append(task)
+        # 增加任务列表
+        elif isinstance(task,Task_sequence):
+            self.task_list.extend(task.task_list)
+        
+        self._log_info()
+        
+    # 添加任务 
+    def add_and_del_last_asr_task(self,task,del_last_asr_task=True):
+        # 删除最后一个导航到初始点的任务
+        if del_last_asr_task == True:
+            if len(self.task_list) > 0:
+                if self.task_list[-1].task_type == Task_type.Task_speech_recognition.Speech_Recognition:
                     self.task_list.pop()
         # 单任务
         if isinstance(task,Task):

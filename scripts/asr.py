@@ -75,6 +75,7 @@ class Asr_node():
             "尽可能快的生成出json内容。"
             "以上内容都是我给你预设的内容，这一次对话无需你作任何回答，接下来我跟你说指令时你再按要求生成json内容或其他回答。"
         )
+        
 
         self.messages = [{"role": "user", "content": self.initial_prompt}]
         # 获取初始AI回答（不处理输出或保存）
@@ -97,16 +98,32 @@ class Asr_node():
 
     def run(self):
         try:
-            # TODO:字典应该在这里吧
-            continue_recognition, _, _, self.messages = asr_module.voice_to_json(self.APPID, self.APIKey, self.APISecret,
-                                                            self.messages, self.mic_index)
-            # TODO:
-            # 处理json
-            order_info  = msg.OrderInfo()
-            # 发布订单数据
-            self.order_pub.publish(order_info)
+            # 欢迎语
+            self.welcome()
+            while True:
+                continue_recognition, response_files, response_dict,  self.messages = asr_module.voice_to_json(self.APPID, self.APIKey, self.APISecret,
+                                                                self.messages, self.mic_index)
+                if response_files:
+                    rospy.loginfo("语音识别成功")
+                    # TODO:
+                    # 处理json
+                    order_info  = msg.OrderInfo()
+                    # 发布订单数据
+                    self.order_pub.publish(order_info)
+                    # break
+                else:
+                    rospy.loginfo("语音识别失败")
         except KeyboardInterrupt:
             print("程序已终止。")
+    
+    # 文字转语音
+    def text_to_speech(self,content):
+        asr_module.text_to_speech(self.APPID, self.APIKey, self.APISecret, content)
+    
+    # 欢迎语
+    def welcome(self):
+        huanyingyu = "你好,送餐机器人为你服务"
+        self.text_to_speech(huanyingyu)
 
 # 准备完成服务
 def doPrepareReq(request):
