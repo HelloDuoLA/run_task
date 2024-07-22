@@ -31,8 +31,8 @@ import control_cmd
 
 DEBUG_NAVIGATION = False     # 导航调试中, 则运动到桌子的任务均为非并行任务, 并且在完成之后需要输入任意字符才能下一步
 
-# WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
-WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
+WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
+# WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
 
 # 初始化
 class System():
@@ -1645,15 +1645,14 @@ def talker():
     rospy.loginfo("waiting for asr nodes...")
     asr_prepare_service = rospy.ServiceProxy(utilis.Topic_name.asr_prepare_service,std_srvs.Empty)
 
-    left_arm_client.wait_for_service()
-    right_arm_client.wait_for_service()
-    camera_prepare_service.wait_for_service()
+    if WAIT_FOR_ACTION_SERVER:
+        left_arm_client.wait_for_service()
+        right_arm_client.wait_for_service()
+        camera_prepare_service.wait_for_service()
+        asr_prepare_service.wait_for_service()
     
-    # TODO:等待语音识别节点完成初始化
-    # asr_prepare_service.wait_for_service()
-    
-
-    test_order_snack()
+    # 自定义订单
+    # test_order_snack()
     # test_other()
     
     # 设置发布消息的频率，1Hz
