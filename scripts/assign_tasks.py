@@ -793,14 +793,15 @@ class Task_manager():
         # 让任务管理器恢复正常
         if current_task.parallel == task.Task.Task_parallel.NOTALLOWED:
             self.can_run_state = True
+            
         if current_task.if_finished():
             rospy.loginfo(f"task index {current_task.task_index} is finished()")
             try:
-                rospy.loginfo(f"node: {rospy.get_name()}, task_manager, task index : {current_task.task_index} remove task from executed_tasks!")
                 self.executed_tasks.remove_task(current_task) # 在执行的任务中移除
+                self.finished_tasks.add(current_task)         # 添加到已完成的任务中
+                rospy.loginfo(f"node: {rospy.get_name()}, task_manager, task index : {current_task.task_index} remove task from executed_tasks!")
             except Exception as e:
                 rospy.loginfo(f"node: {rospy.get_name()}, task_manager, task index : {current_task.task_index} remove task from executed_tasks failed!!! \nError: {e}")
-            self.finished_tasks.add(current_task)         # 添加到已完成的任务中
         else:
             rospy.loginfo(f"task  index {current_task.task_index} is not finish !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             
@@ -831,7 +832,12 @@ class Task_manager():
             elif return_code == Task_manager.Run_task_return_code.cannot_run_can_next:
                 index += 1  # 下一个执行序号+1
                 continue
+            # 能运行
             else:
+                # 将运行任务添加到正在执行的任务列表中
+                system.task_manager.waiting_task.remove_task(current_task)
+                system.task_manager.executed_tasks.add(current_task)
+                
                 # 导航任务
                 if current_task.task_type.task_type.__class__ == task.Task_type.Task_navigate:
                     system.navigation_actuator.run(current_task)
@@ -846,21 +852,19 @@ class Task_manager():
                     system.asr_actuator.run(current_task)
                 # 功能性暂停任务
                 elif current_task.task_type.task_type == task.Task_type.Task_function.PAUSE:
-                    system.task_manager.waiting_task.remove_task(current_task)
-                    system.task_manager.executed_tasks.add(current_task)
+                    # system.task_manager.waiting_task.remove_task(current_task)
+                    # system.task_manager.executed_tasks.add(current_task)
                     current_task.update_start_status()
                     current_task.update_end_status()
                     system.task_manager.tm_task_finish_callback(current_task,None,None)
                     rospy.loginfo(f"node: {rospy.get_name()}, run a PAUSE task")
                     break
                 
-                # 将运行任务添加到正在执行的任务列表中
-                system.task_manager.waiting_task.remove_task(current_task)
-                system.task_manager.executed_tasks.add(current_task)
-                
                 # 能运行, 但是不能下一个
                 if return_code == Task_manager.Run_task_return_code.can_run_cannot_next:
                     # 完成前, 不允许进行下一个任务
+                    if current_task.task_type.task_type.__class__ == task.Task_type.Task_speech_recognition:
+                        break
                     system.task_manager.can_run_state = False
                     break
                 # 能运行, 也能下一个

@@ -181,7 +181,7 @@ class SpeechRecognizer:
             ws.close()
 
             # 保存音频数据
-            self.save_audio(frames)
+            # self.save_audio(frames)
 
         threading.Thread(target=run).start()
 
