@@ -107,11 +107,16 @@ class Asr_node():
                                                                 self.messages, self.mic_index)
                 if response_files:
                     rospy.loginfo("语音识别成功")
-                    # TODO:
                     # 处理json
                     order_info  = msg.OrderInfo()
                     order_info.order_operation = response_dict.get("order_operation", 0)
                     order_info.table_id        = response_dict.get("table_id", 1)
+                    
+                    # 转换一下
+                    if order_info.table_id == 1:
+                        order_info.table_id = 2
+                    else:
+                        order_info.table_id = 1
                     snack_list = []
                     for snack_id, count in response_dict["snacks"].items():
                         snack = msg.SnackIDWithCount()
