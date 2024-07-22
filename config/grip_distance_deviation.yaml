@@ -1,7 +1,7 @@
 # 左臂抓零食
 LeftArmGripSnack:
-  x_bias: -100
-  y_bias: -58
+  x_bias: -110
+  y_bias: -68
   z_bias: +45
 
 # 左臂上层零食放置高度
@@ -52,7 +52,7 @@ LeftArmGripTurnOFFMachineSwitch:
 # TODO:
 LeftArmWaterCup:
   x_bias: -40
-  y_bias: -86
+  y_bias: -96
   z_const: 240   # 有用
 
 
