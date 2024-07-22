@@ -163,12 +163,13 @@ def main():
             print("程序已终止。")
             break
 
+huanYingYu = "你好, 送餐机器人为您服务"
 def test_tts():
     APPID = 'ec798696'
     APIKey = '079797c2b651aada7573f75eb2ca1955'
     APISecret = 'YzU5ZWM2NjJmOGY1ODQ0ZmM3M2ViZWEy'
     response = "你好"
-    tts(APPID, APIKey, APISecret, response)
+    tts(APPID, APIKey, APISecret, huanYingYu)
 
 
 if __name__ == "__main__":
