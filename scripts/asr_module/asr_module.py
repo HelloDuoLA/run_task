@@ -5,7 +5,7 @@ from ai_interaction_module import get_ai_response_as_dict, chat_with_ai
 from speech_synthesis_module import tts
 
 # 全局对话计数器
-global_count = 0
+global_count = 1
 start_timestamp = time.strftime('%Y-%m-%d_%H-%M-%S')
 
 def list_microphones():
@@ -46,7 +46,7 @@ def prompt_user():
 
 def voice_to_json(APPID, APIKey, APISecret, messages, mic_index):
     global global_count
-    recognizer = SpeechRecognizer(APPID, APIKey, APISecret, mic_index)
+    recognizer = SpeechRecognizer(APPID, APIKey, APISecret, global_count, mic_index)
     print("开始语音识别...")
     recognizer.start_recognition()
     recognizer.closed_event.wait()
@@ -56,7 +56,6 @@ def voice_to_json(APPID, APIKey, APISecret, messages, mic_index):
 
     if recognized_text:
         print("将识别的文字传递给AI处理...")
-        global_count += 1  # 每次成功识别后递增计数
         messages.append({"role": "user", "content": recognized_text})
         response_files, response_dict, response = get_ai_response_as_dict(messages,
                                                 count=global_count, start_timestamp=start_timestamp)
@@ -67,6 +66,8 @@ def voice_to_json(APPID, APIKey, APISecret, messages, mic_index):
             print("AI处理完成, 但未生成文件。")
             # 调用语音合成函数
             tts(APPID, APIKey, APISecret, response)
+        
+        global_count += 1  # 每次成功识别后递增计数
         return True, response_files, response_dict, messages
     else:
         print("未识别到有效文字。")
@@ -155,7 +156,7 @@ def main():
                 break
             else :
                 continue_recognition, _, _, messages = voice_to_json(APPID, APIKey, APISecret,
-                                                            messages, mic_index)
+                                                            messages, mic_index, )
         except KeyboardInterrupt:
             print("程序已终止。")
             break

@@ -67,17 +67,18 @@ class Ws_Param:
 
 
 class SpeechRecognizer:
-    def __init__(self, APPID, APIKey, APISecret, mic_index=None):
+    def __init__(self, APPID, APIKey, APISecret, global_count, mic_index=None):
         self.wsParam = Ws_Param(APPID, APIKey, APISecret)
         self.ws = None
         self.recognized_text = ""
         self.is_recognizing = False
         self.mic_index = mic_index
-        self.silence_threshold = 600  # 静音阈值
-        self.silence_duration = 5  # 静音持续时长（秒）
-        self.max_initial_wait = 5  # 初始等待时长（秒）
-        self.last_audio_time = time.time()
+        self.silence_threshold = 1000  # 静音阈值
+        self.silence_duration = 3  # 静音持续时长（秒）
+        self.max_initial_wait = 10  # 初始等待时长（秒）
+        self.last_audio_time = 9999999999999999
         self.closed_event = threading.Event()  # 用于检测 WebSocket 关闭事件
+        self.global_count = global_count
 
     def on_message(self, ws, message):
         try:
@@ -115,7 +116,7 @@ class SpeechRecognizer:
 
             frames = []
             initial_wait_start = time.time()
-            self.last_audio_time = time.time()  # 初始化最后音频时间
+            self.last_audio_time = 9999999999999999 # 初始化最后音频时间
 
             while self.is_recognizing:
                 buf = stream.read(8000)
@@ -129,13 +130,32 @@ class SpeechRecognizer:
                 if audio_level > self.silence_threshold:
                     self.last_audio_time = time.time()
                     print("Detected speech, resetting last_audio_time")  # 检测到讲话，重置时间
-
-                # 检查静音时间和初始等待时间
-                if time.time() - self.last_audio_time > self.silence_duration and time.time() - initial_wait_start > self.max_initial_wait:
+                    
+                print(f"Global count: {self.global_count}") 
+                # if self.global_count == 1:
+                if (self.last_audio_time == 9999999999999999 and time.time() - initial_wait_start > self.max_initial_wait) \
+                    or (self.last_audio_time != 9999999999999999 and time.time() - self.last_audio_time > self.silence_duration):
                     self.is_recognizing = False
                     status = STATUS_LAST_FRAME
-                    print("Silence duration exceeded, stopping recognition")  # 静音时间超过，停止识别
-
+                    print("Initial duration exceeded, stopping recognition")
+                # # 检查静音时间和初始等待时间
+                # else:
+                #     if time.time() - self.last_audio_time > self.silence_duration:
+                #         self.is_recognizing = False
+                #         status = STATUS_LAST_FRAME
+                #         print("Silence duration exceeded, stopping recognition")# 静音时间超过，停止识别
+                # time.time() - initial_wait_start > self.max_initial_wait
+                # if time.time() - initial_wait_start > self.max_initial_wait:
+                #     if time.time() - self.last_audio_time > self.silence_duration:
+                #         self.is_recognizing = False
+                #         status = STATUS_LAST_FRAME
+                #         print("Silence duration exceeded, stopping recognition")
+                # else:
+                #     if time.time() - self.last_audio_time > self.silence_duration:
+                #         self.is_recognizing = False
+                #         status = STATUS_LAST_FRAME
+                #         print("Silence duration exceeded, stopping recognition")
+                  
                 if status == STATUS_LAST_FRAME:
                     break  # 立即退出循环
 
