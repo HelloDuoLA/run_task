@@ -46,8 +46,6 @@ def prompt_user():
 
 def voice_to_json(APPID, APIKey, APISecret, messages, mic_index):
     global global_count
-    
-    # !: 不在此处进行下一步判断
     recognizer = SpeechRecognizer(APPID, APIKey, APISecret, mic_index)
     print("开始语音识别...")
     recognizer.start_recognition()
@@ -69,25 +67,20 @@ def voice_to_json(APPID, APIKey, APISecret, messages, mic_index):
             print("AI处理完成，但未生成文件。")
             # 调用语音合成函数
             tts(APPID, APIKey, APISecret, response)
-            # TODO: 需要返回点不一样的东西
         return True, response_files, response_dict, messages
     else:
         print("未识别到有效文字。")
         return True, None, None, messages
 
-def text_to_speech(APPID, APIKey, APISecret, response):
-    """调用语音合成函数"""
-    tts(APPID, APIKey, APISecret, response)
-
 
 def main():
-    # global global_count
+    global global_count
     APPID = 'ec798696'
     APIKey = '079797c2b651aada7573f75eb2ca1955'
     APISecret = 'YzU5ZWM2NjJmOGY1ODQ0ZmM3M2ViZWEy'
 
     use_default_microphone = True  # 设置为 True 时，直接使用默认麦克风设备
-
+    initial_text = "系统初始化完成，等待语音识别"
     initial_prompt = (
         "给我生成一份json文件，内容包括order_operation、table_id、snacks、drinks、other_items六个对象。"
         "order_operation包括0、1、2、3，分别代表ADD、DELETE、MODIFT、CHECK，"
@@ -141,8 +134,8 @@ def main():
     initial_response = chat_with_ai(messages)
     messages.append({"role": "assistant", "content": initial_response})
     if initial_response:
-        print("系统初始化完成，等待语音识别...")
-
+        print(initial_text)
+    tts(APPID, APIKey, APISecret, initial_text)
     # 获取麦克风设备编号
     if not use_default_microphone:
         list_microphones()
@@ -155,22 +148,19 @@ def main():
         try:
             if not prompt_user():
                 print("已取消本次语音识别。")
+                return False, None, None, messages
+            continue_recognition, response_files, response_dict, messages = voice_to_json(APPID, APIKey, APISecret,
+                                                        messages, mic_index)
+            if response_files is None:
+                print("识别到物品")
+            else:
+                print("未识别到物品")
+            if not continue_recognition:
                 break
-            else :
-                continue_recognition, _, _, messages = voice_to_json(APPID, APIKey, APISecret,
-                                                            messages, mic_index)
         except KeyboardInterrupt:
             print("程序已终止。")
             break
 
-def test_tts():
-    APPID = 'ec798696'
-    APIKey = '079797c2b651aada7573f75eb2ca1955'
-    APISecret = 'YzU5ZWM2NjJmOGY1ODQ0ZmM3M2ViZWEy'
-    response = "你好"
-    tts(APPID, APIKey, APISecret, response)
-
 
 if __name__ == "__main__":
-    test_tts()
-    # main()
+    main()
