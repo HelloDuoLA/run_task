@@ -1,6 +1,26 @@
-07-22 11:07:15
+07-22 18:38:19
 
 --------------------------------------------------
+
+
+Task       : Task_speech_recognition Speech_Recognition
+Name       : speech recognition
+Group_id   : -999
+Index      : 0
+Create_time: 1721644699.5222971
+Start_time : 1721644699.7553384
+End_time   : 1721644699.7611642
+Duration   : 0.00582575798034668
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
 
 --------------------------------------------------
 

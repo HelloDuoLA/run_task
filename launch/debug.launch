@@ -14,6 +14,7 @@
 <!-- roslaunch run_task assign_tasks.launch  -->
 <!-- roslaunch run_task control_cmd.launch  -->
 <!-- roslaunch run_task mercury_navigation.launch  -->
+<!-- roslaunch run_task asr.launch -->
 
 
 <!-- rostopic echo /left_arm_move_topic -->

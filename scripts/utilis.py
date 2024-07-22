@@ -100,8 +100,8 @@ class Pose3D():
 # 设备id类
 class Device_id(Enum):
     TBD        = 0        # 待定
-    LEFT       = auto()   # 左
-    RIGHT      = auto()   # 右 
+    LEFT       = auto()   # 左  1
+    RIGHT      = auto()   # 右  2
     LEFT_RIGHT = auto()   # 左右
     LEFT_OR_RIGHT = auto()# 左或右
     HEAD       = auto()   # 头(头部摄像头)

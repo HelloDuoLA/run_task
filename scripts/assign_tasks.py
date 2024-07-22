@@ -796,9 +796,10 @@ class Task_manager():
         if current_task.if_finished():
             rospy.loginfo(f"task index {current_task.task_index} is finished()")
             try:
+                rospy.loginfo(f"node: {rospy.get_name()}, task_manager, task index : {current_task.task_index} remove task from executed_tasks!")
                 self.executed_tasks.remove_task(current_task) # 在执行的任务中移除
-            except:
-                rospy.loginfo(f"node: {rospy.get_name()}, task_manager, task index : {current_task.task_index} remove task from executed_tasks failed!!!")
+            except Exception as e:
+                rospy.loginfo(f"node: {rospy.get_name()}, task_manager, task index : {current_task.task_index} remove task from executed_tasks failed!!! \nError: {e}")
             self.finished_tasks.add(current_task)         # 添加到已完成的任务中
         else:
             rospy.loginfo(f"task  index {current_task.task_index} is not finish !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
@@ -969,6 +970,9 @@ class Order_driven_task_schedul():
         log.log_new_order_info(new_order)
         obj.order_list.append(new_order)
         obj.update_task(new_order)
+        
+    def add_asr_task(self):
+        self.task_manager.waiting_task.add(self.create_task_speech_recognition())
     
     # 根据订单更新任务
     def update_task(self,order:order.Order):
@@ -976,6 +980,7 @@ class Order_driven_task_schedul():
         # 增
         if order.operation == order.Operation.ADD:
             rospy.loginfo(f"node name {rospy.get_name()}, order driven task schedul, add new order")
+            rospy.loginfo(f"order info \r\n{order}")
             result = self.add_task(order)
         # 删
         elif order.operation == order.Operation.DELETE:
@@ -1014,7 +1019,7 @@ class Order_driven_task_schedul():
         new_task_sequence.add(self.create_task_speech_recognition())
         
         # 添加到任务管理器待执行队列, 删除最后的语音识别任务
-        self.task_manager.waiting_task.add_and_del_last_asr_task(new_task_sequence,del_last_naviagte_to_init_point = True)
+        self.task_manager.waiting_task.add_and_del_last_asr_task(new_task_sequence,del_last_asr_task = True)
         
         return new_task_sequence
         
@@ -1280,7 +1285,7 @@ class Order_driven_task_schedul():
             task_move_back_from_service_desk.set_move_back_second(system.anchor_point.left_deck_move_back_pose.run_time)    # 设置运行时间
         elif table_id == utilis.Device_id.RIGHT.value:
             task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            system.anchor_point.right_deck_move_back_pose, name="move back from left service desk")
+            system.anchor_point.right_deck_move_back_pose, name="move back from right service desk")
             task_move_back_from_service_desk.set_move_back_second(system.anchor_point.right_deck_move_back_pose.run_time)    # 设置运行时间
         else:
             raise ValueError("Invalid table_id")
@@ -1509,7 +1514,7 @@ class Order_driven_task_schedul():
             task_move_back_from_service_desk.set_move_back_second(system.anchor_point.left_deck_move_back_pose.run_time)    # 设置运行时间
         elif table_id == utilis.Device_id.RIGHT.value:
             task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
-            system.anchor_point.right_deck_move_back_pose, name="move back from left service desk")
+            system.anchor_point.right_deck_move_back_pose, name="move back from right service desk")
             task_move_back_from_service_desk.set_move_back_second(system.anchor_point.right_deck_move_back_pose.run_time)    # 设置运行时间
         else:
             raise ValueError("Invalid table_id")
@@ -1649,11 +1654,13 @@ def talker():
         left_arm_client.wait_for_service()
         right_arm_client.wait_for_service()
         camera_prepare_service.wait_for_service()
-        asr_prepare_service.wait_for_service()
+    asr_prepare_service.wait_for_service()
     
     # 自定义订单
     # test_order_snack()
     # test_other()
+    # 新增识别服务
+    system.order_driven_task_schedul.add_asr_task()
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)
@@ -1688,7 +1695,7 @@ def test_order_snack():
     order_info2.table_id = utilis.Device_id.LEFT
 
     tasks = system.order_driven_task_schedul.add_task(order_info)
-    tasks2 = system.order_driven_task_schedul.add_task(order_info2)
+    # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
     # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
 
     # tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)

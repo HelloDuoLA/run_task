@@ -119,17 +119,19 @@ class Asr_node():
                         order_info.table_id = 1
                     snack_list = []
                     for snack_id, count in response_dict["snacks"].items():
-                        snack = msg.SnackIDWithCount()
-                        snack.snack_id = int(snack_id)
-                        snack.count = count
-                        snack_list.append(snack)
+                        if count != 0:
+                            snack = msg.SnackIDWithCount()
+                            snack.snack_id = int(snack_id)
+                            snack.count = count
+                            snack_list.append(snack)
                     
                     drink_list = []
                     for drink_id, count in response_dict["drinks"].items():
-                        drink = msg.DrinkIDWithCount()
-                        drink.drink_id = int(drink_id)
-                        drink.count = count
-                        drink_list.append(drink)
+                        if count != 0:
+                            drink = msg.DrinkIDWithCount()
+                            drink.drink_id = int(drink_id)
+                            drink.count = count
+                            drink_list.append(drink)
                         
                     order_info.snacks = snack_list
                     order_info.drinks = drink_list
