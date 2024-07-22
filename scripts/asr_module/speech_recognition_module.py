@@ -17,12 +17,15 @@ import numpy as np
 import os
 import re
 
+LOGDIR = "/home/elephant/xzc_code/ros_ws/src/run_task/log/"
+
 STATUS_FIRST_FRAME = 0  # 第一帧的标识
 STATUS_CONTINUE_FRAME = 1  # 中间帧标识
 STATUS_LAST_FRAME = 2  # 最后一帧的标识
 
 # 设置日志记录
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+
 
 
 class Ws_Param:
@@ -183,7 +186,7 @@ class SpeechRecognizer:
         threading.Thread(target=run).start()
 
     def save_audio(self, frames):
-        base_dir = os.path.join("recordings", time.strftime('%Y-%m-%d_%H-%M-%S'))
+        base_dir = os.path.join( LOGDIR + "/recordings", time.strftime('%Y-%m-%d_%H-%M-%S'))
         if not os.path.exists(base_dir):
             os.makedirs(base_dir)
         filename = f"order_{int(time.time())}.wav"
@@ -212,7 +215,7 @@ class SpeechRecognizer:
             self.ws.close()
             self.ws = None
         self.process_recognized_text()
-        self.swap_items_if_needed()
+        # self.swap_items_if_needed()
         return self.recognized_text
 
     def process_recognized_text(self):
@@ -242,6 +245,7 @@ class SpeechRecognizer:
         检查并交换特定短语的位置。
         """
         items = ["益达口香糖", "果蔬果冻", "C酷果冻", "伊利每益添乳酸菌", "金津陈皮丹"]
+        # TODO:这里是不是要修改
         pattern = re.compile(r"拿(.*?)和(.*?)到(.*?)桌子上")
         match = pattern.search(self.recognized_text)
 

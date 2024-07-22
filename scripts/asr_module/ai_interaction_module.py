@@ -6,6 +6,8 @@ from http import HTTPStatus
 import dashscope
 from dashscope import Generation
 
+LOGDIR = "/home/elephant/xzc_code/ros_ws/src/run_task/log/"
+
 # 设置API密钥
 dashscope.api_key = "sk-7a78d83cef354876abead0b8d1e7d18b"
 
@@ -132,10 +134,10 @@ def get_ai_response_as_dict(messages, count, start_timestamp):
     print(f"AI处理时间: {processing_time:.2f} 秒")
 
     # 保存结果到TXT文件
-    save_result_to_file(result, os.path.join("ai_responses", start_timestamp), count)
+    save_result_to_file(result, os.path.join(LOGDIR + "/ai_responses", start_timestamp), count)
 
     # 保存JSON并返回文件路径列表和JSON对象
-    files, json_objects = save_json_to_file(result, os.path.join("json_files", start_timestamp), count)
+    files, json_objects = save_json_to_file(result, os.path.join(LOGDIR + "/json_files", start_timestamp), count)
     if json_objects:
         try:
             first_json_object = json.loads(json_objects[0])

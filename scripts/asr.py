@@ -10,13 +10,14 @@ import std_msgs.msg  as std_msgs
 rospack = rospkg.RosPack()
 package_path = rospack.get_path('run_task')
 sys.path.insert(0,package_path + "/scripts")
+sys.path.insert(0,package_path + "/scripts/asr_module")
 import run_task.msg as msg
 import task
 import utilis
 import robot
 import order
 import log
-import asr_module.main as asr_module
+import asr_module
 
 # 语音识别节点
 # TODO:待完成功能
@@ -140,7 +141,7 @@ def talker():
     rospy.init_node('asr')
 
     # 设置发布消息的频率，1Hz
-    rate = rospy.Rate(1)
+    rate = rospy.Rate(0.1)
     global asr_node
     asr_node = Asr_node()
     
@@ -161,3 +162,6 @@ if __name__ == '__main__':
         talker()
     except rospy.ROSInterruptException:
         pass
+    
+
+# rostopic pub /asr_request std_msgs/Empty "{}"
