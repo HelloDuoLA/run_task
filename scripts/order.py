@@ -22,19 +22,19 @@ import run_task.msg as msg
 class Snack:
     snack_type = {
         "益达口香糖": 1,
-        "果蔬果冻"  : 2,
-        "C酷果冻"   : 3,
-        "伊利每益添乳酸菌" : 4,
-        "金津陈皮丹" :5
+        "果冻"  : 2,
+        "伊利每益添乳酸菌" : 3,
+        "金津陈皮丹" :4
     }
     
     class Snack_id(Enum):
         TBD       = 0
         YIDA      = auto() #1
-        GUOSHU    = auto() #2
-        CKU       = auto() #3
-        RUSUANJUN = auto() #4
-        CHENPIDAN = auto() #5
+        # GUOSHU    = auto() #2
+        # CKU       = auto() #3
+        GUODONG   = auto() #2
+        RUSUANJUN = auto() #3
+        CHENPIDAN = auto() #4
         
         # def __str__(self) -> str:
         #     return self.value

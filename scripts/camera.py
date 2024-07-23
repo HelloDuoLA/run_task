@@ -44,9 +44,11 @@ class STag_result():
 # STag 识别结果列表
 class STag_result_list():
     # TODO:值域为STag码, 根据实际修改
+    # STag -> snack ID
     STag_Snack_dict = {
-        0 : order.Snack.Snack_id.CKU.value,
-        0 : order.Snack.Snack_id.GUOSHU.value,
+        # 0 : order.Snack.Snack_id.CKU.value,
+        # 0 : order.Snack.Snack_id.GUOSHU.value,
+        0 : order.Snack.Snack_id.GUODONG.value,
         1 : order.Snack.Snack_id.RUSUANJUN.value,
         2 : order.Snack.Snack_id.CHENPIDAN.value,
         3 : order.Snack.Snack_id.YIDA.value,
@@ -61,7 +63,6 @@ class STag_result_list():
     }
     
     STag_other_enum_2_stag_num = {
-        # task.Task_image_rec.Rec_OBJ_type.CONTAINER :     9,
         task.Task_image_rec.Rec_OBJ_type.CONTAINER_LEFT    : 4,
         task.Task_image_rec.Rec_OBJ_type.CONTAINER_RIGHT   : 5,
         task.Task_image_rec.Rec_OBJ_type.CUP               : 6,
