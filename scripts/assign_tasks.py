@@ -1665,7 +1665,7 @@ def talker():
     test_order_snack()
     # test_other()
     # 新增识别服务
-    # system.order_driven_task_schedul.add_asr_task()
+    system.order_driven_task_schedul.add_asr_task()
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)
@@ -1699,8 +1699,8 @@ def test_order_snack():
     # order_info2.table_id = utilis.Device_id.RIGHT
     order_info2.table_id = utilis.Device_id.LEFT
 
-    tasks = system.order_driven_task_schedul.add_task(order_info)
-    # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
+    # tasks = system.order_driven_task_schedul.add_task(order_info)
+    tasks2 = system.order_driven_task_schedul.add_task(order_info2)
     # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
 
     # tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)

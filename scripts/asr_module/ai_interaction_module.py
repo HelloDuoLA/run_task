@@ -12,7 +12,7 @@ LOGDIR = "/home/elephant/xzc_code/ros_ws/src/run_task/log/"
 dashscope.api_key = "sk-7a78d83cef354876abead0b8d1e7d18b"
 
 def chat_with_ai(messages):
-    response = Generation.call(model="qwen-turbo",
+    response = Generation.call(model="qwen-plus",
                                messages=messages,
                                result_format='message')
     if response.status_code == HTTPStatus.OK:
