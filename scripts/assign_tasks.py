@@ -1646,19 +1646,20 @@ def talker():
     system = System()
     
     # 等待手臂,摄像头节点完成初始化
-    rospy.loginfo("waiting for arm nodes...")
+    
     left_arm_client = rospy.ServiceProxy(utilis.Topic_name.left_arm_prepare_service,std_srvs.Empty)
     right_arm_client = rospy.ServiceProxy(utilis.Topic_name.right_arm_prepare_service,std_srvs.Empty)
-    rospy.loginfo("waiting for camera nodes...")
     camera_prepare_service = rospy.ServiceProxy(utilis.Topic_name.camera_prepare_service,std_srvs.Empty)
-    rospy.loginfo("waiting for asr nodes...")
     asr_prepare_service = rospy.ServiceProxy(utilis.Topic_name.asr_prepare_service,std_srvs.Empty)
 
     if WAIT_FOR_ACTION_SERVER:
+        rospy.loginfo("waiting for arm nodes...")
         left_arm_client.wait_for_service()
         right_arm_client.wait_for_service()
+        rospy.loginfo("waiting for camera nodes...")
         camera_prepare_service.wait_for_service()
-    asr_prepare_service.wait_for_service()
+        rospy.loginfo("waiting for asr nodes...")
+        asr_prepare_service.wait_for_service()
     
     # 自定义订单
     # test_order_snack()

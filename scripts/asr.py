@@ -118,30 +118,40 @@ class Asr_node():
                     else:
                         order_info.table_id = 1
                     snack_list = []
+                    snack_all_count = 0
                     for snack_id, count in response_dict["snacks"].items():
                         if count != 0:
                             snack = msg.SnackIDWithCount()
                             snack.snack_id = int(snack_id)
                             snack.count = count
                             snack_list.append(snack)
+                            snack_all_count += count
                     
                     drink_list = []
+                    drink_count = 0
                     for drink_id, count in response_dict["drinks"].items():
                         if count != 0:
                             drink = msg.DrinkIDWithCount()
                             drink.drink_id = int(drink_id)
                             drink.count = count
                             drink_list.append(drink)
+                            drink_count += count
                         
                     order_info.snacks = snack_list
                     order_info.drinks = drink_list
-    
+                    if drink_count == 0 and snack_all_count == 0:
+                        rospy.loginfo("没有识别到任何物品")
+                        self.say_again()
+                        time.sleep(1)
+                        continue
+
                     # 发布订单数据
                     self.order_pub.publish(order_info)
                     self.say_do_service()
                     break
                 else:
                     rospy.loginfo("语音识别失败")
+                    self.say_again()
                     time.sleep(1)
         except KeyboardInterrupt:
             print("程序已终止。")
@@ -152,12 +162,17 @@ class Asr_node():
     
     # 欢迎语
     def say_welcome(self):
-        huanyingyu = "机器人为你服务"
+        huanyingyu = "送餐机器人为你服务"
         self.text_to_speech(huanyingyu)
         
     # 欢迎语
     def say_do_service(self):
         content = "好的, 马上为你送达"
+        self.text_to_speech(content)
+    
+    # 再来一次 
+    def say_again(self):
+        content = "不好意思, 能再说一次吗?"
         self.text_to_speech(content)
 
 # 准备完成服务

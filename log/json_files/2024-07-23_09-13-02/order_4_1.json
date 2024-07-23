@@ -1,10 +1,8 @@
 {
     "order_operation": 0,
     "table_id": 1,
-    "snacks": {
-        "1": 12
-    },
+    "snacks": {},
     "drinks": {
-        "1": 0
+        "1": 1
     }
 }
