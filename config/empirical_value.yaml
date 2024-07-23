@@ -24,7 +24,7 @@ right_arm_grip_container:
   
 # 右臂抓杯子
 right_arm_grip_cup:
-  xyz: [420, -320, 220]
+  xyz: [350, -320, 220]
 
 # 右臂抓零食(上层)
 right_arm_grip_snack_top:

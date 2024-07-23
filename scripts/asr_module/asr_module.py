@@ -71,7 +71,7 @@ def voice_to_json(APPID, APIKey, APISecret, messages, mic_index):
         return True, response_files, response_dict, messages
     else:
         print("未识别到有效文字。")
-        return True, None, None, messages
+        return False, None, None, messages
 
 def text_to_speech(APPID, APIKey, APISecret, response):
     """调用语音合成函数"""

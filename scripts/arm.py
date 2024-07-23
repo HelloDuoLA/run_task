@@ -428,7 +428,7 @@ class Arm_controller():
         # 等待机械臂运动结束
         def wait(self,result=1):
             if result == None:
-                time.sleep(0.3)
+                time.sleep(0.4)
                 while(self.control_instance.is_moving()):
                     # print("arm is moving")
                     time.sleep(0.03)
