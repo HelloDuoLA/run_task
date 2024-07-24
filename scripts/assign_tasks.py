@@ -613,6 +613,7 @@ class Image_rec_actuator():
                 rospy.loginfo("!!!!snack count is not equal to task count")
             
             # 没有识别到的零食, 删除需要任务里的前置任务
+            rospy.loginfo(f"req_snack_count : {req_snack_count} rec_snack_count {rec_snack_count}")
             req_snack_count = current_task.get_snack_count()
             if rec_snack_count < req_snack_count:
                 for i in range(rec_snack_count,req_snack_count):
@@ -1849,16 +1850,16 @@ def test_order_snack():
     order_info2 = order.Order()
 
     snack  = order.Snack(order.Snack.Snack_id.YIDA,1)
-    order_info.add_snack(snack)
+    # order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.CHENPIDAN,1)
-    # order_info.add_snack(snack)
-    
-    snack  = order.Snack(order.Snack.Snack_id.GUODONG ,1)
     order_info.add_snack(snack)
     
-    snack  = order.Snack(order.Snack.Snack_id.RUSUANJUN ,1)
+    snack  = order.Snack(order.Snack.Snack_id.GUODONG ,1)
     # order_info.add_snack(snack)
+    
+    snack  = order.Snack(order.Snack.Snack_id.RUSUANJUN ,1)
+    order_info.add_snack(snack)
     
     drink  = order.Drink(order.Drink.Drink_id.COFFEE,1)
 
