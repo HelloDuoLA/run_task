@@ -563,15 +563,18 @@ class Image_rec_actuator():
     # 识别结果话题回调
     @staticmethod
     def do_image_rec_result_callback(result:msg.ImageRecResult):
-        # rospy.loginfo(f"do_image_rec_result {result}")
+        rospy.loginfo(f"do_image_rec_result {result}")
         # 获取对应的服务对象
         current_task:task.Task_image_rec = system.image_rec_actuator.running_tasks_manager.get_task(result.task_index)
         # 根据不同任务作出不同处理
         # 识别零食
         if current_task.task_type.task_type == task.Task_type.Task_image_rec.SNACK:
+            rospy.loginfo("==!!!!!!!")
             rec_snack_count = len(result.obj_positions)
             try:
+                rospy.loginfo(f"rec_snack_count {rec_snack_count}")
                 for i in range(rec_snack_count):
+                    rospy.loginfo(f"obj_positions[{i}]:{ result.obj_positions[i]}")
                     snack_xyz                = result.obj_positions[i].position
                     arm_id                   = result.obj_positions[i].arm_id
                     task_grasp_snack_pre:task.Task_manipulation     = current_task.need_modify_tasks.task_list[i*6]   # 抓零食准备任务
@@ -1859,7 +1862,6 @@ def test_order_snack():
     
     drink  = order.Drink(order.Drink.Drink_id.COFFEE,1)
 
-    order_info.add_snack(snack)
     # order_info.add_snack(snack2)
     order_info.order_id = 2
     order_info.table_id = utilis.Device_id.RIGHT
