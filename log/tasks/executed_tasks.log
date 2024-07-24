@@ -1,7 +1,35 @@
-07-23 22:04:27
+07-24 12:54:33
 
 --------------------------------------------------
 
+
+Task       : Task_image_rec CONTAINER
+Name       : right camera rec container
+Group_id   : 6
+Index      : 3
+Create_time: 1721796867.0544038
+Start_time : 1721796871.0244467
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : RUNNING
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [1:Task_manipulation Rec_container] 
+Sleep_time_before_task : 1
+Sleep_time_after_task  : 0
+Camera_id: RIGHT 
+Snack_list: []
+Need_modify_tasks: 
+          [8:Task_manipulation Grasp_container_dodge]
+          [12:Task_manipulation Lossen_snack]
+          [16:Task_manipulation Lossen_snack]
+          [20:Task_manipulation Lossen_snack]
+          [22:Task_manipulation Grasp_container_pre]
+ 
 --------------------------------------------------
 
 
