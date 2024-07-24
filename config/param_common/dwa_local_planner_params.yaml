@@ -47,7 +47,6 @@ DWAPlannerROS:
   publish_traj_pc : true     #将规划的轨迹在rviz上进行可视化
   publish_cost_grid_pc: true #将代价值进行可视化显示
   global_frame_id: odom      #全局参考坐标系 !!!!!从map改为odom
-  # ! 要不要换成combined_odom
 
   #是否将走过的路径从路径规划中清除
   prune_plan: true
