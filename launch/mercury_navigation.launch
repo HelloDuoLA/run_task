@@ -19,7 +19,7 @@
  <node name='send_mark' pkg="turn_on_mercury_robot" type="send_mark.py">
  </node>
  
- <node pkg="rviz" type="rviz" name="rviz" args="-d /home/elephant/xzc_code/ros_ws/src/run_task/rviz/CobotX.rviz"/>
+ <node pkg="rviz" type="rviz" name="rviz" args="-d /home/elephant/dev/team1/ros/src/run_task/rviz/CobotX.rviz"/>
 
 </launch>
 

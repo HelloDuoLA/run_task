@@ -1,14 +1,14 @@
-07-24 12:54:33
+07-24 18:13:11
 
 --------------------------------------------------
 
 
-Task       : Task_image_rec CONTAINER
-Name       : right camera rec container
+Task       : Task_manipulation Lossen_snack_pre
+Name       : task_placement_snack_middle
 Group_id   : 6
-Index      : 3
-Create_time: 1721796867.0544038
-Start_time : 1721796871.0244467
+Index      : 15
+Create_time: 1721815969.0047638
+Start_time : 1721815985.026474
 End_time   : -999
 Duration   : -999
 Finsih_cb  : None
@@ -18,18 +18,16 @@ Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: [1:Task_manipulation Rec_container] 
-Sleep_time_before_task : 1
+Predecessor_tasks: [14:Task_manipulation Grasp_snack] 
+Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-Camera_id: RIGHT 
-Snack_list: []
-Need_modify_tasks: 
-          [8:Task_manipulation Grasp_container_dodge]
-          [12:Task_manipulation Lossen_snack]
-          [16:Task_manipulation Lossen_snack]
-          [20:Task_manipulation Lossen_snack]
-          [22:Task_manipulation Grasp_container_pre]
- 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[240, 270, 440, -90, 0, -90] } 
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
+Clamp_speed         : 50 
+arm_move_method     : Z_X_Y 
+click_length        : 0 
+
 --------------------------------------------------
 
 
