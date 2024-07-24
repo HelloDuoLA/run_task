@@ -1634,10 +1634,7 @@ class Order_driven_task_schedul():
     # 创建放置饮料的任务
     def test_tasks_lossen_cup(self,table_id):
         pass
-    
 
-def test_other():
-    rospy.loginfo(f"task.Task_type.Task_image_rec == task.Task_type.Task_image_rec.SNACK : {task.Task_type.Task_image_rec == task.Task_type.Task_image_rec.SNACK.__class__}")
 
 def talker():
     # 初始化节点，命名为'talker'
@@ -1663,7 +1660,7 @@ def talker():
     
     # 自定义订单
     test_order_snack()
-    # test_other()
+
     # 新增识别服务
     system.order_driven_task_schedul.add_asr_task()
     
