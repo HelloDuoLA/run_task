@@ -379,6 +379,7 @@ class Task_manipulation(Task):
                 clamp_speed = 50, arm_move_method = arm.ArmMoveMethod.XYZ, click_length = 0,name=""):
         super().__init__(task_name,fn_callback,name)
         self.arm_id              = arm_id               # 操作对象
+        self.debug_position      = -999
         
         # 判断输入是不是列表
         if isinstance(target_arms_pose,arm.Arm_pose):

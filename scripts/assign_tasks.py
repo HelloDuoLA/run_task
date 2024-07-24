@@ -400,7 +400,8 @@ class Manipulator_actuator():
             left_goal.arm_move_method      = manipulation_task.arm_move_method.value
             left_goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
             
-            rospy.loginfo(f"left_arm_pub type {type(left_arm_pub)}")
+            # if manipulation_task.debug_position != -999:
+            #     left_goal.arm_pose.arm_pose = manipulation_task.debug_position
             left_arm_pub.publish(left_goal)
             rospy.loginfo(f"left_arm_pub send goal")
         # 右臂
@@ -415,6 +416,9 @@ class Manipulator_actuator():
             right_goal.grasp_speed          = manipulation_task.clamp_speed
             right_goal.arm_move_method      = manipulation_task.arm_move_method.value
             right_goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
+            
+            # if manipulation_task.debug_position != -999:
+            #     right_goal.arm_pose.arm_pose = manipulation_task.debug_position
             right_arm_pub.publish(right_goal)
             rospy.loginfo(f"right_arm_pub send goal")
             
@@ -571,79 +575,130 @@ class Image_rec_actuator():
         if current_task.task_type.task_type == task.Task_type.Task_image_rec.SNACK:
             rospy.loginfo("==!!!!!!!")
             rec_snack_count = len(result.obj_positions)
-            try:
-                rospy.loginfo(f"rec_snack_count {rec_snack_count}")
-                first_arm_id            =  result.obj_positions[0].arm_id   # 第一次抓取的手臂
-                first_task_lossen_snack =  current_task.need_modify_tasks.task_list[3]  # 松零食任务
-                first_task_grasp_snack  =  current_task.need_modify_tasks.task_list[1]  # 抓零食任务
-                first_position = result.obj_positions[0].position
-                for i in range(rec_snack_count):
-                    rospy.loginfo(f"!!!!obj_positions[{i}]:{ result.obj_positions[i]}")
-                    snack_xyz                = result.obj_positions[i].position
-                    rospy.loginfo(f"7@@{first_task_grasp_snack}")
-                    arm_id                   = result.obj_positions[i].arm_id
-                    rospy.loginfo(f"5@@{first_task_grasp_snack}")
-                    task_grasp_snack_pre:task.Task_manipulation     = current_task.need_modify_tasks.task_list[i * 6]   # 抓零食准备任务
-                    task_grasp_snack_pre.select_arm(arm_id)
-                    rospy.loginfo(f"6@@{first_task_grasp_snack}")
-                    if i == 0:
-                        task_grasp_snack0:task.Task_manipulation         = current_task.need_modify_tasks.task_list[i * 6 + 1] # 抓零食任务
-                        rospy.loginfo(f"999@@{first_task_grasp_snack}")
-                        task_grasp_snack0.modify_xyz_select_arm(snack_xyz,arm_id)  
-                    elif i == 1:
-                        task_grasp_snack1:task.Task_manipulation         = current_task.need_modify_tasks.task_list[i * 6 + 1] # 抓零食任务
-                        rospy.loginfo(f"999@@{first_task_grasp_snack}")
-                        task_grasp_snack1.modify_xyz_select_arm(snack_xyz,arm_id)
+            # 两个零食都是同一个手臂拿的
+            if rec_snack_count == 2 and (result.obj_positions[0].arm_id == result.obj_positions[1].arm_id):
+                arm_id                     = result.obj_positions[0].arm_id
+                snack_xyz_0                = result.obj_positions[0].position
+                snack_xyz_1                = result.obj_positions[1].position
                 
-                    rospy.loginfo(f"99@@{first_task_grasp_snack}")
-                    task_lossen_snack_pre:task.Task_manipulation    = current_task.need_modify_tasks.task_list[i * 6 + 2] # 松零食准备任务
-                    
-                    # 第二个抓取任务与第一个任务使用手臂相同
-                    if i == 1 and arm_id == first_arm_id:
-                        # 第二次抓零食准备动作
-                        task_grasp_snack_pre.add_predecessor_task(first_task_lossen_snack)
-                    rospy.loginfo(f"4@@{first_task_grasp_snack}")
+                task_grasp_snack_pre_0:task.Task_manipulation     = current_task.need_modify_tasks.task_list[0]   # 抓零食准备任务
+                task_grasp_snack_pre_0.select_arm(arm_id)
+                
+                task_grasp_snack_pre_1:task.Task_manipulation     = current_task.need_modify_tasks.task_list[6]   # 抓零食准备任务
+                task_grasp_snack_pre_1.select_arm(arm_id)
+                
+
+                task_grasp_snack_0:task.Task_manipulation         = current_task.need_modify_tasks.task_list[1] # 抓零食任务
+                task_grasp_snack_0.modify_xyz_select_arm(snack_xyz_0,arm_id) 
+                
+                task_grasp_snack_1:task.Task_manipulation         = current_task.need_modify_tasks.task_list[7] # 抓零食任务
+                task_grasp_snack_1.modify_xyz_select_arm(snack_xyz_1,arm_id) 
+            
+                task_lossen_snack_pre_0:task.Task_manipulation    = current_task.need_modify_tasks.task_list[2] # 松零食准备任务
+                task_lossen_snack_pre_1:task.Task_manipulation    = current_task.need_modify_tasks.task_list[8] # 松零食准备任务
+                      
+                if arm_id == utilis.Device_id.LEFT:
+                    # 左臂松零食准备动作使用 Z_X_Y
+                    # 左臂夹下层零食用 XY_Z
+                    if snack_xyz_0[2] < 500:
+                        task_lossen_snack_pre_0.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y)
+                        task_grasp_snack_0.arm_move_method = arm.ArmMoveMethod.XY_Z
+                    else:
+                        task_lossen_snack_pre_0.select_arm(arm_id)
                         
-                    if arm_id == utilis.Device_id.LEFT:
-                        # 左臂松零食准备动作使用 Z_X_Y
-                        # 左臂夹下层零食用 XY_Z
-                        if snack_xyz[2] < 500:
-                            task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y)
-                            if i == 0:
-                                task_grasp_snack0.arm_move_method = arm.ArmMoveMethod.XY_Z
-                            elif i == 1:
-                                task_grasp_snack1.arm_move_method = arm.ArmMoveMethod.XY_Z
+                    if snack_xyz_1[2] < 500:
+                        task_lossen_snack_pre_1.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y)
+                        task_grasp_snack_1.arm_move_method = arm.ArmMoveMethod.XY_Z
+                    else:
+                        task_lossen_snack_pre_1.select_arm(arm_id)
+                    
+                else:
+                    task_lossen_snack_pre_0.select_arm(arm_id)
+                    task_lossen_snack_pre_1.select_arm(arm_id)
+
+                task_lossen_snack_0:task.Task_manipulation        = current_task.need_modify_tasks.task_list[3]  # 松零食任务
+                task_lossen_snack_0.select_arm(arm_id)
+                
+                task_lossen_snack_1:task.Task_manipulation        = current_task.need_modify_tasks.task_list[9]  # 松零食任务
+                task_lossen_snack_1.select_arm(arm_id)
+                
+                task_left_arm_grap_container_pre :task.Task_manipulation  = current_task.need_modify_tasks.task_list[4] # 左臂夹取零食框的准备动作
+                task_right_arm_grap_container_pre:task.Task_manipulation  = current_task.need_modify_tasks.task_list[5] # 右臂夹取零食框的准备动作
+                
+                # 左臂则, 左臂夹取零食框的准备动作需要等放零食结束. 而右臂不需要
+                if arm_id == utilis.Device_id.LEFT:
+                    task_right_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack_0)
+                    task_right_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack_1)
+                elif arm_id == utilis.Device_id.RIGHT:
+                    task_left_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack_0)
+                    task_left_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack_1)
+                    
+                
+                task_grasp_snack_pre_1.add_predecessor_task(task_lossen_snack_0)  # 添加前置任务
+                
+                task_grasp_snack_pre_0.status  = task.Task.Task_status.BEREADY
+                task_grasp_snack_0.status      = task.Task.Task_status.BEREADY
+                task_lossen_snack_pre_0.status = task.Task.Task_status.BEREADY
+                task_lossen_snack_0.status     = task.Task.Task_status.BEREADY
+                
+                task_grasp_snack_pre_1.status  = task.Task.Task_status.BEREADY
+                task_grasp_snack_1.status      = task.Task.Task_status.BEREADY
+                task_lossen_snack_pre_1.status = task.Task.Task_status.BEREADY
+                task_lossen_snack_1.status     = task.Task.Task_status.BEREADY
+                
+            else:
+                try:
+                    rospy.loginfo(f"rec_snack_count {rec_snack_count}")
+                    first_arm_id            =  result.obj_positions[0].arm_id   # 第一次抓取的手臂
+                    first_task_lossen_snack =  current_task.need_modify_tasks.task_list[3]  # 松零食任务
+                    first_task_grasp_snack  =  current_task.need_modify_tasks.task_list[1]  # 抓零食任务
+                    first_position = result.obj_positions[0].position
+                    for i in range(rec_snack_count):
+                        rospy.loginfo(f"!!!!obj_positions[{i}]:{ result.obj_positions[i]}")
+                        snack_xyz                = result.obj_positions[i].position
+                        arm_id                   = result.obj_positions[i].arm_id
+                        task_grasp_snack_pre:task.Task_manipulation     = current_task.need_modify_tasks.task_list[i * 6]   # 抓零食准备任务
+                        task_grasp_snack_pre.select_arm(arm_id)
+
+                        task_grasp_snack:task.Task_manipulation         = current_task.need_modify_tasks.task_list[i * 6 + 1] # 抓零食任务
+                        task_grasp_snack.modify_xyz_select_arm(snack_xyz,arm_id)  
+                        
+                        task_lossen_snack_pre:task.Task_manipulation    = current_task.need_modify_tasks.task_list[i * 6 + 2] # 松零食准备任务
+                        
+                        # 第二个抓取任务与第一个任务使用手臂相同
+                        if i == 1 and arm_id == first_arm_id:
+                            # 第二次抓零食准备动作
+                            task_grasp_snack_pre.add_predecessor_task(first_task_lossen_snack)
+                            
+                        if arm_id == utilis.Device_id.LEFT:
+                            # 左臂松零食准备动作使用 Z_X_Y
+                            # 左臂夹下层零食用 XY_Z
+                            if snack_xyz[2] < 500:
+                                task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y)
+                                task_grasp_snack.arm_move_method = arm.ArmMoveMethod.XY_Z
+                            else:
+                                task_lossen_snack_pre.select_arm(arm_id)
                         else:
                             task_lossen_snack_pre.select_arm(arm_id)
-                    else:
-                        task_lossen_snack_pre.select_arm(arm_id)
-                    rospy.loginfo(f"3@@{first_task_grasp_snack}")
-                    task_lossen_snack:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i * 6 + 3]  # 松零食任务
-                    task_lossen_snack.select_arm(arm_id)
-                    
-                    task_left_arm_grap_container_pre :task.Task_manipulation  = current_task.need_modify_tasks.task_list[i * 6 + 4] # 左臂夹取零食框的准备动作
-                    task_right_arm_grap_container_pre:task.Task_manipulation  = current_task.need_modify_tasks.task_list[i * 6 + 5] # 右臂夹取零食框的准备动作
-                    
-                    # 左臂则, 左臂夹取零食框的准备动作需要等放零食结束. 而右臂不需要
-                    rospy.loginfo(f"1@@{first_task_grasp_snack}")
-                    if arm_id == utilis.Device_id.LEFT:
-                        task_right_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack)
-                    elif arm_id == utilis.Device_id.RIGHT:
-                        task_left_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack)
+                        task_lossen_snack:task.Task_manipulation        = current_task.need_modify_tasks.task_list[i * 6 + 3]  # 松零食任务
+                        task_lossen_snack.select_arm(arm_id)
                         
-                    rospy.loginfo(f"2@@{first_task_grasp_snack}")
-                    
-                    task_grasp_snack_pre.status  = task.Task.Task_status.BEREADY
-                    if i == 0:
-                        task_grasp_snack0.status      = task.Task.Task_status.BEREADY
-                    elif i == 1:
-                        task_grasp_snack1.status      = task.Task.Task_status.BEREADY
-                    # task_grasp_snack.status      = task.Task.Task_status.BEREADY
-                    task_lossen_snack_pre.status = task.Task.Task_status.BEREADY
-                    task_lossen_snack.status     = task.Task.Task_status.BEREADY
-                    time.sleep(1)
-            except:
-                rospy.loginfo("!!!!snack count is not equal to task count")
+                        task_left_arm_grap_container_pre :task.Task_manipulation  = current_task.need_modify_tasks.task_list[i * 6 + 4] # 左臂夹取零食框的准备动作
+                        task_right_arm_grap_container_pre:task.Task_manipulation  = current_task.need_modify_tasks.task_list[i * 6 + 5] # 右臂夹取零食框的准备动作
+                        
+                        # 左臂则, 左臂夹取零食框的准备动作需要等放零食结束. 而右臂不需要
+                        if arm_id == utilis.Device_id.LEFT:
+                            task_right_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack)
+                        elif arm_id == utilis.Device_id.RIGHT:
+                            task_left_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack)
+                            
+                        
+                        task_grasp_snack_pre.status  = task.Task.Task_status.BEREADY
+                        task_grasp_snack.status      = task.Task.Task_status.BEREADY
+                        task_lossen_snack_pre.status = task.Task.Task_status.BEREADY
+                        task_lossen_snack.status     = task.Task.Task_status.BEREADY
+                except:
+                    rospy.loginfo("!!!!snack count is not equal to task count")
                 
             # first_task_grasp_snack first_position
             # first_task_grasp_snack.target_arms_pose[0].arm_pose[0] = first_position[0]
