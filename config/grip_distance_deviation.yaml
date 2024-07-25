@@ -88,7 +88,7 @@ RightArmLossenSnack:
 # 右臂抓容器, 躲避放置零食的位点(相对于抓容器的位置)
 RightArmGripContainerDodge:
   x_bias : 0
-  y_bias : -70
+  y_bias : -80
   z_const: 360        # 这里的z无用
 
 # 右臂抓杯子

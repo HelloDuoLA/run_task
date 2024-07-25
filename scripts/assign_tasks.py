@@ -124,6 +124,7 @@ class System():
             self.left_deck_move_forward_pose  =  self._get_control_cmd_x_yaw_time("LeftDeckMoveforward")
             self.right_deck_move_forward_pose =  self._get_control_cmd_x_yaw_time("RightDeckMoveforward")
             
+            self.snack_deck_first_move_back_pose =  self._get_control_cmd_x_yaw_time("SnackDeckFirstMoveBack")
             self.snack_deck_move_back_pose =  self._get_control_cmd_x_yaw_time("SnackDeckMoveBack")
             self.drink_deck_move_back_pose =  self._get_control_cmd_x_yaw_time("DrinkDeckMoveBack")
             self.left_deck_move_back_pose  =  self._get_control_cmd_x_yaw_time("LeftDeckMoveBack")
@@ -175,7 +176,7 @@ class System():
             self.left_arm_container_grip       = self._get_arm_anchor_coord("LeftArmGripContainer")       # 左臂抓取容器
             self.left_arm_container_delivery   = self._get_arm_anchor_coord("LeftArmContainerDelivery")   # 左臂容器运送时的姿态
             self.left_arm_container_placement  = self._get_arm_anchor_coord("LeftArmContainerPlacement")  # 左臂容器放置
-            self.left_arm_machine_turn_on_rec  = self._get_arm_anchor_angle("LeftArmMachineTurnOnRec")    # 左臂 开 咖啡机识别
+            self.left_arm_machine_turn_on_rec  = self._get_arm_anchor_coord("LeftArmMachineTurnOnRec")    # 左臂 开 咖啡机识别
             self.left_arm_machine_turn_off_rec = self._get_arm_anchor_angle("LeftArmMachineTurnOFFRec")   # 左臂 关 咖啡机识别
             self.left_arm_machine_turn_on_pre  = self._get_arm_anchor_coord("LeftArmMachineTurnOnPre")    # 左臂 开 咖啡机预备动作
             self.left_arm_machine_turn_on_click= self._get_arm_anchor_coord("LeftArmMachineTurnOnClick")  # 左臂 开 咖啡机 向上拨一拨
@@ -501,7 +502,8 @@ def do_right_arm_move_result(result:msg.ArmMoveResult):
     
     # !如果是夹容器的准备动作和夹零食准备动作, 则需要更新放零食位置的状态 
     if current_task.task_type == task.Task_type.Task_manipulation.Grasp_container_dodge or \
-        current_task.task_type == task.Task_type.Task_manipulation.Lossen_snack_pre:
+        (current_task.task_type == task.Task_type.Task_manipulation.Grasp_snack_pre and \
+            system.robot.use_one_arm_grip_snack == True):
         system.robot.lossen_snack_point_status = robot.Robot.Common_status.IDLE
         
     # 任务完成暂停时间
@@ -1324,12 +1326,20 @@ class Order_driven_task_schedul():
         task_arm_dilivery_container.add_predecessor_task(task_right_arm_grap_container)       # 前置任务, 右臂抓取容器
         tasks_pick_snack.add(task_arm_dilivery_container)
         
-        # 机器人后退
+        # 机器人后退1
+        task_move_back_first_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            system.anchor_point.snack_deck_first_move_back_pose, name="move back first from snack desk")
+        task_move_back_first_from_snack_desk.set_move_back_second(system.anchor_point.snack_deck_first_move_back_pose.run_time)  # 设置运行时间
+        task_move_back_first_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)   # 前置任务, 左臂抓取容器
+        task_move_back_first_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)    # 前置任务, 右臂抓取容器
+        task_move_back_first_from_snack_desk.parallel = task.Task.Task_parallel.ALL
+        tasks_pick_snack.add(task_move_back_first_from_snack_desk)
+        
+        # 机器人后退2
         task_move_back_from_snack_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             system.anchor_point.snack_deck_move_back_pose, name="move back from snack desk")
         task_move_back_from_snack_desk.set_move_back_second(system.anchor_point.snack_deck_move_back_pose.run_time)  # 设置运行时间
-        task_move_back_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)   # 前置任务, 左臂抓取容器
-        task_move_back_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)    # 前置任务, 右臂抓取容器
+        task_move_back_from_snack_desk.add_predecessor_task(task_move_back_first_from_snack_desk)   # 前置任务, 直线后退完成
         task_move_back_from_snack_desk.parallel = task.Task.Task_parallel.ALL
         tasks_pick_snack.add(task_move_back_from_snack_desk)
 

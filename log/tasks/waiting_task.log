@@ -1,13 +1,125 @@
-07-25 10:08:28
+07-25 11:20:14
 
 --------------------------------------------------
+
+
+Task       : Task_manipulation Grasp_snack_pre
+Name       : grasp snack pre
+Group_id   : 0
+Index      : 17
+Create_time: 1721877567.005762
+Start_time : -999
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : TBD 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[240, 290, 440, -90, 0, -90] 
+                       Arm_pose_1: arm RIGHT, pose type ANGLE, joint:[76.87, 21.81, -150.56, -107.2, 61.99, -8.4] } 
+Debug_position      : -999
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
+
+
+Task       : Task_manipulation Grasp_snack
+Name       : grasp snack
+Group_id   : 0
+Index      : 18
+Create_time: 1721877567.0058193
+Start_time : -999
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [17:Task_manipulation Grasp_snack_pre] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : TBD 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[279.48150634765625, 313.0797119140625, 550.0, -90, 0, -90] 
+                       Arm_pose_1: arm RIGHT, pose type BASE_COORDS, coords:[-999, -999, -999, 90, 0, 90] } 
+Debug_position      : -999
+Target_clamps_status: Clamp_status_0: OPEN_CLOSE  
+Clamp_speed         : 50 
+arm_move_method     : YZ_X 
+click_length        : 0 
+
+
+Task       : Task_manipulation Lossen_snack_pre
+Name       : task_placement_snack_middle
+Group_id   : 0
+Index      : 19
+Create_time: 1721877567.0058746
+Start_time : -999
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [18:Task_manipulation Grasp_snack] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : TBD 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[240, 270, 420, -90, 0, -90] 
+                       Arm_pose_1: arm RIGHT, pose type BASE_COORDS, coords:[230, -140, 450, 90, 0, 90] } 
+Debug_position      : -999
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
+Clamp_speed         : 50 
+arm_move_method     : X_Z_Y 
+click_length        : 0 
+
+
+Task       : Task_manipulation Lossen_snack
+Name       : placement snack
+Group_id   : 0
+Index      : 20
+Create_time: 1721877567.0059187
+Start_time : -999
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : NOTREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [19:Task_manipulation Lossen_snack_pre] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : TBD 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[330.0, 90.0, 400, -180, 0, -90] 
+                       Arm_pose_1: arm RIGHT, pose type BASE_COORDS, coords:[340.0, 50.0, 400, -180, 0, 90] } 
+Debug_position      : -999
+Target_clamps_status: Clamp_status_0: OPEN  
+Clamp_speed         : 50 
+arm_move_method     : YZ_XANGLE 
+click_length        : 0 
 
 
 Task       : Task_function PAUSE
 Name       : function pause
 Group_id   : 0
 Index      : 23
-Create_time: 1721873258.6253898
+Create_time: 1721877567.0063531
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -27,7 +139,7 @@ Task       : Task_manipulation Grasp_container
 Name       : left arm grap container
 Group_id   : 0
 Index      : 24
-Create_time: 1721873258.6258113
+Create_time: 1721877567.0065062
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -54,7 +166,7 @@ Task       : Task_manipulation Grasp_container
 Name       : right arm grap container
 Group_id   : 0
 Index      : 25
-Create_time: 1721873258.6260138
+Create_time: 1721877567.0066476
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -81,7 +193,7 @@ Task       : Task_manipulation Deliever_container
 Name       : two arms dilivery container
 Group_id   : 0
 Index      : 26
-Create_time: 1721873258.6266048
+Create_time: 1721877567.0067618
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -106,10 +218,10 @@ click_length        : 0
 
 
 Task       : Task_navigate Move_backward
-Name       : move back from snack desk
+Name       : move back first from snack desk
 Group_id   : 0
 Index      : 27
-Create_time: 1721873258.6266646
+Create_time: 1721877567.0068107
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -123,13 +235,13 @@ Subtask_count_finished: 0
 Predecessor_tasks: [25:Task_manipulation Grasp_container] [24:Task_manipulation Grasp_container] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-Target_3D_pose: x:-8.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:-70.00 
+Target_3D_pose: x:-10.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:0.00 
 
-Task       : Task_navigate Navigate_to_the_right_service_desk
-Name       : navigation to right service desk
+Task       : Task_navigate Move_backward
+Name       : move back from snack desk
 Group_id   : 0
 Index      : 28
-Create_time: 1721873258.6271524
+Create_time: 1721877567.0068521
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -143,13 +255,13 @@ Subtask_count_finished: 0
 Predecessor_tasks: [27:Task_navigate Move_backward] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-Target_3D_pose: x:1.95 y:-0.65 z:0.00 roll:0.00 pitch:-0.00 yaw:0.00 
+Target_3D_pose: x:-5.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:-70.00 
 
-Task       : Task_navigate Move_forward
-Name       : navigation move forward to right desk
+Task       : Task_navigate Navigate_to_the_right_service_desk
+Name       : navigation to right service desk
 Group_id   : 0
 Index      : 29
-Create_time: 1721873258.6272206
+Create_time: 1721877567.0069063
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -160,7 +272,27 @@ Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: [28:Task_navigate Navigate_to_the_right_service_desk] 
+Predecessor_tasks: [28:Task_navigate Move_backward] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Target_3D_pose: x:1.95 y:-0.65 z:0.00 roll:0.00 pitch:-0.00 yaw:0.00 
+
+Task       : Task_navigate Move_forward
+Name       : navigation move forward to right desk
+Group_id   : 0
+Index      : 30
+Create_time: 1721877567.0069394
+Start_time : -999
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [29:Task_navigate Navigate_to_the_right_service_desk] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Target_3D_pose: x:20.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:0.00 
@@ -168,8 +300,8 @@ Target_3D_pose: x:20.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:0.00
 Task       : Task_manipulation Lossen_container
 Name       : two arms placement container
 Group_id   : 0
-Index      : 30
-Create_time: 1721873258.6272812
+Index      : 31
+Create_time: 1721877567.0069842
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -180,7 +312,7 @@ Return_data: None
 Parallel   : NOTALLOWED
 Subtask_count: 2
 Subtask_count_finished: 0
-Predecessor_tasks: [29:Task_navigate Move_forward] 
+Predecessor_tasks: [30:Task_navigate Move_forward] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Arm_id              : LEFT_RIGHT 
@@ -196,8 +328,8 @@ click_length        : 0
 Task       : Task_manipulation Move_to_IDLE
 Name       : two arms move to idle
 Group_id   : 0
-Index      : 31
-Create_time: 1721873258.6273675
+Index      : 32
+Create_time: 1721877567.0070522
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -208,7 +340,7 @@ Return_data: None
 Parallel   : ALL
 Subtask_count: 2
 Subtask_count_finished: 0
-Predecessor_tasks: [30:Task_manipulation Lossen_container] 
+Predecessor_tasks: [31:Task_manipulation Lossen_container] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Arm_id              : LEFT_RIGHT 
@@ -224,8 +356,8 @@ click_length        : 0
 Task       : Task_navigate Move_backward
 Name       : move back from right service desk
 Group_id   : 0
-Index      : 32
-Create_time: 1721873258.627416
+Index      : 33
+Create_time: 1721877567.007125
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -236,7 +368,7 @@ Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: [30:Task_manipulation Lossen_container] 
+Predecessor_tasks: [31:Task_manipulation Lossen_container] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Target_3D_pose: x:-70.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:-90.00 
@@ -244,8 +376,8 @@ Target_3D_pose: x:-70.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:-90.
 Task       : Task_function PAUSE
 Name       : function pause
 Group_id   : 0
-Index      : 33
-Create_time: 1721873258.6274624
+Index      : 34
+Create_time: 1721877567.0071638
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -265,7 +397,7 @@ Task       : Task_speech_recognition Speech_Recognition
 Name       : speech recognition
 Group_id   : -999
 Index      : 0
-Create_time: 1721873258.6275535
+Create_time: 1721877567.0072467
 Start_time : -999
 End_time   : -999
 Duration   : -999
