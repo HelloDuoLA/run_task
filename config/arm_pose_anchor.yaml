@@ -28,7 +28,7 @@ LeftArmGripSnack:
 # 左臂零食放置位点 准备点
 LeftArmSnackPlacementPre:
 # TODO:Y,Z轴待定
-  coords:  [240, 270 , 420, -90, 0, -90]
+  coords:  [240, 300 , 420, -90, 0, -90]
 
 # 左臂零食放置位点
 LeftArmSnackPlacement:
