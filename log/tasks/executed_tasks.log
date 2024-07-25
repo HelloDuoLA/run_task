@@ -1,13 +1,13 @@
-07-25 18:06:58
+07-25 19:59:32
 
 --------------------------------------------------
 
 
-Task       : Task_manipulation Grasp_container_dodge
-Name       : left arm grap container dodge
+Task       : Task_manipulation Lossen_container
+Name       : two arms placement container
 Group_id   : 0
-Index      : 11
-Create_time: 1721901967.6236248
+Index      : 31
+Create_time: 1721908689.0445497
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -15,18 +15,19 @@ Finsih_cb  : None
 Status     : BEREADY
 Result     : INVALID
 Return_data: None
-Parallel   : ALL
-Subtask_count: 1
+Parallel   : NOTALLOWED
+Subtask_count: 2
 Subtask_count_finished: 0
-Predecessor_tasks: [16:Task_manipulation Lossen_snack] 
+Predecessor_tasks: [30:Task_navigate Move_forward] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[290.0, 250.0, 400, -180, 0.0, -90] } 
+Arm_id              : LEFT_RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[0, 0, -80, 0, 0, 0] 
+                       Arm_pose_1: arm RIGHT, pose type BASE_COORDS, coords:[0, 0, -80, 0, 0, 0] } 
 Debug_position      : -999
-Target_clamps_status: Clamp_status_0: OPEN  
+Target_clamps_status: Clamp_status_0: OPEN Clamp_status_1: OPEN  
 Clamp_speed         : 50 
-arm_move_method     : Z_XY 
+arm_move_method     : MODIFY_Z 
 click_length        : 0 
 
 --------------------------------------------------

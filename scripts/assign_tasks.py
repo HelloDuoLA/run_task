@@ -165,7 +165,7 @@ class System():
         # 初始化机械臂位点常量配置
         def _initialize_arm_anchor_point(self):
             self.left_arm_idle                 = self._get_arm_anchor_angle("LeftArmIdle")                # 左臂闲置
-            self.left_arm_container_rec        = self._get_arm_anchor_angle("LeftArmContainerRec")        # 左臂识别容器
+            self.left_arm_container_rec        = self._get_arm_anchor_coord("LeftArmContainerRec")        # 左臂识别容器
             self.left_arm_snack_rec            = self._get_arm_anchor_angle("LeftArmSnackRec")            # 左臂零食识别
             self.left_arm_snack_grip_pre       = self._get_arm_anchor_coord("LeftArmGripSnackPre")        # 左臂零食抓取准备点
             self.left_arm_snack_grip           = self._get_arm_anchor_coord("LeftArmGripSnack")           # 左臂零食抓取
@@ -186,7 +186,7 @@ class System():
             
             
             self.right_arm_idle                = self._get_arm_anchor_angle("RightArmIdle")               # 右臂空闲
-            self.right_arm_container_rec       = self._get_arm_anchor_angle("RightArmContainerRec")       # 右臂识别容器
+            self.right_arm_container_rec       = self._get_arm_anchor_coord("RightArmContainerRec")       # 右臂识别容器
             self.right_arm_snack_rec           = self._get_arm_anchor_angle("RightArmSnackRec")           # 右臂识别零食
             self.right_arm_snack_grip_pre      = self._get_arm_anchor_angle("RightArmGripSnackPre")       # 右臂零食抓取准备点
             self.right_arm_snack_grip          = self._get_arm_anchor_coord("RightArmGripSnack")          # 右臂零食抓取
