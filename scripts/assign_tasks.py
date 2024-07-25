@@ -458,7 +458,8 @@ def do_left_arm_move_result(result:msg.ArmMoveResult):
     current_task =  system.manipulator_actuator.running_tasks_manager.get_task(result.task_index)
     # !如果是夹容器的准备动作和夹零食准备动作, 则需要更新放零食位置的状态 
     if current_task.task_type == task.Task_type.Task_manipulation.Grasp_container_dodge or \
-        current_task.task_type == task.Task_type.Task_manipulation.Lossen_snack_pre:
+        (current_task.task_type == task.Task_type.Task_manipulation.Grasp_snack_pre and \
+            system.robot.use_one_arm_grip_snack == True):
         system.robot.lossen_snack_point_status = robot.Robot.Common_status.IDLE
     
     # 任务完成暂停时间
@@ -578,6 +579,7 @@ class Image_rec_actuator():
             rec_snack_count = len(result.obj_positions)
             # 两个零食都是同一个手臂拿的
             if rec_snack_count == 2 and (result.obj_positions[0].arm_id == result.obj_positions[1].arm_id):
+                system.robot.use_one_arm_grip_snack = True
                 arm_id                     = result.obj_positions[0].arm_id
                 snack_xyz_0                = result.obj_positions[0].position
                 snack_xyz_1                = result.obj_positions[1].position
@@ -713,15 +715,15 @@ class Image_rec_actuator():
             # first_task_grasp_snack.target_arms_pose[0].arm_pose[2] = first_position[2]
             
             # 没有识别到的零食, 删除需要任务里的前置任务
-            # req_snack_count = current_task.get_snack_count()
-            # rospy.loginfo(f"req_snack_count : {req_snack_count} rec_snack_count {rec_snack_count}")
-            # if rec_snack_count < req_snack_count:
-            #     for i in range(rec_snack_count,req_snack_count):
-            #         task_left_arm_grap_container_pre :task.Task_manipulation  = current_task.need_modify_tasks.task_list[i*6+4] # 左臂夹取零食框的准备动作
-            #         task_right_arm_grap_container_pre:task.Task_manipulation  = current_task.need_modify_tasks.task_list[i*6+5] # 右臂夹取零食框的准备动作
-            #         task_lossen_snack:task.Task_manipulation                  = current_task.need_modify_tasks.task_list[i*6+3]  # 松零食任务
-            #         task_right_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack)  # 删除前置任务
-            #         task_left_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack)   # 删除前置任务
+            req_snack_count = current_task.get_snack_count()
+            rospy.loginfo(f"req_snack_count : {req_snack_count} rec_snack_count {rec_snack_count}")
+            if rec_snack_count < req_snack_count:
+                for i in range(rec_snack_count,req_snack_count):
+                    task_left_arm_grap_container_pre :task.Task_manipulation  = current_task.need_modify_tasks.task_list[i*6+4] # 左臂夹取零食框的准备动作
+                    task_right_arm_grap_container_pre:task.Task_manipulation  = current_task.need_modify_tasks.task_list[i*6+5] # 右臂夹取零食框的准备动作
+                    task_lossen_snack:task.Task_manipulation                  = current_task.need_modify_tasks.task_list[i*6+3]  # 松零食任务
+                    task_right_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack)  # 删除前置任务
+                    task_left_arm_grap_container_pre.del_prodecessor_task(task_lossen_snack)   # 删除前置任务
                     
         
         # 识别容器
@@ -982,7 +984,7 @@ class Task_manager():
         # rospy.loginfo(f"robot status: {system.robot}")
         # 不能执行下一个任务
         if self.can_run_state == False:
-            rospy.loginfo(f"node: {rospy.get_name()}, task index {current_task.task_index} can not run, because can_run_state is {self.can_run_state}")
+            # rospy.loginfo(f"node: {rospy.get_name()}, task index {current_task.task_index} can not run, because can_run_state is {self.can_run_state}")
             return Task_manager.Run_task_return_code.cannot_run_cannot_next
         
         # 任务不支持并行
@@ -1930,10 +1932,10 @@ def talker():
         asr_prepare_service.wait_for_service()
     
     # 自定义订单
-    test_order_snack()
+    # test_order_snack()
 
     # 新增识别服务
-    # system.order_driven_task_schedul.add_asr_task()
+    system.order_driven_task_schedul.add_asr_task()
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)
@@ -1976,7 +1978,7 @@ def test_order_snack():
     # order_info2.table_id = utilis.Device_id.RIGHT
     order_info2.table_id = utilis.Device_id.LEFT
 
-    # tasks = system.order_driven_task_schedul.add_task(order_info)
+    tasks = system.order_driven_task_schedul.add_task(order_info)
     # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
     # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
 
@@ -1994,7 +1996,7 @@ def test_order_snack():
 
     # log.log_tasks_info(tasks_get_snack,"new_all_task.log")
     
-    system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
+    # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_lossen_snack)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(tasks_get_drink)
     # system.order_driven_task_schedul.task_manager.waiting_task.add(task_lossen_cup)

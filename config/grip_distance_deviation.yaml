@@ -21,7 +21,7 @@ LeftArmGripContainer:
 # 左臂松零食(相对于抓容器的位置)
 LeftArmLossenSnack:
   x_bias: +40
-  y_bias: -80
+  y_bias: -90
   z_bias: 20  # 410
 
 # 左臂抓容器前, 躲避放置零食的位点(相对于抓容器的位置)
@@ -34,7 +34,7 @@ LeftArmGripContainerDodge:
 LeftArmGripTurnOnMachineSwitch:
   x_bias: -164
   y_bias: -30
-  z_bias: -40     
+  z_bias: -43     
 
 # 左臂从开咖啡机 转移 到关咖啡机(相对开咖啡机偏移)
 LeftArmGripTranMachineSwitch:
@@ -44,7 +44,7 @@ LeftArmGripTranMachineSwitch:
 
 # 左臂准备 关 咖啡开关(相对开咖啡机偏移)
 LeftArmGripTurnOFFMachineSwitch:
-  x_bias: 10
+  x_bias: 5
   y_bias: -20
   z_bias: 160 
 
