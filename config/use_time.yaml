@@ -4,7 +4,7 @@ time_wait_for_turn_on_machine : 2
 # 等待关闭机器的时间
 time_wait_for_turn_off_machine: 3
 # 拍照前等待手臂稳定的时间
-time_before_get_image         : 1
+time_before_get_image         : 1.5
 # 任务管理器遍历任务的间隔时间
 time_interval_for_task        : 0.05
 

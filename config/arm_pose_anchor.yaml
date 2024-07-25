@@ -97,7 +97,7 @@ LeftArmMachineTurnOffPre:
 
 # 左臂咖啡机关闭时向下拨一拨
 LeftArmMachineTurnOffClick:
-  coords:  [0, 0, -20, 0, 0, 0]
+  coords:  [0, 0, -25, 0, 0, 0]
 
 
 # !TODO:右臂

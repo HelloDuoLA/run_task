@@ -44,7 +44,7 @@ LeftArmGripTranMachineSwitch:
 
 # 左臂准备 关 咖啡开关(相对开咖啡机偏移)
 LeftArmGripTurnOFFMachineSwitch:
-  x_bias: 5
+  x_bias: 3
   y_bias: -20
   z_bias: 160 
 
