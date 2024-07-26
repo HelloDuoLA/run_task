@@ -16,7 +16,7 @@ left_arm_turn_off_machine:
 
 # 左臂打开咖啡机
 left_arm_turn_on_machine:
-  xyz: [320, 70, 480]
+  xyz: [270, 100, 450]
 
 # 右臂抓容器
 right_arm_grip_container:
@@ -24,7 +24,7 @@ right_arm_grip_container:
   
 # 右臂抓杯子
 right_arm_grip_cup:
-  xyz: [350, -320, 220]
+  xyz: [350, -250, 220]
 
 # 右臂抓零食(上层)
 right_arm_grip_snack_top:

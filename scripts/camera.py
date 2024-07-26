@@ -130,7 +130,7 @@ class STag_result_list():
                     # 下层零食
                     else:
                         stag_result.base_coords[2] = LeftArmBottomSnackGrip
-                        
+   
                     # 记录经验值
                     log.log_empirical_value_left_arm_grip_snack(stag_result.base_coords)
             # 右臂
@@ -379,7 +379,7 @@ class STag_result_list():
                 rospy.loginfo("No machine switch STag detected !!!!!!! use experience value")
                 stag_result = STag_result(utilis.Device_id.LEFT,self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH])
                 stag_result.base_coords = ev_left_arm_turn_on_machine
-                stag_result.obj_id      = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value
+                stag_result.obj_id      = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH_ON.value
                 new_stag_result_list.append(stag_result)
                 
                 # 关机键
@@ -692,7 +692,7 @@ class Recognition_node():
                 # 发送信息
                 obj_positions = stag_result.to_msg()
             else:
-                    raise ValueError("get image False")
+                raise ValueError("get image False")
 
             
         # 识别咖啡机开关, 只有左臂
@@ -718,7 +718,7 @@ class Recognition_node():
                 # 发送信息
                 obj_positions = stag_result.to_msg()
             else:
-                    raise ValueError("get image False")
+                raise ValueError("get image False")
                 
         # 识别咖啡机开关, 只有左臂
         elif request.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF :
@@ -743,7 +743,7 @@ class Recognition_node():
                 # 发送信息
                 obj_positions = stag_result.to_msg()
             else:
-                    raise ValueError("get image False")
+                raise ValueError("get image False")
         else:
             raise ValueError("task_type is not defined")
 
