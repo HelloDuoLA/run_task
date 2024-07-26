@@ -128,7 +128,9 @@ class System():
             self.snack_deck_move_back_pose =  self._get_control_cmd_x_yaw_time("SnackDeckMoveBack")
             self.drink_deck_move_back_pose =  self._get_control_cmd_x_yaw_time("DrinkDeckMoveBack")
             self.left_deck_move_back_pose  =  self._get_control_cmd_x_yaw_time("LeftDeckMoveBack")
+            self.left_deck_second_move_back_pose  =  self._get_control_cmd_x_yaw_time("LeftDeckSecondMoveBack")
             self.right_deck_move_back_pose =  self._get_control_cmd_x_yaw_time("RightDeckMoveBack")
+            self.right_deck_second_move_back_pose =  self._get_control_cmd_x_yaw_time("RightDeckSecondMoveBack")
             
         def _get_control_cmd_x_yaw_time(self,name):
             target_pose     = utilis.Pose3D()
@@ -1404,15 +1406,31 @@ class Order_driven_task_schedul():
             task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             system.anchor_point.left_deck_move_back_pose, name="move back from left service desk")
             task_move_back_from_service_desk.set_move_back_second(system.anchor_point.left_deck_move_back_pose.run_time)    # 设置运行时间
+            
+            # 后退第二步
+            task_move_back_second_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            system.anchor_point.left_deck_second_move_back_pose, name="move back second from left service desk")
+            task_move_back_from_service_desk.set_move_back_second(system.anchor_point.left_deck_second_move_back_pose.run_time)    # 设置运行时间
+            
         elif table_id == utilis.Device_id.RIGHT.value:
             task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             system.anchor_point.right_deck_move_back_pose, name="move back from right service desk")
             task_move_back_from_service_desk.set_move_back_second(system.anchor_point.right_deck_move_back_pose.run_time)    # 设置运行时间
+            
+            # 后退第二步
+            task_move_back_second_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            system.anchor_point.right_deck_second_move_back_pose, name="move back second from right service desk")
+            task_move_back_from_service_desk.set_move_back_second(system.anchor_point.right_deck_second_move_back_pose.run_time)    # 设置运行时间
         else:
             raise ValueError("Invalid table_id")
+        
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL              # 可并行
         task_move_back_from_service_desk.add_predecessor_task(task_arm_placement_container)  # 前置任务, 完成放置容器
         tasks_pick_snack.add(task_move_back_from_service_desk)
+        
+        task_move_back_second_from_service_desk.parallel = task.Task.Task_parallel.ALL                  # 可并行
+        task_move_back_second_from_service_desk.add_predecessor_task(task_move_back_from_service_desk)  # 前置任务, 完成转向
+        tasks_pick_snack.add(task_move_back_second_from_service_desk)                                   
         
         # 功能性暂停(等待前面的动作全部完成)
         task_function_pause2 = task.Task_function(task.Task_type.Task_function.PAUSE,None,name="function pause")
@@ -1633,16 +1651,33 @@ class Order_driven_task_schedul():
             task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             system.anchor_point.left_deck_move_back_pose, name="move back from left service desk")
             task_move_back_from_service_desk.set_move_back_second(system.anchor_point.left_deck_move_back_pose.run_time)    # 设置运行时间
+            
+            # 后退第二步
+            task_move_back_second_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            system.anchor_point.left_deck_second_move_back_pose, name="move back second from left service desk")
+            task_move_back_from_service_desk.set_move_back_second(system.anchor_point.left_deck_second_move_back_pose.run_time)    # 设置运行时间
+            
         elif table_id == utilis.Device_id.RIGHT.value:
             task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             system.anchor_point.right_deck_move_back_pose, name="move back from right service desk")
             task_move_back_from_service_desk.set_move_back_second(system.anchor_point.right_deck_move_back_pose.run_time)    # 设置运行时间
+            
+            # 后退第二步
+            task_move_back_second_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+            system.anchor_point.right_deck_second_move_back_pose, name="move back second from right service desk")
+            task_move_back_from_service_desk.set_move_back_second(system.anchor_point.right_deck_second_move_back_pose.run_time)    # 设置运行时间
+            
         else:
             raise ValueError("Invalid table_id")
         
         task_move_back_from_service_desk.parallel = task.Task.Task_parallel.ALL                    # 可并行
         task_move_back_from_service_desk.add_predecessor_task(task_right_arm_placement_cup)        # 前置任务, 右臂放好了杯子
         tasks_get_drink.add(task_move_back_from_service_desk)
+        
+        task_move_back_second_from_service_desk.parallel = task.Task.Task_parallel.ALL                  # 可并行
+        task_move_back_second_from_service_desk.add_predecessor_task(task_move_back_from_service_desk)  # 前置任务, 完成转向
+        tasks_get_drink.add(task_move_back_second_from_service_desk)     
+        
         
         #  将左,右臂放到空闲位置(可并行)
         task_arms_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\

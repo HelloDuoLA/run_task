@@ -40,6 +40,7 @@ def talker():
     left_deck_move_forward_pose  =  _get_control_cmd_x_yaw("LeftDeckMoveforward")
     right_deck_move_forward_pose =  _get_control_cmd_x_yaw("RightDeckMoveforward")
     
+    snack_deck_first_move_back_pose =  _get_control_cmd_x_yaw("SnackDeckFirstMoveBack")
     snack_deck_move_back_pose =  _get_control_cmd_x_yaw("SnackDeckMoveBack")
     drink_deck_move_back_pose =  _get_control_cmd_x_yaw("DrinkDeckMoveBack")
     left_deck_move_back_pose  =  _get_control_cmd_x_yaw("LeftDeckMoveBack")
@@ -47,6 +48,7 @@ def talker():
             
     task_init_pose            = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_init_point, None, init_pose)
     task_SnackDesk            = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_snack_desk, None, SnackDesk)
+    task_snack_deck_first_move_back_pose  = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,snack_deck_first_move_back_pose)
     task_snack_desk_back      = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,snack_deck_move_back_pose)
     task_snack_desk_forward   = task.Task_navigation(task.Task_type.Task_navigate.Move_forward,None,snack_deck_move_forward_pose)
     task_DrinkDesk            = task.Task_navigation(task.Task_type.Task_navigate.Navigate_to_the_drink_desk, None, DrinkDesk)
@@ -126,9 +128,13 @@ def talker():
                 current_task = task_SnackDesk
                 navigation_actuator.run(task_SnackDesk)
                 
-            elif user_input == "10":
+            elif user_input == "100":
                 current_task = task_snack_desk_back
                 navigation_actuator.run(task_snack_desk_back)
+            
+            elif user_input == "10":
+                current_task = task_snack_deck_first_move_back_pose
+                navigation_actuator.run(task_snack_deck_first_move_back_pose)
             
             elif user_input == "11":
                 current_task = task_snack_desk_forward
