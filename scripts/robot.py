@@ -83,6 +83,7 @@ class Robot():
         self.right_manipulation_status = manipulation_status(utilis.Device_id.RIGHT)    # 右臂
         self.left_manipulation_status  = manipulation_status(utilis.Device_id.LEFT)     # 左臂
         self.lossen_snack_point_status = self.Common_status.IDLE                        # 松开零食点状态
+        self.use_one_arm_grip_snack    = False
 
     
 

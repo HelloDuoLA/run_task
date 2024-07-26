@@ -752,9 +752,9 @@ class Recognition_node():
         result.camera_id     = request.camera_id
         result.obj_positions = obj_positions
         # 发布结果
-        # rospy.loginfo(f"rec result :\n {result}")
+        rospy.loginfo(f"rec result :\n {result}")
         self.pub_result.publish(result)
-        rospy.loginfo(f"rec send result :\n")
+        # rospy.loginfo(f"rec send result :\n")
 
 # YOLO识别
 def YOLO_rec(snack_id_list,image) -> YOLO_result_list:

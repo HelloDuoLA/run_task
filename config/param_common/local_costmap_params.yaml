@@ -21,7 +21,7 @@ local_costmap:
   #代价地图宽度，单位：m
   width: 2.0
   #代价地图高度，单位：m
-  height: 2.5
+  height: 4
   #代价地图分辨率（米/单元格）
   resolution: 0.05 
 
@@ -31,7 +31,7 @@ local_costmap:
     #是否开启膨胀层
     enabled: true 
     #代价地图数值随与障碍物距离下降的比值，越大会导致路径规划越靠近障碍物
-    cost_scaling_factor: 1
+    cost_scaling_factor: 0.1
     #机器人膨胀半径，影响路径规划，单位：m
     inflation_radius: 0.10
 

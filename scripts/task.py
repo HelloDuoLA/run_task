@@ -379,6 +379,7 @@ class Task_manipulation(Task):
                 clamp_speed = 50, arm_move_method = arm.ArmMoveMethod.XYZ, click_length = 0,name=""):
         super().__init__(task_name,fn_callback,name)
         self.arm_id              = arm_id               # 操作对象
+        self.debug_position      = -999
         
         # 判断输入是不是列表
         if isinstance(target_arms_pose,arm.Arm_pose):
@@ -450,8 +451,9 @@ class Task_manipulation(Task):
     
     # 修改xyz并选择机械臂
     def modify_xyz_select_arm(self,arm_pose:List[float],device_id:utilis.Device_id):
-        self.modify_target_xyz(arm_pose,device_id)
         self.select_arm(device_id)
+        self.modify_target_xyz(arm_pose,device_id)
+        
     
     # 选择机械臂
     def select_arm(self,device_id:utilis.Device_id,arm_move_method = None):
@@ -483,6 +485,7 @@ class Task_manipulation(Task):
         return super().__str__()+(
             f"Arm_id              : {self.arm_id} \r\n"
             f"Target_arms_pose    : {{{arms_pose_str}}} \r\n" 
+            f"Debug_position      : {self.debug_position}\r\n"
             f"Target_clamps_status: {clamps_status_str} \r\n" 
             f"Clamp_speed         : {self.clamp_speed} \r\n"
             f"arm_move_method     : {self.arm_move_method} \r\n"

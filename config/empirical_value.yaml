@@ -1,6 +1,6 @@
 # 左臂抓容器
 left_arm_grip_container:
-  xyz: [290, 180, 360]
+  xyz: [290, 240, 360]
 
 # 左臂抓零食(上层)
 left_arm_grip_snack_top:
@@ -20,7 +20,7 @@ left_arm_turn_on_machine:
 
 # 右臂抓容器
 right_arm_grip_container:
-  xyz: [380, -70, 360]
+  xyz: [380, -30, 360]
   
 # 右臂抓杯子
 right_arm_grip_cup:
