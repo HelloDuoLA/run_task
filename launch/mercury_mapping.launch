@@ -56,5 +56,5 @@
   </include>
   </group>  
 
-<node pkg="rviz" type="rviz" name="rviz" args="-d /home/elephant/xzc_code/ros_ws/src/run_task/rviz/mapping.rviz"/>
+<node pkg="rviz" type="rviz" name="rviz" args="-d /home/elephant/dev/team1/ros/src/run_task/rviz/mapping.rviz"/>
 </launch>
