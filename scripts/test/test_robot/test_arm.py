@@ -75,22 +75,8 @@ mr.set_gripper_enabled(0)
 ml.set_gripper_calibration()
 mr.set_gripper_calibration()
 
-# 左臂
+# !左臂
 from pymycobot import Mercury
-
-ml = Mercury("/dev/left_arm")
-a = 2
-ml.power_on()
-ml.power_off()
-ml.release_all_servos()
-ml.focus_all_servos()
-
-ml.release_servo(6)
-ml.focus_servo(6)
-
-
-
-
 
 ml.get_angles()
 ml.set_servo_calibration(1)
