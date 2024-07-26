@@ -88,5 +88,7 @@ ml.set_servo_calibration(6)
 
 ml.send_angle(3,20, 100)
 
-
+# 运送点
+ml.send_angles([90,90,0,-30, 90, 0],10)
+mr.send_angles([-90,90,0,30, 90, 0],10)
 
