@@ -1,14 +1,14 @@
-07-26 11:00:27
+07-27 17:32:43
 
 --------------------------------------------------
 
 
-Task       : Task_image_rec COFFEE_MACHINE_SWITCH_ON
-Name       : left camera rec coffee machine turn on
-Group_id   : 0
-Index      : 5
-Create_time: 1721962795.3531063
-Start_time : 1721962817.3946314
+Task       : Task_navigate Navigate_to_the_snack_desk
+Name       : navigation to snack desk
+Group_id   : 2
+Index      : 2
+Create_time: 1722072761.0787582
+Start_time : 1722072761.352968
 End_time   : -999
 Duration   : -999
 Finsih_cb  : None
@@ -18,17 +18,10 @@ Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: [2:Task_manipulation Rec_machine_switch] [1:Task_navigate Move_forward] 
-Sleep_time_before_task : 1.5
+Predecessor_tasks: 
+Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-Camera_id: LEFT 
-Snack_list: []
-Need_modify_tasks: 
-          [9:Task_manipulation Turn_on_coffee_machine]
-          [11:Task_manipulation Water_cup]
-          [12:Task_manipulation Turn_tra_coffee_machine]
-          [13:Task_manipulation Turn_off_coffee_machine]
- 
+Target_3D_pose: x:0.40 y:-2.36 z:0.00 roll:0.00 pitch:-0.00 yaw:3.14 
 --------------------------------------------------
 
 
