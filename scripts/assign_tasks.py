@@ -1540,7 +1540,7 @@ class Order_driven_task_schedul():
         
         #  右臂将杯子挪到咖啡机
         task_right_arm_water_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Water_cup,None,utilis.Device_id.RIGHT,\
-            copy.deepcopy(system.anchor_point.right_arm_cup_water), arm_move_method = arm.ArmMoveMethod.X_YZ,\
+            copy.deepcopy(system.anchor_point.right_arm_cup_water), arm_move_method = arm.ArmMoveMethod.X_Z_Y,\
                 name="right arm water cup")
         task_right_arm_water_cup.parallel = task.Task.Task_parallel.ALL                  # 可并行
         task_right_arm_water_cup.status   = task.Task.Task_status.NOTREADY
@@ -2089,10 +2089,10 @@ def talker():
         asr_prepare_service.wait_for_service()
     
     # 自定义订单
-    test_order_snack()
+    # test_order_snack()
 
     # 新增识别服务
-    # system.order_driven_task_schedul.add_asr_task()
+    system.order_driven_task_schedul.add_asr_task()
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)
@@ -2112,13 +2112,13 @@ def test_order_snack():
     order_info2 = order.Order()
 
     snack  = order.Snack(order.Snack.Snack_id.YIDA,1)
-    order_info.add_snack(snack)
+    # order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.CHENPIDAN,1)
     order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.GUODONG ,1)
-    # order_info.add_snack(snack)
+    order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.RUSUANJUN ,1)
     # order_info.add_snack(snack)
