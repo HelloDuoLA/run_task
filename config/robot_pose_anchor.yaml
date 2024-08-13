@@ -10,8 +10,8 @@ InitialPose:
 
 # 零食台位姿
 SnackDesk:
-  position_x: 0.4
-  position_y: -2.36
+  position_x: 0.51
+  position_y: -2.34
   position_z: 0
   orientation_x: 0
   orientation_y: 0
@@ -20,9 +20,8 @@ SnackDesk:
   
 # 饮料台位姿
 DrinkDesk:
-  position_x: 0.50
-  # position_y: -2.20
-  position_y: -2.35
+  position_x: 0.52
+  position_y: -2.20
   position_z: -0
   orientation_x: 0.00152
   orientation_y: 0.00167
