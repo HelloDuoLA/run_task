@@ -409,31 +409,6 @@ class STag_result_list():
             
             self.stag_result_list = new_stag_result_list
             
-        # 关闭咖啡机开关
-        # TODO: 删除
-        # elif rec_task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF:
-        #     # 识别关机, 只有左手
-        #     new_stag_result_list = [ ]
-        #     for i in range(len(self.stag_result_list)):
-        #         stag_result = copy.deepcopy(self.stag_result_list[i])  
-        #         if stag_result.stag_id == self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH]:
-        #             stag_result.base_coords[0] = arm_poses[0] + stag_result.image_coords[2] + LeftArmGripTurnOFFMachineSwitch.x # x = x + z + bias
-        #             stag_result.base_coords[1] = arm_poses[1] - stag_result.image_coords[1] + LeftArmGripTurnOFFMachineSwitch.y # y = y - y + bias
-        #             stag_result.base_coords[2] = arm_poses[2] + stag_result.image_coords[0] + LeftArmGripTurnOFFMachineSwitch.z # z = z + x + bias
-        #             stag_result.obj_id = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value
-        #             new_stag_result_list.append(stag_result)
-        #             # 记录经验值
-        #             log.log_empirical_value_left_arm_turn_off_machine(stag_result.base_coords)
-            
-        #     # 加入经验值
-        #     if len(new_stag_result_list) == 0:
-        #         rospy.loginfo("No machine switch STag detected !!!!!!! use experience value")     
-        #         stag_result = STag_result(utilis.Device_id.LEFT,self.STag_other_enum_2_stag_num[task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH])
-        #         stag_result.base_coords = ev_left_arm_turn_off_machine
-        #         stag_result.obj_id      = task.Task_image_rec.Rec_OBJ_type.MACHINE_SWITCH.value
-        #         new_stag_result_list.append(stag_result)
-            
-        #     self.stag_result_list = new_stag_result_list
         else:
             raise ValueError("rec_task_type is not defined")
 
@@ -524,12 +499,64 @@ class YOLO_result():
 
 # YOLO 识别结果列表
 class  YOLO_result_list():
+    # 物体真实宽度
+    Obj_True_Width = {
+        order.Snack.Snack_id.GUODONG.value   : 0 ,
+        order.Snack.Snack_id.RUSUANJUN.value : 1 ,
+        order.Snack.Snack_id.CHENPIDAN.value : 2 ,
+        order.Snack.Snack_id.YIDA.value      : 3  ,
+    }
+        
     def __init__(self) -> None:
         self.yolo_result_list:List[YOLO_result] = []
     
     # 增加
     def add(self,yolo_result:YOLO_result):
         self.yolo_result_list.append(yolo_result)
+        
+    # 根据任务与左右手对坐标值进行修正
+    def modified_position(self,rec_task_type:task.Task_type.Task_image_rec,arm_id:utilis.Device_id,arm_poses):
+        global  ev_left_arm_grip_container, ev_left_arm_grip_snack_top, ev_left_arm_grip_snack_bottom
+        global  ev_left_arm_turn_off_machine, ev_left_arm_turn_on_machine, ev_right_arm_grip_container
+        global  ev_right_arm_grip_cup, ev_right_arm_grip_snack_top, ev_right_arm_grip_snack_bottom, ev_right_arm_water_cup
+        # 零食
+        if rec_task_type == task.Task_type.Task_image_rec.SNACK:
+            # 左臂
+            if arm_id == utilis.Device_id.LEFT:
+                for i in range(len(self.stag_result_list)):
+                    stag_result = self.stag_result_list[i]
+                    stag_result.base_coords[0] = arm_poses[0]  +  stag_result.image_coords[2] + LeftArmGripSnackDNN.x    # x = x + z + bias
+                    stag_result.base_coords[1] = arm_poses[1]  -  stag_result.image_coords[1] + LeftArmGripSnackDNN.y    # y = y - y + bias
+                    stag_result.base_coords[2] = arm_poses[2]  +  stag_result.image_coords[0] + LeftArmGripSnackDNN.z    # z = z + x + bias
+                    
+                    # 上层零食
+                    if stag_result.base_coords[2] > 500 :
+                        stag_result.base_coords[2] = LeftArmTopSnackGrip
+                    # 下层零食
+                    else:
+                        stag_result.base_coords[2] = LeftArmBottomSnackGrip
+   
+                    # 记录经验值
+                    log.log_empirical_value_left_arm_grip_snack(stag_result.base_coords)
+            # 右臂
+            elif arm_id == utilis.Device_id.RIGHT:
+                for i in range(len(self.stag_result_list)):
+                    stag_result = self.stag_result_list[i]
+                    stag_result.base_coords[0] = arm_poses[0]  +  stag_result.image_coords[2] + RightArmGripSnackDNN.x   # x = x + z + bias
+                    stag_result.base_coords[1] = arm_poses[1]  +  stag_result.image_coords[1] + RightArmGripSnackDNN.y   # y = y + y + bias
+                    stag_result.base_coords[2] = arm_poses[2]  -  stag_result.image_coords[0] + RightArmGripSnackDNN.z   # z = z - x + bias
+                    
+                    # 上层零食
+                    if stag_result.base_coords[2] > 500 :
+                        stag_result.base_coords[2] = RightArmTopSnackGrip
+                    # 下层零食
+                    else:
+                        stag_result.base_coords[2] = RightArmBottomSnackGrip
+                        
+                    # 记录经验值
+                    log.log_empirical_value_right_arm_grip_snack(stag_result.base_coords)
+        else:
+            raise ValueError("rec_task_type is not defined")
 
 # 摄像头控制器
 class camera_controller():
@@ -574,6 +601,8 @@ class Recognition_node():
                 log.log_write_image(f"{timestamp}_snack_left.jpg", left_img)
                 timestamp = str(int(time.time()))
                 timestamp = str(int(time.time()))
+                
+                # STag 识别零食
                 right_stag_result = STag_rec(right_img,mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
                 left_stag_result  = STag_rec(left_img, mtx, distCoeffs, utilis.Device_id.LEFT, image_name=f"{timestamp}_snack_left")
                 
@@ -584,6 +613,7 @@ class Recognition_node():
                 left_resp  = self.left_arm_client.call(arm_req)
                 right_resp = self.right_arm_client.call(arm_req)
                 
+                # 修正角度
                 right_arm_poses = right_resp.arm_pose
                 right_stag_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
                 left_arm_poses  = left_resp.arm_pose
@@ -600,7 +630,6 @@ class Recognition_node():
                 # STag 使用已知信息转为rec_result
                 right_rec_result = right_stag_result.to_rec_result()
                 left_rec_result  = left_stag_result.to_rec_result()
-                
                 
                 # 两个结果融合
                 fuse_rec_result = right_rec_result.fuse(left_rec_result)
@@ -912,8 +941,11 @@ def init_const():
     
     global LeftArmWaterCup, RightArmWaterCup
     
+    global LeftArmGripSnackDNN, RightArmGripSnackDNN
+    
     # 获取项偏移
     LeftArmGripSnack                = get_deviation("LeftArmGripSnack")
+    LeftArmGripSnackDNN             = get_deviation("LeftArmGripSnackDNN")
     LeftArmLossenSnack              = get_deviation("LeftArmLossenSnack")
     LeftArmGripContainer            = get_deviation("LeftArmGripContainer",True)
     LeftArmGripContainerDodge       = get_deviation("LeftArmGripContainerDodge",True)
@@ -922,6 +954,7 @@ def init_const():
     LeftArmGripTurnOFFMachineSwitch = get_deviation("LeftArmGripTurnOFFMachineSwitch")
     LeftArmWaterCup                 = get_deviation("LeftArmWaterCup",True)
     RightArmGripSnack               = get_deviation("RightArmGripSnack")
+    RightArmGripSnackDNN            = get_deviation("RightArmGripSnackDNN")
     RightArmLossenSnack             = get_deviation("RightArmLossenSnack")
     RightArmGripContainer           = get_deviation("RightArmGripContainer",True)
     RightArmGripContainerDodge      = get_deviation("RightArmGripContainerDodge",True)

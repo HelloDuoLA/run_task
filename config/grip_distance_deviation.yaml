@@ -4,6 +4,13 @@ LeftArmGripSnack:
   y_bias: -68
   z_bias: +45
 
+# 左臂抓零食DNN
+LeftArmGripSnackDNN:
+  x_bias: -110
+  y_bias: -68
+  z_bias: +45
+
+
 # 左臂上层零食放置高度
 LeftArmTopSnackGrip:
   z_const: 550
@@ -60,6 +67,12 @@ LeftArmWaterCup:
 
 # 右臂抓零食
 RightArmGripSnack:
+  x_bias: -90
+  y_bias: 58
+  z_bias: 20
+
+# 右臂抓零食
+RightArmGripSnackDNN:
   x_bias: -90
   y_bias: 58
   z_bias: 20
