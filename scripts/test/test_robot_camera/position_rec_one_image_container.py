@@ -129,8 +129,8 @@ if __name__ == "__main__":
     # print(xyz_list[0][0])
     # print(xyz_list[0][1])
     new_xyz_list = []
-    base_coords_left        = [360, 220, 550, -180, 0.0, -90]
-    base_coords_right       = [360, -150, 550, -180, 0.0, 90]
+    base_coords_left        = [330, 205, 435, -180, 0.0, -90]
+    base_coords_right       = [330, -100, 435, -180, 0.0, 90] 
     yaw = -(-90)
     
     for i in range(len(xyz_list)):
@@ -140,12 +140,12 @@ if __name__ == "__main__":
             print("left")
             print(f"left   arm end pose {base_coords_left[:3]}")
             print(f"stag xyz : {xyz}")
-            print(f"shousuan    xyz:{base_coords_left[0] + xyz[0] - 36}  {base_coords_left[1] - xyz[1] -45} {360}")
+            print(f"shousuan    xyz:{base_coords_left[0] + xyz[0] - 36}  {base_coords_left[1] - xyz[1] -50} {240}")
         elif id == 5:
             print("right")
             print(f"stag xyz : {xyz}")
             print(f"right  arm end pose {base_coords_right[:3]}")
-            print(f"shousuan    xyz:{base_coords_right[0] - xyz[0] +40}  {base_coords_right[1] + xyz[1] + 50} {360}\r\n\r\n")
+            print(f"shousuan    xyz:{base_coords_right[0] - xyz[0] +40}  {base_coords_right[1] + xyz[1] + 55} {240}\r\n\r\n")
 
 # 左臂
     # 测量 270.7953405531688  190.52039196049034 360
