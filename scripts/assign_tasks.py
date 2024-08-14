@@ -2089,10 +2089,10 @@ def talker():
         asr_prepare_service.wait_for_service()
     
     # 自定义订单
-    # test_order_snack()
+    test_order_snack()
 
     # 新增识别服务
-    system.order_driven_task_schedul.add_asr_task()
+    # system.order_driven_task_schedul.add_asr_task()
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)
@@ -2135,12 +2135,12 @@ def test_order_snack():
     # order_info2.table_id = utilis.Device_id.RIGHT
     order_info2.table_id = utilis.Device_id.LEFT
 
-    tasks = system.order_driven_task_schedul.add_task(order_info)
-    # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
+    # tasks = system.order_driven_task_schedul.add_task(order_info)
+    tasks2 = system.order_driven_task_schedul.add_task(order_info2)
     # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
 
-    tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)
-    tasks_get_snack.update_group_id(6)
+    # tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)
+    # tasks_get_snack.update_group_id(6)
     
     # tasks_lossen_snack = system.order_driven_task_schedul.test_tasks_lossen_container(order_info.table_id)
     # tasks_lossen_snack.update_group_id(7)
