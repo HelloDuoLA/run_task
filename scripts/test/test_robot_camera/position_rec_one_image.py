@@ -126,8 +126,8 @@ if __name__ == "__main__":
     xyz_list = STag_rec(args.tag_size,camera_matrix,dist_coeffs,image,11)
    
     new_xyz_list = []
-    base_coords_left        = [160, 320, 360, -90, 0, -90]
-    base_coords_right       = [160, -90, 360, 90, 0, 90]
+    base_coords_left        = [160, 250, 360, -90, 0.0, -90]
+    base_coords_right       = [160, -140, 360, 90, 0, 90]
     yaw = -(-90)
     
     print(f"left   arm end pose {base_coords_left[:3]}")
