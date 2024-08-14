@@ -506,6 +506,15 @@ class  YOLO_result_list():
         order.Snack.Snack_id.CHENPIDAN.value : 2 ,
         order.Snack.Snack_id.YIDA.value      : 3  ,
     }
+    
+    # 物体真实高度
+    Obj_True_Height = {
+        order.Snack.Snack_id.GUODONG.value   : 0 ,
+        order.Snack.Snack_id.RUSUANJUN.value : 1 ,
+        order.Snack.Snack_id.CHENPIDAN.value : 2 ,
+        order.Snack.Snack_id.YIDA.value      : 3  ,
+    }
+    
         
     def __init__(self) -> None:
         self.yolo_result_list:List[YOLO_result] = []
