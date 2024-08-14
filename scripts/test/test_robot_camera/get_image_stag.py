@@ -19,14 +19,14 @@ for camera in cameras.values():
 # camera_ids = [4, 6]
 # cameras = {}
 
-for cid in camera_ids:
-    # 构建GStreamer管道字符串，包括帧率设置
-    gstreamer_pipeline = (
-        f'v4l2src device=/dev/video{cid} ! '
-        'video/x-raw, format=(string)YUY2, width=(int)640, height=(int)480, framerate=(fraction)30/1 ! '
-        'videoconvert ! appsink'
-    )
-    cameras[cid] = cv2.VideoCapture(gstreamer_pipeline, cv2.CAP_GSTREAMER)
+# for cid in camera_ids:
+#     # 构建GStreamer管道字符串，包括帧率设置
+#     gstreamer_pipeline = (
+#         f'v4l2src device=/dev/video{cid} ! '
+#         'video/x-raw, format=(string)YUY2, width=(int)640, height=(int)480, framerate=(fraction)30/1 ! '
+#         'videoconvert ! appsink'
+#     )
+#     cameras[cid] = cv2.VideoCapture(gstreamer_pipeline, cv2.CAP_GSTREAMER)
 
 # 检查摄像头是否正确打开
 for cid, camera in cameras.items():
