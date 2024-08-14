@@ -31,7 +31,7 @@ LeftArmGripContainer:
 LeftArmLossenSnack:
   x_bias: +40
   y_bias: -90
-  z_bias: 20  # 410
+  z_bias: 20      # 这里的z无用
 
 # 左臂抓容器前, 躲避放置零食的位点(相对于抓容器的位置)
 LeftArmGripContainerDodge:
@@ -63,7 +63,7 @@ LeftArmGripTurnOFFMachineSwitch:
 LeftArmWaterCup:
   x_bias: -30
   y_bias: 0
-  z_const: 240   # 有用
+  z_const: 240     # 有用
 
 
 # !!!!!以下为右臂
@@ -112,7 +112,7 @@ RightArmGripContainerDodge:
 RightArmGripCup:
   x_bias : -90
   y_bias : 83
-  z_const: 220
+  z_const: 220    # 有用
 
 # 右臂杯子接水
 RightArmWaterCup:

@@ -816,10 +816,10 @@ class Image_rec_actuator():
                     # 抓杯子 准备时, 只改变yz
                     need_modify_task.modify_target_yz(cup_xyz,result.camera_id)
                     need_modify_task.status = task.Task.Task_status.BEREADY
-                elif need_modify_task.task_type == task.Task_type.Task_manipulation.Water_cup:
-                    # 给杯子浇水
-                    need_modify_task.modify_target_xyz(water_xyz,result.camera_id)
-                    need_modify_task.status = task.Task.Task_status.BEREADY
+                # elif need_modify_task.task_type == task.Task_type.Task_manipulation.Water_cup:
+                #     # 给杯子浇水
+                #     need_modify_task.modify_target_xyz(water_xyz,result.camera_id)
+                #     need_modify_task.status = task.Task.Task_status.BEREADY
                     
         else:
             raise ValueError("Invalid task type")
