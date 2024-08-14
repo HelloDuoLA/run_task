@@ -3,27 +3,23 @@ import os
 import re
 import time
 from http import HTTPStatus
-import dashscope
-from dashscope import Generation
+from dashscope import Application
+from config_loader import app_id, api_key
 
 LOGDIR = "/home/elephant/xzc_code/ros_ws/src/run_task/log/"
 
-# 设置API密钥
-dashscope.api_key = "sk-7a78d83cef354876abead0b8d1e7d18b"
-
 def chat_with_ai(messages):
-    response = Generation.call(model="qwen-plus",
-                               messages=messages,
-                               result_format='message')
-    if response.status_code == HTTPStatus.OK:
-        result = response.output.choices[0]['message']['content']
-        return result
+    response = Application.call(app_id=app_id,
+                                prompt=messages,
+                                api_key=api_key,
+                                )
+
+    if response.status_code != HTTPStatus.OK:
+        print('request_id=%s, code=%s, message=%s\n' % (response.request_id, response.status_code, response.message))
     else:
-        print('Request id: %s, Status code: %s, error code: %s, error message: %s' % (
-            response.request_id, response.status_code,
-            response.code, response.message
-        ))
-        return None
+        # 直接从 response.output 中提取 text 字段
+        result = response.output.get("text", "No text found")
+        return result
 
 def remove_comments(json_string):
     pattern = re.compile(r'//.*')
