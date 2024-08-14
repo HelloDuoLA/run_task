@@ -2085,8 +2085,8 @@ def talker():
         right_arm_client.wait_for_service()
         rospy.loginfo("waiting for camera nodes...")
         camera_prepare_service.wait_for_service()
-        rospy.loginfo("waiting for asr nodes...")
-        asr_prepare_service.wait_for_service()
+        # rospy.loginfo("waiting for asr nodes...")
+        # asr_prepare_service.wait_for_service()
     
     # 自定义订单
     test_order_snack()
