@@ -4,13 +4,12 @@ LeftArmIdle:
   angles: [-71.22, 62.77, -35.52, 66.98, 20.46, 35.6]
 
 # 左臂食物框识别位点
-# !修改成坐标
 LeftArmContainerRec:
-  coords: [305, 255, 435, -180, 0.0, -90]
+  coords: [330, 205, 435, -180, 0, -90]
 
 # 左臂零食识别位点
 LeftArmSnackRec:
-  angles: [-119.88, -23.38, -141.87, 107.28, 51.84, 75.7]
+  angles: [-108.34, -16.51, -151.6, 101.01, 56.86, 53.15]
 
 # ! 新增
 # 左臂抓零食位点准备位点(识别位置前往下层会碰撞)
@@ -29,20 +28,17 @@ LeftArmSnackPlacementPre:
 # 左臂零食放置位点
 LeftArmSnackPlacement:
   # x y 待定(与识别框的偏移量), z比抓取框高20mm 
-  # !框的高度待定
-  coords:  [-999, -999, 400, -180, 0, -90]
+  coords:  [-999, -999, 290, -180, 0, -90]
 
 # 左臂抓框时, 躲避放置零食的位点
 LeftArmGripContainerDodge:
   # x y 与 左臂抓框时的位点 相同, z轴比抓框高 
-  # !框的高度待定
-  coords:  [-1, -1, 400, -180, 0.0, -90]
+  coords:  [-1, -1, 290, -180, 0.0, -90]
 
 # 左臂抓框时的准备位点
 LeftArmGripContainerPre:
   # x y 与 左臂抓框时的位点 相同, z轴比抓框高40mm  
-  # !框的高度待定
-  coords:  [-999, -999, 380, -180, 0.0, -90]
+  coords:  [-999, -999, 270, -180, 0.0, -90]
 
 # 左臂抓框时的位点
 LeftArmGripContainer:
@@ -79,7 +75,6 @@ LeftArmMachineTurnOnClick:
   # x y z 都不确定, 手势确定
   coords:  [0, 0, 20, 0, 0, 0]
 
-# TODO:新增
 # 左臂咖啡机转移位点
 LeftArmMachineTransfrom:
   # x y z 都不确定, 手势确定
@@ -102,16 +97,15 @@ RightArmIdle:
 
 # 右臂食物框识别位点
 RightArmContainerRec:
-  coords: [305, -48, 435, -180, 0.0, 90]
+  coords: [330, -100, 435, -180, 0.0, 90]
 
 # 右臂零食识别位点
 RightArmSnackRec:
-  angles: [80.08, 30.95, -147.32, -100.88, 60.31, -1.94]
+  angles: [88.46, 13.94, -152.88, -98.96, 61.21, -15.06]
 
 # 右臂抓零食位点准备位点
-# 与识别位点相同
 RightArmGripSnackPre:
-  angles:  [80.08, 30.95, -147.32, -100.88, 60.31, -1.94]
+  coords:  [240, -140, 360, 90, 0, 90]
 
 # 右臂抓零食位点
 RightArmGripSnack:
@@ -125,39 +119,33 @@ RightArmSnackPlacementPre:
 # 右臂零食放置位点
 RightArmSnackPlacement:
   # x y 待定(与识别框的偏移量), z比抓取框高20mm 
-  # !框的高度待定
-  coords:  [-999, -999, 400, -180, 0, 90]
+  coords:  [-999, -999, 290, -180, 0, 90]
 
 
 # 右臂抓框时, 躲避放置零食的位点
 RightArmGripContainerDodge:
   # x y 与 左臂抓框时的位点 相同, z轴比抓框高 
-  # !框的高度待定
-  coords:  [-1, -1, 400, -180, 0, 90]
+  coords:  [-1, -1, 290, -180, 0, 90]
 
 
 # 右臂抓框时的准备位点
 RightArmGripContainerPre:
   # x y 与 左臂抓框时的位点 相同, z轴比抓框高 
-  # !框的高度待定
-  coords:  [-1, -1, 380, -180, 0, 90]
+  coords:  [-1, -1, 270, -180, 0, 90]
 
 # 右臂抓框时的位点
 RightArmGripContainer:
-  # coords:  [-999, -999, 360, -180, 0.0, 90]
   coords:  [0, 0, -30, 0, 0, 0]
 
 # 右臂零食框递送时的位点
 RightArmContainerDelivery:
 # x轴 比抓框时多50mm, y 与抓取框时相同, z比抓取框高20mm, x轴写死
-  # coords: [-1, -1, 380, -180, 0, 90]
   # !不用那么高
   coords: [0, 0, 150, 0, 0, 0]
 
 # 右臂零食框放置时的位点
 RightArmContainerPlacement:
 # x轴递送时相同 y 与抓取框时相同,  z比抓取框高10mm
-  # coords: [-1, -1, 370, -180, 0, 90]
   # !不用那么高
   coords: [0, 0, -150, 0, 0, 0]
 
