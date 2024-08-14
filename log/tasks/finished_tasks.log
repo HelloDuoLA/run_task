@@ -1,43 +1,16 @@
-07-27 17:32:43
+08-14 18:39:15
 
 --------------------------------------------------
 
 
-Task       : Task_manipulation Move_to_IDLE
-Name       : left arm move to idle prepare for pick snack
-Group_id   : 2
-Index      : 0
-Create_time: 1722072761.0784745
-Start_time : 1722072761.2456713
-End_time   : 1722072762.9484735
-Duration   : 1.7028021812438965
-Finsih_cb  : None
-Status     : FINISHED
-Result     : SUCCEED
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 1
-Predecessor_tasks: 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-71.31, 63.55, -34.37, 67.69, 20.23, 36.37] } 
-Debug_position      : -999
-Target_clamps_status: Clamp_status_0: CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
-
-Task       : Task_manipulation Move_to_IDLE
-Name       : right arm move to idle prepare for pick snack
-Group_id   : 2
-Index      : 1
-Create_time: 1722072761.0786912
-Start_time : 1722072761.3180475
-End_time   : 1722072762.9899325
-Duration   : 1.6718850135803223
+Task       : Task_manipulation Rec_cup_machine
+Name       : right arm move to rec cup machine prepare
+Group_id   : 3
+Index      : 3
+Create_time: 1723631938.636753
+Start_time : 1723631938.984471
+End_time   : 1723631942.2175188
+Duration   : 3.2330477237701416
 Finsih_cb  : None
 Status     : FINISHED
 Result     : SUCCEED
@@ -49,13 +22,107 @@ Predecessor_tasks:
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
 Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[71.31, 63.55, -34.38, -67.73, 20.23, -36.42] } 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[0, 0, -115, 0, 90, 0] } 
 Debug_position      : -999
 Target_clamps_status: Clamp_status_0: CLOSE  
 Clamp_speed         : 50 
 arm_move_method     : XYZ 
 click_length        : 0 
 
+
+Task       : Task_manipulation Rec_cup_machine
+Name       : right arm move to rec cup machine
+Group_id   : 3
+Index      : 4
+Create_time: 1723631938.6368034
+Start_time : 1723631942.5034847
+End_time   : 1723631944.2270796
+Duration   : 1.7235949039459229
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: [3:Task_manipulation Rec_cup_machine] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[-144.11, 24.93, -143.94, 40.6, 51.24, 8.33] } 
+Debug_position      : -999
+Target_clamps_status: Clamp_status_0: DONTCANGE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
+
+
+Task       : Task_manipulation Rec_machine_switch
+Name       : left arm move to rec coffee machine turn on
+Group_id   : 3
+Index      : 2
+Create_time: 1723631938.6366558
+Start_time : 1723631938.9329813
+End_time   : 1723631947.09168
+Duration   : 8.158698797225952
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[160, 130, 450, -90, 0, -90] } 
+Debug_position      : -999
+Target_clamps_status: Clamp_status_0: CLOSE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
+
+
+Task       : Task_navigate Navigate_to_the_drink_desk
+Name       : navigation to drink desk
+Group_id   : 3
+Index      : 0
+Create_time: 1723631938.6364384
+Start_time : 1723631938.900497
+End_time   : 1723631952.8299866
+Duration   : 13.929489612579346
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Target_3D_pose: x:0.60 y:-2.30 z:0.00 roll:-0.00 pitch:0.00 yaw:-1.60 
+
+Task       : Task_navigate Move_forward
+Name       : navigation move forward to drink desk
+Group_id   : 3
+Index      : 1
+Create_time: 1723631938.6365826
+Start_time : 1723631952.9999735
+End_time   : 1723631955.6514642
+Duration   : 2.6514906883239746
+Finsih_cb  : None
+Status     : FINISHED
+Result     : SUCCEED
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 1
+Predecessor_tasks: [0:Task_navigate Navigate_to_the_drink_desk] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0.5
+Target_3D_pose: x:15.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:0.00 
 --------------------------------------------------
 
 

@@ -501,18 +501,18 @@ class YOLO_result():
 class  YOLO_result_list():
     # 物体真实宽度
     Obj_True_Width = {
-        order.Snack.Snack_id.GUODONG.value   : 0 ,
-        order.Snack.Snack_id.RUSUANJUN.value : 1 ,
-        order.Snack.Snack_id.CHENPIDAN.value : 2 ,
-        order.Snack.Snack_id.YIDA.value      : 3  ,
+        order.Snack.Snack_id.GUODONG.value   : 8 ,
+        order.Snack.Snack_id.RUSUANJUN.value : 4.5 ,
+        order.Snack.Snack_id.CHENPIDAN.value : 4.6 ,
+        order.Snack.Snack_id.YIDA.value      : 5.6  ,
     }
     
     # 物体真实高度
     Obj_True_Height = {
-        order.Snack.Snack_id.GUODONG.value   : 0 ,
-        order.Snack.Snack_id.RUSUANJUN.value : 1 ,
-        order.Snack.Snack_id.CHENPIDAN.value : 2 ,
-        order.Snack.Snack_id.YIDA.value      : 3  ,
+        order.Snack.Snack_id.GUODONG.value   : 13.5 ,
+        order.Snack.Snack_id.RUSUANJUN.value : 8.7 ,
+        order.Snack.Snack_id.CHENPIDAN.value : 8.7 ,
+        order.Snack.Snack_id.YIDA.value      : 8.3  ,
     }
     
         

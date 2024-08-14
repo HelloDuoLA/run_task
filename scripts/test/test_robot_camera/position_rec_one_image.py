@@ -125,12 +125,9 @@ if __name__ == "__main__":
     
     xyz_list = STag_rec(args.tag_size,camera_matrix,dist_coeffs,image,11)
    
-    # print(xyz_list) 
-    # print(xyz_list[0][0])
-    # print(xyz_list[0][1])
     new_xyz_list = []
-    base_coords_left        = [180, 320, 470, -90, 0, -90]
-    base_coords_right       = [180, -140, 470, 90, 0, 90]
+    base_coords_left        = [160, 250, 360, -90, 0.0, -90]
+    base_coords_right       = [160, -140, 360, 90, 0, 90]
     yaw = -(-90)
     
     print(f"left   arm end pose {base_coords_left[:3]}")
@@ -158,28 +155,29 @@ if __name__ == "__main__":
         # print(f"         newxyz: {new_xyz_list[i][1][0]},{new_xyz_list[i][1][1]},{new_xyz_list[i][1][2]}")
         print("left")
         print(f"left   arm end pose {base_coords_left[:3]}")
-        print(f"arm_base_coords {arm_base_coords_left} ")
-        print(f"shousuanooo xyz:[{base_coords_left[0] + xyz[2]}, {base_coords_left[1] - xyz[1]}, {base_coords_left[2] + xyz[0]}]")
-        print(f"shousuan    xyz:{base_coords_left[0] + xyz[2] - 100}  {base_coords_left[1] - xyz[1]-78 +20} {base_coords_left[2] + xyz[0] +45}")
+        # print(f"arm_base_coords {arm_base_coords_left} ")
+        print(f"shousuan  x,y,z:{base_coords_left[0] + xyz[2] - 100} ,{base_coords_left[1] - xyz[1]-78 + 10}, {base_coords_left[2] + xyz[0] + 20}")
+        print(f"shousuan    xyz:{base_coords_left[0] + xyz[2] - 100}  {base_coords_left[1] - xyz[1]-78 + 10} {base_coords_left[2] + xyz[0]  + 20}")
         print("right")
         print(f"right  arm end pose {base_coords_right[:3]}")
-        print(f"arm_base_coords {arm_base_coords_right} ")
-        print(f"shousuanooo xyz:[{base_coords_right[0] + xyz[2]}, {base_coords_right[1] + xyz[1]}, {base_coords_right[2] - xyz[0]}]")
-        print(f"shousuan    xyz:{base_coords_right[0] + xyz[2] - 90 }  {base_coords_right[1] + xyz[1] + 78 -20} {base_coords_right[2] - xyz[0] +20}\r\n\r\n")
+        # print(f"arm_base_coords {arm_base_coords_right} ")
+        print(f"shousuan  x,y,z:{base_coords_right[0] + xyz[2] - 80 } , {base_coords_right[1] + xyz[1] + 78 -20}, {base_coords_right[2] - xyz[0] + 20}\r\n\r\n")
+        print(f"shousuan    xyz:{base_coords_right[0] + xyz[2] - 80 }  {base_coords_right[1] + xyz[1] + 78 -20} {base_coords_right[2] - xyz[0]   + 20}\r\n\r\n")
+
     
 # 左臂
 # 测量 404.9347297360397  159.7166483771058 380.6525213499157
 # 实际 394, 180, 380
 
-# 上排550
-# 下排380
+# 上排 465
+# 下排 260
 
 
 # 右臂
 # 测量 394, 180, 380
 # 实际 
-# 上排550
-# 下排400
+# 上排450
+# 下排280
 
 
 

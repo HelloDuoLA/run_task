@@ -15,8 +15,7 @@ from urllib.parse import urlencode
 import wave
 import numpy as np
 import os
-import re
-import time
+from config_loader import silence_threshold, silence_duration, max_initial_wait
 
 LOGDIR = "/home/elephant/xzc_code/ros_ws/src/run_task/log/"
 
@@ -73,9 +72,9 @@ class SpeechRecognizer:
         self.recognized_text = ""
         self.is_recognizing = False
         self.mic_index = mic_index
-        self.silence_threshold = 1000  # 静音阈值
-        self.silence_duration = 3      # 静音持续时长（秒）
-        self.max_initial_wait = 10     # 初始等待时长（秒）
+        self.silence_threshold = silence_threshold  # 从配置文件读取
+        self.silence_duration = silence_duration    # 从配置文件读取
+        self.max_initial_wait = max_initial_wait    # 从配置文件读取
         self.last_audio_time = 9999999999999999
         self.closed_event = threading.Event()  # 用于检测 WebSocket 关闭事件
         self.global_count = global_count
@@ -111,7 +110,7 @@ class SpeechRecognizer:
         def run(*args):
             p = pyaudio.PyAudio()
             stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True,
-                            input_device_index=self.mic_index, frames_per_buffer=8000)
+                            input_device_index=self.mic_index, frames_per_buffer=16000)
             status = STATUS_FIRST_FRAME
 
             frames = []
@@ -119,7 +118,7 @@ class SpeechRecognizer:
             self.last_audio_time = 9999999999999999 # 初始化最后音频时间
 
             while self.is_recognizing:
-                buf = stream.read(8000)
+                buf = stream.read(16000)
                 frames.append(buf)
                 audio_data = np.frombuffer(buf, dtype=np.int16)
 
@@ -187,7 +186,7 @@ class SpeechRecognizer:
             ws.close()
 
             # 保存音频数据
-            # self.save_audio(frames)
+            # threading.Thread(target=self.save_audio, args=(frames,)).start()
 
         threading.Thread(target=run).start()
 
@@ -220,8 +219,8 @@ class SpeechRecognizer:
         if self.ws:
             self.ws.close()
             self.ws = None
-        self.process_recognized_text()
-        # self.swap_items_if_needed()
+        # 异步处理后续任务
+        threading.Thread(target=self.process_recognized_text).start()
         return self.recognized_text
 
     def process_recognized_text(self):
@@ -246,27 +245,3 @@ class SpeechRecognizer:
                     self.recognized_text = self.recognized_text.replace(keyword, full_phrase)
 
         return self.recognized_text
-
-    def swap_items_if_needed(self):
-        """
-        检查并交换特定短语的位置。
-        """
-        items = ["益达口香糖", "果蔬果冻", "C酷果冻", "伊利每益添乳酸菌", "金津陈皮丹"]
-        # TODO:这里是不是要修改
-        pattern = re.compile(r"拿(.*?)和(.*?)到(.*?)桌子上")
-        match = pattern.search(self.recognized_text)
-
-        if match:
-            first_item = match.group(1).strip()
-            second_item = match.group(2).strip()
-            location = match.group(3).strip()
-
-            for item in items:
-                if item in second_item and item not in first_item:
-                    # 交换位置
-                    new_first_item = second_item
-                    new_second_item = first_item
-                    new_text = f"拿{new_first_item}和{new_second_item}到{location}桌子上"
-                    self.recognized_text = self.recognized_text.replace(match.group(0), new_text)
-                    break
-
