@@ -32,8 +32,8 @@ def take_photos(camera_id, prefix):
         time.sleep(1)  # 等待1秒拍下一张，确保时间戳不同
 
 # 同时启动4、6号摄像头拍照
-take_photos(4, 'left')
-take_photos(6, 'right')
+take_photos(6, 'left')
+take_photos(4, 'right')
 
 # 释放摄像头资源
 for camera in cameras.values():
