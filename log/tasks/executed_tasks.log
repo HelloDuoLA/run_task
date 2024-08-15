@@ -1,60 +1,13 @@
-08-14 18:42:53
+08-15 23:00:17
 
 --------------------------------------------------
 
 
-Task       : Task_navigate Navigate_to_the_drink_desk
-Name       : navigation to drink desk
-Group_id   : 3
-Index      : 0
-Create_time: 1723632172.9546568
-Start_time : 1723632173.1742024
-End_time   : -999
-Duration   : -999
-Finsih_cb  : None
-Status     : RUNNING
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Target_3D_pose: x:0.60 y:-2.30 z:0.00 roll:-0.00 pitch:0.00 yaw:-1.60 
-
-Task       : Task_manipulation Rec_machine_switch
-Name       : left arm move to rec coffee machine turn on
-Group_id   : 3
-Index      : 2
-Create_time: 1723632172.954933
-Start_time : 1723632173.2337112
-End_time   : -999
-Duration   : -999
-Finsih_cb  : None
-Status     : RUNNING
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[160, 130, 450, -90, 0, -90] } 
-Debug_position      : -999
-Target_clamps_status: Clamp_status_0: CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
-
-Task       : Task_manipulation Rec_cup_machine
-Name       : right arm move to rec cup machine prepare
-Group_id   : 3
-Index      : 3
-Create_time: 1723632172.955014
+Task       : Task_manipulation Deliever_container
+Name       : two arms dilivery container
+Group_id   : 2
+Index      : 26
+Create_time: 1723733955.8844345
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -63,17 +16,18 @@ Status     : BEREADY
 Result     : INVALID
 Return_data: None
 Parallel   : ALL
-Subtask_count: 1
+Subtask_count: 2
 Subtask_count_finished: 0
-Predecessor_tasks: 
+Predecessor_tasks: [24:Task_manipulation Grasp_container] [25:Task_manipulation Grasp_container] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type ANGLE, joint:[0, 0, -115, 0, 90, 0] } 
+Arm_id              : LEFT_RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[0, 0, 150, 0, 0, 0] 
+                       Arm_pose_1: arm RIGHT, pose type BASE_COORDS, coords:[0, 0, 150, 0, 0, 0] } 
 Debug_position      : -999
-Target_clamps_status: Clamp_status_0: CLOSE  
+Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
 Clamp_speed         : 50 
-arm_move_method     : XYZ 
+arm_move_method     : MODIFY_Z 
 click_length        : 0 
 
 --------------------------------------------------
