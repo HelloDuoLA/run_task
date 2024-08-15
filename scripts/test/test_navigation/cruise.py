@@ -207,14 +207,17 @@ def _get_control_cmd_x_yaw(name):
 
 
 def constant_config_to_robot_anchor_pose_orientation(anchor_point_name):
-    x   = rospy.get_param(f'~{anchor_point_name}/position_x')
-    y   = rospy.get_param(f'~{anchor_point_name}/position_y')
-    z   = rospy.get_param(f'~{anchor_point_name}/position_z')
-    o_x = rospy.get_param(f'~{anchor_point_name}/orientation_x')
-    o_y = rospy.get_param(f'~{anchor_point_name}/orientation_y')
-    o_z = rospy.get_param(f'~{anchor_point_name}/orientation_z')
-    o_w = rospy.get_param(f'~{anchor_point_name}/orientation_w')
-    pose = utilis.Pose3D.instantiate_by_xyz_orientation(x,y,z,o_x,o_y,o_z,o_w)
+    x = rospy.get_param(f'~{anchor_point_name}/position_x')
+    y = rospy.get_param(f'~{anchor_point_name}/position_y')
+    z = rospy.get_param(f'~{anchor_point_name}/position_z')
+    yaw = rospy.get_param(f'~{anchor_point_name}/yaw')
+    pose = utilis.Pose3D()
+    pose.x = x
+    pose.y = y
+    pose.z = z
+    pose.yaw = yaw
+    pose.roll = 0
+    pose.pitch = 0
     return pose
 
 # 导航任务执行器

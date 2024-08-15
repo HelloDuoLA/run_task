@@ -66,7 +66,6 @@ class System():
         # TODO:调试需要,暂时注释
         # self.set_initial_pose()
         
-        
     
     # 设置初始位姿
     def set_initial_pose(self):

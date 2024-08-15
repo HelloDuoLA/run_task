@@ -1,8 +1,12 @@
+# 讯飞语音识别、语音合成
+# https://www.xfyun.cn/
 APPID: "ec798696"
 APIKey: "079797c2b651aada7573f75eb2ca1955"
 APISecret: "YzU5ZWM2NjJmOGY1ODQ0ZmM3M2ViZWEy"
 silence_threshold: 1000
 silence_duration: 3
 max_initial_wait: 10
-app_id: "895d38adb4bb4650b0e5048f192ff287"
-api_key: "sk-4c76883bf119457d942f38b7815d9e3a"
+# 阿里云大模型语音识别
+# https://bailian.console.aliyun.com/?spm=5176.29228872.J_TC9GqcHi2edq9zUs9ZsDQ.1.74cd38b1LgIyyT#/data-analysis
+app_id: "cd38b175e23949e295c7306cf90c1af0"     # 应用ID
+api_key: "sk-04c7c8afe3dd4be48bb72bcb19634739" # API Key
