@@ -221,6 +221,7 @@ class SpeechRecognizer:
             self.ws = None
         # 异步处理后续任务
         threading.Thread(target=self.process_recognized_text).start()
+        # self.process_recognized_text()
         return self.recognized_text
 
     def process_recognized_text(self):

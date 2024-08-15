@@ -20,7 +20,7 @@ import order
 import log
 import asr_module
 
-from asr_module.config_loader import APPID, APIKey, APISecret
+from config_loader import APPID, APIKey, APISecret
 
 # 语音识别节点
 # TODO:待完成功能
@@ -28,7 +28,7 @@ from asr_module.config_loader import APPID, APIKey, APISecret
 class Asr_node():
     def __init__(self) -> None:
         self.messages = []  # 初始化空对话记录列表
-
+        self.use_default_microphone = True
         # 获取麦克风设备编号
         if not self.use_default_microphone:
             asr_module.list_microphones()
@@ -140,7 +140,6 @@ def talker():
     
     # 语音识别请求话题
     sub_asr_request = rospy.Subscriber(utilis.Topic_name.asr_request,std_msgs.Empty,doAsrReq,queue_size=10)
-    
     
     # 初始化成功节点
     prepare_server = rospy.Service(utilis.Topic_name.asr_prepare_service,std_srvs.Empty,doPrepareReq)

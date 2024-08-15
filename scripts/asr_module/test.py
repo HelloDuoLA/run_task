@@ -95,7 +95,7 @@ def main():
                 return False, None, None, messages
             continue_recognition, response_files, response_dict, messages = voice_to_json(APPID, APIKey, APISecret,
                                                         messages, mic_index)
-            if response_files is None:
+            if response_files != None:
                 print("识别到物品")
             else:
                 print("未识别到物品")
