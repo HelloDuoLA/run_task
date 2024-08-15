@@ -917,8 +917,11 @@ def init_camera():
     
     # gst-launch-1.0 v4l2src device=/dev/video0 ! image/jpeg, width=640, height=480, framerate=30/1 ! jpegdec ! videoconvert ! appsink sync=false emit-signals=true max-buffers=1 drop=true
     
-    left_camera_id  = 4
-    right_camera_id = 6
+    # left_camera_id  = 4
+    # right_camera_id = 6
+    
+    left_camera_id  = 6
+    right_camera_id = 4
         
         
     # left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_V4L2)
