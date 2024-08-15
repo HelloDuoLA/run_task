@@ -40,30 +40,30 @@ LeftArmGripContainerDodge:
   z_const: 390     # 这里的z无用
 
 # 左臂准备 开 咖啡开关
-# !待定
 LeftArmGripTurnOnMachineSwitch:
   x_bias: -164
-  y_bias: -30
-  z_bias: -43     
+  y_bias: -40
+  z_bias: -10     
 
 # 左臂从开咖啡机 转移 到关咖啡机(相对开咖啡机偏移)
 LeftArmGripTranMachineSwitch:
   x_bias: -30
   y_bias: -20
-  z_bias: 160          
+  z_bias: 150          
 
 # 左臂准备 关 咖啡开关(相对开咖啡机偏移)
 LeftArmGripTurnOFFMachineSwitch:
-  x_bias: 3
+  x_bias: 10
   y_bias: -20
-  z_bias: 160 
+  z_bias: 150 
+
 
 # 左臂识别开关换算到接水点位置
 # y轴无偏差估计
 LeftArmWaterCup:
   x_bias: -30
-  y_bias: 0
-  z_const: 240     # 有用
+  y_bias: -45
+  z_const: 120     # 有用
 
 
 # !!!!!以下为右臂
