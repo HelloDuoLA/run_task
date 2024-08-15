@@ -121,43 +121,40 @@ if __name__ == "__main__":
     
     xyz_list = STag_rec(args.tag_size,camera_matrix,dist_coeffs,image,11)
 
-    base_coords        = [220.0, 200.0, 450.0, -90, 0.0, -90]
+    base_coords        = [160, 100, 330, -90, 0, -90]
     
     for i in range(len(xyz_list)):
         id  = xyz_list[i][0]
         xyz = xyz_list[i][1]
         if id == 7:
-            print(f"no add anything x:{base_coords[0] + xyz[2]},y:{base_coords[1] - xyz[1]},z:{base_coords[2] + xyz[0]}" )
             print(f"id {id} machie switch on")
             print(f"base_coord {base_coords [:3]}")
-            turn_on_position = [base_coords[0] + xyz[2] - 90 - 50 -24, base_coords[1] - xyz[1] - 30, base_coords[2] + xyz[0] -40]
+            turn_on_position = [base_coords[0] + xyz[2] - 90 - 50 -24, base_coords[1] - xyz[1] - 30 - 10, base_coords[2] + xyz[0] -10]
             print(f"shousuan  xyz:{turn_on_position[0] }  {turn_on_position[1]} {turn_on_position[2]}\r\n\r\n")
             
             print(f"id {id} machie switch off")
             print(f"base_coord {base_coords [:3]}")
-            print(f"shousuan  xyz:{turn_on_position[0] + 10}  {turn_on_position[1] - 20} {turn_on_position[2]+160}\r\n\r\n")
+            print(f"shousuan  xyz:{turn_on_position[0] + 10}  {turn_on_position[1] - 20} {turn_on_position[2]+150}\r\n\r\n")
+            
+            print(f"id {id} water point")
+            print(f"shousuan  xyz:{turn_on_position[0] - 30}  {turn_on_position[1] - 45} {120}\r\n\r\n")
 
-# 计算 354.3806982086797  92.67845168662515 439.0931363313384
-# 实际 330.0, 140.0, 420.0,
+
+# 咖啡机开机
+# 计算 274.3488323327195  79.06564892242136 310.4930269315745
+# 实际 [275, 70, 340, -90, 0, -90]
 
 
-# 计算 330.0, 140.0, 420.0
-# 实际 340.0, 120.0, 580.0
+# 咖啡机关机
+# 计算 284.3488323327195  49.06564892242136 500.4930269315745
+# 实际 [284, 50, 490, -90, 0, -90]
 
 # 中间位点退3cm
 
 
-# 无增添, 机器头顶原点xy为
-# 由左臂计算得
-# 423.07130007121157,y:144.94315965144358,z:457.7357283405782
-
-# 左臂有添加
-# 259.07130007121157  114.94315965144358 417.7357283405782
-
-# 由右臂计算接水点得
-# 添加偏差后的数值为
-# 220.12015503201485  18.081667692421348 240
-# 
+# 接水点
+# 计算值 244.3488323327195  14.06564892242136 120
+# 实际值 245, 25, 120, 90, 0, 90
     
     
 
