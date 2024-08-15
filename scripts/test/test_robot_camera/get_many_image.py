@@ -21,11 +21,17 @@ cap1.set(cv2.CAP_PROP_FRAME_HEIGHT, 960)
 cap2.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap2.set(cv2.CAP_PROP_FRAME_HEIGHT, 960)
 
+# 640 * 480
+# cap1.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+# cap1.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+# cap2.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+# cap2.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
 
 
 # 创建保存图像的文件夹
-folder1 = "/home/elephant/xzc_code/ros_ws/run_task/data"
-folder2 = "/home/elephant/xzc_code/ros_ws/run_task/data"
+folder1 = "/home/elephant/dev/team1/ros/src/run_task/data"
+folder2 = "/home/elephant/dev/team1/ros/src/run_task/data"
 os.makedirs(folder1, exist_ok=True)
 os.makedirs(folder2, exist_ok=True)
 
@@ -33,7 +39,7 @@ try:
     while True:
         # 获取当前时间戳
         timestamp = int(time.time() * 1000)
-        
+        userInput = input("输入'save'保存图像，其他任意键继续: ")
         # 从第一个摄像头读取图像
         ret1, frame1 = cap1.read()
         # 从第二个摄像头读取图像
@@ -43,7 +49,7 @@ try:
         if ret1 and ret2:
             # 等待按键事件，参数是等待时间（毫秒）
             # 如果设置为0，则无限等待直到按键
-            userInput = input("输入'save'保存图像，其他任意键继续: ")
+            
             # 获取当前时间戳
             timestamp = int(time.time() * 1000)
             # 构建文件名
