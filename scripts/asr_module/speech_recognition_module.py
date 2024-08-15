@@ -96,6 +96,8 @@ class SpeechRecognizer:
                     # print(f"sid:{sid} call success!, data is: {json.dumps(data, ensure_ascii=False)}")
                     print(f"sid:{sid} call success!")
                     self.recognized_text += result
+                else:
+                    print("recognize result is empty")
         except Exception as e:
             logging.error(f"receive msg, but parse exception: {e}")
 
@@ -110,7 +112,8 @@ class SpeechRecognizer:
         def run(*args):
             p = pyaudio.PyAudio()
             stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True,
-                            input_device_index=self.mic_index, frames_per_buffer=16000)
+                            # input_device_index=self.mic_index, frames_per_buffer=16000)
+                            input_device_index=self.mic_index, frames_per_buffer=8000)
             status = STATUS_FIRST_FRAME
 
             frames = []
@@ -118,7 +121,8 @@ class SpeechRecognizer:
             self.last_audio_time = 9999999999999999 # 初始化最后音频时间
 
             while self.is_recognizing:
-                buf = stream.read(16000)
+                # buf = stream.read(16000)
+                buf = stream.read(8000)
                 frames.append(buf)
                 audio_data = np.frombuffer(buf, dtype=np.int16)
 
@@ -130,7 +134,7 @@ class SpeechRecognizer:
                     self.last_audio_time = time.time()
                     print("Detected speech, resetting last_audio_time")  # 检测到讲话，重置时间
                     
-                print(f"Global count: {self.global_count}") 
+                # print(f"Global count: {self.global_count}") 
                 # if self.global_count == 1:
                 if (self.last_audio_time == 9999999999999999 and time.time() - initial_wait_start > self.max_initial_wait) \
                     or (self.last_audio_time != 9999999999999999 and time.time() - self.last_audio_time > self.silence_duration):
