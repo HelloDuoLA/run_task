@@ -125,7 +125,7 @@ class STag_result_list():
                     stag_result.base_coords[2] = arm_poses[2]  +  stag_result.image_coords[0] + LeftArmGripSnack.z    # z = z + x + bias
                     
                     # 上层零食
-                    if stag_result.base_coords[2] > 500 :
+                    if stag_result.base_coords[2] > 350 :
                         stag_result.base_coords[2] = LeftArmTopSnackGrip
                     # 下层零食
                     else:
@@ -142,7 +142,7 @@ class STag_result_list():
                     stag_result.base_coords[2] = arm_poses[2]  -  stag_result.image_coords[0] + RightArmGripSnack.z   # z = z - x + bias
                     
                     # 上层零食
-                    if stag_result.base_coords[2] > 500 :
+                    if stag_result.base_coords[2] > 350 :
                         stag_result.base_coords[2] = RightArmTopSnackGrip
                     # 下层零食
                     else:
@@ -539,7 +539,7 @@ class  YOLO_result_list():
                     stag_result.base_coords[2] = arm_poses[2]  +  stag_result.image_coords[0] + LeftArmGripSnackDNN.z    # z = z + x + bias
                     
                     # 上层零食
-                    if stag_result.base_coords[2] > 500 :
+                    if stag_result.base_coords[2] > 350 :
                         stag_result.base_coords[2] = LeftArmTopSnackGrip
                     # 下层零食
                     else:
@@ -556,7 +556,7 @@ class  YOLO_result_list():
                     stag_result.base_coords[2] = arm_poses[2]  -  stag_result.image_coords[0] + RightArmGripSnackDNN.z   # z = z - x + bias
                     
                     # 上层零食
-                    if stag_result.base_coords[2] > 500 :
+                    if stag_result.base_coords[2] > 350 :
                         stag_result.base_coords[2] = RightArmTopSnackGrip
                     # 下层零食
                     else:
@@ -847,7 +847,7 @@ def STag_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LE
     # 对于每个id都要进行位置检测
     for i, id in enumerate(ids):
         rospy.loginfo(f"Index: {i}, ID: {id[0]}")
-        # log.log_stag_result(f'{image_name}_STag.txt',f"Index: {i}, ID: {id[0]}\n")
+        log.log_stag_result(f'{image_name}_STag.txt',f"Index: {i}, ID: {id[0]}\n")
         imagePoints  = corners_list[i]
         # flags=cv2.SOLVEPNP_IPPE_SQUARE # 参数有毒
         # success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs,flags=cv2.SOLVEPNP_IPPE_SQUARE)
@@ -855,7 +855,7 @@ def STag_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LE
         if success:
             stag_result = STag_result(device_id, id[0], (imagePoints[0][0] + imagePoints[0][2])/2, [translationVector[0][0],translationVector[1][0],translationVector[2][0]])
             stag_result_list.add(stag_result)
-            # log.log_stag_result(f'{image_name}_STag.txt',f"平移向量 x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}\n\n\n")
+            log.log_stag_result(f'{image_name}_STag.txt',f"平移向量 x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}\n\n\n")
         else:
             print(f"{i} {id} Failed to solve PnP")
     

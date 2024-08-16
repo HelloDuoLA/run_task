@@ -2,8 +2,8 @@
 build/
 devel/
 .catkin_tools/
-# log/images
-# log/STag_result
+log/images
+log/STag_result
 log/recordings/
 scripts/__pycache__
 

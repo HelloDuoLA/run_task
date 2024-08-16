@@ -113,7 +113,7 @@ RightArmGripSnack:
 
 # 右臂零食放置位点 准备点
 RightArmSnackPlacementPre:
-  coords:  [230, -180, 330, 90, 0, 90]
+  coords:  [230, -200, 330, 90, 0, 90]
 
 # 右臂零食放置位点
 RightArmSnackPlacement:

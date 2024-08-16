@@ -621,13 +621,13 @@ class Image_rec_actuator():
                 if arm_id == utilis.Device_id.LEFT:
                     # 左臂松零食准备动作使用 Z_X_Y
                     # 左臂夹下层零食用 XY_Z
-                    if snack_xyz_0[2] < 500:
+                    if snack_xyz_0[2] < 350:
                         task_lossen_snack_pre_0.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y)
                         task_grasp_snack_0.arm_move_method = arm.ArmMoveMethod.XY_Z
                     else:
                         task_lossen_snack_pre_0.select_arm(arm_id)
                         
-                    if snack_xyz_1[2] < 500:
+                    if snack_xyz_1[2] < 350:
                         task_lossen_snack_pre_1.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y)
                         task_grasp_snack_1.arm_move_method = arm.ArmMoveMethod.XY_Z
                     else:
@@ -694,7 +694,7 @@ class Image_rec_actuator():
                         if arm_id == utilis.Device_id.LEFT:
                             # 左臂松零食准备动作使用 Z_X_Y
                             # 左臂夹下层零食用 XY_Z
-                            if snack_xyz[2] < 500:
+                            if snack_xyz[2] < 350:
                                 task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y)
                                 task_grasp_snack.arm_move_method = arm.ArmMoveMethod.XY_Z
                             else:
