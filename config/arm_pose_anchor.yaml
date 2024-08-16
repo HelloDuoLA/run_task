@@ -154,7 +154,7 @@ RightArmCupRecPre:
 
 # 右臂杯子识别位点
 RightArmCupRec:
-  angles: [-145.1, 18.55, -139.3, 46.52, 43.04, 18.39]
+  angles: [-147.43, 15.12, -137.21, 48.36, 38.58, 23.61]
 
 # 右臂杯子抓取位点 准备
 RightArmCupGrabPre:
