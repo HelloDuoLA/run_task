@@ -1548,7 +1548,8 @@ class Order_driven_task_schedul():
         
         #  右臂将杯子挪到咖啡机
         task_right_arm_water_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Water_cup,None,utilis.Device_id.RIGHT,\
-            copy.deepcopy(system.anchor_point.right_arm_cup_water), arm_move_method = arm.ArmMoveMethod.X_Z_Y,\
+            # copy.deepcopy(system.anchor_point.right_arm_cup_water), arm_move_method = arm.ArmMoveMethod.X_Z_Y,\
+            copy.deepcopy(system.anchor_point.right_arm_cup_water), arm_move_method = arm.ArmMoveMethod.Z_XY,\
                 name="right arm water cup")
         task_right_arm_water_cup.parallel = task.Task.Task_parallel.ALL                  # 可并行
         task_right_arm_water_cup.status   = task.Task.Task_status.NOTREADY
