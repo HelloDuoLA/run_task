@@ -43,7 +43,7 @@ LeftArmGripContainerDodge:
 LeftArmGripTurnOnMachineSwitch:
   x_bias: -170
   y_bias: -40
-  z_bias: -30     
+  z_bias: -20     
 
 # 左臂从开咖啡机 转移 到关咖啡机(相对开咖啡机偏移)
 LeftArmGripTranMachineSwitch:
