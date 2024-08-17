@@ -62,10 +62,11 @@ def voice_to_json(APPID, APIKey, APISecret, messages, mic_index):
         response_files, response_dict, response = get_ai_response_as_dict(messages,
                                                 count=global_count, start_timestamp=start_timestamp)
         messages.append({"role": "assistant", "content": response})
-        if response_dict:
+        print(f"response_files : {response_files}")
+        if response_files:
             print("AI处理完成并生成了文件。")
         else:
-            print("AI处理完成，但未生成文件。")
+            print("AI处理完成, 但未生成文件。")
             # 调用语音合成函数
             tts(APPID, APIKey, APISecret, response)
         return True, response_files, response_dict, messages
@@ -95,7 +96,7 @@ def main():
                 return False, None, None, messages
             continue_recognition, response_files, response_dict, messages = voice_to_json(APPID, APIKey, APISecret,
                                                         messages, mic_index)
-            if response_files != None:
+            if response_files:
                 print("识别到物品")
             else:
                 print("未识别到物品")
