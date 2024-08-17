@@ -83,7 +83,7 @@ class Asr_node():
                     order_info.snacks = snack_list
                     order_info.drinks = drink_list
                     if drink_count == 0 and snack_all_count == 0:
-                        rospy.loginfo("没有识别到任何物品")
+                        rospy.loginfo("asr node 没有识别到任何物品")
                         self.say_again()
                         time.sleep(1)
                         continue
@@ -93,8 +93,9 @@ class Asr_node():
                     self.say_do_service()
                     rospy.loginfo(f"{order_info}")
                     break
+                
                 elif continue_recognition == False:  # 没有识别到文字
-                    rospy.loginfo("语音识别失败")
+                    rospy.loginfo("asr node 语音识别失败")
                     self.say_again()
                     time.sleep(1)
         except KeyboardInterrupt:
