@@ -62,7 +62,7 @@ def voice_to_json(APPID, APIKey, APISecret, messages, mic_index):
         response_files, response_dict, response = get_ai_response_as_dict(messages,
                                                 count=global_count, start_timestamp=start_timestamp)
         messages.append({"role": "assistant", "content": response})
-        if response_files:
+        if response_dict:
             print("AI处理完成并生成了文件。")
         else:
             print("AI处理完成，但未生成文件。")
