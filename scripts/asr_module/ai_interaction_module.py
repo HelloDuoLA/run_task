@@ -6,6 +6,8 @@ from http import HTTPStatus
 from dashscope import Application
 from config_loader import app_id, api_key
 
+LOGDIR = "/home/elephant/xzc_code/ros_ws/src/run_task/log/"
+
 def chat_with_ai(messages):
     response = Application.call(app_id=app_id,
                                 prompt=messages,
@@ -62,18 +64,19 @@ def replace_empty_json(json_object):
     :param json_object: JSON对象（字典形式）
     :return: 替换后的JSON对象
     """
-    if not json_object:  # 检查JSON对象是否为空
+    # if not json_object:  # 检查JSON对象是否为空
+    if json_object == {}:  # 检查JSON对象是否为空
         return {
             "order_operation": 0,
             "table_id": 0,
             "snacks": {
-                1: 0,
-                2: 0,
-                3: 0,
-                4: 0
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0
             },
             "drinks": {
-                1: 0
+                "1": 0
             }
         }
     return json_object
@@ -156,10 +159,12 @@ def get_ai_response_as_dict(messages, count, start_timestamp):
     print(f"AI处理时间: {processing_time:.2f} 秒")
 
     # 保存结果到TXT文件
-    save_result_to_file(result, os.path.join("ai_responses", start_timestamp), count)
-
+    # save_result_to_file(result, os.path.join("ai_responses", start_timestamp), count)
+    save_result_to_file(result, os.path.join(LOGDIR + "/ai_responses", start_timestamp), count)
+    
     # 保存JSON并返回文件路径列表和JSON对象
-    files, json_objects = save_json_to_file(result, os.path.join("json_files", start_timestamp), count)
+    # files, json_objects = save_json_to_file(result, os.path.join("json_files", start_timestamp), count)
+    files, json_objects = save_json_to_file(result, os.path.join(LOGDIR + "/json_files", start_timestamp), count)
     if json_objects:
         try:
             first_json_object = json.loads(json_objects[0])
