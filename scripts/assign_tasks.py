@@ -621,13 +621,13 @@ class Image_rec_actuator():
                 if arm_id == utilis.Device_id.LEFT:
                     # 左臂松零食准备动作使用 Z_X_Y
                     # 左臂夹下层零食用 XY_Z
-                    if snack_xyz_0[2] < 500:
+                    if snack_xyz_0[2] < 350:
                         task_lossen_snack_pre_0.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y)
                         task_grasp_snack_0.arm_move_method = arm.ArmMoveMethod.XY_Z
                     else:
                         task_lossen_snack_pre_0.select_arm(arm_id)
                         
-                    if snack_xyz_1[2] < 500:
+                    if snack_xyz_1[2] < 350:
                         task_lossen_snack_pre_1.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y)
                         task_grasp_snack_1.arm_move_method = arm.ArmMoveMethod.XY_Z
                     else:
@@ -694,7 +694,7 @@ class Image_rec_actuator():
                         if arm_id == utilis.Device_id.LEFT:
                             # 左臂松零食准备动作使用 Z_X_Y
                             # 左臂夹下层零食用 XY_Z
-                            if snack_xyz[2] < 500:
+                            if snack_xyz[2] < 350:
                                 task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y)
                                 task_grasp_snack.arm_move_method = arm.ArmMoveMethod.XY_Z
                             else:
@@ -1548,7 +1548,8 @@ class Order_driven_task_schedul():
         
         #  右臂将杯子挪到咖啡机
         task_right_arm_water_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Water_cup,None,utilis.Device_id.RIGHT,\
-            copy.deepcopy(system.anchor_point.right_arm_cup_water), arm_move_method = arm.ArmMoveMethod.X_Z_Y,\
+            # copy.deepcopy(system.anchor_point.right_arm_cup_water), arm_move_method = arm.ArmMoveMethod.X_Z_Y,\
+            copy.deepcopy(system.anchor_point.right_arm_cup_water), arm_move_method = arm.ArmMoveMethod.Z_XY,\
                 name="right arm water cup")
         task_right_arm_water_cup.parallel = task.Task.Task_parallel.ALL                  # 可并行
         task_right_arm_water_cup.status   = task.Task.Task_status.NOTREADY
@@ -2120,16 +2121,16 @@ def test_order_snack():
     order_info2 = order.Order()
 
     snack  = order.Snack(order.Snack.Snack_id.YIDA,1)
-    # order_info.add_snack(snack)
+    order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.CHENPIDAN,1)
-    order_info.add_snack(snack)
+    # order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.GUODONG ,1)
-    order_info.add_snack(snack)
+    # order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.RUSUANJUN ,1)
-    # order_info.add_snack(snack)
+    order_info.add_snack(snack)
     
     drink  = order.Drink(order.Drink.Drink_id.COFFEE,1)
 
@@ -2140,8 +2141,8 @@ def test_order_snack():
     
     order_info2.add_drink(drink)
     order_info2.order_id = 3
-    # order_info2.table_id = utilis.Device_id.RIGHT
-    order_info2.table_id = utilis.Device_id.LEFT
+    order_info2.table_id = utilis.Device_id.RIGHT
+    # order_info2.table_id = utilis.Device_id.LEFT
 
     tasks = system.order_driven_task_schedul.add_task(order_info)
     # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
