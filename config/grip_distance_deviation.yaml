@@ -19,7 +19,7 @@ LeftArmTopSnackGrip:
 
 # 左臂下层零食放置高度
 LeftArmBottomSnackGrip:
-  z_const: 270
+  z_const: 280
 
 # 左臂抓容器
 LeftArmGripContainer:
@@ -41,9 +41,9 @@ LeftArmGripContainerDodge:
 
 # 左臂准备 开 咖啡开关
 LeftArmGripTurnOnMachineSwitch:
-  x_bias: -170
+  x_bias: -165
   y_bias: -40
-  z_bias: -20     
+  z_bias: -30     
 
 # 左臂从开咖啡机 转移 到关咖啡机(相对开咖啡机偏移)
 LeftArmGripTranMachineSwitch:

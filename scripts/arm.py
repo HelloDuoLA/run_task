@@ -191,12 +191,15 @@ class Arm_controller():
         # 关闭抓爪 
         def close_grasp(self):
             result = self.control_instance.set_gripper_state(1,50)
+            # result = self.control_instance.set_gripper_value(100,50)
+            
             time.sleep(1.5)
             return result
         
         # 打开抓爪 
         def open_grasp(self):
             result = self.control_instance.set_gripper_state(0,50)
+            # result = self.control_instance.set_gripper_value(0,50)
             time.sleep(1.5)
             return result
             
