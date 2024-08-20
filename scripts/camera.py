@@ -493,8 +493,24 @@ class YOLO_result_list():
         self.yolo_result_list.append(yolo_result)
     
     # TODO:在图像上画结果
-    def draw_result(image,image_name=""):
-        pass
+    def draw_result(self,image,image_name=""):
+        for yolo_result in self.yolo_result_list:
+            label = yolo_result.snack_tag
+            confidence = yolo_result.confidence
+
+            # 绘制边界框
+            cv2.rectangle(image, yolo_result.bonding_box[0], yolo_result.bonding_box[2], (0, 255, 0), 2)
+
+            # 绘制标签和置信度
+            text = f"{label}: {confidence:.2f}"
+            x = yolo_result.bonding_box[0][0]
+            y = yolo_result.bonding_box[0][1]
+            cv2.putText(image, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        
+        if image_name == "":
+            image_name = int(time.time())
+        
+        log.log_write_image(f'Yolo_{image_name}.jpg', image)
     
     # 转为目标识别结果
     def to_obj_result(self, camera_id:utilis.Device_id)->Obj_result_list:
@@ -502,6 +518,7 @@ class YOLO_result_list():
         for yolo_result in self.yolo_result_list:
             obj_result = Obj_result(camera_id,yolo_result.snack_tag, yolo_result.bonding_box)
             obj_result_list.add(obj_result)
+        return obj_result_list
 
 # OBJ 识别结果
 class Obj_result():
@@ -685,9 +702,38 @@ class Recognition_node():
 
                     # 转为消息
                     obj_positions = final_rec_result.to_msg()
-                    rospy.loginfo(f"snack rec finish")
+                    rospy.loginfo(f"snack stag rec finish")
                 elif request.rec_method == utilis.Rec_method.YOLO:
-                    pass
+                    # YOLO 识别零食
+                    right_result = Obj_rec(right_img, mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
+                    left_result  = Obj_rec(left_img,  mtx, distCoeffs, utilis.Device_id.LEFT,  image_name=f"{timestamp}_snack_left")
+                    
+                    # 请求机械臂位置
+                    arm_req = srv.CheckArmPoseRequest()
+                    arm_req.type_id = arm.PoseType.BASE_COORDS.value
+                    
+                    left_resp  = self.left_arm_client.call(arm_req)
+                    right_resp = self.right_arm_client.call(arm_req)
+                    
+                    # 修正角度
+                    right_arm_poses = right_resp.arm_pose
+                    right_stag_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
+                    left_arm_poses  = left_resp.arm_pose
+                    left_stag_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
+                    
+                    # STag 使用已知信息转为rec_result
+                    right_rec_result = right_stag_result.to_rec_result()
+                    left_rec_result  = left_stag_result.to_rec_result()
+                    
+                    # 两个结果融合
+                    fuse_rec_result = right_rec_result.fuse(left_rec_result)
+                    
+                    # 结果过滤
+                    final_rec_result = fuse_rec_result.filter(request.snacks)
+
+                    # 转为消息
+                    obj_positions = final_rec_result.to_msg()
+                    rospy.loginfo(f"snack stag rec finish")
             else:
                 raise ValueError(f"get image False. Right Image: {right_grabbed}, Left Image: {left_grabbed} !!!!")
 
@@ -834,7 +880,7 @@ class Recognition_node():
         # rospy.loginfo(f"rec send result :\n")
 
 # YOLO检测函数
-def YOLO_detect():
+def YOLO_detect() -> YOLO_result_list:
     # 顺时针4个点，左上角为起点
     obj1 = ["yiliduo",[[1,2],[3,4],[5,6],[7,8]],"填入置信度的值"]
     obj2 = ["guodong",[[1,2],[3,4],[5,6],[7,8]],"填入置信度的值"]
@@ -854,11 +900,18 @@ def Obj_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LEF
     color = (0, 255, 0)  # BGR颜色，这里为绿色
     thickness = -1  # 设置为-1表示填充整个圆
     
-    # 检测结果列表
-    detect_result_list = YOLO_detect()
+    # 画圆
+    cv2.circle(image, center_coordinates, radius, color, thickness)
     
-    a = Obj_result_list()
-    return a
+    # 检测结果列表
+    yolo_detect_result_list = YOLO_detect()
+    
+    # 画图
+    yolo_detect_result_list.draw_result(image_name)
+    
+    # 转为obj_result
+    obj_result_list = yolo_detect_result_list.to_obj_result(device_id)
+    return obj_result_list
 
 
 # STag_rec识别
