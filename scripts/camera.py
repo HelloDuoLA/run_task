@@ -25,6 +25,7 @@ import task
 import order
 import arm
 import log 
+import engine
 
 
 
@@ -588,6 +589,10 @@ class Recognition_node():
         # 请求手臂位置服务
         self.left_arm_client  = rospy.ServiceProxy(utilis.Topic_name.CheckLeftArmPose  ,srv.CheckArmPose)
         self.right_arm_client = rospy.ServiceProxy(utilis.Topic_name.CheckRightArmPose ,srv.CheckArmPose)
+        
+        model_name ="/home/elephant/xzc_code/tensorrt_demos/engine/ssd_resnet18_epoch_070.engine"
+        INPUT_HW = (1280, 960)
+        self.model = engine.TrtSSD(model_name, INPUT_HW)
     
     @staticmethod
     # 图像识别请求回调
@@ -1030,6 +1035,7 @@ def talker():
     init_const()
     init_camera_calibration()
     init_empirical_value()
+    
 
     recognition_node = Recognition_node()
     
