@@ -62,8 +62,10 @@ class System():
         # 订单驱动任务增加器
         self.order_driven_task_schedul     = Order_driven_task_schedul(self.task_manager)
         
+        # 零食识别方法
+        self.snack_rec_method = utilis.Rec_method.YOLO
+        
         # 设置初始位姿
-        # TODO:调试需要,暂时注释
         # self.set_initial_pose()
         
     
@@ -572,6 +574,7 @@ class Image_rec_actuator():
         task_info.task_index = task_index                                    # 任务索引
         task_info.task_type  = task_image_rec_task.task_type.task_type.value # 任务类型
         task_info.camera_id  = task_image_rec_task.camera_id.value           # 相机ID
+        task_info.rec_method = task_image_rec_task.rec_method.value          # 识别方法
         # 如果是识别零食, 则需要给出零食列表
         if task_info.task_type == task.Task_type.Task_image_rec.SNACK:
             task_info.snacks = task_image_rec_task.snack_list.to_list()      # 零食列表
@@ -617,17 +620,17 @@ class Image_rec_actuator():
             
                 task_lossen_snack_pre_0:task.Task_manipulation    = current_task.need_modify_tasks.task_list[2] # 松零食准备任务
                 task_lossen_snack_pre_1:task.Task_manipulation    = current_task.need_modify_tasks.task_list[8] # 松零食准备任务
-                      
+                
                 if arm_id == utilis.Device_id.LEFT:
                     # 左臂松零食准备动作使用 Z_X_Y
                     # 左臂夹下层零食用 XY_Z
-                    if snack_xyz_0[2] < 500:
+                    if snack_xyz_0[2] < 350:
                         task_lossen_snack_pre_0.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y)
                         task_grasp_snack_0.arm_move_method = arm.ArmMoveMethod.XY_Z
                     else:
                         task_lossen_snack_pre_0.select_arm(arm_id)
                         
-                    if snack_xyz_1[2] < 500:
+                    if snack_xyz_1[2] < 350:
                         task_lossen_snack_pre_1.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y)
                         task_grasp_snack_1.arm_move_method = arm.ArmMoveMethod.XY_Z
                     else:
@@ -694,7 +697,7 @@ class Image_rec_actuator():
                         if arm_id == utilis.Device_id.LEFT:
                             # 左臂松零食准备动作使用 Z_X_Y
                             # 左臂夹下层零食用 XY_Z
-                            if snack_xyz[2] < 500:
+                            if snack_xyz[2] < 350:
                                 task_lossen_snack_pre.select_arm(arm_id,arm.ArmMoveMethod.Z_X_Y)
                                 task_grasp_snack.arm_move_method = arm.ArmMoveMethod.XY_Z
                             else:
@@ -1238,7 +1241,8 @@ class Order_driven_task_schedul():
         #  左、右摄像头零食识别(不可并行，动态)
         task_rec_snack = task.Task_image_rec(task.Task_type.Task_image_rec.SNACK, None, utilis.Device_id.LEFT_RIGHT,\
             name="two arms rec snack")
-        task_rec_snack.set_snack_list(snack_list)
+        task_rec_snack.set_snack_list(snack_list)                                              # 添加零食列表
+        task_rec_snack.rec_method = system.snack_rec_method                                    # !根据参数修改识别方法
         task_rec_snack.set_sleep_time_before_task(system.anchor_point.time_before_get_image)   # 获取照片前暂停一下，以免图片模糊
         task_rec_snack.add_predecessor_task(task_left_arm_to_rec_snack)                        # 前置任务, 左臂移动到零食识别位置
         task_rec_snack.add_predecessor_task(task_right_arm_to_rec_snack)                       # 前置任务, 右臂移动到零食识别位置
@@ -1548,7 +1552,8 @@ class Order_driven_task_schedul():
         
         #  右臂将杯子挪到咖啡机
         task_right_arm_water_cup = task.Task_manipulation(task.Task_type.Task_manipulation.Water_cup,None,utilis.Device_id.RIGHT,\
-            copy.deepcopy(system.anchor_point.right_arm_cup_water), arm_move_method = arm.ArmMoveMethod.X_Z_Y,\
+            # copy.deepcopy(system.anchor_point.right_arm_cup_water), arm_move_method = arm.ArmMoveMethod.X_Z_Y,\
+            copy.deepcopy(system.anchor_point.right_arm_cup_water), arm_move_method = arm.ArmMoveMethod.Z_XY,\
                 name="right arm water cup")
         task_right_arm_water_cup.parallel = task.Task.Task_parallel.ALL                  # 可并行
         task_right_arm_water_cup.status   = task.Task.Task_status.NOTREADY
@@ -2120,16 +2125,16 @@ def test_order_snack():
     order_info2 = order.Order()
 
     snack  = order.Snack(order.Snack.Snack_id.YIDA,1)
-    # order_info.add_snack(snack)
+    order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.CHENPIDAN,1)
-    order_info.add_snack(snack)
+    # order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.GUODONG ,1)
-    order_info.add_snack(snack)
+    # order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.RUSUANJUN ,1)
-    # order_info.add_snack(snack)
+    order_info.add_snack(snack)
     
     drink  = order.Drink(order.Drink.Drink_id.COFFEE,1)
 
@@ -2140,11 +2145,11 @@ def test_order_snack():
     
     order_info2.add_drink(drink)
     order_info2.order_id = 3
-    # order_info2.table_id = utilis.Device_id.RIGHT
-    order_info2.table_id = utilis.Device_id.LEFT
+    order_info2.table_id = utilis.Device_id.RIGHT
+    # order_info2.table_id = utilis.Device_id.LEFT
 
-    tasks = system.order_driven_task_schedul.add_task(order_info)
-    # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
+    # tasks = system.order_driven_task_schedul.add_task(order_info)
+    tasks2 = system.order_driven_task_schedul.add_task(order_info2)
     # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
 
     # tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)

@@ -47,11 +47,39 @@ def extract_json_objects(text):
                 if brace_count == 0:
                     json_obj_str = text[start:end + 1]
                     json_obj_str = remove_comments(json_obj_str)
+
+                    # 去除前后的双引号
+                    if json_obj_str.startswith('"') and json_obj_str.endswith('"'):
+                        json_obj_str = json_obj_str[1:-1]
+
                     json_objects.append(json_obj_str)
                     break
             end += 1
         start = end + 1
     return json_objects
+
+def replace_empty_json(json_object):
+    """
+    如果JSON对象是空的，则替换为指定的结构
+    :param json_object: JSON对象（字典形式）
+    :return: 替换后的JSON对象
+    """
+    # if not json_object:  # 检查JSON对象是否为空
+    if json_object == {}:  # 检查JSON对象是否为空
+        return {
+            "order_operation": 0,
+            "table_id": 0,
+            "snacks": {
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0
+            },
+            "drinks": {
+                "1": 0
+            }
+        }
+    return json_object
 
 def split_orders(json_content):
     """
@@ -85,6 +113,7 @@ def save_json_to_file(json_content, base_dir, count):
             print(f"Invalid JSON: {json_obj}")
             continue
         for order in orders:
+            order = replace_empty_json(order)
             file_path = os.path.join(base_dir, f"order_{count}_{i + 1}.json")
             with open(file_path, 'w', encoding='utf-8') as json_file:
                 json.dump(order, json_file, ensure_ascii=False, indent=4)
@@ -130,9 +159,11 @@ def get_ai_response_as_dict(messages, count, start_timestamp):
     print(f"AI处理时间: {processing_time:.2f} 秒")
 
     # 保存结果到TXT文件
+    # save_result_to_file(result, os.path.join("ai_responses", start_timestamp), count)
     save_result_to_file(result, os.path.join(LOGDIR + "/ai_responses", start_timestamp), count)
-
+    
     # 保存JSON并返回文件路径列表和JSON对象
+    # files, json_objects = save_json_to_file(result, os.path.join("json_files", start_timestamp), count)
     files, json_objects = save_json_to_file(result, os.path.join(LOGDIR + "/json_files", start_timestamp), count)
     if json_objects:
         try:

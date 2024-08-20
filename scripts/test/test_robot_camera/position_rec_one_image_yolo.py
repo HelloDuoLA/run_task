@@ -7,6 +7,22 @@ import time
 import numpy as np
 from tf.transformations import euler_matrix
 
+# 物体真实宽度
+Obj_True_Width = {
+    "guodong"  : 8 ,
+    "yiliduo"  : 4.5 ,
+    "chenpidan": 4.6 ,
+    "yida"     : 5.6
+}
+
+# 物体真实高度
+Obj_True_Height = {
+    "guodong"  : 13.5 ,
+    "yiliduo"  : 8.7  ,
+    "chenpidan": 8.7  ,
+    "yida"     : 8.3 
+}
+    
 
 
 def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
@@ -18,15 +34,6 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
         [-tag_size/2, -tag_size/2 ,  0]
     ], dtype=np.float32)
     
-    print(objectPoints)
-    
-    (corners_list, ids, rejected_corners_list) = stag.detectMarkers(image, libraryHD)
-    
-    # draw detected markers with ids
-    stag.drawDetectedMarkers(image, corners_list, ids)
-
-    # draw rejected quads without ids with different color
-    stag.drawDetectedMarkers(image, rejected_corners_list, border_color=(255, 0, 0))
     
     # 获取图像的尺寸
     height, width = image.shape[:2]
@@ -46,7 +53,7 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
     
     xyz_list_with_id = []
     # 对于每个id都要进行位置检测
-    with open(f'./STag/result/{timestamp}.txt', 'a') as file:
+    with open(f'./YOLO/result/{timestamp}.txt', 'a') as file:
         for i, id in enumerate(ids):
             print(f"Index: {i}, ID: {id[0]}")
             file.write(f"Index: {i}, ID: {id[0]}\n")

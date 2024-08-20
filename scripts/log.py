@@ -74,6 +74,11 @@ def log_stag_result(filename,context):
     with open(f"{LOGDIR}/STag_result/{filename}", 'a') as file:
         file.write(context)
 
+# 保存 yolo result 结果
+def log_yolo_result(filename,context):
+    with open(f"{LOGDIR}/STag_result/{filename}", 'a') as file:
+        file.write(context)
+
 # 保存姿势经验值
 def log_pose_empirical_value(context,pose_name):
     with open(f"{LOGDIR}/empirical_value/{pose_name}.log", 'a') as file:

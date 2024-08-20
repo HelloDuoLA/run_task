@@ -1,34 +1,6 @@
-08-15 23:00:17
+08-19 19:36:32
 
 --------------------------------------------------
-
-
-Task       : Task_manipulation Deliever_container
-Name       : two arms dilivery container
-Group_id   : 2
-Index      : 26
-Create_time: 1723733955.8844345
-Start_time : -999
-End_time   : -999
-Duration   : -999
-Finsih_cb  : None
-Status     : BEREADY
-Result     : INVALID
-Return_data: None
-Parallel   : ALL
-Subtask_count: 2
-Subtask_count_finished: 0
-Predecessor_tasks: [24:Task_manipulation Grasp_container] [25:Task_manipulation Grasp_container] 
-Sleep_time_before_task : 0
-Sleep_time_after_task  : 0
-Arm_id              : LEFT_RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[0, 0, 150, 0, 0, 0] 
-                       Arm_pose_1: arm RIGHT, pose type BASE_COORDS, coords:[0, 0, 150, 0, 0, 0] } 
-Debug_position      : -999
-Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
-Clamp_speed         : 50 
-arm_move_method     : MODIFY_Z 
-click_length        : 0 
 
 --------------------------------------------------
 

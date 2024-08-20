@@ -113,7 +113,7 @@ RightArmGripSnack:
 
 # 右臂零食放置位点 准备点
 RightArmSnackPlacementPre:
-  coords:  [230, -180, 330, 90, 0, 90]
+  coords:  [230, -200, 330, 90, 0, 90]
 
 # 右臂零食放置位点
 RightArmSnackPlacement:
@@ -154,7 +154,7 @@ RightArmCupRecPre:
 
 # 右臂杯子识别位点
 RightArmCupRec:
-  angles: [-145.1, 18.55, -139.3, 46.52, 43.04, 18.39]
+  angles: [-147.43, 15.12, -137.21, 48.36, 38.58, 23.61]
 
 # 右臂杯子抓取位点 准备
 RightArmCupGrabPre:
