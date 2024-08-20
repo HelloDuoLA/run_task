@@ -26,10 +26,7 @@ import order
 import arm
 import log 
 
-
-
 # 摄像头识别节点, 完成摄像头的识别功能
-
 
 # STag 识别结果
 class STag_result():
@@ -78,29 +75,18 @@ class STag_result_list():
         self.stag_result_list.append(stag_result)   
     
     # 转为msg
-    def to_msg(self,) -> List[msg.ObjPositionWithID]:
-        return_list = []
-        for stag_result in self.stag_result_list:
-            obj_position = msg.ObjPositionWithID()
-            obj_position.arm_id        = stag_result.camera_id.value
-            obj_position.obj_id        = stag_result.obj_id
-            obj_position.position      = stag_result.base_coords
-            obj_position.position_type = arm.PoseType.BASE_COORDS.value
-            return_list.append(obj_position)
-        return return_list
+    # def to_msg(self,) -> List[msg.ObjPositionWithID]:
+    #     return_list = []
+    #     for stag_result in self.stag_result_list:
+    #         obj_position = msg.ObjPositionWithID()
+    #         obj_position.arm_id        = stag_result.camera_id.value
+    #         obj_position.obj_id        = stag_result.obj_id
+    #         obj_position.position      = stag_result.base_coords
+    #         obj_position.position_type = arm.PoseType.BASE_COORDS.value
+    #         return_list.append(obj_position)
+    #     return return_list
     
-    # 绑定yolo结果进行输出
-    def bind(self,yolo_result_list:YOLO_result_list)->Rec_result_list:
-        rec_result_list = Rec_result_list()
-        for stag_result in self.stag_result_list:
-            for yolo_result in yolo_result_list.yolo_result_list:
-                # 判断STag 中心在YOLO检测框内
-                if (stag_result.image_xy[0] > yolo_result.left_top_point_xy[0] and stag_result.image_xy[0] < yolo_result.left_top_point_xy[0] + yolo_result.rectangular_length[0]) \
-                and (stag_result.image_xy[1] > yolo_result.left_top_point_xy[1] and stag_result.image_xy[1] < yolo_result.left_top_point_xy[1] + yolo_result.rectangular_length[1]):
-                    rec_result = Rec_result(stag_result.camera_id, yolo_result.snack_id, stag_result.image_xy, stag_result.base_coords)
-                    rec_result_list.rec_result_list.append(rec_result)
-        return rec_result_list
-    
+
     # 通过已知STag id 与零食的关系进行绑定 
     def to_rec_result(self)->Rec_result_list:
         rec_result_list = Rec_result_list()
@@ -130,7 +116,6 @@ class STag_result_list():
                     # 下层零食
                     else:
                         stag_result.base_coords[2] = LeftArmBottomSnackGrip
-   
                     # 记录经验值
                     log.log_empirical_value_left_arm_grip_snack(stag_result.base_coords)
             # 右臂
@@ -415,10 +400,10 @@ class STag_result_list():
 # 识别结果
 class Rec_result():
     def __init__(self,camera_id:utilis.Device_id, obj_id:order.Snack.Snack_id, image_xy=[], base_coords=[]) -> None:
-        self.camera_id = camera_id
-        self.obj_id    = obj_id
-        self.image_xy  = image_xy
-        self.base_coords = base_coords
+        self.camera_id   = camera_id     # 摄像头ID
+        self.obj_id      = obj_id        # 物体ID
+        self.image_xy    = image_xy      # 图像坐标
+        self.base_coords = base_coords   # 机械臂基坐标系
     
     def __str__(self) -> None:
         return f"camera_id : {self.camera_id}\n obj_id : {self.obj_id } \n image_xy : {self.image_xy} \n base_coords : {self.base_coords}"
@@ -491,11 +476,14 @@ class Rec_result_list():
 
 # YOLO 识别结果
 class YOLO_result():
-    def __init__(self,camera_id:utilis.Device_id,snack_id:order.Snack.Snack_id, imag_xy = [],rectangular_length=[]) -> None:
-        self.camera_id           = camera_id
-        self.snack_id            = snack_id
-        self.left_top_point_xy   = imag_xy
-        self.rectangular_length  = rectangular_length
+    def __init__(self,camera_id:utilis.Device_id,snack_tag,obj_id:order.Snack.Snack_id=-999, bonding_box = []) -> None:
+        self.camera_id           = camera_id             # 摄像头id
+        self.obj_id              = obj_id                # 零食id
+        self.snack_tag           = snack_tag             # 零食标签 
+        self.bonding_box         = bonding_box           # 检测框
+        self.image_xy     = 0   # 检测框中心点
+        self.image_coords = []  # 图像三维坐标系
+        self.base_coords  = []  # 机械臂基坐标系
 
 # YOLO 识别结果列表
 class  YOLO_result_list():
@@ -515,6 +503,14 @@ class  YOLO_result_list():
         order.Snack.Snack_id.YIDA.value      : 8.3  ,
     }
     
+    # Tag-> ID
+    Tag_Snack_dict = {
+        "guodong"   : order.Snack.Snack_id.GUODONG.value,
+        "yiliduo"   : order.Snack.Snack_id.RUSUANJUN.value,
+        "chenpidan" : order.Snack.Snack_id.CHENPIDAN.value,
+        "yida"      : order.Snack.Snack_id.YIDA.value,
+    }
+    
         
     def __init__(self) -> None:
         self.yolo_result_list:List[YOLO_result] = []
@@ -532,8 +528,8 @@ class  YOLO_result_list():
         if rec_task_type == task.Task_type.Task_image_rec.SNACK:
             # 左臂
             if arm_id == utilis.Device_id.LEFT:
-                for i in range(len(self.stag_result_list)):
-                    stag_result = self.stag_result_list[i]
+                for i in range(len(self.yolo_result_list)):
+                    stag_result = self.yolo_result_list[i]
                     stag_result.base_coords[0] = arm_poses[0]  +  stag_result.image_coords[2] + LeftArmGripSnackDNN.x    # x = x + z + bias
                     stag_result.base_coords[1] = arm_poses[1]  -  stag_result.image_coords[1] + LeftArmGripSnackDNN.y    # y = y - y + bias
                     stag_result.base_coords[2] = arm_poses[2]  +  stag_result.image_coords[0] + LeftArmGripSnackDNN.z    # z = z + x + bias
@@ -544,13 +540,12 @@ class  YOLO_result_list():
                     # 下层零食
                     else:
                         stag_result.base_coords[2] = LeftArmBottomSnackGrip
-   
                     # 记录经验值
                     log.log_empirical_value_left_arm_grip_snack(stag_result.base_coords)
             # 右臂
             elif arm_id == utilis.Device_id.RIGHT:
-                for i in range(len(self.stag_result_list)):
-                    stag_result = self.stag_result_list[i]
+                for i in range(len(self.yolo_result_list)):
+                    stag_result = self.yolo_result_list[i]
                     stag_result.base_coords[0] = arm_poses[0]  +  stag_result.image_coords[2] + RightArmGripSnackDNN.x   # x = x + z + bias
                     stag_result.base_coords[1] = arm_poses[1]  +  stag_result.image_coords[1] + RightArmGripSnackDNN.y   # y = y + y + bias
                     stag_result.base_coords[2] = arm_poses[2]  -  stag_result.image_coords[0] + RightArmGripSnackDNN.z   # z = z - x + bias
@@ -566,6 +561,14 @@ class  YOLO_result_list():
                     log.log_empirical_value_right_arm_grip_snack(stag_result.base_coords)
         else:
             raise ValueError("rec_task_type is not defined")
+
+    # 通过已知零食标签 与零食id的关系进行绑定, 转为rec_result 
+    def to_rec_result(self)->Rec_result_list:
+        rec_result_list = Rec_result_list()
+        for yolo_result in self.yolo_result_list:
+            rec_result = Rec_result(yolo_result.camera_id, self.Tag_Snack_dict[yolo_result.snack_tag], yolo_result.image_xy, yolo_result.base_coords)
+            rec_result_list.rec_result_list.append(rec_result)
+        return rec_result_list
 
 # 摄像头控制器
 class camera_controller():
@@ -632,9 +635,6 @@ class Recognition_node():
                 # right_yolo_result = YOLO_rec(snacks, right_img)
                 # left_yolo_result  = YOLO_rec(snacks, left_img)
                 
-                # # YOLO 与 STag 结果绑定
-                # right_rec_result = right_stag_result.bind(right_yolo_result)
-                # left_rec_result  = left_stag_result.bind(left_yolo_result)
                 
                 # STag 使用已知信息转为rec_result
                 right_rec_result = right_stag_result.to_rec_result()
@@ -651,7 +651,7 @@ class Recognition_node():
                 rospy.loginfo(f"snack rec finish")
             else:
                 raise ValueError(f"get image False. Right Image: {right_grabbed}, Left Image: {left_grabbed} !!!!")
-  
+
         # 识别容器
         elif request.task_type == task.Task_type.Task_image_rec.CONTAINER:
             rospy.loginfo(f"request.task_type is task.Task_type.Task_image_rec.CONTAINER ")
@@ -807,15 +807,7 @@ def STag_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LE
         [tag_size/2 , -tag_size/2,  0],
         [tag_size/2 , tag_size/2 ,  0],
         [-tag_size/2, tag_size/2 ,  0]
-    ], dtype=np.float32)
-    
-    # objectPoints = np.array([
-    #     [-tag_size/2, tag_size/2,  0],
-    #     [tag_size/2 , tag_size/2,  0],
-    #     [tag_size/2 , -tag_size/2 ,  0],
-    #     [-tag_size/2, -tag_size/2 ,  0]
-    # ], dtype=np.float32)
-    
+    ], dtype=np.float32)    
     
     (corners_list, ids, rejected_corners_list) = stag.detectMarkers(image, libraryHD)
     
