@@ -62,8 +62,10 @@ class System():
         # 订单驱动任务增加器
         self.order_driven_task_schedul     = Order_driven_task_schedul(self.task_manager)
         
+        # 零食识别方法
+        self.snack_rec_method = utilis.Rec_method.YOLO
+        
         # 设置初始位姿
-        # TODO:调试需要,暂时注释
         # self.set_initial_pose()
         
     
@@ -572,6 +574,7 @@ class Image_rec_actuator():
         task_info.task_index = task_index                                    # 任务索引
         task_info.task_type  = task_image_rec_task.task_type.task_type.value # 任务类型
         task_info.camera_id  = task_image_rec_task.camera_id.value           # 相机ID
+        task_info.rec_method = task_image_rec_task.rec_method.value          # 识别方法
         # 如果是识别零食, 则需要给出零食列表
         if task_info.task_type == task.Task_type.Task_image_rec.SNACK:
             task_info.snacks = task_image_rec_task.snack_list.to_list()      # 零食列表
@@ -617,7 +620,7 @@ class Image_rec_actuator():
             
                 task_lossen_snack_pre_0:task.Task_manipulation    = current_task.need_modify_tasks.task_list[2] # 松零食准备任务
                 task_lossen_snack_pre_1:task.Task_manipulation    = current_task.need_modify_tasks.task_list[8] # 松零食准备任务
-                      
+                
                 if arm_id == utilis.Device_id.LEFT:
                     # 左臂松零食准备动作使用 Z_X_Y
                     # 左臂夹下层零食用 XY_Z
@@ -1238,7 +1241,8 @@ class Order_driven_task_schedul():
         #  左、右摄像头零食识别(不可并行，动态)
         task_rec_snack = task.Task_image_rec(task.Task_type.Task_image_rec.SNACK, None, utilis.Device_id.LEFT_RIGHT,\
             name="two arms rec snack")
-        task_rec_snack.set_snack_list(snack_list)
+        task_rec_snack.set_snack_list(snack_list)                                              # 添加零食列表
+        task_rec_snack.rec_method = system.snack_rec_method                                    # !根据参数修改识别方法
         task_rec_snack.set_sleep_time_before_task(system.anchor_point.time_before_get_image)   # 获取照片前暂停一下，以免图片模糊
         task_rec_snack.add_predecessor_task(task_left_arm_to_rec_snack)                        # 前置任务, 左臂移动到零食识别位置
         task_rec_snack.add_predecessor_task(task_right_arm_to_rec_snack)                       # 前置任务, 右臂移动到零食识别位置

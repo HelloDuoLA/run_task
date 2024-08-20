@@ -116,6 +116,20 @@ class Device_id(Enum):
             return self.value == value.value
         elif isinstance(value, int):
             return self.value == value
+        
+# 目标识别方法
+class Rec_method(Enum):
+    STAG       = 0        # stag
+    YOLO       = auto()   # YOLO
+    
+    def __str__(self) -> str:
+        return self.name
+    
+    def __eq__(self, value: Device_id) -> bool:
+        if isinstance(value, Device_id):
+            return self.value == value.value
+        elif isinstance(value, int):
+            return self.value == value
 
 
 # 订阅的话题名称

@@ -347,7 +347,8 @@ class Task_image_rec(Task):
         super().__init__(task_name,fn_callback,name)
         self.camera_id   = camera_id     # 摄像头id
         self.snack_list  = snack_list    # 零食列表
-        self.need_modify_tasks = Task_sequence() # 需要修改的任务
+        self.need_modify_tasks = Task_sequence()  # 需要修改的任务
+        self.rec_method  = utilis.Rec_method.STAG # 识别方法
     
     def set_snack_list(self,snack_list:order.Snack_list):
         self.snack_list = snack_list

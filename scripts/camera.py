@@ -642,11 +642,6 @@ class Recognition_node():
     # 图像识别请求回调
     def do_image_rec_request(request:msg.ImageRecRequest,self:Recognition_node):
         rospy.loginfo(f"node name :{rospy.get_name()}, get request {request}")
-        # while right_camera.grab():
-        #     pass
-        # while left_camera.grab():
-        #     pass
-        
         result = msg.ImageRecResult()
         # 识别零食,左右都要用
         if  request.task_type == task.Task_type.Task_image_rec.SNACK :            
@@ -660,41 +655,39 @@ class Recognition_node():
                 timestamp = str(int(time.time()))
                 timestamp = str(int(time.time()))
                 
-                # STag 识别零食
-                right_stag_result = STag_rec(right_img,mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
-                left_stag_result  = STag_rec(left_img, mtx, distCoeffs, utilis.Device_id.LEFT, image_name=f"{timestamp}_snack_left")
-                
-                # 物体识别
-                # right_obj_result = Obj_rec(right_img)
-                # left_obj_result  = Obj_rec(left_img)
-                
-                
-                # 请求机械臂位置
-                arm_req = srv.CheckArmPoseRequest()
-                arm_req.type_id = arm.PoseType.BASE_COORDS.value
-                
-                left_resp  = self.left_arm_client.call(arm_req)
-                right_resp = self.right_arm_client.call(arm_req)
-                
-                # 修正角度
-                right_arm_poses = right_resp.arm_pose
-                right_stag_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
-                left_arm_poses  = left_resp.arm_pose
-                left_stag_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
-                
-                # STag 使用已知信息转为rec_result
-                right_rec_result = right_stag_result.to_rec_result()
-                left_rec_result  = left_stag_result.to_rec_result()
-                
-                # 两个结果融合
-                fuse_rec_result = right_rec_result.fuse(left_rec_result)
-                
-                # 结果过滤
-                final_rec_result = fuse_rec_result.filter(request.snacks)
+                if request.rec_method == utilis.Rec_method.STAG:
+                    # STag 识别零食
+                    right_stag_result = STag_rec(right_img,mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
+                    left_stag_result  = STag_rec(left_img, mtx, distCoeffs, utilis.Device_id.LEFT, image_name=f"{timestamp}_snack_left")
+                    
+                    # 请求机械臂位置
+                    arm_req = srv.CheckArmPoseRequest()
+                    arm_req.type_id = arm.PoseType.BASE_COORDS.value
+                    
+                    left_resp  = self.left_arm_client.call(arm_req)
+                    right_resp = self.right_arm_client.call(arm_req)
+                    
+                    # 修正角度
+                    right_arm_poses = right_resp.arm_pose
+                    right_stag_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
+                    left_arm_poses  = left_resp.arm_pose
+                    left_stag_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
+                    
+                    # STag 使用已知信息转为rec_result
+                    right_rec_result = right_stag_result.to_rec_result()
+                    left_rec_result  = left_stag_result.to_rec_result()
+                    
+                    # 两个结果融合
+                    fuse_rec_result = right_rec_result.fuse(left_rec_result)
+                    
+                    # 结果过滤
+                    final_rec_result = fuse_rec_result.filter(request.snacks)
 
-                # 转为消息
-                obj_positions = final_rec_result.to_msg()
-                rospy.loginfo(f"snack rec finish")
+                    # 转为消息
+                    obj_positions = final_rec_result.to_msg()
+                    rospy.loginfo(f"snack rec finish")
+                elif request.rec_method == utilis.Rec_method.YOLO:
+                    pass
             else:
                 raise ValueError(f"get image False. Right Image: {right_grabbed}, Left Image: {left_grabbed} !!!!")
 
