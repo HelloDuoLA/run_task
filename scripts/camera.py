@@ -476,17 +476,54 @@ class Rec_result_list():
 
 # YOLO 识别结果
 class YOLO_result():
-    def __init__(self,camera_id:utilis.Device_id,snack_tag,obj_id:order.Snack.Snack_id=-999, bonding_box = []) -> None:
-        self.camera_id           = camera_id             # 摄像头id
-        self.obj_id              = obj_id                # 零食id
+    def __init__(self,snack_tag, bonding_box = [], confidence = 0) -> None:
         self.snack_tag           = snack_tag             # 零食标签 
         self.bonding_box         = bonding_box           # 检测框
-        self.image_xy     = 0   # 检测框中心点
-        self.image_coords = []  # 图像三维坐标系
-        self.base_coords  = []  # 机械臂基坐标系
+        self.confidence          = confidence            # 置信度
+    
+
 
 # YOLO 识别结果列表
-class  YOLO_result_list():
+class YOLO_result_list():
+    def __init__(self) -> None:
+        self.yolo_result_list:List[YOLO_result] = []
+    
+    # 增加
+    def add(self,yolo_result:YOLO_result):
+        self.yolo_result_list.append(yolo_result)
+    
+    # TODO:在图像上画结果
+    def draw_result(image,image_name=""):
+        pass
+    
+    # 转为目标识别结果
+    def to_obj_result(self, camera_id:utilis.Device_id)->Obj_result_list:
+        obj_result_list = Obj_result_list()
+        for yolo_result in self.yolo_result_list:
+            obj_result = Obj_result(camera_id,yolo_result.snack_tag, yolo_result.bonding_box)
+            obj_result_list.add(obj_result)
+
+# OBJ 识别结果
+class Obj_result():
+    # Tag-> ID
+    Tag_Snack_dict = {
+        "guodong"   : order.Snack.Snack_id.GUODONG.value,
+        "yiliduo"   : order.Snack.Snack_id.RUSUANJUN.value,
+        "chenpidan" : order.Snack.Snack_id.CHENPIDAN.value,
+        "yida"      : order.Snack.Snack_id.YIDA.value,
+    }
+    
+    def __init__(self,camera_id:utilis.Device_id,snack_tag,bonding_box) -> None:
+        self.camera_id    = camera_id                            # 摄像头id
+        self.snack_tag    = snack_tag                            # 零食标签 
+        self.obj_id       = self.Tag_Snack_dict[snack_tag]       # 零食id
+        self.bonding_box  = bonding_box                          # bonding_box
+        self.image_xy     = (bonding_box[0] + bonding_box[2])/2  # 检测框中心点
+        self.image_coords = None                                 # 图像三维坐标系
+        self.base_coords  = None                                 # 机械臂基坐标系
+
+# OBJ 识别结果列表
+class  Obj_result_list():
     # 物体真实宽度
     Obj_True_Width = {
         order.Snack.Snack_id.GUODONG.value   : 8 ,
@@ -503,21 +540,30 @@ class  YOLO_result_list():
         order.Snack.Snack_id.YIDA.value      : 8.3  ,
     }
     
-    # Tag-> ID
-    Tag_Snack_dict = {
-        "guodong"   : order.Snack.Snack_id.GUODONG.value,
-        "yiliduo"   : order.Snack.Snack_id.RUSUANJUN.value,
-        "chenpidan" : order.Snack.Snack_id.CHENPIDAN.value,
-        "yida"      : order.Snack.Snack_id.YIDA.value,
-    }
-    
-        
+
     def __init__(self) -> None:
-        self.yolo_result_list:List[YOLO_result] = []
+        self.obj_result_list:List[Obj_result] = []
     
     # 增加
-    def add(self,yolo_result:YOLO_result):
-        self.yolo_result_list.append(yolo_result)
+    def add(self,obj_result:Obj_result):
+        self.obj_result_list.append(obj_result)
+    
+    # 识别
+    def rec(self,mtx,distCoeffs,image_name):
+        for obj_result in self.obj_result_list:
+            true_width = self.Obj_True_Width[obj_result.obj_id]
+            true_height = self.Obj_True_Height[obj_result.obj_id]
+            objectPoints = np.array([
+                [-true_height/2, -true_width/2,  0],
+                [true_width/2 , -true_width/2,  0],
+                [true_width/2 , true_width/2 ,  0],
+                [-true_width/2, true_width/2 ,  0]
+            ], dtype=np.float32)   
+            imagePoints  = obj_result.bonding_box       
+            success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
+            obj_result.image_coords = [translationVector[0][0],translationVector[1][0],translationVector[2][0]]
+            
+            log.log_stag_result(f'{image_name}_STag.txt',f"平移向量 x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}\n\n\n")
         
     # 根据任务与左右手对坐标值进行修正
     def modified_position(self,rec_task_type:task.Task_type.Task_image_rec,arm_id:utilis.Device_id,arm_poses):
@@ -528,45 +574,45 @@ class  YOLO_result_list():
         if rec_task_type == task.Task_type.Task_image_rec.SNACK:
             # 左臂
             if arm_id == utilis.Device_id.LEFT:
-                for i in range(len(self.yolo_result_list)):
-                    stag_result = self.yolo_result_list[i]
-                    stag_result.base_coords[0] = arm_poses[0]  +  stag_result.image_coords[2] + LeftArmGripSnackDNN.x    # x = x + z + bias
-                    stag_result.base_coords[1] = arm_poses[1]  -  stag_result.image_coords[1] + LeftArmGripSnackDNN.y    # y = y - y + bias
-                    stag_result.base_coords[2] = arm_poses[2]  +  stag_result.image_coords[0] + LeftArmGripSnackDNN.z    # z = z + x + bias
+                for i in range(len(self.obj_result_list)):
+                    obj_result = self.obj_result_list[i]
+                    obj_result.base_coords[0] = arm_poses[0]  +  obj_result.image_coords[2] + LeftArmGripSnackDNN.x    # x = x + z + bias
+                    obj_result.base_coords[1] = arm_poses[1]  -  obj_result.image_coords[1] + LeftArmGripSnackDNN.y    # y = y - y + bias
+                    obj_result.base_coords[2] = arm_poses[2]  +  obj_result.image_coords[0] + LeftArmGripSnackDNN.z    # z = z + x + bias
                     
                     # 上层零食
-                    if stag_result.base_coords[2] > 350 :
-                        stag_result.base_coords[2] = LeftArmTopSnackGrip
+                    if obj_result.base_coords[2] > 350 :
+                        obj_result.base_coords[2] = LeftArmTopSnackGrip
                     # 下层零食
                     else:
-                        stag_result.base_coords[2] = LeftArmBottomSnackGrip
+                        obj_result.base_coords[2] = LeftArmBottomSnackGrip
                     # 记录经验值
-                    log.log_empirical_value_left_arm_grip_snack(stag_result.base_coords)
+                    log.log_empirical_value_left_arm_grip_snack(obj_result.base_coords)
             # 右臂
             elif arm_id == utilis.Device_id.RIGHT:
-                for i in range(len(self.yolo_result_list)):
-                    stag_result = self.yolo_result_list[i]
-                    stag_result.base_coords[0] = arm_poses[0]  +  stag_result.image_coords[2] + RightArmGripSnackDNN.x   # x = x + z + bias
-                    stag_result.base_coords[1] = arm_poses[1]  +  stag_result.image_coords[1] + RightArmGripSnackDNN.y   # y = y + y + bias
-                    stag_result.base_coords[2] = arm_poses[2]  -  stag_result.image_coords[0] + RightArmGripSnackDNN.z   # z = z - x + bias
+                for i in range(len(self.obj_result_list)):
+                    obj_result = self.obj_result_list[i]
+                    obj_result.base_coords[0] = arm_poses[0]  +  obj_result.image_coords[2] + RightArmGripSnackDNN.x   # x = x + z + bias
+                    obj_result.base_coords[1] = arm_poses[1]  +  obj_result.image_coords[1] + RightArmGripSnackDNN.y   # y = y + y + bias
+                    obj_result.base_coords[2] = arm_poses[2]  -  obj_result.image_coords[0] + RightArmGripSnackDNN.z   # z = z - x + bias
                     
                     # 上层零食
-                    if stag_result.base_coords[2] > 350 :
-                        stag_result.base_coords[2] = RightArmTopSnackGrip
+                    if obj_result.base_coords[2] > 350 :
+                        obj_result.base_coords[2] = RightArmTopSnackGrip
                     # 下层零食
                     else:
-                        stag_result.base_coords[2] = RightArmBottomSnackGrip
+                        obj_result.base_coords[2] = RightArmBottomSnackGrip
                         
                     # 记录经验值
-                    log.log_empirical_value_right_arm_grip_snack(stag_result.base_coords)
+                    log.log_empirical_value_right_arm_grip_snack(obj_result.base_coords)
         else:
             raise ValueError("rec_task_type is not defined")
 
     # 通过已知零食标签 与零食id的关系进行绑定, 转为rec_result 
     def to_rec_result(self)->Rec_result_list:
         rec_result_list = Rec_result_list()
-        for yolo_result in self.yolo_result_list:
-            rec_result = Rec_result(yolo_result.camera_id, self.Tag_Snack_dict[yolo_result.snack_tag], yolo_result.image_xy, yolo_result.base_coords)
+        for obj_result in self.obj_result_list:
+            rec_result = Rec_result(obj_result.camera_id, self.Tag_Snack_dict[obj_result.snack_tag], obj_result.image_xy, obj_result.base_coords)
             rec_result_list.rec_result_list.append(rec_result)
         return rec_result_list
 
@@ -618,6 +664,11 @@ class Recognition_node():
                 right_stag_result = STag_rec(right_img,mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
                 left_stag_result  = STag_rec(left_img, mtx, distCoeffs, utilis.Device_id.LEFT, image_name=f"{timestamp}_snack_left")
                 
+                # 物体识别
+                # right_obj_result = Obj_rec(right_img)
+                # left_obj_result  = Obj_rec(left_img)
+                
+                
                 # 请求机械臂位置
                 arm_req = srv.CheckArmPoseRequest()
                 arm_req.type_id = arm.PoseType.BASE_COORDS.value
@@ -630,11 +681,6 @@ class Recognition_node():
                 right_stag_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
                 left_arm_poses  = left_resp.arm_pose
                 left_stag_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
-                
-                # # YOLO识别
-                # right_yolo_result = YOLO_rec(snacks, right_img)
-                # left_yolo_result  = YOLO_rec(snacks, left_img)
-                
                 
                 # STag 使用已知信息转为rec_result
                 right_rec_result = right_stag_result.to_rec_result()
@@ -794,9 +840,32 @@ class Recognition_node():
         self.pub_result.publish(result)
         # rospy.loginfo(f"rec send result :\n")
 
-# YOLO识别
-def YOLO_rec(snack_id_list,image) -> YOLO_result_list:
-    pass
+# YOLO检测函数
+def YOLO_detect():
+    # 顺时针4个点，左上角为起点
+    obj1 = ["yiliduo",[[1,2],[3,4],[5,6],[7,8]],"填入置信度的值"]
+    obj2 = ["guodong",[[1,2],[3,4],[5,6],[7,8]],"填入置信度的值"]
+    obj_list = []
+    obj_list.append(obj1)
+    obj_list.append(obj2)
+    return obj_list
+
+# OBJ识别
+def Obj_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LEFT, image_name="") -> Obj_result_list:
+    # 获取图像的尺寸
+    height, width = image.shape[:2]
+
+    # 计算图像中心作为圆心坐标
+    center_coordinates = (width // 2, height // 2)
+    radius = 5  # 圆的半径
+    color = (0, 255, 0)  # BGR颜色，这里为绿色
+    thickness = -1  # 设置为-1表示填充整个圆
+    
+    # 检测结果列表
+    detect_result_list = YOLO_detect()
+    
+    a = Obj_result_list()
+    return a
 
 
 # STag_rec识别
