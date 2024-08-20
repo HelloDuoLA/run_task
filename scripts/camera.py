@@ -612,7 +612,7 @@ class  Obj_result_list():
     def to_rec_result(self)->Rec_result_list:
         rec_result_list = Rec_result_list()
         for obj_result in self.obj_result_list:
-            rec_result = Rec_result(obj_result.camera_id, self.Tag_Snack_dict[obj_result.snack_tag], obj_result.image_xy, obj_result.base_coords)
+            rec_result = Rec_result(obj_result.camera_id, obj_result.obj_id, obj_result.image_xy, obj_result.base_coords)
             rec_result_list.rec_result_list.append(rec_result)
         return rec_result_list
 
