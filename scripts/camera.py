@@ -525,10 +525,10 @@ class YOLO_result_list():
 class Obj_result():
     # Tag-> ID
     Tag_Snack_dict = {
-        "guodong"   : order.Snack.Snack_id.GUODONG.value,
-        "yiliduo"   : order.Snack.Snack_id.RUSUANJUN.value,
-        "chenpidan" : order.Snack.Snack_id.CHENPIDAN.value,
-        "yida"      : order.Snack.Snack_id.YIDA.value,
+        "1"   : order.Snack.Snack_id.GUODONG.value,
+        "2"   : order.Snack.Snack_id.CHENPIDAN.value,
+        "3"   : order.Snack.Snack_id.RUSUANJUN.value,
+        "-1"  : order.Snack.Snack_id.YIDA.value,
     }
     
     def __init__(self,camera_id:utilis.Device_id,snack_tag,bonding_box) -> None:
@@ -885,17 +885,28 @@ class Recognition_node():
         # rospy.loginfo(f"rec send result :\n")
 
 # YOLO检测函数
-def YOLO_detect() -> YOLO_result_list:
-    # 顺时针4个点，左上角为起点
-    obj1 = ["yiliduo",[[1,2],[3,4],[5,6],[7,8]],"填入置信度的值"]
-    obj2 = ["guodong",[[1,2],[3,4],[5,6],[7,8]],"填入置信度的值"]
-    obj_list = []
-    obj_list.append(obj1)
-    obj_list.append(obj2)
-    return obj_list
+def YOLO_detect(img, trt_ssd, conf_th) -> YOLO_result_list:
+    boxes, confs, clss = trt_ssd.detect(img, conf_th)
+    # box 格式为 [x_min, y_min, x_max, y_max]
+    # confs 置信度
+    # clss 类别
+    # 1 guodong
+    # 2 chenpidan
+    # 3 yiliduo
+    
+    yolo_result_list = YOLO_result_list()
+    for (box, conf, cls) in zip(boxes, confs, clss):
+        # ! bonding_box 需要思考一下
+        bonding_box = [[box[0],box[1]],[box[2],box[1]],[box[2],box[3]],[box[0],box[3]]]
+        yolo_result = YOLO_result(cls, bonding_box, conf)
+        yolo_result_list.add(yolo_result)
+    return yolo_result_list
 
 # OBJ识别
-def Obj_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LEFT, image_name="") -> Obj_result_list:
+def Obj_rec(image,model,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LEFT, image_name="") -> Obj_result_list:
+    # 检测结果列表
+    yolo_detect_result_list = YOLO_detect(image,model, conf_th=0.35)
+    
     # 获取图像的尺寸
     height, width = image.shape[:2]
 
@@ -907,10 +918,7 @@ def Obj_rec(image,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LEF
     
     # 画圆
     cv2.circle(image, center_coordinates, radius, color, thickness)
-    
-    # 检测结果列表
-    yolo_detect_result_list = YOLO_detect()
-    
+
     # 画图
     yolo_detect_result_list.draw_result(image_name)
     
