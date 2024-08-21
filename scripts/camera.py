@@ -656,7 +656,7 @@ class Recognition_node():
         self.left_arm_client  = rospy.ServiceProxy(utilis.Topic_name.CheckLeftArmPose  ,srv.CheckArmPose)
         self.right_arm_client = rospy.ServiceProxy(utilis.Topic_name.CheckRightArmPose ,srv.CheckArmPose)
         
-        model_name ="/home/elephant/xzc_code/tensorrt_demos/engine/ssd_resnet18_epoch_070.engine"
+        model_name ="/home/elephant/dev/team1/model/ssd_resnet18_epoch_070.engine"
         INPUT_HW = (1280, 960)
         self.model = engine.TrtSSD(model_name, INPUT_HW)
     
