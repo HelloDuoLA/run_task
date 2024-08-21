@@ -68,6 +68,12 @@ def Yolo_rec(image, mtx, distCoeffs):
     
     xyz_list_with_id = []
     for (box, conf, cls) in zip(boxes, confs, clss):
+        print(f"conf {conf}")
+        if conf < 0.9:
+            print(f"conf < 0.9 {conf}. result discard")
+            continue
+
+            
         # 画框
         cv2.rectangle(image, (int(box[0]), int(box[1])), (int(box[2]), int(box[3])), (255, 0, 0), 2)
             # 在边界框左上角添加一个绿色小圆点
@@ -82,12 +88,22 @@ def Yolo_rec(image, mtx, distCoeffs):
         obj_id = Tag_Snack_dict[cls]
         true_width  = Obj_True_Width[obj_id]
         true_height = Obj_True_Height[obj_id]
+        
+        
+
         objectPoints = np.array([
             [-true_height/2, -true_width/2,  0],
-            [true_width/2 , -true_width/2,  0],
-            [true_width/2 , true_width/2 ,  0],
-            [-true_width/2, true_width/2 ,  0]
+            [true_height/2 , -true_width/2,  0],
+            [true_height/2 , true_width/2 ,  0],
+            [-true_height/2, true_width/2 ,  0]
         ], dtype=np.float32) 
+        
+
+        
+        print(f"true_width / true_height: {true_width / true_height}")
+        print(f"cal_width / cal_height: { (box[3] - box[1]) / (box[2] - box[0])}")
+        new_box_width = (box[2] - box[0]) * true_width / true_height
+        print(f"error: {abs(new_box_width - (box[3] - box[1]))}")
         
         imagePoints = np.array([[
             [box[0], box[1]],
@@ -95,6 +111,7 @@ def Yolo_rec(image, mtx, distCoeffs):
             [box[2], box[3]],
             [box[0], box[3]]
         ]], dtype=np.float32) 
+        
         
         success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
         if success:
@@ -119,27 +136,6 @@ if __name__ == "__main__":
     
     # 解析参数
     args = parser.parse_args()
-    
-    # 假设calibration_path是你的标定文件夹路径
-    # calibration_path = args.calibration_path  # 使用argparse解析得到的路径
-    # mtx_file_path = f"{calibration_path}/mtx.txt"
-
-    # 从文件读取数据
-    # with open(mtx_file_path, 'r') as file:
-    #     lines = file.readlines()
-    #     data = [list(map(float, line.split())) for line in lines]
-
-    # 转换为numpy矩阵
-    # camera_matrix = np.array(data)
-    # print(f"Camera Matrix: {camera_matrix}")
-    
-    # dist_file_path = f"{calibration_path}/dist.txt"
-    
-
-    # 从文件读取畸变系数
-    # with open(dist_file_path, 'r') as file:
-    #     line = file.readline()
-    #     dist_coeffs = np.array(list(map(float, line.split())), dtype=np.float32)
         
         
     camera_matrix = np.array([[532.76634274 ,  0.,         306.22017641],
@@ -162,36 +158,36 @@ if __name__ == "__main__":
     print(f"right  arm end pose {base_coords_right[:3]}")
     for i in range(len(xyz_list)):
         xyz = xyz_list[i][1]
-        if (base_coords_right[2] < 350):
-            continue
+        # if (base_coords_right[2] < 350):
+        #     continue
         print(f"\r\nid: {xyz_list[i][0]}")
         print(f"                xyz {xyz} ")
         
         print("left")
         print(f"left   arm end pose {base_coords_left[:3]}")
         # print(f"arm_base_coords {arm_base_coords_left} ")
-        print(f"shousuan  x,y,z:{base_coords_left[0] + xyz[2] - 110} ,{base_coords_left[1] - xyz[1] - 78},    {base_coords_left[2] + xyz[0] + 20}")
-        print(f"shousuan    xyz:{base_coords_left[0] + xyz[2] - 110}  {base_coords_left[1] - xyz[1] - 78}     {base_coords_left[2] + xyz[0]  + 20}")
+        print(f"shousuan  x,y,z:{base_coords_left[0] + xyz[2] - 100} ,{base_coords_left[1] - xyz[1] - 78},    {base_coords_left[2] + xyz[0] + 20}")
+        print(f"shousuan    xyz:{base_coords_left[0] + xyz[2] - 100}  {base_coords_left[1] - xyz[1] - 78}     {base_coords_left[2] + xyz[0]  + 20}")
         print("\r\nright")
         print(f"right  arm end pose {base_coords_right[:3]}")
         # print(f"arm_base_coords {arm_base_coords_right} ")
-        print(f"shousuan  x,y,z:{base_coords_right[0] + xyz[2] - 90 } , {base_coords_right[1] + xyz[1] + 58}, {base_coords_right[2] - xyz[0] + 20}\r\n\r\n")
-        print(f"shousuan    xyz:{base_coords_right[0] + xyz[2] - 90 }   {base_coords_right[1] + xyz[1] + 58}  {base_coords_right[2] - xyz[0] + 20}\r\n\r\n")
+        print(f"shousuan  x,y,z:{base_coords_right[0] + xyz[2] - 80 } , {base_coords_right[1] + xyz[1] + 68}, {base_coords_right[2] - xyz[0] + 20}\r\n\r\n")
+        print(f"shousuan    xyz:{base_coords_right[0] + xyz[2] - 80 }   {base_coords_right[1] + xyz[1] + 68}  {base_coords_right[2] - xyz[0] + 20}\r\n\r\n")
 
     
 # 左臂
 # 测量 404.9347297360397  159.7166483771058 380.6525213499157
 # 实际 394, 180, 380
 
-# 上排 465
-# 下排 260
+# 上排 430
+# 下排 280
 
 
 # 右臂
 # 测量 394, 180, 380
 # 实际 
-# 上排450
-# 下排270
+# 上排430
+# 下排280
 
 
 
