@@ -469,6 +469,14 @@ class Rec_result_list():
                 final_result.rec_result_list.append(self.rec_result_list[i])
         return final_result
     
+    # 过滤掉底层零食
+    def filter_low_floor_snack(self)->Rec_result_list:
+        final_result = Rec_result_list()
+        for i in range(len(self.rec_result_list)):
+            if self.rec_result_list[i].base_coords[2] > 350:
+                final_result.rec_result_list.append(self.rec_result_list[i])
+        return final_result
+    
     def get_snack_from_id(self,snack_id:int)->Rec_result:
         for rec_result in self.rec_result_list:
             if rec_result.obj_id == snack_id:
@@ -493,14 +501,22 @@ class YOLO_result_list():
     def add(self,yolo_result:YOLO_result):
         self.yolo_result_list.append(yolo_result)
     
-    # TODO:在图像上画结果
+    # 在图像上画结果
     def draw_result(self,image,image_name=""):
         for yolo_result in self.yolo_result_list:
             label = yolo_result.snack_tag
             confidence = yolo_result.confidence
 
             # 绘制边界框
-            cv2.rectangle(image, yolo_result.bonding_box[0], yolo_result.bonding_box[2], (0, 255, 0), 2)
+            # cv2.rectangle(image, yolo_result.bonding_box[0], yolo_result.bonding_box[2], (0, 255, 0), 2)
+            
+            # 绘制左上角和右下角
+            # 在边界框左上角添加一个绿色小圆点
+            cv2.circle(image, yolo_result.bonding_box[0], 5, (0, 255, 0), -1)
+
+            # 在边界框右下角添加一个红色小圆点
+            cv2.circle(image, yolo_result.bonding_box[2], 5, (0, 0, 255), -1)
+            
 
             # 绘制标签和置信度
             text = f"{label}: {confidence:.2f}"
@@ -511,7 +527,15 @@ class YOLO_result_list():
         if image_name == "":
             image_name = int(time.time())
         
-        log.log_write_image(f'Yolo_{image_name}.jpg', image)
+        log.log_write_image(f'DNN_{image_name}.jpg', image)
+    
+    # 过滤低置信度
+    def filter_low_confidence(self,confidence_threshold=0.65):
+        final_result = YOLO_result_list()
+        for yolo_result in self.yolo_result_list:
+            if yolo_result.confidence > confidence_threshold:
+                final_result.add(yolo_result)
+        self.yolo_result_list = final_result.yolo_result_list
     
     # 转为目标识别结果
     def to_obj_result(self, camera_id:utilis.Device_id)->Obj_result_list:
@@ -523,12 +547,12 @@ class YOLO_result_list():
 
 # OBJ 识别结果
 class Obj_result():
-    # !Tag-> ID
+    # Tag-> ID
     Tag_Snack_dict = {
-        "2"   : order.Snack.Snack_id.GUODONG.value,
-        "1"   : order.Snack.Snack_id.CHENPIDAN.value,
-        "3"   : order.Snack.Snack_id.RUSUANJUN.value,
-        "-1"  : order.Snack.Snack_id.YIDA.value,
+        2   : order.Snack.Snack_id.GUODONG.value,
+        1   : order.Snack.Snack_id.CHENPIDAN.value,
+        3   : order.Snack.Snack_id.RUSUANJUN.value,
+        -1  : order.Snack.Snack_id.YIDA.value,
     }
     
     def __init__(self,camera_id:utilis.Device_id,snack_tag,bonding_box) -> None:
@@ -536,7 +560,7 @@ class Obj_result():
         self.snack_tag    = snack_tag                            # 零食标签 
         self.obj_id       = self.Tag_Snack_dict[snack_tag]       # 零食id
         self.bonding_box  = bonding_box                          # bonding_box
-        self.image_xy     = (bonding_box[0] + bonding_box[2])/2  # 检测框中心点
+        self.image_xy     = (bonding_box[0][0] + bonding_box[0][2])/2  # 检测框中心点
         self.image_coords = None                                 # 图像三维坐标系
         self.base_coords  = None                                 # 机械臂基坐标系
 
@@ -571,23 +595,22 @@ class  Obj_result_list():
         for obj_result in self.obj_result_list:
             true_width = self.Obj_True_Width[obj_result.obj_id]
             true_height = self.Obj_True_Height[obj_result.obj_id]
+            
             objectPoints = np.array([
                 [-true_height/2, -true_width/2,  0],
-                [true_width/2 , -true_width/2,  0],
-                [true_width/2 , true_width/2 ,  0],
-                [-true_width/2, true_width/2 ,  0]
-            ], dtype=np.float32)   
+                [true_height/2 , -true_width/2,  0],
+                [true_height/2 , true_width/2 ,  0],
+                [-true_height/2, true_width/2 ,  0]
+            ], dtype=np.float32)  
+            
             imagePoints  = obj_result.bonding_box       
             success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
             obj_result.image_coords = [translationVector[0][0],translationVector[1][0],translationVector[2][0]]
             
-            log.log_stag_result(f'{image_name}_STag.txt',f"平移向量 x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}\n\n\n")
+            log.log_stag_result(f'{image_name}_DNN.txt',f"平移向量 x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}\n\n\n")
         
     # 根据任务与左右手对坐标值进行修正
     def modified_position(self,rec_task_type:task.Task_type.Task_image_rec,arm_id:utilis.Device_id,arm_poses):
-        global  ev_left_arm_grip_container, ev_left_arm_grip_snack_top, ev_left_arm_grip_snack_bottom
-        global  ev_left_arm_turn_off_machine, ev_left_arm_turn_on_machine, ev_right_arm_grip_container
-        global  ev_right_arm_grip_cup, ev_right_arm_grip_snack_top, ev_right_arm_grip_snack_bottom, ev_right_arm_water_cup
         # 零食
         if rec_task_type == task.Task_type.Task_image_rec.SNACK:
             # 左臂
@@ -710,8 +733,8 @@ class Recognition_node():
                     rospy.loginfo(f"snack stag rec finish")
                 elif request.rec_method == utilis.Rec_method.YOLO:
                     # YOLO 识别零食
-                    right_result = Obj_rec(right_img, mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
-                    left_result  = Obj_rec(left_img,  mtx, distCoeffs, utilis.Device_id.LEFT,  image_name=f"{timestamp}_snack_left")
+                    right_DNN_result = Obj_rec(right_img, self.model, mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
+                    left_DNN_result  = Obj_rec(left_img,  self.model, mtx, distCoeffs, utilis.Device_id.LEFT,  image_name=f"{timestamp}_snack_left")
                     
                     # 请求机械臂位置
                     arm_req = srv.CheckArmPoseRequest()
@@ -722,19 +745,24 @@ class Recognition_node():
                     
                     # 修正角度
                     right_arm_poses = right_resp.arm_pose
-                    right_stag_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
+                    right_DNN_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
                     left_arm_poses  = left_resp.arm_pose
-                    left_stag_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
+                    left_DNN_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
                     
                     # STag 使用已知信息转为rec_result
-                    right_rec_result = right_stag_result.to_rec_result()
-                    left_rec_result  = left_stag_result.to_rec_result()
+                    right_rec_result = right_DNN_result.to_rec_result()
+                    left_rec_result  = left_DNN_result.to_rec_result()
+                    
+                    # 过滤低层零食
+                    right_rec_result_high_snack = right_rec_result.filter_low_floor_snack()
+                    left_rec_result_high_snack  = left_rec_result.filter_low_floor_snack()
                     
                     # 两个结果融合
-                    fuse_rec_result = right_rec_result.fuse(left_rec_result)
+                    fuse_rec_result = right_rec_result_high_snack.fuse(left_rec_result_high_snack)
                     
-                    # 结果过滤
+                    # 结果过滤不需要的零食
                     final_rec_result = fuse_rec_result.filter(request.snacks)
+                    
 
                     # 转为消息
                     obj_positions = final_rec_result.to_msg()
@@ -885,25 +913,30 @@ class Recognition_node():
         # rospy.loginfo(f"rec send result :\n")
 
 # YOLO检测函数
-def YOLO_detect(img, trt_ssd, conf_th) -> YOLO_result_list:
+def YOLO_detect(img, trt_ssd:engine.TrtSSD, conf_th) -> YOLO_result_list:
     boxes, confs, clss = trt_ssd.detect(img, conf_th)
     # box 格式为 [x_min, y_min, x_max, y_max]
     # confs 置信度
     # clss 类别
-    # 1 guodong
-    # 2 chenpidan
+    # 1 chenpidan
+    # 2 guodong
     # 3 yiliduo
     
     yolo_result_list = YOLO_result_list()
     for (box, conf, cls) in zip(boxes, confs, clss):
         # ! bonding_box 需要思考一下
-        bonding_box = [[box[0],box[1]],[box[2],box[1]],[box[2],box[3]],[box[0],box[3]]]
+        bonding_box = np.array([[
+            [box[0], box[1]],
+            [box[2], box[1]],
+            [box[2], box[3]],
+            [box[0], box[3]]
+        ]], dtype=np.float32) 
         yolo_result = YOLO_result(cls, bonding_box, conf)
         yolo_result_list.add(yolo_result)
     return yolo_result_list
 
 # OBJ识别
-def Obj_rec(image,model,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LEFT, image_name="") -> Obj_result_list:
+def Obj_rec(image,model:engine.TrtSSD,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LEFT, image_name="") -> Obj_result_list:
     # 检测结果列表
     yolo_detect_result_list = YOLO_detect(image,model, conf_th=0.35)
     
@@ -920,10 +953,17 @@ def Obj_rec(image,model,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_
     cv2.circle(image, center_coordinates, radius, color, thickness)
 
     # 画图
-    yolo_detect_result_list.draw_result(image_name)
+    yolo_detect_result_list.draw_result(image,image_name)
+    
+    # 过滤低置信度对象
+    yolo_detect_result_list.filter_low_confidence()
     
     # 转为obj_result
     obj_result_list = yolo_detect_result_list.to_obj_result(device_id)
+    
+    # obj 识别
+    obj_result_list.rec(mtx,distCoeffs,image_name)
+    
     return obj_result_list
 
 
@@ -1011,32 +1051,7 @@ def get_deviation(name,z_is_const=False):
 # 初始化两个摄像头
 def init_camera():
     global left_camera,right_camera
-    
-    # camera_ids = [4, 6]
-    # cameras = {}
 
-    # for cid in camera_ids:
-    #     # 构建GStreamer管道字符串，包括帧率设置
-    #     gstreamer_pipeline = (
-    #         f'v4l2src device=/dev/video{cid} ! '
-    #         'video/x-raw, format=(string)YUY2, width=(int)1280, height=(int)960, framerate=(fraction)5/1 ! '
-    #         'queue max-size-buffers=1 ! '
-    #         'videoconvert ! appsink'
-    #     )
-    #     cameras[cid] = cv2.VideoCapture(gstreamer_pipeline, cv2.CAP_GSTREAMER)
-
-    # # 检查摄像头是否正确打开
-    # for cid, camera in cameras.items():
-    #     if not camera.isOpened():
-    #         print(f"摄像头 {cid} 无法打开。")
-    #     else:
-    #         print(f"摄像头 {cid} 已成功打开。")
-            
-    # left_camera  = cameras[4]
-    # right_camera = cameras[6]
-    
-    # gst-launch-1.0 v4l2src device=/dev/video0 ! image/jpeg, width=640, height=480, framerate=30/1 ! jpegdec ! videoconvert ! appsink sync=false emit-signals=true max-buffers=1 drop=true
-    
     # left_camera_id  = 4
     # right_camera_id = 6
     

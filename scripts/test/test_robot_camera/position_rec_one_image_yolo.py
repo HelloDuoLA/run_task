@@ -74,7 +74,7 @@ def Yolo_rec(image, mtx, distCoeffs):
             
         # 画框
         cv2.rectangle(image, (int(box[0]), int(box[1])), (int(box[2]), int(box[3])), (255, 0, 0), 2)
-            # 在边界框左上角添加一个绿色小圆点
+        # 在边界框左上角添加一个绿色小圆点
         cv2.circle(image, (int(box[0]), int(box[1])), 5, (0, 255, 0), -1)
 
         # 在边界框右下角添加一个红色小圆点

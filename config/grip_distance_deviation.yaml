@@ -4,18 +4,17 @@ LeftArmGripSnack:
   y_bias: -78
   z_bias: +20
 
-# 左臂抓零食DNN
-# !待定
+# 左臂抓零食DNN(深度神经网络识别)
 LeftArmGripSnackDNN:
-  x_bias: -110
+  x_bias: -80
   y_bias: -78
   z_bias: +20
 
 
 # 左臂上层零食放置高度
 LeftArmTopSnackGrip:
-  # z_const: 550
-  z_const: 465
+  # z_const: 465
+  z_const: 430
 
 # 左臂下层零食放置高度
 LeftArmBottomSnackGrip:
@@ -74,16 +73,16 @@ RightArmGripSnack:
   y_bias: 58
   z_bias: 20
 
-# 右臂抓零食
-# !待定
+# 右臂抓零食(深度神经网络识别)
 RightArmGripSnackDNN:
-  x_bias: -90
-  y_bias: 58
+  x_bias: -80
+  y_bias: 68
   z_bias: 20
 
 # 右臂上层零食放置高度
 RightArmTopSnackGrip:
-  z_const: 450
+  # z_const: 450
+  z_const: 430
 
 # 右臂下层零食放置高度
 RightArmBottomSnackGrip:
