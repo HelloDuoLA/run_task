@@ -162,7 +162,7 @@ if __name__ == "__main__":
     print(f"right  arm end pose {base_coords_right[:3]}")
     for i in range(len(xyz_list)):
         xyz = xyz_list[i][1]
-        if (base_coords_right[1] < 350):
+        if (base_coords_right[2] < 350):
             continue
         print(f"id: {xyz_list[i][0]}")
         print(f"                xyz {xyz} ")
