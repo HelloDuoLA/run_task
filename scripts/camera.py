@@ -523,10 +523,10 @@ class YOLO_result_list():
 
 # OBJ 识别结果
 class Obj_result():
-    # Tag-> ID
+    # !Tag-> ID
     Tag_Snack_dict = {
-        "1"   : order.Snack.Snack_id.GUODONG.value,
-        "2"   : order.Snack.Snack_id.CHENPIDAN.value,
+        "2"   : order.Snack.Snack_id.GUODONG.value,
+        "1"   : order.Snack.Snack_id.CHENPIDAN.value,
         "3"   : order.Snack.Snack_id.RUSUANJUN.value,
         "-1"  : order.Snack.Snack_id.YIDA.value,
     }
