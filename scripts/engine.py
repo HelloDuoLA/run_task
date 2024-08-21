@@ -9,6 +9,8 @@ from PIL import Image
 
 def _preprocess_trt(img, shape=(1024, 1024)):
     """TRT SSD 推理前的数据前处理"""
+    # print(f"img.shape: {str(img.shape)}")
+    # print(f"shape: {shape}")
     img = cv2.resize(img, shape)
     img = img.transpose((2, 0, 1)).astype(np.float32)
     return img

@@ -69,7 +69,7 @@ ml.set_gripper_state(1,50)
 mr.set_gripper_state(0,50)
 mr.set_gripper_state(1,50)
 
-# 新版开0 合100
+# 新版开100 合0
 mr.set_gripper_value(0,50)
 mr.set_gripper_value(100,50)
 

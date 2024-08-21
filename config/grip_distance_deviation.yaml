@@ -8,8 +8,8 @@ LeftArmGripSnack:
 # !待定
 LeftArmGripSnackDNN:
   x_bias: -110
-  y_bias: -68
-  z_bias: +45
+  y_bias: -78
+  z_bias: +20
 
 
 # 左臂上层零食放置高度
