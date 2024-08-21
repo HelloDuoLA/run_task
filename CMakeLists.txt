@@ -200,7 +200,7 @@ catkin_install_python(PROGRAMS
   scripts/log.py
   scripts/control_cmd.py          # 控制命令
   scripts/asr_module/config_loader.py
-  scripts/SSD/engine.py
+  scripts/engine.py
   scripts/test/test.py
   scripts/test/test_amcl.py
   scripts/test/test_opencv.py

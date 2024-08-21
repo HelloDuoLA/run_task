@@ -123,6 +123,7 @@ def main_one():
     INPUT_HW = (1280, 960)
     img = cv2.imread(filename)
     trt_ssd = TrtSSD(model_name, INPUT_HW)
+    input()
     print("start detection!")
     detect_one(img, trt_ssd, conf_th=0.35)
     cv2.destroyAllWindows()
