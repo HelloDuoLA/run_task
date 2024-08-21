@@ -25,18 +25,18 @@ class Snack_id(Enum):
 
 # 物体真实宽度
 Obj_True_Width = {
-    Snack_id.GUODONG.value    : 8 ,
-    Snack_id.RUSUANJUN.value  : 4.5 ,
-    Snack_id.CHENPIDAN.value  : 4.6 ,
-    Snack_id.YIDA.value       : 5.6
+    Snack_id.GUODONG.value    : 80 ,
+    Snack_id.RUSUANJUN.value  : 45 ,
+    Snack_id.CHENPIDAN.value  : 46 ,
+    Snack_id.YIDA.value       : 56
 }
 
 # 物体真实高度
 Obj_True_Height = {
-    Snack_id.GUODONG.value    : 13.5 ,
-    Snack_id.RUSUANJUN.value  : 8.7  ,
-    Snack_id.CHENPIDAN.value  : 8.7  ,
-    Snack_id.YIDA.value       : 8.3 
+    Snack_id.GUODONG.value    : 135 ,
+    Snack_id.RUSUANJUN.value  : 87  ,
+    Snack_id.CHENPIDAN.value  : 87  ,
+    Snack_id.YIDA.value       : 83 
 }
 
 Tag_Snack_dict = {
@@ -121,25 +121,25 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     # 假设calibration_path是你的标定文件夹路径
-    calibration_path = args.calibration_path  # 使用argparse解析得到的路径
-    mtx_file_path = f"{calibration_path}/mtx.txt"
+    # calibration_path = args.calibration_path  # 使用argparse解析得到的路径
+    # mtx_file_path = f"{calibration_path}/mtx.txt"
 
     # 从文件读取数据
-    with open(mtx_file_path, 'r') as file:
-        lines = file.readlines()
-        data = [list(map(float, line.split())) for line in lines]
+    # with open(mtx_file_path, 'r') as file:
+    #     lines = file.readlines()
+    #     data = [list(map(float, line.split())) for line in lines]
 
     # 转换为numpy矩阵
-    camera_matrix = np.array(data)
+    # camera_matrix = np.array(data)
     # print(f"Camera Matrix: {camera_matrix}")
     
-    dist_file_path = f"{calibration_path}/dist.txt"
+    # dist_file_path = f"{calibration_path}/dist.txt"
     
 
     # 从文件读取畸变系数
-    with open(dist_file_path, 'r') as file:
-        line = file.readline()
-        dist_coeffs = np.array(list(map(float, line.split())), dtype=np.float32)
+    # with open(dist_file_path, 'r') as file:
+    #     line = file.readline()
+    #     dist_coeffs = np.array(list(map(float, line.split())), dtype=np.float32)
         
         
     camera_matrix = np.array([[532.76634274 ,  0.,         306.22017641],
@@ -155,8 +155,8 @@ if __name__ == "__main__":
     print(f"xyz_list :{xyz_list}")
     
     new_xyz_list = []
-    base_coords_left        = [160, 250, 360, -90, 0.0, -90]
-    base_coords_right       = [160, -140, 360, 90, 0, 90]
+    base_coords_left        = [130, 250, 360, -90, 0, -90]
+    base_coords_right       = [130, -160, 360, 90, 0, 90]
     
     print(f"left   arm end pose {base_coords_left[:3]}")
     print(f"right  arm end pose {base_coords_right[:3]}")
@@ -164,7 +164,7 @@ if __name__ == "__main__":
         xyz = xyz_list[i][1]
         if (base_coords_right[2] < 350):
             continue
-        print(f"id: {xyz_list[i][0]}")
+        print(f"\r\nid: {xyz_list[i][0]}")
         print(f"                xyz {xyz} ")
         
         print("left")
@@ -172,7 +172,7 @@ if __name__ == "__main__":
         # print(f"arm_base_coords {arm_base_coords_left} ")
         print(f"shousuan  x,y,z:{base_coords_left[0] + xyz[2] - 110} ,{base_coords_left[1] - xyz[1] - 78},    {base_coords_left[2] + xyz[0] + 20}")
         print(f"shousuan    xyz:{base_coords_left[0] + xyz[2] - 110}  {base_coords_left[1] - xyz[1] - 78}     {base_coords_left[2] + xyz[0]  + 20}")
-        print("right")
+        print("\r\nright")
         print(f"right  arm end pose {base_coords_right[:3]}")
         # print(f"arm_base_coords {arm_base_coords_right} ")
         print(f"shousuan  x,y,z:{base_coords_right[0] + xyz[2] - 90 } , {base_coords_right[1] + xyz[1] + 58}, {base_coords_right[2] - xyz[0] + 20}\r\n\r\n")
