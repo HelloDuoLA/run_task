@@ -21,3 +21,5 @@
 <!-- rostopic echo /left_arm_move_topic -->
 <!-- rostopic echo /right_arm_move_topic -->
 
+<!-- rostopic echo /image_rec_request  -->
+

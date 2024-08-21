@@ -31,8 +31,8 @@ import control_cmd
 
 DEBUG_NAVIGATION = False     # 导航调试中, 则运动到桌子的任务均为非并行任务, 并且在完成之后需要输入任意字符才能下一步
 
-# WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
-WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
+WAIT_FOR_ACTION_SERVER = False       # 是否等待服务器
+# WAIT_FOR_ACTION_SERVER = True       # 是否等待服务器
 
 # 初始化
 class System():
@@ -558,6 +558,7 @@ class Image_rec_actuator():
 
     # 运行
     def run(self, task_image_rec_task:task.Task_image_rec):
+        rospy.loginfo(f"Image_rec_actuator run task")
         task_index = self.running_tasks_manager.add_task(task_image_rec_task)
         # 任务开始
         task_image_rec_task.update_start_status()
@@ -2098,11 +2099,14 @@ def talker():
         right_arm_client.wait_for_service()
         rospy.loginfo("waiting for camera nodes...")
         camera_prepare_service.wait_for_service()
-        # rospy.loginfo("waiting for asr nodes...")
-        # asr_prepare_service.wait_for_service()
+        rospy.loginfo("waiting for asr nodes...")
+        asr_prepare_service.wait_for_service()
+    
+    # 测试SSD
+    # test_ssd()
     
     # 自定义订单
-    test_order_snack()
+    # test_order_snack()
 
     # 新增识别服务
     # system.order_driven_task_schedul.add_asr_task()
@@ -2119,6 +2123,31 @@ def talker():
 def ensure_directory_exists(path):
     if not os.path.exists(path):
         os.makedirs(path)
+
+# 发送识别任务, 测试ssd
+def test_ssd():
+    order_info = order.Order()
+
+    snack  = order.Snack(order.Snack.Snack_id.YIDA,1)
+    # order_info.add_snack(snack)
+    
+    snack  = order.Snack(order.Snack.Snack_id.CHENPIDAN,1)
+    # order_info.add_snack(snack)
+    
+    snack  = order.Snack(order.Snack.Snack_id.GUODONG ,1)
+    order_info.add_snack(snack)
+    
+    snack  = order.Snack(order.Snack.Snack_id.RUSUANJUN ,1)
+    order_info.add_snack(snack)
+    
+    #  左、右摄像头零食识别(不可并行，动态)
+    task_rec_snack = task.Task_image_rec(task.Task_type.Task_image_rec.SNACK, None, utilis.Device_id.LEFT_RIGHT,\
+        name="two arms rec snack")
+    task_rec_snack.set_snack_list(order_info.snack_list)                                              # 添加零食列表
+    task_rec_snack.rec_method = utilis.Rec_method.YOLO                                                # !根据参数修改识别方法
+    
+    system.image_rec_actuator.run(task_rec_snack)
+
 
 def test_order_snack():
     order_info = order.Order()

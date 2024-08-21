@@ -51,6 +51,7 @@ def Yolo_rec(image, mtx, distCoeffs):
     model_name ="/home/elephant/dev/team1/model/ssd_resnet18_epoch_070.engine"
     INPUT_HW = (1280, 960)
     trt_ssd = engine.TrtSSD(model_name, INPUT_HW)
+    # input()
     # 识别
     boxes, confs, clss = trt_ssd.detect(image, 0.35)
     

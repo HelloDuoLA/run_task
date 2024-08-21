@@ -507,21 +507,25 @@ class YOLO_result_list():
             label = yolo_result.snack_tag
             confidence = yolo_result.confidence
 
-            # 绘制边界框
-            # cv2.rectangle(image, yolo_result.bonding_box[0], yolo_result.bonding_box[2], (0, 255, 0), 2)
+            
             
             # 绘制左上角和右下角
             # 在边界框左上角添加一个绿色小圆点
-            cv2.circle(image, yolo_result.bonding_box[0], 5, (0, 255, 0), -1)
+            top_left = (int(yolo_result.bonding_box[0][0][0]), int(yolo_result.bonding_box[0][0][1]))
+            cv2.circle(image, top_left, 5, (0, 255, 0), -1)
 
             # 在边界框右下角添加一个红色小圆点
-            cv2.circle(image, yolo_result.bonding_box[2], 5, (0, 0, 255), -1)
+            bottom_right = (int(yolo_result.bonding_box[0][2][0]), int(yolo_result.bonding_box[0][2][1]))
+            cv2.circle(image, bottom_right, 5, (0, 0, 255), -1)
+            
+            # 绘制边界框
+            cv2.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
             
 
             # 绘制标签和置信度
             text = f"{label}: {confidence:.2f}"
-            x = yolo_result.bonding_box[0][0]
-            y = yolo_result.bonding_box[0][1]
+            x = int(yolo_result.bonding_box[0][0][0])
+            y = int(yolo_result.bonding_box[0][0][1])
             cv2.putText(image, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         
         if image_name == "":
@@ -679,6 +683,7 @@ class Recognition_node():
         self.left_arm_client  = rospy.ServiceProxy(utilis.Topic_name.CheckLeftArmPose  ,srv.CheckArmPose)
         self.right_arm_client = rospy.ServiceProxy(utilis.Topic_name.CheckRightArmPose ,srv.CheckArmPose)
         
+        # 初始化模型
         model_name ="/home/elephant/dev/team1/model/ssd_resnet18_epoch_070.engine"
         INPUT_HW = (1280, 960)
         self.model = engine.TrtSSD(model_name, INPUT_HW)
@@ -913,8 +918,9 @@ class Recognition_node():
         # rospy.loginfo(f"rec send result :\n")
 
 # YOLO检测函数
-def YOLO_detect(img, trt_ssd:engine.TrtSSD, conf_th) -> YOLO_result_list:
+def YOLO_detect(img, trt_ssd:engine.TrtSSD, conf_th=0.35) -> YOLO_result_list:
     boxes, confs, clss = trt_ssd.detect(img, conf_th)
+    print(f"obj count {len(clss)}")
     # box 格式为 [x_min, y_min, x_max, y_max]
     # confs 置信度
     # clss 类别
@@ -936,9 +942,9 @@ def YOLO_detect(img, trt_ssd:engine.TrtSSD, conf_th) -> YOLO_result_list:
     return yolo_result_list
 
 # OBJ识别
-def Obj_rec(image,model:engine.TrtSSD,mtx,distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LEFT, image_name="") -> Obj_result_list:
+def Obj_rec(image, model:engine.TrtSSD, mtx, distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LEFT, image_name="") -> Obj_result_list:
     # 检测结果列表
-    yolo_detect_result_list = YOLO_detect(image,model, conf_th=0.35)
+    yolo_detect_result_list = YOLO_detect(image, model, conf_th=0.35)
     
     # 获取图像的尺寸
     height, width = image.shape[:2]
@@ -1162,6 +1168,8 @@ def doPrepareReq(request):
     # 这里执行你需要的操作
     return std_srvs.EmptyResponse()  # 返回空响应
 
+
+    
 def talker():
     # 初始化节点，命名为'camera'
     rospy.init_node('camera')
@@ -1175,6 +1183,12 @@ def talker():
     recognition_node = Recognition_node()
     
     prepare_server = rospy.Service(utilis.Topic_name.camera_prepare_service,std_srvs.Empty,doPrepareReq)
+    
+    
+    # image = cv2.imread("/home/elephant/dev/team1/ros/src/run_task/log/images/1724250132_snack_left.jpg")
+    # YOLO_detect(image,recognition_node.model)
+    # timestamp = str(int(time.time()))
+    # Obj_rec(image, recognition_node.model, mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)
