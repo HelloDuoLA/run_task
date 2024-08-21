@@ -52,7 +52,6 @@ class TrtSSD(object):
     def _create_context(self):
         for binding in self.engine:
             size = trt.volume(self.engine.get_binding_shape(binding))
-            
             ##注意：这里的 host_mem 需要使用 pagelocked memory，以免内存被释放
             host_mem = cuda.pagelocked_empty(size, np.float32)
             cuda_mem = cuda.mem_alloc(host_mem.nbytes)
@@ -66,6 +65,7 @@ class TrtSSD(object):
         return self.engine.create_execution_context()
     # 初始化引擎
     def __init__(self, model, input_shape, output_layout=7):
+        self.cfx = cuda.Device(0).make_context()  #2. trt engine创建前首先初始化cuda上下文
         self.model = model
         self.input_shape = input_shape
         self.output_layout = output_layout
@@ -84,10 +84,12 @@ class TrtSSD(object):
         del self.stream
         del self.cuda_outputs
         del self.cuda_inputs
+        self.cfx.detach() # 2. 实例释放时需要detech cuda上下文
     # 利用生成的可执行上下文执行推理
     def detect(self, img, conf_th=0.3):
         img_resized = _preprocess_trt(img, self.input_shape)
         np.copyto(self.host_inputs[0], img_resized.ravel())
+        self.cfx.push()  # 3. 推理前执行cfx.push()
         # 将处理好的图片从 CPU 内存中复制到 GPU 显存
         cuda.memcpy_htod_async(
         self.cuda_inputs[0], self.host_inputs[0], self.stream)
@@ -103,7 +105,9 @@ class TrtSSD(object):
             self.host_outputs[0], self.cuda_outputs[0], self.stream)
         self.stream.synchronize()
         output = self.host_outputs[0]
-        return _postprocess_trt(img, output, conf_th,self.output_layout)
+        output = _postprocess_trt(img, output, conf_th,self.output_layout)
+        self.cfx.pop()  # 3. 推理后执行cfx.pop()
+        return output
     
 def detect_one(img, trt_ssd, conf_th):
 ##开始检测，并将结果写到 result.jpg 中
@@ -128,7 +132,6 @@ def main_one():
     input()
     print("start detection!")
     detect_one(img, trt_ssd, conf_th=0.35)
-    cv2.destroyAllWindows()
     print("finish!")
     
 # from IPython.display import Image
