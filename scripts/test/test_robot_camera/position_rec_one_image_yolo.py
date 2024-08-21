@@ -69,9 +69,7 @@ def Yolo_rec(image, mtx, distCoeffs):
     xyz_list_with_id = []
     for (box, conf, cls) in zip(boxes, confs, clss):
         print(f"conf {conf}")
-        if conf < 0.9:
-            print(f"conf < 0.9 {conf}. result discard")
-            continue
+
 
             
         # 画框
@@ -111,6 +109,10 @@ def Yolo_rec(image, mtx, distCoeffs):
             [box[2], box[3]],
             [box[0], box[3]]
         ]], dtype=np.float32) 
+        
+        if conf < 0.7:
+            print(f"conf < 0.9 {conf}. result discard")
+            continue
         
         
         success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
@@ -166,8 +168,8 @@ if __name__ == "__main__":
         print("left")
         print(f"left   arm end pose {base_coords_left[:3]}")
         # print(f"arm_base_coords {arm_base_coords_left} ")
-        print(f"shousuan  x,y,z:{base_coords_left[0] + xyz[2] - 100} ,{base_coords_left[1] - xyz[1] - 78},    {base_coords_left[2] + xyz[0] + 20}")
-        print(f"shousuan    xyz:{base_coords_left[0] + xyz[2] - 100}  {base_coords_left[1] - xyz[1] - 78}     {base_coords_left[2] + xyz[0]  + 20}")
+        print(f"shousuan  x,y,z:{base_coords_left[0] + xyz[2] - 80} ,{base_coords_left[1] - xyz[1] - 78},    {base_coords_left[2] + xyz[0] + 20}")
+        print(f"shousuan    xyz:{base_coords_left[0] + xyz[2] - 80}  {base_coords_left[1] - xyz[1] - 78}     {base_coords_left[2] + xyz[0]  + 20}")
         print("\r\nright")
         print(f"right  arm end pose {base_coords_right[:3]}")
         # print(f"arm_base_coords {arm_base_coords_right} ")
