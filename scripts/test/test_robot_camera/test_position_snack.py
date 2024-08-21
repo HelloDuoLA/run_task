@@ -25,7 +25,7 @@ import task
 import order
 import arm
 import log 
-import engine
+import run_task.scripts.test.test_robot_camera.test_engine as test_engine
 
 # 摄像头识别节点, 完成摄像头的识别功能
 
@@ -658,7 +658,7 @@ class Recognition_node():
         
         model_name ="/home/elephant/dev/team1/model/ssd_resnet18_epoch_070.engine"
         INPUT_HW = (1280, 960)
-        self.model = engine.TrtSSD(model_name, INPUT_HW)
+        self.model = test_engine.TrtSSD(model_name, INPUT_HW)
     
     @staticmethod
     # 图像识别请求回调

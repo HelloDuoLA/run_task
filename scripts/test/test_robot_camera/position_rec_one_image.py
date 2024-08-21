@@ -52,6 +52,7 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
             file.write(f"Index: {i}, ID: {id[0]}\n")
             imagePoints  = corners_list[i]
             print(f"imagePoints \n {imagePoints}")
+            print(f"imagePoints type \n {type(imagePoints[0][0])}")
             # success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs,flags=cv2.SOLVEPNP_IPPE_SQUARE)
             success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
             if success:

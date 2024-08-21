@@ -6,35 +6,45 @@ import stag
 import time
 import numpy as np
 from tf.transformations import euler_matrix
-import engine
 import sys
+from enum import Enum,auto # 任务字典
 
 # 将父目录添加到 sys.path
-sys.path.insert(0, "/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/scripts/")
-import order
+sys.path.append("../..") #相对路径或绝对路径
+import engine
+
+
+class Snack_id(Enum):
+        TBD       = 0
+        YIDA      = auto() #1
+        GUODONG   = auto() #2
+        RUSUANJUN = auto() #3
+        CHENPIDAN = auto() #4
+        
+
 
 # 物体真实宽度
 Obj_True_Width = {
-    order.Snack.Snack_id.GUODONG.value    : 8 ,
-    order.Snack.Snack_id.RUSUANJUN.value  : 4.5 ,
-    order.Snack.Snack_id.CHENPIDAN.value  : 4.6 ,
-    order.Snack.Snack_id.YIDA.value       : 5.6
+    Snack_id.GUODONG.value    : 8 ,
+    Snack_id.RUSUANJUN.value  : 4.5 ,
+    Snack_id.CHENPIDAN.value  : 4.6 ,
+    Snack_id.YIDA.value       : 5.6
 }
 
 # 物体真实高度
 Obj_True_Height = {
-    order.Snack.Snack_id.GUODONG.value    : 13.5 ,
-    order.Snack.Snack_id.RUSUANJUN.value  : 8.7  ,
-    order.Snack.Snack_id.CHENPIDAN.value  : 8.7  ,
-    order.Snack.Snack_id.YIDA.value       : 8.3 
+    Snack_id.GUODONG.value    : 13.5 ,
+    Snack_id.RUSUANJUN.value  : 8.7  ,
+    Snack_id.CHENPIDAN.value  : 8.7  ,
+    Snack_id.YIDA.value       : 8.3 
 }
 
 Tag_Snack_dict = {
-        "2"   : order.Snack.Snack_id.GUODONG.value,
-        "1"   : order.Snack.Snack_id.CHENPIDAN.value,
-        "3"   : order.Snack.Snack_id.RUSUANJUN.value,
-        "-1"  : order.Snack.Snack_id.YIDA.value,
-    }
+        2   : Snack_id.GUODONG.value,
+        1   : Snack_id.CHENPIDAN.value,
+        3   : Snack_id.RUSUANJUN.value,
+        -1  : Snack_id.YIDA.value,
+}
 
 
 def Yolo_rec(image, mtx, distCoeffs):
@@ -43,8 +53,6 @@ def Yolo_rec(image, mtx, distCoeffs):
     trt_ssd = engine.TrtSSD(model_name, INPUT_HW)
     # 识别
     boxes, confs, clss = trt_ssd.detect(image, 0.35)
-    
-    # 画框
     
     # 获取图像的尺寸
     height, width = image.shape[:2]
@@ -61,8 +69,16 @@ def Yolo_rec(image, mtx, distCoeffs):
     xyz_list_with_id = []
     for (box, conf, cls) in zip(boxes, confs, clss):
         # 画框
-        
-        
+        cv2.rectangle(image, (int(box[0]), int(box[1])), (int(box[2]), int(box[3])), (255, 0, 0), 2)
+            # 在边界框左上角添加一个绿色小圆点
+        cv2.circle(image, (int(box[0]), int(box[1])), 5, (0, 255, 0), -1)
+
+        # 在边界框右下角添加一个红色小圆点
+        cv2.circle(image, (int(box[2]), int(box[3])), 5, (0, 0, 255), -1)
+
+        # 在边界框旁边添加文本（类别和置信度）
+        text = f'{cls}: {conf:.2f}'
+        cv2.putText(image, text, (int(box[0]), int(box[1]-5)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
         obj_id = Tag_Snack_dict[cls]
         true_width  = Obj_True_Width[obj_id]
         true_height = Obj_True_Height[obj_id]
@@ -73,17 +89,24 @@ def Yolo_rec(image, mtx, distCoeffs):
             [-true_width/2, true_width/2 ,  0]
         ], dtype=np.float32) 
         
-        imagePoints = [[box[0],box[1]],[box[2],box[1]],[box[2],box[3]],[box[0],box[3]]]
+        imagePoints = np.array([[
+            [box[0], box[1]],
+            [box[2], box[1]],
+            [box[2], box[3]],
+            [box[0], box[3]]
+        ]], dtype=np.float32) 
+        
         success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
         if success:
             xyz_list_with_id.append([cls,translationVector.flatten().tolist()])
             print(f"cls : {cls}  x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}")
         else:
             print(f"cls : {cls} Failed to solve PnP")
-        
+            
     # 保存图片
-    #!
-
+    timestamp = int(time.time())
+    cv2.imwrite(f'./STag/result/{timestamp}.jpg', image)
+    return xyz_list_with_id
             
 if __name__ == "__main__":
     # 创建 ArgumentParser 对象
@@ -129,6 +152,7 @@ if __name__ == "__main__":
     image = cv2.imread(args.image_path)
     
     xyz_list = Yolo_rec(image,camera_matrix,dist_coeffs)
+    print(f"xyz_list :{xyz_list}")
     
     new_xyz_list = []
     base_coords_left        = [160, 250, 360, -90, 0.0, -90]
@@ -138,7 +162,8 @@ if __name__ == "__main__":
     print(f"right  arm end pose {base_coords_right[:3]}")
     for i in range(len(xyz_list)):
         xyz = xyz_list[i][1]
-
+        if (base_coords_right[1] < 350):
+            continue
         print(f"id: {xyz_list[i][0]}")
         print(f"                xyz {xyz} ")
         
