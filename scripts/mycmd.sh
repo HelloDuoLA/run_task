@@ -16,3 +16,4 @@ roslaunch run_task mercury_mapping.launch
 roslaunch run_task mercury_navigation.launch 
 
 git clone git@gitee.com:erzongxie/run_task.git --depth 1
+git clone git@gitee.com:erzongxie/tensorrt_demos.git . --depth 1
