@@ -742,138 +742,6 @@ class Recognition_node():
             else:
                 raise ValueError(f"get image False. Right Image: {right_grabbed}, Left Image: {left_grabbed} !!!!")
 
-        # 识别容器
-        elif request.task_type == task.Task_type.Task_image_rec.CONTAINER:
-            rospy.loginfo(f"request.task_type is task.Task_type.Task_image_rec.CONTAINER ")
-            # 左臂
-            if request.camera_id == utilis.Device_id.LEFT:
-                # 拍摄图片
-                grabbed, img = left_camera.read()
-                if grabbed:
-                    timestamp = str(int(time.time()))
-                    firename = f'{timestamp}_container_left.jpg'
-                    log.log_write_image(firename, img)
-                    stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"{timestamp}_container_left")
-                    
-                    # 请求机械臂位置
-                    arm_req = srv.CheckArmPoseRequest()
-                    arm_req.type_id = arm.PoseType.BASE_COORDS.value
-                
-                    left_resp:srv.CheckArmPoseResponse = self.left_arm_client.call(arm_req)
-                    left_arm_poses = left_resp.arm_pose
-                    
-                    # 修正位置
-                    stag_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
-                    
-                    # 发送信息
-                    obj_positions = stag_result.to_msg()
-                else:
-                    raise ValueError("get image False")
-                    
-            elif request.camera_id == utilis.Device_id.RIGHT:
-                # 拍摄图片
-                grabbed, img = right_camera.read()
-                if grabbed:
-                    timestamp = str(int(time.time()))
-                    firename = f'{timestamp}_container_right.jpg'
-                    log.log_write_image(firename, img)
-                    stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"{timestamp}_container_right")
-                    
-                    # 请求机械臂位置
-                    arm_req = srv.CheckArmPoseRequest()
-                    arm_req.type_id = arm.PoseType.BASE_COORDS.value
-                
-                    right_resp      = self.right_arm_client.call(arm_req)
-                    right_arm_poses = right_resp.arm_pose
-                    
-                    # 修正位置
-                    stag_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
-                    
-                    # 发送信息
-                    obj_positions = stag_result.to_msg()
-                else:
-                    raise ValueError("get image False")
-            else:
-                raise ValueError("camera_id is not defined")   
-        # 识别杯子和咖啡机位置, 只有右臂
-        elif request.task_type == task.Task_type.Task_image_rec.CUP_COFFEE_MACHINE :
-            # 拍摄图片
-            grabbed, img = right_camera.read()
-            if grabbed:
-                timestamp = str(int(time.time()))
-                firename = f'{timestamp}_cup_coffee_.jpg'
-                log.log_write_image(firename, img)
-                
-                # STag 识别
-                stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"{timestamp}_cup_coffee_.jpg")
-                
-                # # 请求机械臂位置
-                arm_req = srv.CheckArmPoseRequest()
-                arm_req.type_id = arm.PoseType.BASE_COORDS.value
-            
-                right_resp = self.right_arm_client.call(arm_req)
-                right_arm_poses = right_resp.arm_pose
-                
-                # 修正位置
-                stag_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
-                
-                # 发送信息
-                obj_positions = stag_result.to_msg()
-            else:
-                raise ValueError("get image False")
-
-            
-        # 识别咖啡机开关, 只有左臂
-        elif request.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_ON :
-            # 拍摄图片
-            grabbed, img = left_camera.read()
-            if grabbed:
-                timestamp = str(int(time.time()))
-                firename = f'{timestamp}_switch_on.jpg'
-                log.log_write_image(firename, img)
-                # STag识别
-                stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"{timestamp}_switch_on")
-                # # 请求机械臂位置
-                arm_req = srv.CheckArmPoseRequest()
-                arm_req.type_id = arm.PoseType.BASE_COORDS.value
-            
-                left_resp = self.left_arm_client.call(arm_req)
-                left_arm_poses = left_resp.arm_pose
-                
-                # 修正位置
-                stag_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
-                
-                # 发送信息
-                obj_positions = stag_result.to_msg()
-            else:
-                raise ValueError("get image False")
-                
-        # 识别咖啡机开关, 只有左臂
-        elif request.task_type == task.Task_type.Task_image_rec.COFFEE_MACHINE_SWITCH_OFF :
-            # 拍摄图片
-            grabbed, img = left_camera.read()
-            if grabbed:
-                timestamp = str(int(time.time()))
-                firename = f'{timestamp}_switch_off.jpg'
-                log.log_write_image(firename, img)
-                # STag识别
-                stag_result = STag_rec(img,mtx,distCoeffs,image_name=f"{timestamp}_switch_off")
-                # # 请求机械臂位置
-                arm_req = srv.CheckArmPoseRequest()
-                arm_req.type_id = arm.PoseType.BASE_COORDS.value
-            
-                left_resp = self.left_arm_client.call(arm_req)
-                left_arm_poses = left_resp.arm_pose
-                
-                # 修正位置
-                stag_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
-                
-                # 发送信息
-                obj_positions = stag_result.to_msg()
-            else:
-                raise ValueError("get image False")
-        else:
-            raise ValueError("task_type is not defined")
 
         result.task_index    = request.task_index
         result.task_type     = request.task_type
@@ -890,8 +758,8 @@ def YOLO_detect(img, trt_ssd, conf_th) -> YOLO_result_list:
     # box 格式为 [x_min, y_min, x_max, y_max]
     # confs 置信度
     # clss 类别
-    # 1 guodong
-    # 2 chenpidan
+    # 1 chenpidan
+    # 2 guodong 
     # 3 yiliduo
     
     yolo_result_list = YOLO_result_list()
@@ -1006,53 +874,16 @@ def get_deviation(name,z_is_const=False):
         z_bias  = rospy.get_param(f'~{name}/z_bias')
         return Grip_deviation(x_bias,y_bias,z_bias)
     
-        
 
 # 初始化两个摄像头
 def init_camera():
     global left_camera,right_camera
     
-    # camera_ids = [4, 6]
-    # cameras = {}
-
-    # for cid in camera_ids:
-    #     # 构建GStreamer管道字符串，包括帧率设置
-    #     gstreamer_pipeline = (
-    #         f'v4l2src device=/dev/video{cid} ! '
-    #         'video/x-raw, format=(string)YUY2, width=(int)1280, height=(int)960, framerate=(fraction)5/1 ! '
-    #         'queue max-size-buffers=1 ! '
-    #         'videoconvert ! appsink'
-    #     )
-    #     cameras[cid] = cv2.VideoCapture(gstreamer_pipeline, cv2.CAP_GSTREAMER)
-
-    # # 检查摄像头是否正确打开
-    # for cid, camera in cameras.items():
-    #     if not camera.isOpened():
-    #         print(f"摄像头 {cid} 无法打开。")
-    #     else:
-    #         print(f"摄像头 {cid} 已成功打开。")
-            
-    # left_camera  = cameras[4]
-    # right_camera = cameras[6]
-    
-    # gst-launch-1.0 v4l2src device=/dev/video0 ! image/jpeg, width=640, height=480, framerate=30/1 ! jpegdec ! videoconvert ! appsink sync=false emit-signals=true max-buffers=1 drop=true
-    
-    # left_camera_id  = 4
-    # right_camera_id = 6
-    
     left_camera_id  = 6
     right_camera_id = 4
-        
-        
-    # left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_V4L2)
-    # right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_V4L2)  
-    
-    # left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_GSTREAMER)
-    # right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_GSTREAMER)
     
     left_camera     = cv2.VideoCapture(left_camera_id)
     right_camera    = cv2.VideoCapture(right_camera_id)
-    
     
     # frame_width     = rospy.get_param(f'~frame_width',  1280)
     # frame_height    = rospy.get_param(f'~frame_height', 960)    
@@ -1099,8 +930,8 @@ def init_const():
     RightArmBottomSnackGrip         = rospy.get_param(f'~RightArmBottomSnackGrip/z_const')
     LeftArmTopSnackGrip             = rospy.get_param(f'~LeftArmTopSnackGrip/z_const')
     LeftArmBottomSnackGrip          = rospy.get_param(f'~LeftArmBottomSnackGrip/z_const')
+    
 
-# 初始化经验值
 def init_empirical_value():   
     global  ev_left_arm_grip_container, ev_left_arm_grip_snack_top, ev_left_arm_grip_snack_bottom
     global  ev_left_arm_turn_off_machine, ev_left_arm_turn_on_machine, ev_right_arm_grip_container
@@ -1116,7 +947,6 @@ def init_empirical_value():
     ev_right_arm_grip_snack_top   = _get_arm_empirical_value("right_arm_grip_snack_top")
     ev_right_arm_grip_snack_bottom= _get_arm_empirical_value("right_arm_grip_snack_bottom")
     ev_right_arm_water_cup        = _get_arm_empirical_value("right_arm_water_cup")
-    
 # 通过名字获取经验值
 def _get_arm_empirical_value(anchor_point_name):
     xyz = rospy.get_param(f'~{anchor_point_name}/xyz')
@@ -1149,7 +979,7 @@ def doPrepareReq(request):
 
 def talker():
     # 初始化节点，命名为'camera'
-    rospy.init_node('camera')
+    rospy.init_node('test_position_snack')
     
     init_camera()
     init_const()

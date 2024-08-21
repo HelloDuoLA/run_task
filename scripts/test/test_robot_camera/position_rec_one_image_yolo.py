@@ -6,34 +6,45 @@ import stag
 import time
 import numpy as np
 from tf.transformations import euler_matrix
+import engine
+import sys
+
+# 将父目录添加到 sys.path
+sys.path.insert(0, "/home/zrt/xzc_code/Competition/AIRobot/ros_ws/src/run_task/scripts/")
+import order
 
 # 物体真实宽度
 Obj_True_Width = {
-    "guodong"  : 8 ,
-    "yiliduo"  : 4.5 ,
-    "chenpidan": 4.6 ,
-    "yida"     : 5.6
+    order.Snack.Snack_id.GUODONG.value    : 8 ,
+    order.Snack.Snack_id.RUSUANJUN.value  : 4.5 ,
+    order.Snack.Snack_id.CHENPIDAN.value  : 4.6 ,
+    order.Snack.Snack_id.YIDA.value       : 5.6
 }
 
 # 物体真实高度
 Obj_True_Height = {
-    "guodong"  : 13.5 ,
-    "yiliduo"  : 8.7  ,
-    "chenpidan": 8.7  ,
-    "yida"     : 8.3 
+    order.Snack.Snack_id.GUODONG.value    : 13.5 ,
+    order.Snack.Snack_id.RUSUANJUN.value  : 8.7  ,
+    order.Snack.Snack_id.CHENPIDAN.value  : 8.7  ,
+    order.Snack.Snack_id.YIDA.value       : 8.3 
 }
 
+Tag_Snack_dict = {
+        "2"   : order.Snack.Snack_id.GUODONG.value,
+        "1"   : order.Snack.Snack_id.CHENPIDAN.value,
+        "3"   : order.Snack.Snack_id.RUSUANJUN.value,
+        "-1"  : order.Snack.Snack_id.YIDA.value,
+    }
 
+
+def Yolo_rec(image, mtx, distCoeffs):
+    model_name ="/home/elephant/dev/team1/model/ssd_resnet18_epoch_070.engine"
+    INPUT_HW = (1280, 960)
+    trt_ssd = engine.TrtSSD(model_name, INPUT_HW)
+    # 识别
+    boxes, confs, clss = trt_ssd.detect(image, 0.35)
     
-def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
-    # 假设的三维点 (例如，一个简单的正方形)
-    objectPoints = np.array([
-        [-tag_size/2, tag_size/2,  0],
-        [tag_size/2 , tag_size/2,  0],
-        [tag_size/2 , -tag_size/2 ,  0],
-        [-tag_size/2, -tag_size/2 ,  0]
-    ], dtype=np.float32)
-    
+    # 画框
     
     # 获取图像的尺寸
     height, width = image.shape[:2]
@@ -46,47 +57,33 @@ def STag_rec(tag_size,mtx,distCoeffs,image,libraryHD=11):
 
     # 画圆
     cv2.circle(image, center_coordinates, radius, color, thickness)
-
-    timestamp = int(time.time())
-
-    cv2.imwrite(f'./STag/result/{timestamp}.jpg', image)
     
     xyz_list_with_id = []
-    # 对于每个id都要进行位置检测
-    with open(f'./YOLO/result/{timestamp}.txt', 'a') as file:
-        for i, id in enumerate(ids):
-            print(f"Index: {i}, ID: {id[0]}")
-            file.write(f"Index: {i}, ID: {id[0]}\n")
-            imagePoints  = corners_list[i]
-            print(f"imagePoints \n {imagePoints}")
-            # success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs,flags=cv2.SOLVEPNP_IPPE_SQUARE)
-            success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
-            if success:
-                xyz_list_with_id.append([id[0],translationVector.flatten().tolist()])
-                # print(translationVector)
-                # print(f"旋转向量 : {rotationVector[0][0]}, {rotationVector[1][0]}, {rotationVector[2][0]}")
-                # print(f"平移向量 x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}")
-                file.write(f"旋转向量 : {rotationVector[0][0]}, {rotationVector[1][0]}, {rotationVector[2][0]}\n")
-                file.write(f"平移向量 x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}\n\n\n")
-            else:
-                print(f"{i} {id} Failed to solve PnP")
-    
-    return xyz_list_with_id
+    for (box, conf, cls) in zip(boxes, confs, clss):
+        # 画框
+        
+        
+        obj_id = Tag_Snack_dict[cls]
+        true_width  = Obj_True_Width[obj_id]
+        true_height = Obj_True_Height[obj_id]
+        objectPoints = np.array([
+            [-true_height/2, -true_width/2,  0],
+            [true_width/2 , -true_width/2,  0],
+            [true_width/2 , true_width/2 ,  0],
+            [-true_width/2, true_width/2 ,  0]
+        ], dtype=np.float32) 
+        
+        imagePoints = [[box[0],box[1]],[box[2],box[1]],[box[2],box[3]],[box[0],box[3]]]
+        success, rotationVector, translationVector = cv2.solvePnP(objectPoints, imagePoints, mtx, distCoeffs)
+        if success:
+            xyz_list_with_id.append([cls,translationVector.flatten().tolist()])
+            print(f"cls : {cls}  x : {translationVector[0][0]}  y : {translationVector[1][0]} z : {translationVector[2][0]}")
+        else:
+            print(f"cls : {cls} Failed to solve PnP")
+        
+    # 保存图片
+    #!
 
-# 坐标转换
-# ?
-# yaw z轴
-# roll x轴
-# pitch y轴
-def coords_trans(xyz, translation, rpy):
-    roll  = np.radians(rpy[0])
-    pitch = np.radians(rpy[1])
-    yaw   = np.radians(rpy[2])
-    rotation_matrix = euler_matrix(roll, pitch, yaw)[:3, :3]
-    # print(f"rotation_matrix:\n {rotation_matrix}")
-    new_xyz = np.dot(rotation_matrix, xyz) + translation
-
-    return new_xyz
             
 if __name__ == "__main__":
     # 创建 ArgumentParser 对象
@@ -123,45 +120,28 @@ if __name__ == "__main__":
         
         
     camera_matrix = np.array([[532.76634274 ,  0.,         306.22017641],
-                    [  0.         , 532.94411762, 225.40097394],
-                    [  0.         ,  0.         , 1.        ]], dtype=np.float32)
+                                [  0.         , 532.94411762, 225.40097394],
+                                [  0.         ,  0.         , 1.        ]], dtype=np.float32)
     
     dist_coeffs = np.array([ 0.17156132, -0.66222681, -0.00294354,  0.00106322,  0.73823942], dtype=np.float32)
-        
-    # print(f"Distortion Coefficients: {dist_coeffs}")
+    
     
     image = cv2.imread(args.image_path)
     
-    xyz_list = STag_rec(args.tag_size,camera_matrix,dist_coeffs,image,11)
-   
+    xyz_list = Yolo_rec(image,camera_matrix,dist_coeffs)
+    
     new_xyz_list = []
     base_coords_left        = [160, 250, 360, -90, 0.0, -90]
     base_coords_right       = [160, -140, 360, 90, 0, 90]
-    yaw = -(-90)
     
     print(f"left   arm end pose {base_coords_left[:3]}")
     print(f"right  arm end pose {base_coords_right[:3]}")
     for i in range(len(xyz_list)):
-        # print(f"id: {xyz_list[i][0]} xyz: {xyz_list[i][1]}")
         xyz = xyz_list[i][1]
-        # 动态摄像头坐标系转 静态摄像头坐标系
-        # static_image_coords = coords_trans(xyz, [0,0,0], [0,0,0])
-        static_image_coords = coords_trans(xyz, [0,0,0], [0,0,-yaw])
-        
-        # 静态摄像头坐标系转手臂末端坐标系
-        arm_end_coords = coords_trans(static_image_coords, [0,78,0], [0,0,0])
-        
-        # 手臂末端坐标系转机械臂坐标系
-        arm_base_coords_left = coords_trans(arm_end_coords, base_coords_left[:3], base_coords_left[3:])
-        arm_base_coords_right = coords_trans(arm_end_coords, base_coords_right[:3], base_coords_right[3:])
-        
+
         print(f"id: {xyz_list[i][0]}")
         print(f"                xyz {xyz} ")
-        print(f"static_image_coords {static_image_coords} ")
-        print(f"arm_end_coords      {arm_end_coords} ")
         
-        # new_xyz_list.append([xyz_list[i][0],arm_base_coords])
-        # print(f"         newxyz: {new_xyz_list[i][1][0]},{new_xyz_list[i][1][1]},{new_xyz_list[i][1][2]}")
         print("left")
         print(f"left   arm end pose {base_coords_left[:3]}")
         # print(f"arm_base_coords {arm_base_coords_left} ")

@@ -201,6 +201,7 @@ catkin_install_python(PROGRAMS
   scripts/control_cmd.py          # 控制命令
   scripts/asr_module/config_loader.py
   scripts/engine.py
+  # scripts/test/test_robot_camera/test_position_snack.py # 测试位置识别
   scripts/test/test.py
   scripts/test/test_amcl.py
   scripts/test/test_opencv.py
