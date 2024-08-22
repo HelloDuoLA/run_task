@@ -1212,10 +1212,10 @@ def talker():
     prepare_server = rospy.Service(utilis.Topic_name.camera_prepare_service,std_srvs.Empty,doPrepareReq)
     
     
-    image = cv2.imread("/home/elephant/dev/team1/ros/src/run_task/scripts/test/test_robot_camera/STag/1724300327_left_6_1.jpg")
-    # YOLO_detect(image,recognition_node.model)
-    timestamp = str(int(time.time()))
-    Obj_rec(image, recognition_node.model, mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
+    # image = cv2.imread("/home/elephant/dev/team1/ros/src/run_task/scripts/test/test_robot_camera/STag/1724300327_left_6_1.jpg")
+    # # YOLO_detect(image,recognition_node.model)
+    # timestamp = str(int(time.time()))
+    # Obj_rec(image, recognition_node.model, mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)
