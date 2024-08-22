@@ -204,10 +204,10 @@ class Arm_controller():
             return result
             
         # 机械臂移动 
-        def move_arm(self,pose_type:PoseType,target_pose,move_method:ArmMoveMethod):
+        def move_arm(self,pose_type:PoseType,target_pose,move_method:ArmMoveMethod,arm_speed=100):
             rospy.loginfo(f"{self.id} arm move to {target_pose} using {pose_type} method {ArmMoveMethod(move_method).name}")
             # rospy.loginfo(f"{self.id} arm move to {target_pose} using {pose_type.name} method {move_method.name}")
-            arm_speed =  100
+            # arm_speed =  100
             if pose_type == PoseType.ANGLE:
                 result = self.control_instance.send_angles(target_pose,arm_speed)
                 self.wait(result)
@@ -465,7 +465,7 @@ def execute_cb(goal:msg.ArmMoveRequest,self):
     
     if goal.arm_move_method != ArmMoveMethod.OPLY_GRIP:
         # 2. 给机械臂发送目标值
-        self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose, goal.arm_move_method)
+        self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose, goal.arm_move_method,goal.arm_speed)
     
     # 后打开 and 先关闭后打开
     if goal_grasp_flag == GripMethod.CLOSE_OPEN or goal_grasp_flag == GripMethod.OPEN:

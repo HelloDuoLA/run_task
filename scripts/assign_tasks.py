@@ -412,6 +412,7 @@ class Manipulator_actuator():
             left_goal.grasp_speed          = manipulation_task.clamp_speed
             left_goal.arm_move_method      = manipulation_task.arm_move_method.value
             left_goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
+            left_goal.arm_speed            = manipulation_task.arm_speed
             
             if manipulation_task.debug_position != -999:
                 left_goal.arm_pose.arm_pose = manipulation_task.debug_position
@@ -429,6 +430,7 @@ class Manipulator_actuator():
             right_goal.grasp_speed          = manipulation_task.clamp_speed
             right_goal.arm_move_method      = manipulation_task.arm_move_method.value
             right_goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
+            right_goal.arm_speed            = manipulation_task.arm_speed
             
             if manipulation_task.debug_position != -999:
                 right_goal.arm_pose.arm_pose = manipulation_task.debug_position
@@ -448,6 +450,7 @@ class Manipulator_actuator():
                     left_goal.grasp_speed          = manipulation_task.clamp_speed
                     left_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     left_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
+                    left_goal.arm_speed            = manipulation_task.arm_speed
                 elif manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.RIGHT:
                     right_goal.task_index           = task_index
                     right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
@@ -457,6 +460,7 @@ class Manipulator_actuator():
                     right_goal.grasp_speed          = manipulation_task.clamp_speed
                     right_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
+                    right_goal.arm_speed            = manipulation_task.arm_speed
 
             left_arm_pub.publish(left_goal)
             right_arm_pub.publish(right_goal)
@@ -1748,6 +1752,7 @@ class Order_driven_task_schedul():
         task_grasp_snack.parallel = task.Task.Task_parallel.ALL
         task_grasp_snack.status   = task.Task.Task_status.NOTREADY       # 需要参数
         task_grasp_snack.add_predecessor_task(task_grasp_snack_pre)      # 添加前置任务
+        task_grasp_snack.arm_speed  = 30                                 # !手臂移动速度
         task_grasp_snack_seq.add(task_grasp_snack)
         
         # 放置零食中间位置
@@ -2103,10 +2108,10 @@ def talker():
         asr_prepare_service.wait_for_service()
     
     # 测试SSD
-    test_ssd()
+    # test_ssd()
     
     # 自定义订单
-    # test_order_snack()
+    test_order_snack()
 
     # 新增识别服务
     # system.order_driven_task_schedul.add_asr_task()
@@ -2154,13 +2159,13 @@ def test_order_snack():
     order_info2 = order.Order()
 
     snack  = order.Snack(order.Snack.Snack_id.YIDA,1)
-    order_info.add_snack(snack)
+    # order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.CHENPIDAN,1)
     # order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.GUODONG ,1)
-    # order_info.add_snack(snack)
+    order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.RUSUANJUN ,1)
     order_info.add_snack(snack)

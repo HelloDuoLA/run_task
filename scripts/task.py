@@ -397,6 +397,7 @@ class Task_manipulation(Task):
         self.clamp_speed         = clamp_speed          # 夹具速度
         self.arm_move_method     = arm_move_method      # 移动方式
         self.click_length        = click_length         # 点击长度
+        self.arm_speed           = 100                  # 机械臂速度
     
     # 设置目标位置
     def set_target_arm_pose(self,arm_pose:arm.Arm_pose,device_id:utilis.Device_id):
