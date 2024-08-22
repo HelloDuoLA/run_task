@@ -64,8 +64,10 @@ class TrtSSD(object):
                 self.cuda_outputs.append(cuda_mem)
         return self.engine.create_execution_context()
     # 初始化引擎
-    def __init__(self, model, input_shape, output_layout=7):
-        self.cfx = cuda.Device(0).make_context()  #2. trt engine创建前首先初始化cuda上下文
+    def __init__(self, model, input_shape,is_ros = False, output_layout=7):
+        self.is_ros = is_ros
+        if is_ros:
+            self.cfx = cuda.Device(0).make_context()  #2. trt engine创建前首先初始化cuda上下文
         self.model = model
         self.input_shape = input_shape
         self.output_layout = output_layout
@@ -84,12 +86,14 @@ class TrtSSD(object):
         del self.stream
         del self.cuda_outputs
         del self.cuda_inputs
-        self.cfx.detach() # 2. 实例释放时需要detech cuda上下文
+        if self.is_ros:
+            self.cfx.detach() # 2. 实例释放时需要detech cuda上下文
     # 利用生成的可执行上下文执行推理
     def detect(self, img, conf_th=0.3):
         img_resized = _preprocess_trt(img, self.input_shape)
         np.copyto(self.host_inputs[0], img_resized.ravel())
-        self.cfx.push()  # 3. 推理前执行cfx.push()
+        if self.is_ros:
+            self.cfx.push()  # 3. 推理前执行cfx.push()
         # 将处理好的图片从 CPU 内存中复制到 GPU 显存
         cuda.memcpy_htod_async(
         self.cuda_inputs[0], self.host_inputs[0], self.stream)
@@ -106,7 +110,8 @@ class TrtSSD(object):
         self.stream.synchronize()
         output = self.host_outputs[0]
         output = _postprocess_trt(img, output, conf_th,self.output_layout)
-        self.cfx.pop()  # 3. 推理后执行cfx.pop()
+        if self.is_ros:
+            self.cfx.pop()  # 3. 推理后执行cfx.pop()
         return output
     
 def detect_one(img, trt_ssd, conf_th):

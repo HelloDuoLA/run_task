@@ -574,7 +574,7 @@ class Obj_result():
         self.bonding_box  = bonding_box                          # bonding_box
         self.image_xy     = (bonding_box[0][0] + bonding_box[0][2])/2  # 检测框中心点
         self.image_coords = None                                 # 图像三维坐标系
-        self.base_coords  = None                                 # 机械臂基坐标系
+        self.base_coords  = [-999,-999,-999]                     # 机械臂基坐标系
         
     def __str__(self) -> None:
         return f"camera_id : {self.camera_id}\n snack_tag : {self.snack_tag } \n obj_id : {self.obj_id} \n image_coords : {self.image_coords} \n base_coords : {self.base_coords}"
@@ -703,7 +703,7 @@ class Recognition_node():
         # 初始化模型
         model_name ="/home/elephant/dev/team1/model/ssd_resnet18_epoch_070_fp16_2.engine"
         INPUT_HW = (1280, 960)
-        self.model = engine.TrtSSD(model_name, INPUT_HW)
+        self.model = engine.TrtSSD(model_name, INPUT_HW,is_ros=True)
     
     @staticmethod
     # 图像识别请求回调
@@ -760,8 +760,8 @@ class Recognition_node():
                     rospy.sleep(1)
                     left_DNN_result  = Obj_rec(left_img,  self.model, mtx, distCoeffs, utilis.Device_id.LEFT,  image_name=f"{timestamp}_snack_left")
                     
-                    rospy.loginfo(f"right_DNN_result : {right_DNN_result}")
-                    rospy.loginfo(f"left_DNN_result : {left_DNN_result}")
+                    # rospy.loginfo(f"right_DNN_result : {right_DNN_result}")
+                    # rospy.loginfo(f"left_DNN_result : {left_DNN_result}")
                     
                     # 请求机械臂位置
                     arm_req = srv.CheckArmPoseRequest()
@@ -780,7 +780,6 @@ class Recognition_node():
                     right_DNN_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
                     left_arm_poses  = left_resp.arm_pose
                     left_DNN_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
-                    rospy.loginfo(f"modified_position finish")
                     
                     # 转为rec_result
                     right_rec_result = right_DNN_result.to_rec_result()
@@ -1213,10 +1212,10 @@ def talker():
     prepare_server = rospy.Service(utilis.Topic_name.camera_prepare_service,std_srvs.Empty,doPrepareReq)
     
     
-    # image = cv2.imread("/home/elephant/dev/team1/ros/src/run_task/scripts/test/test_robot_camera/STag/1724287813_left_6_1.jpg")
-    # # YOLO_detect(image,recognition_node.model)
-    # timestamp = str(int(time.time()))
-    # Obj_rec(image, recognition_node.model, mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
+    image = cv2.imread("/home/elephant/dev/team1/ros/src/run_task/scripts/test/test_robot_camera/STag/1724300327_left_6_1.jpg")
+    # YOLO_detect(image,recognition_node.model)
+    timestamp = str(int(time.time()))
+    Obj_rec(image, recognition_node.model, mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)

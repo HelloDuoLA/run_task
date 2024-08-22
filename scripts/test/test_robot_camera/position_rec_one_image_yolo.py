@@ -48,7 +48,7 @@ Tag_Snack_dict = {
 
 
 def Yolo_rec(image, mtx, distCoeffs):
-    model_name ="/home/elephant/dev/team1/model/ssd_resnet18_epoch_070.engine"
+    model_name ="/home/elephant/dev/team1/model/ssd_resnet18_epoch_070_fp16_2.engine"
     INPUT_HW = (1280, 960)
     trt_ssd = engine.TrtSSD(model_name, INPUT_HW)
     # input()
