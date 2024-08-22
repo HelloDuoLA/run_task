@@ -754,9 +754,15 @@ class Recognition_node():
                     left_arm_poses  = left_resp.arm_pose
                     left_DNN_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
                     
-                    # STag 使用已知信息转为rec_result
+                    # 使用 pnp 识别
+                    right_DNN_result.rec(mtx,distCoeffs)
+                    left_DNN_result.rec(mtx,distCoeffs)
+                    
+                    
+                    # 转为rec_result
                     right_rec_result = right_DNN_result.to_rec_result()
                     left_rec_result  = left_DNN_result.to_rec_result()
+                    
                     
                     # 过滤低层零食
                     right_rec_result_high_snack = right_rec_result.filter_low_floor_snack()
@@ -1185,8 +1191,8 @@ def talker():
     prepare_server = rospy.Service(utilis.Topic_name.camera_prepare_service,std_srvs.Empty,doPrepareReq)
     
     
-    # image = cv2.imread("/home/elephant/dev/team1/ros/src/run_task/log/images/1724250132_snack_left.jpg")
-    # YOLO_detect(image,recognition_node.model)
+    # image = cv2.imread("/home/elephant/dev/team1/ros/src/run_task/scripts/test/test_robot_camera/STag/1724287813_left_6_1.jpg")
+    # # YOLO_detect(image,recognition_node.model)
     # timestamp = str(int(time.time()))
     # Obj_rec(image, recognition_node.model, mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
     

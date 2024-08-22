@@ -2103,7 +2103,7 @@ def talker():
         asr_prepare_service.wait_for_service()
     
     # 测试SSD
-    # test_ssd()
+    test_ssd()
     
     # 自定义订单
     # test_order_snack()
