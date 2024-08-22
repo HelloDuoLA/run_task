@@ -398,6 +398,8 @@ class Task_manipulation(Task):
         self.arm_move_method     = arm_move_method      # 移动方式
         self.click_length        = click_length         # 点击长度
         self.arm_speed           = 100                  # 机械臂速度
+        self.open_grasp_value    = 100                  # 手臂开启抓取值, 默认为100
+        self.close_grasp_value   = 0                    # 手臂关闭抓取值, 默认为0
     
     # 设置目标位置
     def set_target_arm_pose(self,arm_pose:arm.Arm_pose,device_id:utilis.Device_id):

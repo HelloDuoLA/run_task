@@ -413,6 +413,8 @@ class Manipulator_actuator():
             left_goal.arm_move_method      = manipulation_task.arm_move_method.value
             left_goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
             left_goal.arm_speed            = manipulation_task.arm_speed
+            left_goal.open_grasp_value     = manipulation_task.open_grasp_value
+            left_goal.close_grasp_value    = manipulation_task.close_grasp_value
             
             if manipulation_task.debug_position != -999:
                 left_goal.arm_pose.arm_pose = manipulation_task.debug_position
@@ -431,6 +433,8 @@ class Manipulator_actuator():
             right_goal.arm_move_method      = manipulation_task.arm_move_method.value
             right_goal.arm_id               = manipulation_task.target_arms_pose[0].arm_id.value
             right_goal.arm_speed            = manipulation_task.arm_speed
+            right_goal.open_grasp_value     = manipulation_task.open_grasp_value
+            right_goal.close_grasp_value    = manipulation_task.close_grasp_value
             
             if manipulation_task.debug_position != -999:
                 right_goal.arm_pose.arm_pose = manipulation_task.debug_position
@@ -451,6 +455,9 @@ class Manipulator_actuator():
                     left_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     left_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
                     left_goal.arm_speed            = manipulation_task.arm_speed
+                    left_goal.open_grasp_value     = manipulation_task.open_grasp_value
+                    left_goal.close_grasp_value    = manipulation_task.close_grasp_value
+                    
                 elif manipulation_task.target_arms_pose[i].arm_id == utilis.Device_id.RIGHT:
                     right_goal.task_index           = task_index
                     right_goal.arm_pose.arm_pose    = manipulation_task.target_arms_pose[i].arm_pose
@@ -461,6 +468,8 @@ class Manipulator_actuator():
                     right_goal.arm_move_method      = manipulation_task.arm_move_method.value
                     right_goal.arm_id               = manipulation_task.target_arms_pose[i].arm_id.value
                     right_goal.arm_speed            = manipulation_task.arm_speed
+                    right_goal.open_grasp_value     = manipulation_task.open_grasp_value
+                    right_goal.close_grasp_value    = manipulation_task.close_grasp_value
 
             left_arm_pub.publish(left_goal)
             right_arm_pub.publish(right_goal)
@@ -1533,6 +1542,7 @@ class Order_driven_task_schedul():
         task_right_arm_grasp_cup.status   = task.Task.Task_status.NOTREADY                   # 需要参数
         task_right_arm_grasp_cup.add_predecessor_task(task_right_arm_grasp_cup_pre)          # 前置任务, 到达中间点
         tasks_get_drink.add(task_right_arm_grasp_cup)
+        task_right_arm_grasp_cup.close_grasp_value = 70                                      # 夹取杯子的力度
         task_right_camera_rec_cup_machine.add_need_modify_task(task_right_arm_grasp_cup)     # 右臂绑定 夹取杯子和移动杯子
 
         # 左臂放置到按钮下方, 进行准备
@@ -1785,7 +1795,7 @@ class Order_driven_task_schedul():
         snack_rec_task.add_need_modify_task(task_grasp_snack)               # 抓零食
         snack_rec_task.add_need_modify_task(task_placement_snack_pre)       # 放零食中间点
         snack_rec_task.add_need_modify_task(task_placement_snack)           # 放零食
-        snack_rec_task.add_need_modify_task(task_left_arm_grap_container_dodge)   # 容器夹取准备动作
+        snack_rec_task.add_need_modify_task(task_left_arm_grap_container_dodge)    # 容器夹取准备动作
         snack_rec_task.add_need_modify_task(task_right_arm_grap_container_dodge)   # 容器夹取准备动作
         left_arm_container_rec_task.add_need_modify_task(task_placement_snack)
         right_arm_container_rec_task.add_need_modify_task(task_placement_snack)
@@ -2162,10 +2172,10 @@ def test_order_snack():
     # order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.CHENPIDAN,1)
-    # order_info.add_snack(snack)
+    order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.GUODONG ,1)
-    order_info.add_snack(snack)
+    # order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.RUSUANJUN ,1)
     order_info.add_snack(snack)
@@ -2182,8 +2192,8 @@ def test_order_snack():
     order_info2.table_id = utilis.Device_id.RIGHT
     # order_info2.table_id = utilis.Device_id.LEFT
 
-    # tasks = system.order_driven_task_schedul.add_task(order_info)
-    tasks2 = system.order_driven_task_schedul.add_task(order_info2)
+    tasks = system.order_driven_task_schedul.add_task(order_info)
+    # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
     # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
 
     # tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)

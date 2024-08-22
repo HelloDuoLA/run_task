@@ -7,3 +7,5 @@ uint8 arm_speed       # 手臂移动速度
 uint8 grasp_flag  # 0 - 打开 1 - 关闭 2. 不变
 uint8 grasp_speed # 1 ~ 100 
 bool  grasp_first # 爪子优先 0 - 不优先 1 - 优先
+uint8 open_grasp_value  # 开启爪子抓取值 0 完全闭合 100完全打开
+uint8 close_grasp_value # 关闭爪子抓取值 0 完全闭合 100完全打开

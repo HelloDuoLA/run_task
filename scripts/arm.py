@@ -189,17 +189,17 @@ class Arm_controller():
             self.control_instance = control_instance
             
         # 关闭抓爪 
-        def close_grasp(self):
-            result = self.control_instance.set_gripper_state(1,50)
-            # result = self.control_instance.set_gripper_value(100,50)
+        def close_grasp(self,close_grasp_value=0):
+            # result = self.control_instance.set_gripper_state(1,50)
+            result = self.control_instance.set_gripper_value(close_grasp_value,50)
             
             time.sleep(1.5)
             return result
         
         # 打开抓爪 
-        def open_grasp(self):
-            result = self.control_instance.set_gripper_state(0,50)
-            # result = self.control_instance.set_gripper_value(0,50)
+        def open_grasp(self,open_grasp_value=100):
+            # result = self.control_instance.set_gripper_state(0,50)
+            result = self.control_instance.set_gripper_value(open_grasp_value,50)
             time.sleep(1.5)
             return result
             
@@ -457,10 +457,10 @@ def execute_cb(goal:msg.ArmMoveRequest,self):
     
     # 先打开 and 先打开后关闭
     if goal_grasp_flag == GripMethod.OPEN_CLOSE or goal_grasp_flag == GripMethod.OPEN_FIRST:
-        self.open_grasp()
+        self.open_grasp(goal.open_grasp_value)
     # 先关闭 and 先关闭后打开
     elif goal_grasp_flag == GripMethod.CLOSE_OPEN or goal_grasp_flag == GripMethod.CLOSE_FIRST:
-        self.close_grasp()
+        self.close_grasp(goal.close_grasp_value)
     
     
     if goal.arm_move_method != ArmMoveMethod.OPLY_GRIP:
@@ -469,10 +469,10 @@ def execute_cb(goal:msg.ArmMoveRequest,self):
     
     # 后打开 and 先关闭后打开
     if goal_grasp_flag == GripMethod.CLOSE_OPEN or goal_grasp_flag == GripMethod.OPEN:
-        self.open_grasp()
+        self.open_grasp(goal.open_grasp_value)
     # 后关闭 and 先打开后关闭
     elif goal_grasp_flag == GripMethod.OPEN_CLOSE or goal_grasp_flag == GripMethod.CLOSE:
-        self.close_grasp()
+        self.close_grasp(goal.close_grasp_value)
 
     
     # 构建返回数据

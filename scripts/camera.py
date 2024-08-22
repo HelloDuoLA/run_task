@@ -76,16 +76,16 @@ class STag_result_list():
         self.stag_result_list.append(stag_result)   
     
     # 转为msg
-    # def to_msg(self,) -> List[msg.ObjPositionWithID]:
-    #     return_list = []
-    #     for stag_result in self.stag_result_list:
-    #         obj_position = msg.ObjPositionWithID()
-    #         obj_position.arm_id        = stag_result.camera_id.value
-    #         obj_position.obj_id        = stag_result.obj_id
-    #         obj_position.position      = stag_result.base_coords
-    #         obj_position.position_type = arm.PoseType.BASE_COORDS.value
-    #         return_list.append(obj_position)
-    #     return return_list
+    def to_msg(self,) -> List[msg.ObjPositionWithID]:
+        return_list = []
+        for stag_result in self.stag_result_list:
+            obj_position = msg.ObjPositionWithID()
+            obj_position.arm_id        = stag_result.camera_id.value
+            obj_position.obj_id        = stag_result.obj_id
+            obj_position.position      = stag_result.base_coords
+            obj_position.position_type = arm.PoseType.BASE_COORDS.value
+            return_list.append(obj_position)
+        return return_list
     
 
     # 通过已知STag id 与零食的关系进行绑定 
