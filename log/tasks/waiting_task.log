@@ -1,6 +1,114 @@
-08-22 18:51:18
+08-22 19:09:04
 
 --------------------------------------------------
+
+
+Task       : Task_manipulation Move_to_IDLE
+Name       : two arms move to idle
+Group_id   : 2
+Index      : 32
+Create_time: 1724324857.203142
+Start_time : -999
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 2
+Subtask_count_finished: 0
+Predecessor_tasks: [31:Task_manipulation Lossen_container] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : LEFT_RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-71.22, 62.77, -35.52, 66.98, 20.46, 35.6] 
+                       Arm_pose_1: arm RIGHT, pose type ANGLE, joint:[71.22, 62.77, -35.52, -66.98, 20.46, -35.6] } 
+Debug_position      : -999
+Target_clamps_status: Clamp_status_0: CLOSE Clamp_status_1: CLOSE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
+
+
+Task       : Task_navigate Move_backward
+Name       : move back from right service desk
+Group_id   : 2
+Index      : 33
+Create_time: 1724324857.2031987
+Start_time : -999
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [31:Task_manipulation Lossen_container] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Target_3D_pose: x:-50.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:-90.00 
+
+Task       : Task_navigate Move_backward
+Name       : move back second from right service desk
+Group_id   : 2
+Index      : 34
+Create_time: 1724324857.2032607
+Start_time : -999
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : ALL
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [33:Task_navigate Move_backward] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Target_3D_pose: x:-20.00 y:-999.00 z:-999.00 roll:-999.00 pitch:-999.00 yaw:0.00 
+
+Task       : Task_function PAUSE
+Name       : function pause
+Group_id   : 2
+Index      : 35
+Create_time: 1724324857.2033343
+Start_time : -999
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+
+
+Task       : Task_speech_recognition Speech_Recognition
+Name       : speech recognition
+Group_id   : -999
+Index      : 0
+Create_time: 1724324857.203458
+Start_time : -999
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
 
 --------------------------------------------------
 
