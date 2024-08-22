@@ -490,12 +490,20 @@ class YOLO_result():
         self.bonding_box         = bonding_box           # 检测框
         self.confidence          = confidence            # 置信度
     
+    def __str__(self) -> None:
+        return f"snack_tag : {self.snack_tag}\n bonding_box : {self.bonding_box } \n confidence : {self.confidence} \n"
 
 
 # YOLO 识别结果列表
 class YOLO_result_list():
     def __init__(self) -> None:
         self.yolo_result_list:List[YOLO_result] = []
+        
+    def __str__(self) -> None:
+        str_print = ""
+        for yolo_result in self.yolo_result_list:
+            str_print += str(yolo_result) + "\n"
+        return str_print
     
     # 增加
     def add(self,yolo_result:YOLO_result):
@@ -567,6 +575,9 @@ class Obj_result():
         self.image_xy     = (bonding_box[0][0] + bonding_box[0][2])/2  # 检测框中心点
         self.image_coords = None                                 # 图像三维坐标系
         self.base_coords  = None                                 # 机械臂基坐标系
+        
+    def __str__(self) -> None:
+        return f"camera_id : {self.camera_id}\n snack_tag : {self.snack_tag } \n obj_id : {self.obj_id} \n image_coords : {self.image_coords} \n base_coords : {self.base_coords}"
 
 # OBJ 识别结果列表
 class  Obj_result_list():
@@ -589,6 +600,12 @@ class  Obj_result_list():
 
     def __init__(self) -> None:
         self.obj_result_list:List[Obj_result] = []
+        
+    def __str__(self) -> None:
+        str_print = ""
+        for obj_result in self.obj_result_list:
+            str_print += str(obj_result) + "\n"
+        return str_print
     
     # 增加
     def add(self,obj_result:Obj_result):
@@ -741,6 +758,9 @@ class Recognition_node():
                     right_DNN_result = Obj_rec(right_img, self.model, mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
                     left_DNN_result  = Obj_rec(left_img,  self.model, mtx, distCoeffs, utilis.Device_id.LEFT,  image_name=f"{timestamp}_snack_left")
                     
+                    rospy.loginfo(f"right_DNN_result : {right_DNN_result}")
+                    rospy.loginfo(f"left_DNN_result : {left_DNN_result}")
+                    
                     # 请求机械臂位置
                     arm_req = srv.CheckArmPoseRequest()
                     arm_req.type_id = arm.PoseType.BASE_COORDS.value
@@ -760,11 +780,9 @@ class Recognition_node():
                     left_DNN_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
                     rospy.loginfo(f"modified_position finish")
                     
-
                     # 转为rec_result
                     right_rec_result = right_DNN_result.to_rec_result()
                     left_rec_result  = left_DNN_result.to_rec_result()
-                    
                     
                     # 过滤低层零食
                     right_rec_result_high_snack = right_rec_result.filter_low_floor_snack()
@@ -950,7 +968,7 @@ def YOLO_detect(img, trt_ssd:engine.TrtSSD, conf_th=0.35) -> YOLO_result_list:
     return yolo_result_list
 
 # OBJ识别
-def Obj_rec(image, model:engine.TrtSSD, mtx, distCoeffs,device_id:utilis.Device_id=utilis.Device_id.LEFT, image_name="") -> Obj_result_list:
+def Obj_rec(image, model:engine.TrtSSD, mtx, distCoeffs, device_id:utilis.Device_id=utilis.Device_id.LEFT, image_name="") -> Obj_result_list:
     # 检测结果列表
     yolo_detect_result_list = YOLO_detect(image, model, conf_th=0.35)
     
