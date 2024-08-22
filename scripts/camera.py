@@ -748,15 +748,17 @@ class Recognition_node():
                     left_resp  = self.left_arm_client.call(arm_req)
                     right_resp = self.right_arm_client.call(arm_req)
                     
+                    # 使用 pnp 识别
+                    right_DNN_result.rec(mtx,distCoeffs)
+                    left_DNN_result.rec(mtx,distCoeffs)
+                    
                     # 修正角度
                     right_arm_poses = right_resp.arm_pose
                     right_DNN_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
                     left_arm_poses  = left_resp.arm_pose
                     left_DNN_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
                     
-                    # 使用 pnp 识别
-                    right_DNN_result.rec(mtx,distCoeffs)
-                    left_DNN_result.rec(mtx,distCoeffs)
+
                     
                     
                     # 转为rec_result
