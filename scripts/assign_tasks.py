@@ -1360,7 +1360,7 @@ class Order_driven_task_schedul():
         task_move_back_first_from_snack_desk.set_move_back_second(system.anchor_point.snack_deck_first_move_back_pose.run_time)  # 设置运行时间
         task_move_back_first_from_snack_desk.add_predecessor_task(task_right_arm_grap_container)   # 前置任务, 左臂抓取容器
         task_move_back_first_from_snack_desk.add_predecessor_task(task_left_arm_grap_container)    # 前置任务, 右臂抓取容器
-        task_move_back_first_from_snack_desk.add_predecessor_task(task_arm_dilivery_container)    # 前置任务, 右臂抓取容器
+        # task_move_back_first_from_snack_desk.add_predecessor_task(task_arm_dilivery_container)    # 前置任务, 提高容器
         task_move_back_first_from_snack_desk.parallel = task.Task.Task_parallel.ALL
         tasks_pick_snack.add(task_move_back_first_from_snack_desk)
         
@@ -2121,10 +2121,10 @@ def talker():
     # test_ssd()
     
     # 自定义订单
-    test_order_snack()
+    # test_order_snack()
 
     # 新增识别服务
-    # system.order_driven_task_schedul.add_asr_task()
+    system.order_driven_task_schedul.add_asr_task()
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)
