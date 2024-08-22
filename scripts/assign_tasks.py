@@ -2121,10 +2121,10 @@ def talker():
     # test_ssd()
     
     # 自定义订单
-    test_order_snack()
+    # test_order_snack()
 
     # 新增识别服务
-    # system.order_driven_task_schedul.add_asr_task()
+    system.order_driven_task_schedul.add_asr_task()
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)
@@ -2175,10 +2175,10 @@ def test_order_snack():
     order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.GUODONG ,1)
-    # order_info.add_snack(snack)
+    order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.RUSUANJUN ,1)
-    order_info.add_snack(snack)
+    # order_info.add_snack(snack)
     
     drink  = order.Drink(order.Drink.Drink_id.COFFEE,1)
 
@@ -2192,8 +2192,8 @@ def test_order_snack():
     order_info2.table_id = utilis.Device_id.RIGHT
     # order_info2.table_id = utilis.Device_id.LEFT
 
-    # tasks = system.order_driven_task_schedul.add_task(order_info)
-    tasks2 = system.order_driven_task_schedul.add_task(order_info2)
+    tasks = system.order_driven_task_schedul.add_task(order_info)
+    # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
     # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
 
     # tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)

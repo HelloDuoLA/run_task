@@ -17,7 +17,7 @@ import numpy as np
 import os
 from config_loader import silence_threshold, silence_duration, max_initial_wait
 
-LOGDIR = "/home/elephant/xzc_code/ros_ws/src/run_task/log/"
+LOGDIR = "/home/elephant/dev/team1/ros/src/run_task/log/"
 
 STATUS_FIRST_FRAME = 0  # 第一帧的标识
 STATUS_CONTINUE_FRAME = 1  # 中间帧标识

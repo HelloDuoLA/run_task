@@ -397,7 +397,7 @@ class Task_manipulation(Task):
         self.clamp_speed         = clamp_speed          # 夹具速度
         self.arm_move_method     = arm_move_method      # 移动方式
         self.click_length        = click_length         # 点击长度
-        self.arm_speed           = 100                  # 机械臂速度
+        self.arm_speed           = 70                   # 机械臂速度
         self.open_grasp_value    = 100                  # 手臂开启抓取值, 默认为100
         self.close_grasp_value   = 0                    # 手臂关闭抓取值, 默认为0
     
