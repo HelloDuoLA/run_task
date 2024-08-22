@@ -572,18 +572,18 @@ class Obj_result():
 class  Obj_result_list():
     # 物体真实宽度
     Obj_True_Width = {
-        order.Snack.Snack_id.GUODONG.value   : 8 ,
-        order.Snack.Snack_id.RUSUANJUN.value : 4.5 ,
-        order.Snack.Snack_id.CHENPIDAN.value : 4.6 ,
-        order.Snack.Snack_id.YIDA.value      : 5.6  ,
+        order.Snack.Snack_id.GUODONG.value   : 80 ,
+        order.Snack.Snack_id.RUSUANJUN.value : 45 ,
+        order.Snack.Snack_id.CHENPIDAN.value : 46 ,
+        order.Snack.Snack_id.YIDA.value      : 56
     }
     
     # 物体真实高度
     Obj_True_Height = {
-        order.Snack.Snack_id.GUODONG.value   : 13.5 ,
-        order.Snack.Snack_id.RUSUANJUN.value : 8.7 ,
-        order.Snack.Snack_id.CHENPIDAN.value : 8.7 ,
-        order.Snack.Snack_id.YIDA.value      : 8.3  ,
+        order.Snack.Snack_id.GUODONG.value   : 135,
+        order.Snack.Snack_id.RUSUANJUN.value : 87 ,
+        order.Snack.Snack_id.CHENPIDAN.value : 87 ,
+        order.Snack.Snack_id.YIDA.value      : 83
     }
     
 
@@ -751,16 +751,16 @@ class Recognition_node():
                     # 使用 pnp 识别
                     right_DNN_result.rec(mtx,distCoeffs)
                     left_DNN_result.rec(mtx,distCoeffs)
+                    rospy.loginfo(f"snack yolo rec finish")
                     
                     # 修正角度
                     right_arm_poses = right_resp.arm_pose
                     right_DNN_result.modified_position(request.task_type,utilis.Device_id.RIGHT,right_arm_poses)
                     left_arm_poses  = left_resp.arm_pose
                     left_DNN_result.modified_position(request.task_type,utilis.Device_id.LEFT,left_arm_poses)
+                    rospy.loginfo(f"modified_position finish")
                     
 
-                    
-                    
                     # 转为rec_result
                     right_rec_result = right_DNN_result.to_rec_result()
                     left_rec_result  = left_DNN_result.to_rec_result()
