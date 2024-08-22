@@ -684,7 +684,7 @@ class Recognition_node():
         self.right_arm_client = rospy.ServiceProxy(utilis.Topic_name.CheckRightArmPose ,srv.CheckArmPose)
         
         # 初始化模型
-        model_name ="/home/elephant/dev/team1/model/ssd_resnet18_epoch_070.engine"
+        model_name ="/home/elephant/dev/team1/model/ssd_resnet18_epoch_070_fp16_2.engine"
         INPUT_HW = (1280, 960)
         self.model = engine.TrtSSD(model_name, INPUT_HW)
     
@@ -739,6 +739,8 @@ class Recognition_node():
                 elif request.rec_method == utilis.Rec_method.YOLO:
                     # YOLO 识别零食
                     right_DNN_result = Obj_rec(right_img, self.model, mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
+                    # 等大电流过了
+                    rospy.sleep(1)
                     left_DNN_result  = Obj_rec(left_img,  self.model, mtx, distCoeffs, utilis.Device_id.LEFT,  image_name=f"{timestamp}_snack_left")
                     
                     # 请求机械臂位置
