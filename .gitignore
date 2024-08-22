@@ -7,3 +7,5 @@ log/STag_result
 log/recordings/
 scripts/__pycache__
 SSD
+log/ai_responses
+log/json_files
