@@ -749,9 +749,9 @@ class Recognition_node():
                     right_resp = self.right_arm_client.call(arm_req)
                     
                     # 使用 pnp 识别
-                    right_DNN_result.rec(mtx,distCoeffs)
-                    left_DNN_result.rec(mtx,distCoeffs)
-                    rospy.loginfo(f"snack yolo rec finish")
+                    # right_DNN_result.rec(mtx,distCoeffs)
+                    # left_DNN_result.rec(mtx,distCoeffs)
+                    # rospy.loginfo(f"snack yolo rec finish")
                     
                     # 修正角度
                     right_arm_poses = right_resp.arm_pose
