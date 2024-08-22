@@ -1542,7 +1542,7 @@ class Order_driven_task_schedul():
         task_right_arm_grasp_cup.status   = task.Task.Task_status.NOTREADY                   # 需要参数
         task_right_arm_grasp_cup.add_predecessor_task(task_right_arm_grasp_cup_pre)          # 前置任务, 到达中间点
         tasks_get_drink.add(task_right_arm_grasp_cup)
-        task_right_arm_grasp_cup.close_grasp_value = 70                                      # 夹取杯子的力度
+        task_right_arm_grasp_cup.close_grasp_value = 40                                      # 夹取杯子的力度
         task_right_camera_rec_cup_machine.add_need_modify_task(task_right_arm_grasp_cup)     # 右臂绑定 夹取杯子和移动杯子
 
         # 左臂放置到按钮下方, 进行准备
@@ -2192,8 +2192,8 @@ def test_order_snack():
     order_info2.table_id = utilis.Device_id.RIGHT
     # order_info2.table_id = utilis.Device_id.LEFT
 
-    tasks = system.order_driven_task_schedul.add_task(order_info)
-    # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
+    # tasks = system.order_driven_task_schedul.add_task(order_info)
+    tasks2 = system.order_driven_task_schedul.add_task(order_info2)
     # tasks2 = system.order_driven_task_schedul.add_task(order_info2)
 
     # tasks_get_snack = system.order_driven_task_schedul.test_tasks_at_snack_desk(order_info.snack_list)

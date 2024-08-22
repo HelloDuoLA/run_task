@@ -62,32 +62,34 @@ class Asr_node():
                         order_info.table_id = 1
                     snack_list = []
                     snack_all_count = 0
-                    for snack_id, count in response_dict["snacks"].items():
-                        if count != 0:
-                            snack = msg.SnackIDWithCount()
-                            snack.snack_id = int(snack_id)
-                            snack.count = count
-                            snack_list.append(snack)
-                            snack_all_count += count
+                    if "snacks" in response_dict:
+                        for snack_id, count in response_dict["snacks"].items():
+                            if count != 0:
+                                snack = msg.SnackIDWithCount()
+                                snack.snack_id = int(snack_id)
+                                snack.count = count
+                                snack_list.append(snack)
+                                snack_all_count += count
                     
                     drink_list = []
                     drink_count = 0
-                    for drink_id, count in response_dict["drinks"].items():
-                        if count != 0:
-                            drink = msg.DrinkIDWithCount()
-                            drink.drink_id = int(drink_id)
-                            drink.count = count
-                            drink_list.append(drink)
-                            drink_count += count
-                        
-                    order_info.snacks = snack_list
-                    order_info.drinks = drink_list
+                    if "drinks" in response_dict:
+                        for drink_id, count in response_dict["drinks"].items():
+                            if count != 0:
+                                drink = msg.DrinkIDWithCount()
+                                drink.drink_id = int(drink_id)
+                                drink.count = count
+                                drink_list.append(drink)
+                                drink_count += count
+                                
                     if drink_count == 0 and snack_all_count == 0:
                         rospy.loginfo("asr node 没有识别到任何物品")
                         self.say_again()
                         time.sleep(1)
                         continue
-
+                        
+                    order_info.snacks = snack_list
+                    order_info.drinks = drink_list
                     # 发布订单数据
                     self.order_pub.publish(order_info)
                     self.say_do_service()
