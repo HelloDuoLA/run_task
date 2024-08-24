@@ -555,12 +555,12 @@ class YOLO_result_list():
         
     
     # TODO: 过滤边缘零食
-    def filter_edge_snack(self,x_max = 640):
+    def filter_edge_snack(self,y_max = 480):
         final_result = YOLO_result_list()
         for yolo_result in self.yolo_result_list:
-            x_smallest = yolo_result.bonding_box[0][0][0]
-            x_largest = yolo_result.bonding_box[0][2][0]
-            if x_smallest > 20 and x_largest < x_max - 20:
+            y_smallest = yolo_result.bonding_box[0][0][1]
+            y_largest = yolo_result.bonding_box[0][2][1]
+            if y_smallest > 20 and y_largest < y_max - 20:
                 final_result.add(yolo_result)
         self.yolo_result_list = final_result.yolo_result_list
     
