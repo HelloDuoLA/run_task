@@ -439,10 +439,10 @@ class Arm_controller():
                 rospy.loginfo(f"arm move failed {result}!!!!!!!!!!!!")
                 return False
         #  可靠地获取当前的基座标
-        # TODO:貌似没人用
         def get_base_coords(self):
             current_base_coords     = self.control_instance.get_base_coords()
             while current_base_coords == None:
+                rospy.loginfo(f"get_base_coords failed")
                 current_base_coords = self.control_instance.get_base_coords()
                 time.sleep(0.1)
             return current_base_coords

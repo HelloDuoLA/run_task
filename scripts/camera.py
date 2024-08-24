@@ -552,6 +552,17 @@ class YOLO_result_list():
             if yolo_result.confidence > confidence_threshold:
                 final_result.add(yolo_result)
         self.yolo_result_list = final_result.yolo_result_list
+        
+    
+    # TODO: 过滤边缘零食
+    def filter_edge_snack(self,x_max = 640):
+        final_result = YOLO_result_list()
+        for yolo_result in self.yolo_result_list:
+            x_smallest = yolo_result.bonding_box[0][0][0]
+            x_largest = yolo_result.bonding_box[0][2][0]
+            if x_smallest > 20 and x_largest < x_max - 20:
+                final_result.add(yolo_result)
+        self.yolo_result_list = final_result.yolo_result_list
     
     # 转为目标识别结果
     def to_obj_result(self, camera_id:utilis.Device_id)->Obj_result_list:
@@ -998,6 +1009,9 @@ def Obj_rec(image, model:engine.TrtSSD, mtx, distCoeffs, device_id:utilis.Device
     
     # 过滤低置信度对象
     yolo_detect_result_list.filter_low_confidence()
+    
+    # 过滤边缘对象
+    yolo_detect_result_list.filter_edge_snack()
     
     # 转为obj_result
     obj_result_list = yolo_detect_result_list.to_obj_result(device_id)
