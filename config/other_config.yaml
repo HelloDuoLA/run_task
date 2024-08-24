@@ -2,14 +2,10 @@
 
 SnackDeckFirstMoveBack:
   x    : -35
-  # x    : -8
-  # yaw  : 70
   yaw  : 0
   time : 3
 
 SnackDeckMoveBack:
-  # x    : -45
-  # x    : -8
   x    : 15
   yaw  : -90
   time : 5

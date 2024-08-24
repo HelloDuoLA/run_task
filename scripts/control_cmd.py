@@ -58,7 +58,7 @@ class ControlCmdActionServer:
             x_speed = length_x / 100  / second
             rospy.loginfo(f"x_speed: {x_speed}")
             yaw_speed = math.radians(yaw) / second
-            rospy.loginfo(f"x_speed: {yaw_speed}")
+            rospy.loginfo(f"yaw_speed: {yaw_speed}")
             move_cmd.linear.x = x_speed  # 设置线速度，负值表示后退
             move_cmd.angular.z = yaw_speed     #  航向角
             # 计算后退的时间

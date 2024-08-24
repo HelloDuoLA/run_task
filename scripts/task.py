@@ -315,7 +315,7 @@ class Task_navigation(Task):
         if self.name != Task_type.Task_navigate.Move_backward:
             return super().__str__() + f"Target_3D_pose: {self.target_3D_pose} "
         else:
-            return super().__str__() +  f"back_meters: x {self.target_3D_pose.x}, y {self.target_3D_pose.y}"
+            return super().__str__() +  f"back_meters: x {self.target_3D_pose.x}, yaw {self.target_3D_pose.yaw}, time {self.move_back_second}"
 
 # 图像识别任务
 class Task_image_rec(Task):
