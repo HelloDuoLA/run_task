@@ -9,6 +9,7 @@ InitialPose:
 SnackDesk:
   position_x: 0.42
   position_y: -2.35
+  # position_y: -2.25
   position_z: 0
   yaw: -3.0
   

@@ -560,8 +560,12 @@ class YOLO_result_list():
         for yolo_result in self.yolo_result_list:
             y_smallest = yolo_result.bonding_box[0][0][1]
             y_largest = yolo_result.bonding_box[0][2][1]
+            rospy.loginfo(f"y_smallest : {y_smallest} y_largest : {y_largest}")
             if y_smallest > 20 and y_largest < y_max - 20:
                 final_result.add(yolo_result)
+                rospy.loginfo(f"not filter edge snack")
+            else:
+                rospy.loginfo(f"filter_edge_snack")
         self.yolo_result_list = final_result.yolo_result_list
     
     # 转为目标识别结果
