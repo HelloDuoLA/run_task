@@ -1,32 +1,33 @@
-08-24 16:48:20
+08-24 17:11:25
 
 --------------------------------------------------
 
 
-Task       : Task_manipulation Lossen_cup
-Name       : right arm placement cup
+Task       : Task_manipulation Move_to_IDLE
+Name       : two arms move to idle
 Group_id   : 0
-Index      : 20
-Create_time: 1724489239.6140542
-Start_time : -999
+Index      : 32
+Create_time: 1724490570.658106
+Start_time : 1724490679.6145833
 End_time   : -999
 Duration   : -999
 Finsih_cb  : None
-Status     : BEREADY
+Status     : RUNNING
 Result     : INVALID
 Return_data: None
-Parallel   : NOTALLOWED
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: [19:Task_navigate Move_forward] 
+Parallel   : ALL
+Subtask_count: 2
+Subtask_count_finished: 1
+Predecessor_tasks: [31:Task_manipulation Lossen_container] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[0, 0, -40, 0, 0, 0] } 
+Arm_id              : LEFT_RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-71.22, 62.77, -35.52, 66.98, 20.46, 35.6] 
+                       Arm_pose_1: arm RIGHT, pose type ANGLE, joint:[71.22, 62.77, -35.52, -66.98, 20.46, -35.6] } 
 Debug_position      : -999
-Target_clamps_status: Clamp_status_0: OPEN  
+Target_clamps_status: Clamp_status_0: CLOSE Clamp_status_1: CLOSE  
 Clamp_speed         : 50 
-arm_move_method     : MODIFY_Z 
+arm_move_method     : XYZ 
 click_length        : 0 
 
 --------------------------------------------------

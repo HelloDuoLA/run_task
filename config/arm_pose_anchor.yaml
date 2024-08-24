@@ -5,7 +5,7 @@ LeftArmIdle:
 
 # 左臂食物框识别位点
 LeftArmContainerRec:
-  coords: [330, 185, 435, -180, 0, -90]
+  coords: [330, 175, 435, -180, 0, -90]
 
 # 左臂零食识别位点
 LeftArmSnackRec:
