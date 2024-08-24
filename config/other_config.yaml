@@ -32,12 +32,12 @@ RightDeckMoveBack:
 LeftDeckSecondMoveBack:
   x  : -20
   yaw: 0
-  time : 2
+  time : 1.5
 
 RightDeckSecondMoveBack:
   x  : -20
   yaw: 0
-  time : 2
+  time : 1.5
 
 # 前进距离 [mm]
 SnackDeckMoveforward:

@@ -448,6 +448,8 @@ class Rec_result_list():
                 elif same_id_rec_result.base_coords[1] > 0 and rec_result.base_coords[1] > 0:
                     final_result.rec_result_list.append(same_id_rec_result)
                 else:
+                    rospy.loginfo(f"left arm rec result.base_coords[1] {same_id_rec_result.base_coords[1]}")
+                    rospy.loginfo(f"right arm rec result.base_coords[1] {rec_result.base_coords[1]}")
                     raise ValueError("Rec result list fuse error G!")
                 processed_ids.add(snack_id)
             else:
@@ -476,6 +478,8 @@ class Rec_result_list():
             if self.rec_result_list[i].base_coords[2] > 350:
                 final_result.rec_result_list.append(self.rec_result_list[i])
         return final_result
+    
+
     
     def get_snack_from_id(self,snack_id:int)->Rec_result:
         for rec_result in self.rec_result_list:
@@ -610,6 +614,14 @@ class  Obj_result_list():
     # 增加
     def add(self,obj_result:Obj_result):
         self.obj_result_list.append(obj_result)
+        
+    # TODO:过滤掉图像中比较靠左的零食
+    def filter_left_snack(self)->Rec_result_list:
+        pass
+    
+    # TODO:过滤掉图像中比较靠右的零食
+    def filter_right_snack(self)->Rec_result_list:
+        pass
     
     # 识别
     def rec(self,mtx,distCoeffs,image_name):
@@ -757,7 +769,7 @@ class Recognition_node():
                     # YOLO 识别零食
                     right_DNN_result = Obj_rec(right_img, self.model, mtx, distCoeffs, utilis.Device_id.RIGHT, image_name=f"{timestamp}_snack_right")
                     # 等大电流过了
-                    rospy.sleep(1)
+                    # rospy.sleep(1)
                     left_DNN_result  = Obj_rec(left_img,  self.model, mtx, distCoeffs, utilis.Device_id.LEFT,  image_name=f"{timestamp}_snack_left")
                     
                     # rospy.loginfo(f"right_DNN_result : {right_DNN_result}")
@@ -770,10 +782,6 @@ class Recognition_node():
                     left_resp  = self.left_arm_client.call(arm_req)
                     right_resp = self.right_arm_client.call(arm_req)
                     
-                    # 使用 pnp 识别
-                    # right_DNN_result.rec(mtx,distCoeffs)
-                    # left_DNN_result.rec(mtx,distCoeffs)
-                    # rospy.loginfo(f"snack yolo rec finish")
                     
                     # 修正角度
                     right_arm_poses = right_resp.arm_pose
