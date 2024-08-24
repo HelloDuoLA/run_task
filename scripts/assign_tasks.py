@@ -1436,7 +1436,7 @@ class Order_driven_task_schedul():
             # 后退第二步
             task_move_back_second_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             system.anchor_point.left_deck_second_move_back_pose, name="move back second from left service desk")
-            task_move_back_from_service_desk.set_move_back_second(system.anchor_point.left_deck_second_move_back_pose.run_time)    # 设置运行时间
+            task_move_back_second_from_service_desk.set_move_back_second(system.anchor_point.left_deck_second_move_back_pose.run_time)    # 设置运行时间
             
         elif table_id == utilis.Device_id.RIGHT.value:
             task_move_back_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
@@ -1446,7 +1446,7 @@ class Order_driven_task_schedul():
             # 后退第二步
             task_move_back_second_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
             system.anchor_point.right_deck_second_move_back_pose, name="move back second from right service desk")
-            task_move_back_from_service_desk.set_move_back_second(system.anchor_point.right_deck_second_move_back_pose.run_time)    # 设置运行时间
+            task_move_back_second_from_service_desk.set_move_back_second(system.anchor_point.right_deck_second_move_back_pose.run_time)    # 设置运行时间
         else:
             raise ValueError("Invalid table_id")
         

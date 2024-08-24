@@ -18,22 +18,22 @@ DrinkDeckMoveBack:
 LeftDeckMoveBack:
   x  : -50
   yaw: 90
-  time : 5
+  time : 3
 
 RightDeckMoveBack:
   x  : -50
   yaw: -90
-  time : 5
+  time : 3
 
 LeftDeckSecondMoveBack:
   x  : -20
   yaw: 0
-  time : 1
+  time : 2
 
 RightDeckSecondMoveBack:
   x  : -20
   yaw: 0
-  time : 1
+  time : 2
 
 # 前进距离 [mm]
 SnackDeckMoveforward:

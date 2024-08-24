@@ -1,6 +1,33 @@
-08-24 16:20:13
+08-24 16:48:20
 
 --------------------------------------------------
+
+
+Task       : Task_manipulation Lossen_cup
+Name       : right arm placement cup
+Group_id   : 0
+Index      : 20
+Create_time: 1724489239.6140542
+Start_time : -999
+End_time   : -999
+Duration   : -999
+Finsih_cb  : None
+Status     : BEREADY
+Result     : INVALID
+Return_data: None
+Parallel   : NOTALLOWED
+Subtask_count: 1
+Subtask_count_finished: 0
+Predecessor_tasks: [19:Task_navigate Move_forward] 
+Sleep_time_before_task : 0
+Sleep_time_after_task  : 0
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[0, 0, -40, 0, 0, 0] } 
+Debug_position      : -999
+Target_clamps_status: Clamp_status_0: OPEN  
+Clamp_speed         : 50 
+arm_move_method     : MODIFY_Z 
+click_length        : 0 
 
 --------------------------------------------------
 
