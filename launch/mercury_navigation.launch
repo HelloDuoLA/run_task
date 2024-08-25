@@ -9,8 +9,8 @@
 
  <!-- 设置需要用于导航的地图  -->
  <!-- <arg name="map_file" default="$(find run_task)/map/C111.yaml"/> -->
- <!-- <arg name="map_file" default="$(find turn_on_mercury_robot)/map/map_team1_C111.yaml"/> -->
- <arg name="map_file" default="$(find turn_on_mercury_robot)/map/map_team1_C111_2.yaml"/>
+ <arg name="map_file" default="$(find turn_on_mercury_robot)/map/map_team1_C111.yaml"/>
+ <!-- <arg name="map_file" default="$(find turn_on_mercury_robot)/map/map_team1_C111_2.yaml"/> -->
  <node name="map_server_for_test" pkg="map_server" type="map_server" args="$(arg map_file)">
  </node>
 <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />

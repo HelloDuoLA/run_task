@@ -72,7 +72,7 @@ LeftArmMachineTurnOnPre:
 # 左臂咖啡机开启时向上拨一拨
 LeftArmMachineTurnOnClick:
   # x y z 都不确定, 手势确定
-  coords:  [0, 0, 20, 0, 0, 0]
+  coords:  [0, 0, 10, 0, 0, 0]
 
 # 左臂咖啡机转移位点
 LeftArmMachineTransfrom:
