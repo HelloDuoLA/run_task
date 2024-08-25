@@ -1,14 +1,14 @@
-08-24 18:34:47
+08-25 20:32:26
 
 --------------------------------------------------
 
 
-Task       : Task_manipulation Grasp_snack
-Name       : grasp snack
-Group_id   : 2
-Index      : 14
-Create_time: 1724495641.602308
-Start_time : 1724495679.5510654
+Task       : Task_manipulation Move_to_IDLE
+Name       : left arm move to idle prepare for pick snack
+Group_id   : 0
+Index      : 0
+Create_time: 1724589135.696285
+Start_time : 1724589135.8509905
 End_time   : -999
 Duration   : -999
 Finsih_cb  : None
@@ -18,23 +18,23 @@ Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: [13:Task_manipulation Grasp_snack_pre] 
+Predecessor_tasks: 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[347.1496276855469, -6.073234558105469, 430.0, 90, 0, 90] } 
+Arm_id              : LEFT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-71.22, 62.77, -35.52, 66.98, 20.46, 35.6] } 
 Debug_position      : -999
-Target_clamps_status: Clamp_status_0: OPEN_CLOSE  
+Target_clamps_status: Clamp_status_0: CLOSE  
 Clamp_speed         : 50 
-arm_move_method     : YZ_X 
+arm_move_method     : XYZ 
 click_length        : 0 
 
 
-Task       : Task_manipulation Lossen_snack_pre
-Name       : task_placement_snack_middle
-Group_id   : 2
-Index      : 19
-Create_time: 1724495641.602582
+Task       : Task_manipulation Rec_container
+Name       : right arm move to rec container
+Group_id   : 0
+Index      : 5
+Create_time: 1724589135.696936
 Start_time : -999
 End_time   : -999
 Duration   : -999
@@ -45,15 +45,15 @@ Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: [18:Task_manipulation Grasp_snack] 
+Predecessor_tasks: [3:Task_navigate Move_forward] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-Arm_id              : LEFT 
-Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type BASE_COORDS, coords:[230, 270, 330, -90, 0, -90] } 
+Arm_id              : RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[330, -100, 435, -180, 0.0, 90] } 
 Debug_position      : -999
-Target_clamps_status: Clamp_status_0: DONTCANGE Clamp_status_1: DONTCANGE  
+Target_clamps_status: Clamp_status_0: DONTCANGE  
 Clamp_speed         : 50 
-arm_move_method     : X_Z_Y 
+arm_move_method     : XYZ 
 click_length        : 0 
 
 --------------------------------------------------
