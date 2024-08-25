@@ -1,4 +1,4 @@
-image: /home/elephant/dev/team1/ros/src/run_task/map/C111.pgm
+image: /home/elephant/dev/team1/ros/src/run_task/map/map_team1_C111.pgm
 resolution: 0.050000
 origin: [-5.000000, -4.000000, 0.000000]
 negate: 0
