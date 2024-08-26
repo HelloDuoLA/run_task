@@ -20,4 +20,4 @@ roslaunch run_task mercury_keyboard_teleop.launch
 
 # 保存地图
 # TODO:待修改
-rosrun map_server map_saver -f /home/elephant/mercury_x1_ros/src/turn_on_mercury_robot/map/map_team1_C111
+rosrun map_server map_saver -f /home/elephant/mercury_x1_ros/src/turn_on_mercury_robot/map/map_team1_test

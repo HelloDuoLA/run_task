@@ -1158,7 +1158,7 @@ class Order_driven_task_schedul():
         new_task_sequence.add(self.create_task_speech_recognition())
         
         # 添加到任务管理器待执行队列, 删除最后的语音识别任务
-        self.task_manager.waiting_task.add_and_del_last_asr_task(new_task_sequence,del_last_asr_task = True)
+        self.task_manager.waiting_task.add_and_del_last_asr_task(new_task_sequence,del_last_asr_task=True)
         
         return new_task_sequence
         
