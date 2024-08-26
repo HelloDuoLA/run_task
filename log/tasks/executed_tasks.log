@@ -1,27 +1,35 @@
-08-26 14:20:45
+08-26 14:27:00
 
 --------------------------------------------------
 
 
-Task       : Task_navigate Move_backward
-Name       : move back second from right service desk
+Task       : Task_manipulation Move_to_IDLE
+Name       : two arms move to idle
 Group_id   : 0
-Index      : 30
-Create_time: 1724653147.1408317
-Start_time : -999
+Index      : 23
+Create_time: 1724653544.951119
+Start_time : 1724653616.1177273
 End_time   : -999
 Duration   : -999
 Finsih_cb  : None
-Status     : BEREADY
+Status     : RUNNING
 Result     : INVALID
 Return_data: None
 Parallel   : ALL
-Subtask_count: 1
-Subtask_count_finished: 0
-Predecessor_tasks: [29:Task_navigate Move_backward] 
+Subtask_count: 2
+Subtask_count_finished: 1
+Predecessor_tasks: [21:Task_navigate Move_backward] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-back_meters: x -20, yaw 0, time 2
+Arm_id              : LEFT_RIGHT 
+Target_arms_pose    : {Arm_pose_0: arm LEFT, pose type ANGLE, joint:[-71.22, 62.77, -35.52, 66.98, 20.46, 35.6] 
+                       Arm_pose_1: arm RIGHT, pose type ANGLE, joint:[71.22, 62.77, -35.52, -66.98, 20.46, -35.6] } 
+Debug_position      : -999
+Target_clamps_status: Clamp_status_0: CLOSE Clamp_status_1: CLOSE  
+Clamp_speed         : 50 
+arm_move_method     : XYZ 
+click_length        : 0 
+
 --------------------------------------------------
 
 
