@@ -18,12 +18,12 @@ DrinkDeckMoveBack:
 LeftDeckMoveBack:
   x  : -50
   yaw: 90
-  time : 4
+  time : 5
 
 RightDeckMoveBack:
   x  : -50
   yaw: -90
-  time : 4
+  time : 5
 
 LeftDeckSecondMoveBack:
   x  : -20
