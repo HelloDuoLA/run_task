@@ -1,34 +1,27 @@
-08-25 21:28:47
+08-26 14:20:45
 
 --------------------------------------------------
 
 
-Task       : Task_manipulation Grasp_cup
-Name       : right arm grasp cup
+Task       : Task_navigate Move_backward
+Name       : move back second from right service desk
 Group_id   : 0
-Index      : 8
-Create_time: 1724592492.4134345
-Start_time : 1724592521.52207
+Index      : 30
+Create_time: 1724653147.1408317
+Start_time : -999
 End_time   : -999
 Duration   : -999
 Finsih_cb  : None
-Status     : RUNNING
+Status     : BEREADY
 Result     : INVALID
 Return_data: None
 Parallel   : ALL
 Subtask_count: 1
 Subtask_count_finished: 0
-Predecessor_tasks: [7:Task_manipulation Grasp_cup_pre] 
+Predecessor_tasks: [29:Task_navigate Move_backward] 
 Sleep_time_before_task : 0
 Sleep_time_after_task  : 0
-Arm_id              : RIGHT 
-Target_arms_pose    : {Arm_pose_0: arm RIGHT, pose type BASE_COORDS, coords:[345.0875244140625, -219.28199768066406, 90.0, 90, 0, 90] } 
-Debug_position      : -999
-Target_clamps_status: Clamp_status_0: CLOSE  
-Clamp_speed         : 50 
-arm_move_method     : XYZ 
-click_length        : 0 
-
+back_meters: x -20, yaw 0, time 2
 --------------------------------------------------
 
 
