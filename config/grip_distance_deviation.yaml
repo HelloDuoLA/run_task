@@ -61,7 +61,7 @@ LeftArmGripTurnOFFMachineSwitch:
 # y轴无偏差估计
 LeftArmWaterCup:
   x_bias: -25
-  y_bias: -45
+  y_bias: -35
   z_const: 130     # 有用
 
 

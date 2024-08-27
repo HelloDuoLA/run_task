@@ -467,6 +467,7 @@ def execute_cb(goal:msg.ArmMoveRequest,self):
         # 2. 给机械臂发送目标值
         self.move_arm(goal_arm_pose.type_id,goal_arm_pose.arm_pose, goal.arm_move_method,goal.arm_speed)
     
+    rospy.loginfo(f"{self.id} arm execute.task id {goal.task_index} run here")
     # 后打开 and 先关闭后打开
     if goal_grasp_flag == GripMethod.CLOSE_OPEN or goal_grasp_flag == GripMethod.OPEN:
         self.open_grasp(goal.open_grasp_value)
