@@ -6,6 +6,11 @@ mr = Mercury("/dev/right_arm")
 ml.power_on()
 mr.power_on()
 
+# 运输角度
+ml.send_angles([90.0, 90.0, 0.0, -30.0, 90.0, 0.0], 10)
+mr.send_angles([-90, 90, 0.0, 30.0, 90, 0.0],10)
+
+
 mr.release_all_servos()
 ml.release_all_servos()
 
