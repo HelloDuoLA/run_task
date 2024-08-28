@@ -46,3 +46,9 @@ mr.set_gripper_enabled(0)
 
 ml.set_gripper_calibration()
 mr.set_gripper_calibration()
+
+ml.set_gripper_state(0,50)
+ml.set_gripper_state(1,50)
+
+mr.set_gripper_state(0,50)
+mr.set_gripper_state(1,50)
