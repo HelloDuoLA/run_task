@@ -22,7 +22,7 @@ LeftArmBottomSnackGrip:
 
 # 左臂抓容器
 LeftArmGripContainer:
-  x_bias : -36
+  x_bias : -66
   y_bias : -50
   z_const: 240     # 这里的z无用
 
@@ -42,7 +42,7 @@ LeftArmGripContainerDodge:
 LeftArmGripTurnOnMachineSwitch:
   x_bias: -165
   y_bias: -40
-  z_bias: -30     
+  z_bias: -60     
 
 # 左臂从开咖啡机 转移 到关咖啡机(相对开咖啡机偏移)
 LeftArmGripTranMachineSwitch:
@@ -61,7 +61,7 @@ LeftArmGripTurnOFFMachineSwitch:
 # y轴无偏差估计
 LeftArmWaterCup:
   x_bias: -25
-  y_bias: -45
+  y_bias: -35
   z_const: 130     # 有用
 
 
@@ -90,7 +90,7 @@ RightArmBottomSnackGrip:
 
 # 右臂抓容器
 RightArmGripContainer:     
-  x_bias : 40
+  x_bias : 20
   y_bias : 50
   z_const: 390   # 这里的z无用
 

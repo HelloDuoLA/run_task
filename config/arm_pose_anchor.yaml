@@ -57,7 +57,7 @@ LeftArmContainerPlacement:
 
 # 左臂咖啡机识别位点 开机位点
 LeftArmMachineTurnOnRec:
-  coords: [160, 100, 330, -90, 0, -90]
+  coords: [180, 100, 350, -90, 0, -90]
 
 # TODO:不需要识别
 # 左臂咖啡机识别位点, 关机位点, 需要修改
@@ -72,7 +72,7 @@ LeftArmMachineTurnOnPre:
 # 左臂咖啡机开启时向上拨一拨
 LeftArmMachineTurnOnClick:
   # x y z 都不确定, 手势确定
-  coords:  [0, 0, 20, 0, 0, 0]
+  coords:  [0, 0, 10, 0, 0, 0]
 
 # 左臂咖啡机转移位点
 LeftArmMachineTransfrom:

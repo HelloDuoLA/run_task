@@ -337,4 +337,3 @@ class Order():
         for drink in self.drink_list.drink_list:
             count += drink.count
         return count
-    
