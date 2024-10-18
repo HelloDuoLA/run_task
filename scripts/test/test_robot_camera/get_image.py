@@ -1,7 +1,7 @@
 import cv2
 
 # 2 bottom 摄像头 4 左 6右 
-camera_id = 6
+camera_id = 0
 
 camera = cv2.VideoCapture(camera_id)
 # camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)

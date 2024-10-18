@@ -1,6 +1,6 @@
 import yaml
 
-def load_config(config_file='/home/elephant/dev/team1/ros/src/run_task/scripts/asr_module/config.yaml'):
+def load_config(config_file='/home/jetson/code_ws/src/run_task/scripts/asr_module/config.yaml'):
     with open(config_file, 'r', encoding='utf-8') as file:
         config = yaml.safe_load(file)
     return config
