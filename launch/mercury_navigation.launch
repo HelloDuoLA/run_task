@@ -8,8 +8,8 @@
  <include file="$(find run_task)/launch/mercury_lidar.launch" />
 
  <!-- 设置需要用于导航的地图  -->
- <!-- <arg name="map_file" default="$(find run_task)/map/C111.yaml"/> -->
- <arg name="map_file" default="$(find turn_on_mercury_robot)/map/map_team1_C111.yaml"/>
+ <arg name="map_file" default="$(find run_task)/map/map_team1_C111.yaml"/>
+ <!-- <arg name="map_file" default="$(find turn_on_mercury_robot)/map/map_team1_C111.yaml"/> -->
  <!-- <arg name="map_file" default="$(find turn_on_mercury_robot)/map/map_team1_C111_2.yaml"/> -->
  <node name="map_server_for_test" pkg="map_server" type="map_server" args="$(arg map_file)">
  </node>
@@ -21,7 +21,7 @@
  <node name='send_mark' pkg="turn_on_mercury_robot" type="send_mark.py">
  </node>
  
- <node pkg="rviz" type="rviz" name="rviz" args="-d /home/elephant/dev/team1/ros/src/run_task/rviz/CobotX.rviz"/>
+ <node pkg="rviz" type="rviz" name="rviz" args="-d /home/jetson/code_ws/src/run_task/rviz/c111.rviz"/>
 
 </launch>
 

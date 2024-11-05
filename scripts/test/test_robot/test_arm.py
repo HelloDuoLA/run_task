@@ -83,6 +83,9 @@ mr.set_gripper_state(1,50)
 mr.set_gripper_value(0,50)
 mr.set_gripper_value(100,50)
 
+
+ml.set_gripper_value(0,50)
+ml.set_gripper_value(100,50)
 # 抓爪调零
 
 ml.set_gripper_enabled(0)

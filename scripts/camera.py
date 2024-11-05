@@ -728,7 +728,7 @@ class Recognition_node():
         self.right_arm_client = rospy.ServiceProxy(utilis.Topic_name.CheckRightArmPose ,srv.CheckArmPose)
         
         # 初始化模型
-        model_name ="/home/jetson/tensorrt_demos/engine/ssd_resnet18_epoch_070_fp16_2.engine"
+        model_name ="/home/jetson/code_ws/src/run_task/engine/ssd_resnet18_epoch_070_fp16_2.engine"
         INPUT_HW = (1280, 960)
         self.model = engine.TrtSSD(model_name, INPUT_HW,is_ros=True)
     
@@ -1111,18 +1111,8 @@ def get_deviation(name,z_is_const=False):
 def init_camera():
     global left_camera,right_camera
 
-    # left_camera_id  = 4
-    # right_camera_id = 6
-    
-    left_camera_id  = 0
+    left_camera_id  = 4
     right_camera_id = 2
-        
-        
-    # left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_V4L2)
-    # right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_V4L2)  
-    
-    # left_camera     = cv2.VideoCapture(left_camera_id, cv2.CAP_GSTREAMER)
-    # right_camera    = cv2.VideoCapture(right_camera_id, cv2.CAP_GSTREAMER)
     
     left_camera     = cv2.VideoCapture(left_camera_id)
     right_camera    = cv2.VideoCapture(right_camera_id)

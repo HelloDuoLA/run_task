@@ -1,7 +1,7 @@
 # 左臂抓零食
 LeftArmGripSnack:
-  x_bias: -110
-  y_bias: -78
+  x_bias: -90
+  y_bias: -58
   z_bias: +20
 
 # 左臂抓零食DNN(深度神经网络识别)
@@ -35,7 +35,7 @@ LeftArmLossenSnack:
 # 左臂抓容器前, 躲避放置零食的位点(相对于抓容器的位置)
 LeftArmGripContainerDodge:
   x_bias : 0
-  y_bias : 80 
+  y_bias : 120 
   z_const: 390     # 这里的z无用
 
 # 左臂准备 开 咖啡开关
@@ -97,7 +97,7 @@ RightArmGripContainer:
 # 右臂松零食(相对于抓容器的位置)
 RightArmLossenSnack:
   x_bias: -50
-  y_bias: 80
+  y_bias: 60
   z_bias: 20    # 这里的z无用
 
 

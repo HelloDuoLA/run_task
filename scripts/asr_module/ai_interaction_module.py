@@ -6,7 +6,7 @@ from http import HTTPStatus
 from dashscope import Application
 from config_loader import app_id, api_key
 
-LOGDIR = "/home/elephant/dev/team1/ros/src/run_task/log/"
+LOGDIR = "/home/jetson/code_ws/src/run_task/log/"
 
 def chat_with_ai(messages):
     response = Application.call(app_id=app_id,

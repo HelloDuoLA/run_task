@@ -1120,7 +1120,9 @@ class Order_driven_task_schedul():
         if order.operation == order.Operation.ADD:
             rospy.loginfo(f"node name {rospy.get_name()}, order driven task schedul, add new order")
             rospy.loginfo(f"order info \r\n{order}")
-            result = self.add_task(order)
+            # ! test
+            # result = self.add_task(order)
+            result = self.add_test_task(order)
         # 删
         elif order.operation == order.Operation.DELETE:
             result = self.delete_task(order)
@@ -1144,6 +1146,34 @@ class Order_driven_task_schedul():
         # 有饮料请求
         if order.has_drink_request():
             new_task_sequence.add(self.create_tasks_get_drink(order.table_id))
+
+        # 更新组ID
+        new_task_sequence.update_group_id(order.order_id)
+        
+        # # 添加返回起始点的任务
+        # new_task_sequence.add(self.create_task_navigate_to_init_point())
+        
+        # # 添加到任务管理器待执行队列, 并删除最后的返回起始点 
+        # self.task_manager.waiting_task.add(new_task_sequence,del_last_naviagte_to_init_point = True)
+        
+        # 添加语音识别的任务
+        new_task_sequence.add(self.create_task_speech_recognition())
+        
+        # 添加到任务管理器待执行队列, 删除最后的语音识别任务
+        self.task_manager.waiting_task.add_and_del_last_asr_task(new_task_sequence,del_last_asr_task=True)
+        
+        return new_task_sequence
+    
+    # ! 双台测试任务
+    def add_test_task(self,order:order.Order): 
+        new_task_sequence = self.test_tasks_at_snack_desk(order.snack_list)
+        # 有零食请求
+        # if order.has_snack_request():
+        #     new_task_sequence.add(self.create_tasks_grasp_snack(order.snack_list,order.table_id))
+
+        # # 有饮料请求
+        # if order.has_drink_request():
+        #     new_task_sequence.add(self.create_tasks_get_drink(order.table_id))
 
         # 更新组ID
         new_task_sequence.update_group_id(order.order_id)
@@ -1720,7 +1750,7 @@ class Order_driven_task_schedul():
         # 功能性暂停(等待前面的动作全部完成)
         task_function_pause = task.Task_function(task.Task_type.Task_function.PAUSE,None,name="function pause")
         tasks_get_drink.add(task_function_pause)
-        
+
         # 赋值
         return tasks_get_drink
 
@@ -1763,6 +1793,7 @@ class Order_driven_task_schedul():
         task_grasp_snack.status   = task.Task.Task_status.NOTREADY       # 需要参数
         task_grasp_snack.add_predecessor_task(task_grasp_snack_pre)      # 添加前置任务
         task_grasp_snack.arm_speed  = 30                                 # !手臂移动速度
+        task_grasp_snack.close_grasp_value = 25                          # 夹取零食的力度
         task_grasp_snack_seq.add(task_grasp_snack)
         
         # 放置零食中间位置
@@ -1806,12 +1837,27 @@ class Order_driven_task_schedul():
     # 创建在零食桌前的任务
     def test_tasks_at_snack_desk(self,snack_list:order.Snack_list)->task.Task_sequence:
         tasks_pick_snack        = task.Task_sequence()
+        
+        #  手臂移到空闲位, 并关闭夹爪
+        task_left_arm_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE, None, utilis.Device_id.LEFT, \
+            system.anchor_point.left_arm_idle,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
+                name="left arm move to idle prepare for pick snack")
+        task_left_arm_idle.parallel = task.Task.Task_parallel.ALL  # 可并行
+        tasks_pick_snack.add(task_left_arm_idle)
+        
+        #  手臂移到空闲位, 并关闭夹爪
+        task_right_arm_idle = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE, None, utilis.Device_id.RIGHT, \
+            system.anchor_point.right_arm_idle,arm.GripMethod.CLOSE, arm_move_method = arm.ArmMoveMethod.XYZ,\
+                name="right arm move to idle prepare for pick snack")
+        task_right_arm_idle.parallel = task.Task.Task_parallel.ALL  # 可并行
+        tasks_pick_snack.add(task_right_arm_idle)
       
         #  将左臂抬到指定位置(食物框识别位置)
         task_left_arm_to_rec_contianer = task.Task_manipulation(task.Task_type.Task_manipulation.Rec_container, None, utilis.Device_id.LEFT, \
             system.anchor_point.left_arm_container_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="left arm move to rec container")
         task_left_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL             # 可并行
+        task_left_arm_to_rec_contianer.add_predecessor_task(task_left_arm_idle)           # 前置任务, 左臂移动到空闲位置
         tasks_pick_snack.add(task_left_arm_to_rec_contianer)
         
         #  将右臂抬到指定位置(食物框识别位置)
@@ -1819,6 +1865,7 @@ class Order_driven_task_schedul():
             system.anchor_point.right_arm_container_rec, arm.GripMethod.DONTCANGE, arm_move_method = arm.ArmMoveMethod.XYZ,\
                 name="right arm move to rec container")
         task_right_arm_to_rec_contianer.parallel = task.Task.Task_parallel.ALL           # 可并行
+        task_right_arm_to_rec_contianer.add_predecessor_task(task_right_arm_idle)         # 前置任务, 右臂移动到空闲位置
         tasks_pick_snack.add(task_right_arm_to_rec_contianer)
         
         #  左摄像头食物框识别(可前后并行，固定)
@@ -1954,6 +2001,65 @@ class Order_driven_task_schedul():
         task_arm_dilivery_container.add_predecessor_task(task_left_arm_grap_container)        # 前置任务, 左臂抓取容器
         task_arm_dilivery_container.add_predecessor_task(task_right_arm_grap_container)       # 前置任务, 右臂抓取容器
         tasks_pick_snack.add(task_arm_dilivery_container)
+        
+        
+        # 后退
+        target_pose_3     = utilis.Pose3D()
+        target_pose_3.x   = -15
+        target_pose_3.yaw = 0
+        target_pose_3.run_time = 2
+        task_move_back_second_from_service_desk3 = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+        target_pose_3, name="move back second from left service desk")
+        task_move_back_second_from_service_desk3.set_move_back_second(target_pose_3.run_time)    # 设置运行时间
+        task_move_back_second_from_service_desk3.parallel = task.Task.Task_parallel.ALL                 # 可并行
+        task_move_back_second_from_service_desk3.add_predecessor_task(task_left_arm_grap_container) 
+        task_move_back_second_from_service_desk3.add_predecessor_task(task_right_arm_grap_container) 
+        tasks_pick_snack.add(task_move_back_second_from_service_desk3)
+        
+        # 旋转 
+        target_pose     = utilis.Pose3D()
+        target_pose.x   = 0
+        target_pose.yaw = 90
+        target_pose.run_time = 3
+        task_move_back_second_from_service_desk = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+        target_pose, name="move back second from left service desk")
+        task_move_back_second_from_service_desk.set_move_back_second(target_pose.run_time)    # 设置运行时间
+        task_move_back_second_from_service_desk.parallel = task.Task.Task_parallel.ALL                 # 可并行
+        task_move_back_second_from_service_desk.add_predecessor_task(task_move_back_second_from_service_desk3) 
+        tasks_pick_snack.add(task_move_back_second_from_service_desk)
+        
+        # 前进
+        target_pose_2     = utilis.Pose3D()
+        target_pose_2.x   = 20
+        target_pose_2.yaw = 0
+        target_pose.run_time = 2
+        task_move_back_second_from_service_desk2 = task.Task_navigation(task.Task_type.Task_navigate.Move_backward,None,\
+        target_pose_2, name="move back second from left service desk")
+        task_move_back_second_from_service_desk2.set_move_back_second(target_pose.run_time)    # 设置运行时间
+        task_move_back_second_from_service_desk2.parallel = task.Task.Task_parallel.ALL                 # 可并行
+        task_move_back_second_from_service_desk2.add_predecessor_task(task_move_back_second_from_service_desk) 
+        tasks_pick_snack.add(task_move_back_second_from_service_desk2)
+        
+        
+        #  将左、右臂放到指定位置后，松开(不可并行)
+        task_arm_placement_container   = task.Task_manipulation(task.Task_type.Task_manipulation.Lossen_container,None,utilis.Device_id.LEFT_RIGHT,\
+                [system.anchor_point.left_arm_container_placement,system.anchor_point.right_arm_container_placement],\
+                [arm.GripMethod.OPEN,arm.GripMethod.OPEN], arm_move_method = arm.ArmMoveMethod.MODIFY_Z,\
+                    name="two arms placement container")
+        task_arm_placement_container.add_predecessor_task(task_move_back_second_from_service_desk2)  # 前置任务, 到服务桌前了
+        task_arm_placement_container.set_subtask_count(2)
+        tasks_pick_snack.add(task_arm_placement_container)
+    
+        #  将左,右臂放到空闲位置
+        task_arms_idle   = task.Task_manipulation(task.Task_type.Task_manipulation.Move_to_IDLE,None,utilis.Device_id.LEFT_RIGHT,\
+                [system.anchor_point.left_arm_idle,system.anchor_point.right_arm_idle],\
+                [arm.GripMethod.CLOSE,arm.GripMethod.CLOSE], arm_move_method = arm.ArmMoveMethod.XYZ,
+                name="two arms move to idle")
+        task_arms_idle.set_subtask_count(2)                                # 两个子任务
+        task_arms_idle.parallel = task.Task.Task_parallel.ALL              # 可并行
+        task_arms_idle.add_predecessor_task(task_arm_placement_container)  # 前置任务, 完成放置容器
+        tasks_pick_snack.add(task_arms_idle)
+        
         
         return tasks_pick_snack
     
@@ -2111,17 +2217,17 @@ def talker():
         right_arm_client.wait_for_service()
         rospy.loginfo("waiting for camera nodes...")
         camera_prepare_service.wait_for_service()
-        # rospy.loginfo("waiting for asr nodes...")
-        # asr_prepare_service.wait_for_service()
+        rospy.loginfo("waiting for asr nodes...")
+        asr_prepare_service.wait_for_service()
     
     # 测试SSD
     # test_ssd()
     
     # 自定义订单
-    test_order_snack()
+    # test_order_snack()
 
     # !在任务列表前新增识别服务
-    # system.order_driven_task_schedul.add_asr_task()
+    system.order_driven_task_schedul.add_asr_task()
     
     # 设置发布消息的频率，1Hz
     rate = rospy.Rate(0.1)
@@ -2169,13 +2275,13 @@ def test_order_snack():
     # order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.CHENPIDAN,1)
-    order_info.add_snack(snack)
+    # order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.GUODONG ,1)
     order_info.add_snack(snack)
     
     snack  = order.Snack(order.Snack.Snack_id.RUSUANJUN ,1)
-    # order_info.add_snack(snack)
+    order_info.add_snack(snack)
     
     drink  = order.Drink(order.Drink.Drink_id.COFFEE,1)
 

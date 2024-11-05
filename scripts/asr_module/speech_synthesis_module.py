@@ -16,7 +16,7 @@ import pyaudio
 import io
 from websocket import WebSocketApp
 
-LOGDIR = "/home/elephant/dev/team1/ros/src/run_task/log/"
+LOGDIR = "/home/jetson/code_ws/src/run_task/log/"
 
 STATUS_FIRST_FRAME = 0  # 第一帧的标识
 STATUS_CONTINUE_FRAME = 1  # 中间帧标识

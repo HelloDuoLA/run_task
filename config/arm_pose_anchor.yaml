@@ -38,7 +38,7 @@ LeftArmGripContainerDodge:
 # 左臂抓框时的准备位点
 LeftArmGripContainerPre:
   # x y 与 左臂抓框时的位点 相同, z轴比抓框高40mm  
-  coords:  [-999, -999, 255, -180, 0.0, -90]
+  coords:  [-999, -999, 250, -180, 0.0, -90]
 
 # 左臂抓框时的位点
 LeftArmGripContainer:
