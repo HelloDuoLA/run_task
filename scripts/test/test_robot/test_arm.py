@@ -42,6 +42,10 @@ mr.send_angles([0,0,0,0,90,0],50)
 ml.send_angles([0,0,0,0,90,0],50)
 # ml [90,50,0,0,90,0]
 
+mr.send_angles([0,0,0,0,0,90,0],50)
+ml.send_angles([0,0,0,0,0,90,0],50)
+
+
 mr.send_angles([69.97, 44.71, -44.99, -90.0, 89.99, 30.0],50)
 ml.send_angles([-70.0, 44.99, -45.00, 89.99, 89.99, 30.0],50)
 ml.send_angles([0,0,-90,0,90,0],50)
@@ -61,6 +65,7 @@ mr.set_servo_calibration(3)
 mr.set_servo_calibration(4)
 mr.set_servo_calibration(5)
 mr.set_servo_calibration(6)
+mr.set_servo_calibration(7)
 
 # !抓爪通信打开
 ml.set_gripper_mode(0)
@@ -96,6 +101,7 @@ ml.set_servo_calibration(3)
 ml.set_servo_calibration(4)
 ml.set_servo_calibration(5)
 ml.set_servo_calibration(6)
+ml.set_servo_calibration(7)
 
 ml.send_angle(3,20, 100)
 

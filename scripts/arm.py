@@ -102,6 +102,10 @@ class Arm_pose():
             self.arm_pose = arm_pose
             self.type_id  = type_id
             self.arm_id   = arm_id
+        elif isinstance(arm_pose, list) and len(arm_pose) == 7 and type_id==PoseType.ANGLE:
+            self.arm_pose = arm_pose
+            self.type_id  = type_id
+            self.arm_id   = arm_id
         else:
             raise ValueError("Invalid initialization parameter for arm_pose")
     

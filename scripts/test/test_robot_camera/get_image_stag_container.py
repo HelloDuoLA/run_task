@@ -3,7 +3,24 @@ import time
 
 # 初始化两个摄像头
 camera_ids = [0, 2]
-cameras = {cid: cv2.VideoCapture(cid) for cid in camera_ids}
+# cameras = {cid: cv2.VideoCapture(cid, cv2.CAP_GSTREAMER) for cid in camera_ids}
+
+# def get_gs_pipeline(camera_id):
+#     return f"v4l2src device=/dev/video{camera_id} io-mode=2 " \
+#            f"! video/x-raw, format=YUY2, width=640, height=480, framerate=30/1 " \
+#            f"! videoconvert " \
+#            f"! video/x-raw, format=BGR " \
+#            f"! appsink drop=1"
+
+              
+
+# cameras = {cid: cv2.VideoCapture(get_gs_pipeline(cid), cv2.CAP_GSTREAMER) for cid in camera_ids}
+# cameras = {cid: cv2.VideoCapture(cid) for cid in camera_ids}
+cameras = {cid: cv2.VideoCapture(cid,cv2.CAP_GSTREAMER) for cid in camera_ids}
+
+for camera in cameras.values():
+    if not camera.isOpened():
+        print(f'摄像头 {camera} 打开失败')
 
 # 设置摄像头参数
 for camera in cameras.values():
